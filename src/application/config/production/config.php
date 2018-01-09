@@ -1,0 +1,32 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+/**
+ * Base Site URL.
+ * @see application/config/config.php:6
+ */
+$config['base_url'] = 'http://example.com/cibase/';
+
+/**
+ * Index File
+ * @see application/config/config.php:30
+ */
+$config['index_page'] = '';
+
+/**
+ * Default Language
+ * @see application/config/config.php:71
+ */
+$config['language']	= 'english';
+
+/**
+ * Error Logging Threshold
+ * @see application/config/config.php:206
+ */
+$config['log_threshold'] = 0;
+
+/**
+ * Encryption Key
+ * @see application/config/config.php:318
+ */
+$config['encryption_key'] = '';

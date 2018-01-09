@@ -1,0 +1,24 @@
+# Ignore unnecessary folders.
+.DS_Store
+.phpintel
+
+# Ignore cache files.
+src/application/cache/*
+!src/application/cache/*/.gitkeep
+!src/application/cache/*/.htaccess
+
+# Ignore log files.
+src/application/logs/*
+!src/application/logs/.gitkeep
+!src/application/logs/.htaccess
+
+# keep all .htaccess and .gitkeep
+!**/.htaccess
+!**/.gitkeep
+
+# Sublime Text cache files
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project

@@ -1,0 +1,8 @@
+{
+	"name": "Settings Module",
+	"description": "Allow regular users to update their account details (profile, password, email and avatar) and administrators to update site details.",
+	"version": "0.5.0",
+	"author": "Kader Bouyakoub",
+	"author_uri": "https://github.com/bkader",
+	"author_email": "bkader@mail.com"
+}
