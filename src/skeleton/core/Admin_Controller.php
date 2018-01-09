@@ -104,9 +104,9 @@ class Admin_Controller extends User_Controller
 		$this->theme
 			->add('css', get_common_url('css/font-awesome.min'), 'fontawesome')
 			->add('css', get_common_url('css/bootstrap.min'), 'bootstrap')
-			->add('css', get_common_url('css/admin'), 'admin')
+			->add('css', get_common_url('css/admin'), 'admin.min')
 			->add('js', get_common_url('js/bootstrap.min'), 'bootstrap')
-			->add('js', get_common_url('js/admin'), 'admin');
+			->add('js', get_common_url('js/admin'), 'admin.min');
 	}
 
 	// ------------------------------------------------------------------------

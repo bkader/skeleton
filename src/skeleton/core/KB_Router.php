@@ -320,9 +320,9 @@ class KB_Router extends CI_Router
 	{
 		if (empty($module))
 		{
-			return null;
+			return NULL;
 		}
-		// ($module) OR $module = $this->module;
+
 		// Loop through all locations and try to find the module.
 		foreach ($this->modules_locations() as $location)
 		{
@@ -333,7 +333,7 @@ class KB_Router extends CI_Router
 			}
 		}
 
-		return FALSE;
+		return NULL;
 	}
 
 	// ------------------------------------------------------------------------
