@@ -27,6 +27,10 @@ This file was edited in two (2) places but on the same function, __load_class()_
 
 At line **175**, you notice that we are loading our custom files as soon as the class is called. These classes will have the **KB_** prefix to allow you use any subclass prefix for your application.
 
+## Lang.php
+
+We added the CI_Config to class constructor to avoid load config file again because it is already loaded.
+
 ## KB_Config.php
 
 ## KB_Controller.php

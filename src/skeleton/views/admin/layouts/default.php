@@ -34,6 +34,7 @@
 				<li<?php echo is_module('users') ? ' class="active"' : '' ?>><?php echo admin_anchor('users', __('users')) ?></li>
 				<li<?php echo is_module('themes') ? ' class="active"' : '' ?>><?php echo admin_anchor('themes', __('themes')) ?></li>
 				<li<?php echo is_module('menus') ? ' class="active"' : '' ?>><?php echo admin_anchor('menus', __('menus')) ?></li>
+				<li<?php echo is_module('plugins') ? ' class="active"' : '' ?>><?php echo admin_anchor('plugins', __('plugins')) ?></li>
 				<li<?php echo is_module('settings') ? ' class="active"' : '' ?>><?php echo admin_anchor('settings', __('settings')) ?></li>
 			</ul>
 		</div>

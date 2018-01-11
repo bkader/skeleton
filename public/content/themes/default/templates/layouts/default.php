@@ -1,6 +1,6 @@
-<?= get_partial('navbar') ?> 
+<?php echo get_partial('navbar'); ?> 
 <div class="container">
 	<?php the_alert(); ?> 
 	<?php the_content(); ?> 
 </div>
-<?= get_partial('footer') ?> 
+<?php echo get_partial('footer'); ?> 

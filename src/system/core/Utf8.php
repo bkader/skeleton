@@ -49,6 +49,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link		https://codeigniter.com/user_guide/libraries/utf8.html
  */
 class CI_Utf8 {
+	/**
+	 * Holds an instance of CI_Config object.
+	 * @var object
+	 */
+	protected $config;
 
 	/**
 	 * Class constructor

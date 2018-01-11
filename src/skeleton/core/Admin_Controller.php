@@ -1,15 +1,55 @@
 <?php
+/**
+ * CodeIgniter Skeleton
+ *
+ * A ready-to-use CodeIgniter skeleton  with tons of new features
+ * and a whole new concept of hooks (actions and filters) as well
+ * as a ready-to-use and application-free theme and plugins system.
+ *
+ * This content is released under the MIT License (MIT)
+ *
+ * Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package 	CodeIgniter
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
+ * @license 	http://opensource.org/licenses/MIT	MIT License
+ * @link 		https://github.com/bkader
+ * @since 		Version 1.0.0
+ */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * Admin_Controller Class
  *
- * Controllers extending this class require a logged user of rank 'admin'.
+ * Controllers extending this class requires a logged in user of rank "admin".
  *
  * @package 	CodeIgniter
+ * @subpackage 	Skeleton
  * @category 	Core Extension
- * @author 	Kader Bouyakoub <bkader@mail.com>
- * @link 	https://github.com/bkader
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		Version 1.0.0
+ * @version 	1.0.0
  */
 class Admin_Controller extends User_Controller
 {
@@ -29,10 +69,19 @@ class Admin_Controller extends User_Controller
 			exit;
 		}
 
+		// We reset theme settings and add admin assets.
 		$this->_switch_to_admin();
 
-		// Load admin language file.
+		// Load language file.
 		$this->load->language('bkader_admin');
+
+		// Now we add dashboard needed CSS and JS files.
+		$this->theme
+			->add('css', get_common_url('css/font-awesome.min'), 'fontawesome')
+			->add('css', get_common_url('css/bootstrap.min'), 'bootstrap')
+			->add('css', get_common_url('css/admin'), 'admin')
+			->add('js', get_common_url('js/bootstrap.min'), 'bootstrap')
+			->add('js', get_common_url('js/admin'), 'admin');
 	}
 
 	// ------------------------------------------------------------------------
@@ -56,7 +105,8 @@ class Admin_Controller extends User_Controller
 
 		// Make sure to load theme's translation.
 		$theme_lang = apply_filters('theme_translation', false);
-		if (false !== $theme_lang) {
+		if (false !== $theme_lang)
+		{
 			$this->theme->load_translation($theme_lang);
 		}
 
@@ -76,37 +126,19 @@ class Admin_Controller extends User_Controller
 		$module = $this->router->fetch_module();
 		$module_path = $this->router->module_path($module);
 
+		// We change the views path to modules.
 		if ( ! empty($module) && FALSE !== $module_path)
 		{
 			add_action('theme_view', function($view) use ($module, $module_path) {
 				return $module_path.'views/'.str_replace($module.'/', '', $view);
 			});
 		}
-		else
-		{
-			// add_action('theme_view', function($view) use ($module_path) {
-			// 	$view = $module_path;
-			// 	die($views);
-			// 	return $module_path.'views/'.str_replace(basename($module_path), '', $view);
-			// });
-		}
-		// echo print_d($module);
-		// echo print_d($module_path);
-		// exit;
 
 		// Add IE9 support.
 		add_filter('extra_head', function($output) {
 			add_ie9_support($output, false);
 			return $output;
 		});
-
-		// Now we add dashboard needed CSS and JS files.
-		$this->theme
-			->add('css', get_common_url('css/font-awesome.min'), 'fontawesome')
-			->add('css', get_common_url('css/bootstrap.min'), 'bootstrap')
-			->add('css', get_common_url('css/admin'), 'admin.min')
-			->add('js', get_common_url('js/bootstrap.min'), 'bootstrap')
-			->add('js', get_common_url('js/admin'), 'admin.min');
 	}
 
 	// ------------------------------------------------------------------------
@@ -125,16 +157,30 @@ class Admin_Controller extends User_Controller
 
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Generates a JQuery content fot draggable items.
+	 * @access 	protected
+	 * @param 	string 	$button 	the button that handles saving.
+	 * @param 	string 	$target 	The element id or class to target.
+	 * @param 	string 	$url 		The URL used to send AJAX request.
+	 * @param 	string 	$message 	The message to be displayed after success.
+	 * @return 	void
+	 */
 	protected function add_sortable_list($button, $target, $url, $message = null)
 	{
+		// If these element are not provided, nothing to do.
 		if (empty($button) OR empty($target) OR empty($url))
 		{
 			return;
 		}
 
-		($message) && $message = $this->theme->print_alert(lang('menu_structure_success'), 'success', true);
+		// If the message is set, we add it.
+		if ( ! empty($message))
+		{
+			$message = $this->theme->print_alert($message, 'success', true);
+		}
 
-
+		// Prepare the script to output.
 		$script =<<<EOT
 	<script>
 	var data = data || [];
@@ -167,6 +213,7 @@ class Admin_Controller extends User_Controller
 	</script>
 EOT;
 
+		// No we add it as an inline script.
 		$this->theme->add_inline('js', $script);
 	}
 

@@ -95,9 +95,9 @@ class Bkader extends CI_Driver_Library
 		}
 
 		// Load the rest.
-		$this->ci->load->library('theme');
 		$this->ci->load->helper('url');
 		$this->ci->load->helper('language');
+		$this->ci->load->library('theme');
 
 		// Load main language file.
 		$this->ci->load->language('bkader_main');
@@ -112,7 +112,7 @@ class Bkader extends CI_Driver_Library
 			$this->plugins->load_plugins();
 		}
 
-		log_message('debug', 'Bkader Class Initialized');
+		log_message('info', 'Bkader Class Initialized');
 	}
 
 	// --------------------------------------------------------------------

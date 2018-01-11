@@ -50,6 +50,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 class CI_Loader {
 
+	/**
+	 * Instance of CI_Config object.
+	 *
+	 * @var object
+	 */
+	protected $config;
+
 	// All these are set automatically. Don't mess with them.
 	/**
 	 * Nesting level of the output buffering mechanism
@@ -133,8 +140,9 @@ class CI_Loader {
 	 *
 	 * @return	void
 	 */
-	public function __construct()
+	public function __construct(CI_Config $config)
 	{
+		$this->config =& $config;
 		$this->_ci_ob_level = ob_get_level();
 		$this->_ci_classes =& is_loaded();
 
@@ -303,13 +311,15 @@ class CI_Loader {
 				{
 					throw new RuntimeException($app_path."Model.php exists, but doesn't declare class CI_Model");
 				}
+
+				log_message('info', 'CI_Model class loaded');
 			}
 			elseif ( ! class_exists('CI_Model', FALSE))
 			{
 				require_once(BASEPATH.'core'.DIRECTORY_SEPARATOR.'Model.php');
 			}
 
-			$class = config_item('subclass_prefix').'Model';
+			$class = $this->config->item('subclass_prefix').'Model';
 			if (file_exists($app_path.$class.'.php'))
 			{
 				require_once($app_path.$class.'.php');
@@ -317,6 +327,8 @@ class CI_Loader {
 				{
 					throw new RuntimeException($app_path.$class.".php exists, but doesn't declare class ".$class);
 				}
+
+				log_message('info', 'CI_Model class loaded');
 			}
 		}
 
@@ -599,7 +611,7 @@ class CI_Loader {
 			}
 
 			// Is this a helper extension request?
-			$ext_helper = config_item('subclass_prefix').$filename;
+			$ext_helper = $this->config->item('subclass_prefix').$filename;
 			$ext_loaded = FALSE;
 			foreach ($this->_ci_helper_paths as $path)
 			{
@@ -697,7 +709,7 @@ class CI_Loader {
 	 */
 	public function config($file, $use_sections = FALSE, $fail_gracefully = FALSE)
 	{
-		return get_instance()->config->load($file, $use_sections, $fail_gracefully);
+		return $this->config->load($file, $use_sections, $fail_gracefully);
 	}
 
 	// --------------------------------------------------------------------
@@ -781,8 +793,7 @@ class CI_Loader {
 		$this->_ci_view_paths = array($path.'views/' => $view_cascade) + $this->_ci_view_paths;
 
 		// Add config file path
-		$config =& $this->_ci_get_component('config');
-		$config->_config_paths[] = $path;
+		$this->config->_config_paths[] = $path;
 
 		return $this;
 	}
@@ -816,7 +827,6 @@ class CI_Loader {
 	 */
 	public function remove_package_path($path = '')
 	{
-		$config =& $this->_ci_get_component('config');
 
 		if ($path === '')
 		{
@@ -824,7 +834,7 @@ class CI_Loader {
 			array_shift($this->_ci_model_paths);
 			array_shift($this->_ci_helper_paths);
 			array_shift($this->_ci_view_paths);
-			array_pop($config->_config_paths);
+			array_pop($this->config->_config_paths);
 		}
 		else
 		{
@@ -842,9 +852,9 @@ class CI_Loader {
 				unset($this->_ci_view_paths[$path.'views/']);
 			}
 
-			if (($key = array_search($path, $config->_config_paths)) !== FALSE)
+			if (($key = array_search($path, $this->config->_config_paths)) !== FALSE)
 			{
-				unset($config->_config_paths[$key]);
+				unset($this->config->_config_paths[$key]);
 			}
 		}
 
@@ -853,7 +863,7 @@ class CI_Loader {
 		$this->_ci_helper_paths = array_unique(array_merge($this->_ci_helper_paths, array(APPPATH, BASEPATH)));
 		$this->_ci_model_paths = array_unique(array_merge($this->_ci_model_paths, array(APPPATH)));
 		$this->_ci_view_paths = array_merge($this->_ci_view_paths, array(APPPATH.'views/' => TRUE));
-		$config->_config_paths = array_unique(array_merge($config->_config_paths, array(APPPATH)));
+		$this->config->_config_paths = array_unique(array_merge($this->config->_config_paths, array(APPPATH)));
 
 		return $this;
 	}
@@ -953,7 +963,7 @@ class CI_Loader {
 		// If the PHP installation does not support short tags we'll
 		// do a little string replacement, changing the short tags
 		// to standard PHP echo statements.
-		if ( ! is_php('5.4') && ! ini_get('short_open_tag') && config_item('rewrite_short_tags') === TRUE)
+		if ( ! is_php('5.4') && ! ini_get('short_open_tag') && $this->config->item('rewrite_short_tags') === TRUE)
 		{
 			echo eval('?>'.preg_replace('/;*\s*\?>/', '; ?>', str_replace('<?=', '<?php echo ', file_get_contents($_ci_path))));
 		}
@@ -1108,9 +1118,9 @@ class CI_Loader {
 
 		if (class_exists($prefix.$library_name, FALSE))
 		{
-			if (class_exists(config_item('subclass_prefix').$library_name, FALSE))
+			if (class_exists($this->config->item('subclass_prefix').$library_name, FALSE))
 			{
-				$prefix = config_item('subclass_prefix');
+				$prefix = $this->config->item('subclass_prefix');
 			}
 
 			$property = $object_name;
@@ -1153,7 +1163,7 @@ class CI_Loader {
 		include_once(BASEPATH.'libraries/'.$file_path.$library_name.'.php');
 
 		// Check for extensions
-		$subclass = config_item('subclass_prefix').$library_name;
+		$subclass = $this->config->item('subclass_prefix').$library_name;
 		foreach ($paths as $path)
 		{
 			if (file_exists($path = $path.'libraries/'.$file_path.$subclass.'.php'))
@@ -1161,7 +1171,7 @@ class CI_Loader {
 				include_once($path);
 				if (class_exists($subclass, FALSE))
 				{
-					$prefix = config_item('subclass_prefix');
+					$prefix = $this->config->item('subclass_prefix');
 					break;
 				}
 
@@ -1195,12 +1205,10 @@ class CI_Loader {
 		if ($config === NULL)
 		{
 			// Fetch the config paths containing any package paths
-			$config_component = $this->_ci_get_component('config');
-
-			if (is_array($config_component->_config_paths))
+			if (is_array($this->config->_config_paths))
 			{
 				$found = FALSE;
-				foreach ($config_component->_config_paths as $path)
+				foreach ($this->config->_config_paths as $path)
 				{
 					// We test for both uppercase and lowercase, for servers that
 					// are case-sensitive with regard to file names. Load global first,
@@ -1401,9 +1409,9 @@ class CI_Loader {
 	 * @param 	string	$component	Component name
 	 * @return	bool
 	 */
-	protected function &_ci_get_component($component)
-	{
-		$CI =& get_instance();
-		return $CI->$component;
-	}
+	// protected function &_ci_get_component($component)
+	// {
+	// 	$CI =& get_instance();
+	// 	return $CI->$component;
+	// }
 }

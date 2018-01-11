@@ -70,30 +70,37 @@ if ( ! function_exists('print_input'))
 		}
 
 		// Merge all attributes if there any.
-		if ( !empty($attrs))
+		if ( ! empty($attrs))
 		{
 			$input = array_merge($input, $attrs);
 		}
 
+		// Should placeholder be translated?
+		if (isset($input['placeholder']) 
+			&& sscanf($input['placeholder'], 'lang:%s', $line) === 1)
+		{
+			$input['placeholder'] = line($line);
+		}
+
+		/**
+		 * Here we loop through all input elements only if it's found,
+		 * otherwise, it will simply fall back to "form_input".
+		 */
 		if (isset($input['type']))
 		{
 			switch ($input['type'])
 			{
-
-				case 'password':
-					unset($input['type']);
-					return form_password($input);
-					break;
-
+				// In case of a textarea.
 				case 'textarea':
 					unset($input['type']);
 					return form_textarea($input);
 					break;
 
+				// In case of a dropdwn/select.
 				case 'select':
 				case 'dropdown':
 					$name = $input['name'];
-					$options = $input['options'];
+					$options = array_map('_translate', $input['options']);
 					unset($input['name'], $input['options']);
 					if (isset($input['selected']))
 					{
@@ -107,13 +114,31 @@ if ( ! function_exists('print_input'))
 					return form_dropdown($name, $options, $selected, $input);
 					break;
 
+				// Default one.
 				default:
 					return form_input($input);
 					break;
 			}
 		}
 
-		// Fallback to form input.
+		// Fall-back to form input.
 		return form_input($input);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('_translate'))
+{
+	/**
+	 * This function simply attempts to translate
+	 * a string if it finds "lang:" at the start
+	 * of it.
+	 * @param 	string 	$str 	The string to translate.
+	 * @return 	string
+	 */
+	function _translate($str)
+	{
+		return (sscanf($str, 'lang:%s', $line) === 1) ? line($line) : $str;
 	}
 }

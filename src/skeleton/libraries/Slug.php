@@ -60,7 +60,7 @@ class Slug
 	public function __construct($config = array())
 	{
 		$this->set_config($config);
-		log_message('debug', 'Slug Class Initialized');
+		log_message('info', 'Slug Class Initialized');
 	}
 
 	// ------------------------------------------------------------------------

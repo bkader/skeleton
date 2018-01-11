@@ -41,6 +41,8 @@ $lang['captcha'] = 'Captcha';
 $lang['upload']  = 'Upload';
 $lang['uploads'] = 'Uploads';
 
+$lang['are_you_sure'] = 'Are you sure you want to %s?';
+
 $lang['save_changes'] = 'Save Changes';
 
 $lang['none'] = 'None';

@@ -1,14 +1,56 @@
 <?php
+/**
+ * CodeIgniter Skeleton
+ *
+ * A ready-to-use CodeIgniter skeleton  with tons of new features
+ * and a whole new concept of hooks (actions and filters) as well
+ * as a ready-to-use and application-free theme and plugins system.
+ *
+ * This content is released under the MIT License (MIT)
+ *
+ * Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package 	CodeIgniter
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
+ * @license 	http://opensource.org/licenses/MIT	MIT License
+ * @link 		https://github.com/bkader
+ * @since 		Version 1.0.0
+ */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Users Module - Users Controller
+ * Users Module - Users Controllers
+ *
+ * This module allow users to exists on the website. It handles users 
+ * registration, activation, authentication and password management.
  *
  * @package 	CodeIgniter
- * @subpackage 	Modules
- * @category 	Controllers
- * @author 	Kader Bouyakoub <bkader@mail.com>
- * @link 	https://github.com/bkader
+ * @subpackage 	Skeleton
+ * @category 	Modules\Controllers
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		Version 1.0.0
+ * @version 	1.0.0
  */
 class Users extends KB_Controller
 {
@@ -23,7 +65,7 @@ class Users extends KB_Controller
 		// Make sure the user is not logged in.
 		if ($this->auth->online() && $this->router->fetch_method() !== 'logout')
 		{
-			set_alert(__('error_logged_in'), 'error');
+			set_alert(lang('error_logged_in'), 'error');
 			redirect('');
 			exit;
 		}
@@ -117,7 +159,7 @@ class Users extends KB_Controller
 
 			// Set page title and render view.
 			$this->theme
-				->set_title(__('us_register_title'))
+				->set_title(lang('us_register_title'))
 				->render($data);
 		}
 		// After the form is processed.
@@ -198,14 +240,25 @@ class Users extends KB_Controller
 			$data['captcha'] = $captcha['captcha'];
 			$data['captcha_image'] = $captcha['image'];
 
+			// CSRF security.
+			$data['hidden'] = $this->create_csrf();
+
 			// Set page title and render view.
 			$this->theme
-				->set_title(__('resend_link'))
+				->set_title(lang('resend_link'))
 				->render($data);
 		}
 		// After form processing.
 		else
 		{
+			// Check CSRF token.
+			if ( ! $this->check_csrf())
+			{
+				set_alert(lang('error_csrf'), 'error');
+				redirect('register/resend', 'refresh');
+				exit;
+			}
+
 			// Attempt to resend activation link.
 			$this->users->resend_link($this->input->post('identity', true));
 
@@ -253,14 +306,25 @@ class Users extends KB_Controller
 			$data['captcha'] = $captcha['captcha'];
 			$data['captcha_image'] = $captcha['image'];
 
+			// CSRF security.
+			$data['hidden'] = $this->create_csrf();
+
 			// Set page title and render view.
 			$this->theme
-				->set_title(__('us_restore_title'))
+				->set_title(lang('us_restore_title'))
 				->render($data);
 		}
 		// After form processing.
 		else
 		{
+			// Check CSRF token.
+			if ( ! $this->check_csrf())
+			{
+				set_alert(lang('error_csrf'), 'error');
+				redirect('login/restore', 'refresh');
+				exit;
+			}
+
 			// Attempt to restore the account.
 			$status = $this->users->restore_account(
 				$this->input->post('identity', true),
@@ -342,7 +406,7 @@ class Users extends KB_Controller
 
 			// Set page title and render view.
 			$this->theme
-				->set_title(__('us_login_title'))
+				->set_title(lang('us_login_title'))
 				->render($data);
 		}
 		// After the form is processed.
@@ -415,14 +479,25 @@ class Users extends KB_Controller
 			$data['captcha'] = $captcha['captcha'];
 			$data['captcha_image'] = $captcha['image'];
 
+			// CSRF Security.
+			$data['hidden'] = $this->create_csrf();
+
 			// Set page title and render view.
 			$this->theme
-				->set_title(__('us_recover_title'))
+				->set_title(lang('us_recover_title'))
 				->render($data);
 		}
 		// After the form is processed.
 		else
 		{
+			// Check CSRF token.
+			if ( ! $this->check_csrf())
+			{
+				set_alert(lang('error_csrf'), 'error');
+				redirect('login/recover', 'refresh');
+				exit;
+			}
+
 			// Attempt to prepare password reset.
 			$this->users->prep_password_reset($this->input->post('identity', true));
 
@@ -446,7 +521,7 @@ class Users extends KB_Controller
 		$user_id = $this->users->check_password_code($code);
 		if ( ! $user_id)
 		{
-			set_alert(__('us_reset_invalid_key'), 'error');
+			set_alert(lang('us_reset_invalid_key'), 'error');
 			redirect('');
 			exit;
 		}
@@ -476,7 +551,7 @@ class Users extends KB_Controller
 
 			// Set page title and render view.
 			$this->theme
-				->set_title(__('us_reset_title'))
+				->set_title(lang('us_reset_title'))
 				->render($data);
 		}
 		// After the form is processed.
@@ -485,7 +560,7 @@ class Users extends KB_Controller
 			// Check CSRF token.
 			if ( ! $this->check_csrf())
 			{
-				set_alert(__('error_csrf'), 'error');
+				set_alert(lang('error_csrf'), 'error');
 				redirect('login/reset/'.$code, 'refresh');
 				exit;
 			}

@@ -78,6 +78,46 @@ class Bkader_plugins extends CI_Driver
 	 */
 	private $_active_plugins;
 
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method call catcher to always see if plugins system is on or not.
+	 * @access 	public
+	 * @param 	string 	$method 	The method to call.
+	 * @param 	mixed 	$params 	methods arguments
+	 * @return 	depends on the method.
+	 */
+	public function __call($method, $params = array())
+	{
+		// All our methods have a prepended underscore.
+		$_method = '_' . $method;
+		
+		// We throw a BadMethodCallException if no method exists.
+		if ( ! method_exists($this, $_method))
+		{
+			throw new BadMethodCallException("Call to a private method Bkader_plugins::{$method}()");
+		}
+
+
+		/**
+		 * By using the ReflectionMethod class we make sure to
+		 * call only public or protected method but never
+		 * private one.
+		 */
+		$reflection = new ReflectionMethod($this, $_method);
+
+		if ($reflection->isPrivate())
+		{
+			throw new BadMethodCallException("Call to a private method Bkader_plugins::{$method}()");
+		}
+
+		// We proceed only if plugins system is enabled.
+		if ($this->use_plugins())
+		{
+			return call_user_func_array(array($this, $_method), $params);
+		}
+	}
+
 	// --------------------------------------------------------------------
 
 	/**
@@ -93,13 +133,6 @@ class Bkader_plugins extends CI_Driver
 			: realpath(FCPATH.'content/plugins');
 		($this->_plugins_path) && $this->_plugins_path .= DIRECTORY_SEPARATOR;
 
-		// Make sure to load needed resources.
-		$this->ci->load->helper(array('url', 'directory', 'file'));
-
-		// List all available plugins.
-		$this->_plugins = $this->_get_all_plugins();
-
-		log_message('debug', 'Bkader_plugins Class Initialize');
 		/**
 		 * We proceed only if the plugins folder if found and
 		 * the plugins system is enabled.
@@ -108,33 +141,53 @@ class Bkader_plugins extends CI_Driver
 		{
 			return;
 		}
+
+		// Make sure to load needed resources.
+		$this->ci->load->helper(array('url', 'directory', 'file'));
+
+		// List all available plugins.
+		$this->_plugins = $this->_get_all_plugins();
+
+		log_message('info', 'Bkader_plugins Class Initialize');
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Checks if the using plugins is enabled.
+	 * @access 	public
+	 * @return 	boolean
+	 */
+	public function use_plugins()
+	{
+		return ($this->ci->config->item('use_plugins') === true && false !== $this->_plugins_path);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Load active plugins.
-	 * @access 	public
+	 * @access 	protected
 	 * @return 	void
 	 */
-	public function load_plugins()
+	protected function _load_plugins()
 	{
 		// Prepare the list or activated plugins.
-		$this->_active_plugins = $this->_get_active_plugins();
+		$this->_active_plugins = $this->__get_active_plugins();
 
 		// Now we instantiate plugins.
-		$this->_initialize_plugins();
+		$this->__initialize_plugins();
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
 	 * Activate the selected plugin.
-	 * @access 	public
+	 * @access 	protected
 	 * @param 	string 	$name 	the plugin's folder name.
 	 * @return 	bool
 	 */
-	public function activate($name)
+	protected function _activate($name)
 	{
 		// Prepare the name.
 		$name = strtolower(rtrim($name, DIRECTORY_SEPARATOR));
@@ -143,9 +196,9 @@ class Bkader_plugins extends CI_Driver
 		$status = false;
 
 		// Proceed only if the plugin exists and is not active.
-		if (isset($this->_plugins[$name]) && ! isset($this->_active_plugins[$name]))
+		if (! isset($this->_active_plugins[$name]))
 		{
-			$plugins = $this->_get_db_plugins();
+			$plugins = $this->__get_db_plugins();
 
 			// Plugins are store in database?
 			if ($plugins)
@@ -162,11 +215,17 @@ class Bkader_plugins extends CI_Driver
 			// Store the plugins in database.
 			else
 			{
-				$status = (bool) $this->_parent->options->insert(array(
+				// For security, delete it first.
+				$this->_parent->options->delete_by('name', 'active_plugins');
+
+				// Then we insert it.
+				$this->_parent->options->insert(array(
 					'name'  => 'active_plugins',
 					'value' => array($name => array('folder' => $name)),
 					'tab'   => 'plugins',
 				));
+
+				$status = true;
 			}
 
 		}
@@ -185,11 +244,11 @@ class Bkader_plugins extends CI_Driver
 
 	/**
 	 * Deactivate the selected plugin.
-	 * @access 	public
+	 * @access 	protected
 	 * @param 	string 	$name 	Plugin name.
 	 * @return 	bool
 	 */
-	public function deactivate($name)
+	protected function _deactivate($name)
 	{
 		// Prepare the name.
 		$name = strtolower(rtrim($name, DIRECTORY_SEPARATOR));
@@ -200,7 +259,7 @@ class Bkader_plugins extends CI_Driver
 		if (isset($this->_active_plugins[$name]))
 		{
 			// Get all activated plugins and remove the selected one.
-			$plugins = $this->_get_db_plugins();
+			$plugins = $this->__get_db_plugins();
 			unset($plugins->value[$name]);
 
 			// Update database.
@@ -217,14 +276,79 @@ class Bkader_plugins extends CI_Driver
 		return $status;
 	}
 
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Delete a plugin from plugins directory.
+	 * @access 	protected
+	 * @param 	string 	$plugin 	Plugin's slug.
+	 * @return 	boolean
+	 */
+	protected function _delete($name)
+	{
+		// Prepare the name.
+		$name = strtolower(rtrim($name, DIRECTORY_SEPARATOR));
+
+		// Make sure the plugin exists.
+		if ( ! isset($this->_plugins[$name]))
+		{
+			return false;
+		}
+
+		// Make sure the directory is found.
+		$plugin_path = realpath(plugins_path().'/'.$name);
+		if (false === $plugin_path)
+		{
+			return;
+		}
+
+		/**
+		 * Two steps here: 1. delete all files within the plugin's folder,
+		 * then 2. delete the folder.
+		 */
+		array_map('unlink', glob($plugin_path.'/*.*'));
+		rmdir($plugin_path);
+		return $this->_deactivate($name);
+	}
+
 	// --------------------------------------------------------------------
+
+	/**
+	 * Returns all available plugins at the plugins directory.
+	 * @access 	protected
+	 * @param 	none
+	 * @return 	array
+	 */
+	protected function _get_all_plugins()
+	{
+		// Get all plugins if not already set.
+		$plugins = (isset($this->_plugins)) ? $this->_plugins : $this->__get_all_plugins();
+
+		// Get all active plugins.
+		$active_plugins = (isset($this->_active_plugins))
+			? $this->_active_plugins
+			: $this->__get_active_plugins();
+
+		// Mark active plugins as enabled.
+		if ( ! empty($plugins))
+		{
+			foreach ($plugins as $slug => &$plugin)
+			{
+				$plugin['enabled'] = (isset($active_plugins[$slug]));
+			}
+		}
+
+		return $plugins;
+	}
+
+	// ------------------------------------------------------------------------
 
 	/**
 	 * List all available plugins in plugins directory.
 	 * @access 	private
 	 * @return 	array
 	 */
-	private function _get_all_plugins()
+	private function __get_all_plugins()
 	{
 		// Already cached? Return them.
 		if (isset($this->_plugins))
@@ -263,7 +387,7 @@ class Bkader_plugins extends CI_Driver
 				if (false !== realpath($this->_plugins_path.$plugin.DS.'manifest.json'))
 				{
 					// The manifest.json must contain a valid array.
-					$details = $this->_get_plugin_details($plugin, false);
+					$details = $this->__get_plugin_details($plugin, false);
 
 					// Cache plugins to avoid repeating.
 					if ($details !== null)
@@ -288,7 +412,7 @@ class Bkader_plugins extends CI_Driver
 	 * @param 	bool 	$check 	whether to validate the manifest.
 	 * @return 	array if valid, else false.
 	 */
-	private function _get_plugin_details($name, $check = true)
+	private function __get_plugin_details($name, $check = true)
 	{
 		$manifest = file_get_contents($this->_plugins_path.$name.'/manifest.json');
 		$manifest = json_decode($manifest, true);
@@ -330,20 +454,20 @@ class Bkader_plugins extends CI_Driver
 	 * @access 	private
 	 * @return 	array if found, else null.
 	 */
-	private function _get_active_plugins()
+	private function __get_active_plugins()
 	{
 		// Start an empty array.
 		$this->_active_plugins = array();
 
 		// Get plugins from database.
-		$plugins = $this->_get_db_plugins();
+		$plugins = $this->__get_db_plugins();
 
 		// Found?
 		if ($plugins && count($plugins) > 0)
 		{
 			foreach ($plugins as $plugin)
 			{
-				$details = $this->_get_plugin_details($plugin['folder']);
+				$details = $this->__get_plugin_details($plugin['folder']);
 
 				// Cache the plugin.
 				$this->_active_plugins[$plugin['folder']] = $details;
@@ -360,7 +484,7 @@ class Bkader_plugins extends CI_Driver
 	 * @access 	private
 	 * @return 	array if found, else null.
 	 */
-	public function _get_db_plugins()
+	protected function ___get_db_plugins()
 	{
 		// Already cached? Return them.
 		if (isset($this->_db_plugins))
@@ -369,7 +493,8 @@ class Bkader_plugins extends CI_Driver
 		}
 
 		// Cache them to reduce BD access.
-		$this->_db_plugins = $this->_parent->options->item('active_plugins');
+		$db_plugins = $this->_parent->options->item('active_plugins');
+		$this->_db_plugins = ($db_plugins) ? $db_plugins : array();
 		return $this->_db_plugins;
 	}
 
@@ -380,12 +505,12 @@ class Bkader_plugins extends CI_Driver
 	 * @access 	private
 	 * @return 	void
 	 */
-	private function _initialize_plugins()
+	private function __initialize_plugins()
 	{
 		if (isset($this->_active_plugins))
 		{
 			// For comparison reason.
-			$db_plugins = $this->_get_db_plugins();
+			$db_plugins = $this->__get_db_plugins();
 
 			foreach ($this->_active_plugins as $folder => $details)
 			{
@@ -441,7 +566,7 @@ if ( ! function_exists('activate_plugin'))
 {
 	/**
 	 * Activate the selected plugin.
-	 * @access 	public
+	 * @access 	protected
 	 * @param 	string 	$name 	the plugin's folder name.
 	 * @return 	bool
 	 */
@@ -457,7 +582,7 @@ if ( ! function_exists('deactivate_plugin'))
 {
 	/**
 	 * Deactivate the selected plugin.
-	 * @access 	public
+	 * @access 	protected
 	 * @param 	string 	$name 	the plugin's folder name.
 	 * @return 	bool
 	 */

@@ -427,7 +427,9 @@ if ( ! function_exists('show_error'))
 			$exit_status = 1; // EXIT_ERROR
 		}
 
-		$_error =& load_class('Exceptions', 'core');
+		global $CFG;
+
+		$_error =& load_class('Exceptions', 'core', $CFG);
 		echo $_error->show_error($heading, $message, 'error_general', $status_code);
 		exit($exit_status);
 	}
@@ -450,7 +452,8 @@ if ( ! function_exists('show_404'))
 	 */
 	function show_404($page = '', $log_error = TRUE)
 	{
-		$_error =& load_class('Exceptions', 'core');
+		global $CFG;
+		$_error =& load_class('Exceptions', 'core', $CFG);
 		$_error->show_404($page, $log_error);
 		exit(4); // EXIT_UNKNOWN_FILE
 	}

@@ -72,12 +72,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		require_once(APPPATH.'config/constants.php');
 	}
 
-	/**
-	 * @author 	Kader Bouyakoub <bkader@mail.com>
-	 * @link 	https://github.com/bader
-	 */
-	require_once(KBPATH.'config/constants.php');
-
 /*
  * ------------------------------------------------------
  *  Load the global functions
@@ -231,7 +225,7 @@ if ( ! is_php('5.4'))
  *  Instantiate the hooks class
  * ------------------------------------------------------
  */
-	$EXT =& load_class('Hooks', 'core', $CFG);
+	$EXT =& load_class('Hooks', 'core');
 
 /*
  * ------------------------------------------------------

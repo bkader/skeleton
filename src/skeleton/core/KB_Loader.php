@@ -75,7 +75,7 @@ class KB_Loader extends CI_Loader
 	 * Class constructor.
 	 * @return 	void
 	 */
-	public function __construct()
+	public function __construct(CI_Config $config)
 	{
 		// Let's add our path.
 		$this->_ci_ob_level      = ob_get_level();
@@ -89,10 +89,10 @@ class KB_Loader extends CI_Loader
 		log_message('debug', 'KB_Loader class Initialized');
 
 		// Now we call parent's constructor.
-		parent::__construct();
+		parent::__construct($config);
 
 		// Get an instance of router class.
-		$this->_router =& $this->_ci_get_component('router');
+		$this->_router =& get_instance()->router;
 
 		// Make sure to add the module as a package.
 		($this->_router->module) && $this->add_module($this->_router->module);

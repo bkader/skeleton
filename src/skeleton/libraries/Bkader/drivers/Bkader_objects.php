@@ -69,7 +69,7 @@ class Bkader_objects extends CI_Driver
 		// Make sure to load entities model.
 		$this->ci->load->model('bkader_objects_m');
 
-		log_message('debug', 'Bkader_objects Class Initialized');
+		log_message('info', 'Bkader_objects Class Initialized');
 	}
 
 	// ------------------------------------------------------------------------

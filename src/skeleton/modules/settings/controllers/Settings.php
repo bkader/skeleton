@@ -1,14 +1,56 @@
 <?php
+/**
+ * CodeIgniter Skeleton
+ *
+ * A ready-to-use CodeIgniter skeleton  with tons of new features
+ * and a whole new concept of hooks (actions and filters) as well
+ * as a ready-to-use and application-free theme and plugins system.
+ *
+ * This content is released under the MIT License (MIT)
+ *
+ * Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package 	CodeIgniter
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
+ * @license 	http://opensource.org/licenses/MIT	MIT License
+ * @link 		https://github.com/bkader
+ * @since 		Version 1.0.0
+ */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * Settings Module - Settings Controller
  *
+ * This controller allow regular users to update their account details,
+ * change password, email address and update their avatars.
+ *
  * @package 	CodeIgniter
- * @subpackage 	Modules
- * @category 	Controllers
- * @author 	Kader Bouyakoub <bkader@mail.com>
- * @link 	https://github.com/bkader
+ * @subpackage 	Skeleton
+ * @category 	Modules\Controllers
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		Version 1.0.0
+ * @version 	1.0.0
  */
 class Settings extends User_Controller
 {
@@ -103,7 +145,7 @@ class Settings extends User_Controller
 
 			// Set page title and load view.
 			$this->theme
-				->set_title(__('set_profile_title'))
+				->set_title(lang('set_profile_title'))
 				->render($data);
 		}
 		// After form processing.
@@ -123,6 +165,42 @@ class Settings extends User_Controller
 			redirect('settings/profile', 'refresh');
 			exit;
 		}
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Change account password.
+	 * @access 	public
+	 * @return 	void
+	 */
+	public function password()
+	{
+		//TODO: develop this method.
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Change account email address.
+	 * @access 	public
+	 * @return 	void
+	 */
+	public function email()
+	{
+		//TODO: develop this method.
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Change account password.
+	 * @access 	public
+	 * @return 	void
+	 */
+	public function password()
+	{
+		//TODO: develop this method.
 	}
 
 }

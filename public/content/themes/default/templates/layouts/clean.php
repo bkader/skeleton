@@ -2,4 +2,4 @@
 	<?php the_alert(); ?> 
 	<?php the_content(); ?> 
 </div>
-<?= get_partial('footer') ?> 
+<?php echo get_partial('footer'); ?> 

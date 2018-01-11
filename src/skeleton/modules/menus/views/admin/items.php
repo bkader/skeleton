@@ -22,8 +22,8 @@
 					<td><?php echo htmlspecialchars_decode($item->title) ?><br><small><em><?php echo anchor($item->href, null, 'target="_blank"') ?></em></small></td>
 					<td><?php echo $item->description ?></td>
 					<td class="text-right">
-						<a class="btn btn-default btn-xs" href="<?= admin_url('menus/edit/item/'.$item->id) ?>" title="<?php _e('edit_menu') ?>"><i class="fa fa-edit"></i></a>&nbsp;
-						<a class="btn btn-danger btn-xs" onclick="return confirm('<?php _e('are_your_sure', __('delete_item')) ?>');" href="<?= safe_admin_url('menus/delete/item/'.$item->id) ?>" title="<?php _e('delete_menu') ?>"><i class="fa fa-times"></i></a>
+						<a class="btn btn-default btn-xs" href="<?php echo admin_url('menus/edit/item/'.$item->id) ?>" title="<?php _e('edit_menu') ?>"><i class="fa fa-edit"></i></a>&nbsp;
+						<a class="btn btn-danger btn-xs" onclick="return confirm('<?php _e('are_your_sure', lang('delete_item')) ?>');" href="<?php echo safe_admin_url('menus/delete/item/'.$item->id) ?>" title="<?php _e('delete_menu') ?>"><i class="fa fa-times"></i></a>
 					</td>
 				</tr>
 		<?php endforeach; ?>

@@ -131,7 +131,7 @@ class Bkader_menus extends CI_Driver
 		// Make sure to load needed helpers.
 		$this->ci->load->helper(array('url', 'html', 'inflector'));
 
-		log_message('debug', 'Bkader_menus Class Initialized');
+		log_message('info', 'Bkader_menus Class Initialized');
 	}
 
 	// --------------------------------------------------------------------

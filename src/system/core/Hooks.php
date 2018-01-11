@@ -85,13 +85,13 @@ class CI_Hooks {
 	 *
 	 * @return	void
 	 */
-	public function __construct(CI_Config $config)
+	public function __construct()
 	{
 		log_message('info', 'Hooks Class Initialized');
 
 		// If hooks are not enabled in the config file
 		// there is nothing else to do
-		if ($config->item('enable_hooks') === FALSE)
+		if (config_item('enable_hooks') === FALSE)
 		{
 			return;
 		}

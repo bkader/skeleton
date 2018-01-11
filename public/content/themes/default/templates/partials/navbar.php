@@ -8,7 +8,7 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<?= anchor('', get_option('site_name'), 'class="navbar-brand"') ?>
+			<?php echo anchor('', get_option('site_name'), 'class="navbar-brand"') ?>
 		</div>
 
 		<!-- Collect the nav links, forms, and other content for toggling -->
@@ -25,24 +25,24 @@
 
 			<ul class="nav navbar-nav navbar-right">
 			<?php if ($this->auth->is_admin()): ?>
-				<li><?= admin_anchor('', __('admin_panel')) ?></li>
+				<li><?php echo admin_anchor('', lang('admin_panel')) ?></li>
 			<?php endif; ?>
 				<li class="dropdown">
-					<a href="<?= site_url($c_user->username) ?>" class="dropdown-toggle user-menu" data-toggle="dropdown"><?= $c_user->full_name ?></a>
+					<a href="<?php echo site_url($c_user->username) ?>" class="dropdown-toggle user-menu" data-toggle="dropdown"><?php echo $c_user->full_name ?></a>
 					<ul class="dropdown-menu">
-						<li><?= anchor($c_user->username, __('profile')) ?></li>
-						<li><?= anchor('settings', __('settings')) ?></li>
+						<li><?php echo anchor($c_user->username, lang('profile')) ?></li>
+						<li><?php echo anchor('settings', lang('settings')) ?></li>
 						<li class="divider"></li>
-						<li><?= anchor('logout', __('logout')) ?></li>
+						<li><?php echo anchor('logout', lang('logout')) ?></li>
 					</ul>
 				</li>
 			</ul>
 
 <?php else: ?>
 			<div class="navbar-right">
-				<?= anchor('login', __('login'), 'class="btn btn-primary navbar-btn"') ?>
+				<?php echo anchor('login', lang('login'), 'class="btn btn-primary navbar-btn"') ?>
 			<?php if (get_option('allow_registration', false) === true): ?>
-				&nbsp;<?= anchor('register', __('create_account'), 'class="btn btn-default navbar-btn"') ?>
+				&nbsp;<?php echo anchor('register', lang('create_account'), 'class="btn btn-default navbar-btn"') ?>
 			<?php endif; ?>
 			</div>
 <?php endif; ?>

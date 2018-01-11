@@ -63,6 +63,12 @@ class CI_Lang {
 	public $is_loaded =	array();
 
 	/**
+	 * Instance of CI_Config class.
+	 *
+	 * @var array
+	 */
+
+	/**
 	 * Class constructor
 	 *
 	 * @return	void

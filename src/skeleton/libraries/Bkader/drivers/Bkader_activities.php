@@ -63,7 +63,7 @@ class Bkader_activities extends CI_Driver
 		// Make sure to load activities model.
 		$this->ci->load->model('bkader_activities_m');
 
-		log_message('debug', 'Bkader_activities Class Initialized');
+		log_message('info', 'Bkader_activities Class Initialized');
 	}
 
 	// --------------------------------------------------------------------

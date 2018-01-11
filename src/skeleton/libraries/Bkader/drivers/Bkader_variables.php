@@ -63,7 +63,7 @@ class Bkader_variables extends CI_Driver
 		// Make sure to load entities model.
 		$this->ci->load->model('bkader_variables_m');
 
-		log_message('debug', 'Bkader_variables Class Initialized');
+		log_message('info', 'Bkader_variables Class Initialized');
 	}
 
 	// ------------------------------------------------------------------------

@@ -1,17 +1,56 @@
 <?php
+/**
+ * CodeIgniter Skeleton
+ *
+ * A ready-to-use CodeIgniter skeleton  with tons of new features
+ * and a whole new concept of hooks (actions and filters) as well
+ * as a ready-to-use and application-free theme and plugins system.
+ *
+ * This content is released under the MIT License (MIT)
+ *
+ * Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package 	CodeIgniter
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
+ * @license 	http://opensource.org/licenses/MIT	MIT License
+ * @link 		https://github.com/bkader
+ * @since 		Version 1.0.0
+ */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * Users Module - Admin Controller
  *
+ * This controller allow administrators to manage users accounts.
+ *
  * @package 	CodeIgniter
- * @subpackage 	Modules
- * @category 	Controllers
- * @author 	Kader Bouyakoub <bkader@mail.com>
- * @link 	https://github.com/bkader
+ * @subpackage 	SKeleton
+ * @category 	Modules\Controllers
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		Version 1.0.0
+ * @version 	1.0.0
  */
-// Content
-
 class Admin extends Admin_Controller
 {
 	/**
@@ -46,7 +85,7 @@ class Admin extends Admin_Controller
 		// Get all users.
 		$data['users'] = $this->app->users->get_all_users($limit, $offset);
 		$this->theme
-			->set_title(__('us_manage_users'))
+			->set_title(lang('us_manage_users'))
 			->render($data);
 	}
 
@@ -122,7 +161,7 @@ class Admin extends Admin_Controller
 
 			// Set page title and render view.
 			$this->theme
-				->set_title(__('add_user'))
+				->set_title(lang('add_user'))
 				->render($data);
 		}
 		// Process form.
@@ -134,7 +173,7 @@ class Admin extends Admin_Controller
 				// Store form values in session
 				$this->session->set_flashdata('form', $this->input->post(null, true));
 
-				set_alert(__('error_csrf'), 'error');
+				set_alert(lang('error_csrf'), 'error');
 				redirect('admin/users/add', 'refresh');
 				exit;
 			}
@@ -163,7 +202,7 @@ class Admin extends Admin_Controller
 		$data['user'] = $this->app->users->get($id);
 		if ( ! $data['user'])
 		{
-			set_alert(__('error_account_missing'), 'error');
+			set_alert(lang('error_account_missing'), 'error');
 			redirect($this->agent->referrer());
 			exit;
 		}
@@ -256,7 +295,7 @@ class Admin extends Admin_Controller
 
 			// Set page title and render view.
 			$this->theme
-				->set_title(__('edit_user'))
+				->set_title(lang('edit_user'))
 				->render($data);
 		}
 		// Process form.
@@ -268,7 +307,7 @@ class Admin extends Admin_Controller
 				// Store form values in session
 				$this->session->set_flashdata('form', $this->input->post(null, true));
 
-				set_alert(__('error_csrf'), 'error');
+				set_alert(lang('error_csrf'), 'error');
 				redirect($this->agent->referrer(), 'refresh');
 				exit;
 			}
@@ -305,12 +344,12 @@ class Admin extends Admin_Controller
 
 			if ($status == true)
 			{
-				set_alert(__('us_admin_edit_success'), 'success');
+				set_alert(lang('us_admin_edit_success'), 'success');
 				redirect('admin/users', 'refresh');
 			}
 			else
 			{
-				set_alert(__('us_admin_edit_error'), 'error');
+				set_alert(lang('us_admin_edit_error'), 'error');
 				redirect('admin/users/edit/'.$user->id, 'refresh');
 			}
 			exit;
@@ -338,7 +377,7 @@ class Admin extends Admin_Controller
 			OR ! check_safe_url()
 			OR $id == $this->c_user->id)
 		{
-			set_alert(__('error_safe_url'), 'error');
+			set_alert(lang('error_safe_url'), 'error');
 			redirect($this->agent->referrer());
 			exit;
 		}
@@ -347,7 +386,7 @@ class Admin extends Admin_Controller
 		$user = $this->app->users->get($id);
 		if ( ! $user OR $user->enabled <> 0)
 		{
-			set_alert(__('us_admin_activate_error'), 'error');
+			set_alert(lang('us_admin_activate_error'), 'error');
 			redirect($this->agent->referrer());
 			exit;
 		}
@@ -357,11 +396,11 @@ class Admin extends Admin_Controller
 
 		if ($status === true)
 		{
-			set_alert(__('us_admin_activate_success'), 'success');
+			set_alert(lang('us_admin_activate_success'), 'success');
 		}
 		else
 		{
-			set_alert(__('us_admin_activate_error'), 'error');
+			set_alert(lang('us_admin_activate_error'), 'error');
 		}
 
 		redirect($this->agent->referrer());
@@ -389,7 +428,7 @@ class Admin extends Admin_Controller
 			OR ! check_safe_url()
 			OR $id == $this->c_user->id)
 		{
-			set_alert(__('error_safe_url'), 'error');
+			set_alert(lang('error_safe_url'), 'error');
 			redirect($this->agent->referrer());
 			exit;
 		}
@@ -398,7 +437,7 @@ class Admin extends Admin_Controller
 		$user = $this->app->users->get($id);
 		if ( ! $user OR $user->enabled <> 1)
 		{
-			set_alert(__('us_admin_deactivate_error'), 'error');
+			set_alert(lang('us_admin_deactivate_error'), 'error');
 			redirect($this->agent->referrer());
 			exit;
 		}
@@ -408,11 +447,11 @@ class Admin extends Admin_Controller
 
 		if ($status === true)
 		{
-			set_alert(__('us_admin_deactivate_success'), 'success');
+			set_alert(lang('us_admin_deactivate_success'), 'success');
 		}
 		else
 		{
-			set_alert(__('us_admin_deactivate_error'), 'error');
+			set_alert(lang('us_admin_deactivate_error'), 'error');
 		}
 
 		redirect($this->agent->referrer());
@@ -441,7 +480,7 @@ class Admin extends Admin_Controller
 			OR ! check_safe_url()
 			OR $id == $this->c_user->id)
 		{
-			set_alert(__('error_safe_url'), 'error');
+			set_alert(lang('error_safe_url'), 'error');
 			redirect($this->agent->referrer());
 			exit;
 		}
@@ -449,11 +488,11 @@ class Admin extends Admin_Controller
 		// Could not be deleted?
 		if ( ! $this->app->users->remove($id))
 		{
-			set_alert(__('us_admin_delete_error'), 'error');
+			set_alert(lang('us_admin_delete_error'), 'error');
 		}
 		else
 		{
-			set_alert(__('us_admin_delete_success'), 'success');
+			set_alert(lang('us_admin_delete_success'), 'success');
 		}
 
 		redirect($this->agent->referrer());

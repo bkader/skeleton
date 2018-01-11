@@ -37,3 +37,7 @@ $lang['themes'] = 'Themes';
 // Menus.
 $lang['menu'] = 'Menu';
 $lang['menus'] = 'Menus';
+
+// Menus.
+$lang['plugin'] = 'Plugin';
+$lang['plugins'] = 'Plugins';

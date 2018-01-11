@@ -1,23 +1,23 @@
 <h2 class="page-header">
-	<?= __('theme_settings') ?>
+	<?php _e('theme_settings') ?>
 	<span class="pull-right"><?php echo admin_anchor('themes/add', lang('add_theme'), 'class="btn btn-primary btn-sm"'); ?></span>
 </h2>
 
 <div class="row">
 <?php foreach ($themes as $theme): ?>
-	<div class="col-sm-6 col-md-4" id="theme-<?= $theme['folder'] ?>">
+	<div class="col-sm-6 col-md-4" id="theme-<?php echo $theme['folder'] ?>">
 		<div class="thumbnail">
-			<img src="<?= $theme['screenshot'] ?>" alt="<?= $theme['name'] ?>" class="img-responsive" data-action="zoom">
+			<img src="<?php echo $theme['screenshot'] ?>" alt="<?php echo $theme['name'] ?>" class="img-responsive" data-action="zoom">
 			<div class="caption">
-				<h3><a href="<?= $theme['theme_uri'] ?>"><?= $theme['name'] ?></a> <?= $theme['enabled'] ? '<small>('.__('active').')</small>' : '' ?></h3>
-				<p><?= $theme['description'] ?></p>
-				<p><?= __('author') ?>: <strong><a href="<?= $theme['author_uri'] ?>" target="_blank"><?= $theme['author'] ?></a></strong></p>
-				<p><?= __('author_email') ?>: <strong><a href="mailto:<?= $theme['author_email'] ?>" target="_blank"><?= $theme['author_email'] ?></a></strong></p>
-				<p><?= _('version') ?>: <strong><?= $theme['version'] ?></strong></p>
-				<p><?= __('license') ?>: <strong><a href="<?= $theme['license_uri'] ?>" target="_blank"><?= $theme['license'] ?></a></strong></p>
-				<p><?= __('tags') ?>: <strong><?= $theme['tags'] ?></strong></p>
+				<h3><a href="<?php echo $theme['theme_uri'] ?>"><?php echo $theme['name'] ?></a> <?php echo $theme['enabled'] ? '<small>('.lang('active').')</small>' : '' ?></h3>
+				<p><?php echo $theme['description'] ?></p>
+				<p><?php _e('author') ?>: <strong><a href="<?php echo $theme['author_uri'] ?>" target="_blank"><?php echo $theme['author'] ?></a></strong></p>
+				<p><?php _e('author_email') ?>: <strong><a href="mailto:<?php echo $theme['author_email'] ?>" target="_blank"><?php echo $theme['author_email'] ?></a></strong></p>
+				<p><?php echo _('version') ?>: <strong><?php echo $theme['version'] ?></strong></p>
+				<p><?php _e('license') ?>: <strong><a href="<?php echo $theme['license_uri'] ?>" target="_blank"><?php echo $theme['license'] ?></a></strong></p>
+				<p><?php _e('tags') ?>: <strong><?php echo $theme['tags'] ?></strong></p>
 			<?php if ($theme['folder'] <> get_option('theme')): ?>
-				<?= safe_admin_anchor("themes/activate/{$theme['folder']}", __('enable'), 'class="btn btn-primary btn-block"') ?>
+				<?php echo safe_admin_anchor("themes/activate/{$theme['folder']}", lang('enable'), 'class="btn btn-primary btn-block"') ?>
 			<?php endif; ?>
 			</div>
 		</div>

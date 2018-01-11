@@ -63,7 +63,7 @@ class Bkader_metadata extends CI_Driver
 		// Make sure to load entities model.
 		$this->ci->load->model('bkader_metadata_m');
 
-		log_message('debug', 'Bkader_metadata Class Initialized');
+		log_message('info', 'Bkader_metadata Class Initialized');
 	}
 
 	// ------------------------------------------------------------------------

@@ -59,16 +59,6 @@ class Bkader_options extends CI_Driver
 	 */
 	private $cached;
 
-	/**
-	 * Class constructor
-	 * @return 	void
-	 */
-	public function __construct()
-	{
-		// Make sure to always load options model.
-		get_instance()->load->model('bkader_options_m');
-	}
-
 	// ------------------------------------------------------------------------
 
 	/**
@@ -99,6 +89,10 @@ class Bkader_options extends CI_Driver
 	 */
 	public function initialize()
 	{
+		// Make sure to load options model.
+		$this->ci->load->model('bkader_options_m');
+
+		// Get all options from database.
 		$rows = $this->ci->bkader_options_m->get_all();
 
 		foreach ($rows as $row)
@@ -109,6 +103,8 @@ class Bkader_options extends CI_Driver
 			// Assign them to config array.
 			$this->ci->config->set_item($row->name, $row->value);
 		}
+
+		log_message('info', 'Bkader_options Class Initialized');
 	}
 
 	// ------------------------------------------------------------------------

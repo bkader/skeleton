@@ -60,16 +60,6 @@ class KB_Lang extends CI_Lang
 	 */
 	protected $fallback = 'english';
 
-	/**
-	 * Class constructor
-	 *
-	 * @return	void
-	 */
-	public function __construct()
-	{
-		log_message('info', 'KB_Lang Class Initialized');
-	}
-
 	// --------------------------------------------------------------------
 
 	/**
