@@ -207,18 +207,43 @@ class Bkader_metadata extends CI_Driver
 	 * Delete a single or multiple metadata.
 	 * @access 	public
 	 * @return 	boolean
+	 * 
+	 * @example:
+	 * To delete all metadata of an entity, just pass the ID.
+	 * To delete a specific metadata, pass its name as the second parameter.
+	 * To delete multiple one, pass their array as the second parameter or
+	 * you can pass successive names.
 	 */
-	public function delete($guid, $name = null)
+	public function delete()
 	{
-		// Make sure the entity exists.
-		if ( ! $this->_parent->entities->get($guid))
+		// Collect method arguments and make sure there are any.
+		$args = func_get_args();
+		if (empty($args))
+		{
+			return false;
+		}
+
+		// The entity's ID is always the first argument.
+		$guid = array_shift($args);
+
+		// Make sure it's numeric and the entity exists.
+		if ( ! is_numeric($guid) OR ! $this->_parent->entities->get($guid))
 		{
 			return false;
 		}
 
 		// Proceed to deleting.
 		$this->ci->db->where('guid', $guid);
-		($name !== null) && $this->ci->db->where('name', $name);
+
+		// There are some arguments left?
+		if ( ! empty($args))
+		{
+			// Get rid of nasty deep array.
+			(is_array($args[0])) && $args = $args[0];
+
+			$this->ci->db->where_in('name', $args);
+		}
+
 		$this->ci->db->delete('metadata');
 		return ($this->ci->db->affected_rows() > 0);
 	}
@@ -340,9 +365,16 @@ if ( ! function_exists('update_meta'))
 
 if ( ! function_exists('delete_meta'))
 {
-	function delete_meta($guid, $name = null)
+	/**
+	 * Delete a single or multiple metadata for the selected entity.
+	 * @return 	boolean
+	 */
+	function delete_meta()
 	{
-		return get_instance()->app->metadata->delete($guid, $name);
+		return call_user_func_array(
+			array(get_instance()->app->metadata, 'delete'),
+			func_get_args()
+		);
 	}
 }
 
@@ -350,6 +382,13 @@ if ( ! function_exists('delete_meta'))
 
 if ( ! function_exists('get_meta'))
 {
+	/**
+	 * Retrieve a single or multiple metadata for the selected entity.
+	 * @param 	int 	$guid 	The entity's ID.
+	 * @param 	mixed 	$name 	The metadata name or array.
+	 * @param 	bool 	$single Whether to retrieve the value instead of the object.
+	 * @return 	mixed 	depends on the value of the metadata.
+	 */
 	function get_meta($guid, $name = null, $single = false)
 	{
 		return get_instance()->app->metadata->get($guid, $name, $single);
@@ -358,9 +397,13 @@ if ( ! function_exists('get_meta'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('clean_meta'))
+if ( ! function_exists('purge_meta'))
 {
-	function clean_meta()
+	/**
+	 * Clean up metadata table from meta that have no existing entities.
+	 * @return 	void
+	 */
+	function purge_meta()
 	{
 		return get_instance()->app->metadata->purge();
 	}
