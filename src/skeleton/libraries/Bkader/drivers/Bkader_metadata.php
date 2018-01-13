@@ -60,29 +60,7 @@ class Bkader_metadata extends CI_Driver
 	 */
 	public function initialize()
 	{
-		// Make sure to load entities model.
-		$this->ci->load->model('bkader_metadata_m');
-
 		log_message('info', 'Bkader_metadata Class Initialized');
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Magic __call method to use metadata model methods as well.
-	 * @access 	public
-	 * @param 	string 	$method 	the method's name.
-	 * @param 	array 	$params 	array or method arguments.
-	 * @return 	mixed 	depends on the called method.
-	 */
-	public function __call($method, $params = array())
-	{
-		if (method_exists($this->ci->bkader_metadata_m, $method))
-		{
-			return call_user_func_array(array($this->ci->bkader_metadata_m, $method), $params);
-		}
-
-		throw new BadMethodCallException("No such method ".get_called_class()."::{$method}().");
 	}
 
 	// ------------------------------------------------------------------------
@@ -90,15 +68,15 @@ class Bkader_metadata extends CI_Driver
 	/**
 	 * Create multiple metadata for a given entity.
 	 * @access 	public
-	 * @param 	int 	$id 	the entity's ID.
+	 * @param 	int 	$guid 	the entity's ID.
 	 * @param 	mixed 	$meta 	string or array of name => value.
 	 * @param 	mixed 	$value
 	 * @return 	bool
 	 */
-	public function create_for($id, $meta, $value = null)
+	public function create($guid, $meta, $value = null)
 	{
-		// Make sure the entity exists and metadata are provided.
-		if ( ! $this->_parent->entities->get($id) OR empty($meta))
+		// We make sure the entity exists and $meta is provided.
+		if ( ! $this->_parent->entities->get($guid) OR empty($meta))
 		{
 			return false;
 		}
@@ -106,19 +84,49 @@ class Bkader_metadata extends CI_Driver
 		// Turn things into an array.
 		(is_array($meta)) OR $meta = array($meta => $value);
 
+
 		// Prepare out array of metadata.
 		$data = array();
 
+		// Loop through elements and fill $data.
 		foreach ($meta as $key => $val)
 		{
-			$data[] = array(
-				'guid'  => $id,
-				'name'  => $key,
-				'value' => $val,
-			);
+			/**
+			 * The reason we are doing this check is to allow
+			 * the user use the following structure:
+			 * @example:
+			 * 
+			 * update_meta(1, array(
+			 *     'phone' => '0123456789',
+			 *     'address', // <-- See this!
+			 *     'company' => 'Company Name',
+			 * ));
+			 *
+			 * Both "phone" and "company" will use their respective 
+			 * value while "address" and all other metadata using 
+			 * the same structure will use $value.
+			 */
+			if (is_int($key))
+			{
+				$key = $val;
+				$val = $value;
+			}
+
+			// We make sure it does not exists first.
+			if( ! $this->get($guid, $key))
+			{
+				$data[] = array(
+					'guid'  => $guid,
+					'name'  => $key,
+					'value' => to_bool_or_serialize($val),
+				);
+			}
 		}
 
-		return $this->ci->bkader_metadata_m->insert_many($data);
+		// Proceed only if $data is not empty.
+		return ( ! empty($data))
+			? ($this->ci->db->insert_batch('metadata', $data) > 0)
+			: false;
 	}
 
 	// ------------------------------------------------------------------------
@@ -126,15 +134,15 @@ class Bkader_metadata extends CI_Driver
 	/**
 	 * Update a single or multiple metadat.
 	 * @access 	public
-	 * @param 	int 	$id 	the entity's ID.
+	 * @param 	int 	$guid 	the entity's ID.
 	 * @param 	mixed 	$meta 	string or array of name => value.
 	 * @param 	mixed 	$value
 	 * @return 	bool
 	 */
-	public function update_for($id, $meta, $value = null)
+	public function update($guid, $meta, $value = null)
 	{
 		// Make sure the entity exists and metadata are provided.
-		if ( ! $this->_parent->entities->get($id) OR empty($meta))
+		if ( ! $this->_parent->entities->get($guid) OR empty($meta))
 		{
 			return false;
 		}
@@ -145,10 +153,29 @@ class Bkader_metadata extends CI_Driver
 		// Loop through all, update if found, create if not.
 		foreach ($meta as $key => $val)
 		{
-			$md = $this->ci->bkader_metadata_m->get_by(array(
-				'guid' => $id,
-				'name' => $key,
-			));
+			/**
+			 * The reason we are doing this check is to allow
+			 * the user use the following structure:
+			 * @example:
+			 * 
+			 * update_meta(1, array(
+			 *     'phone' => '0123456789',
+			 *     'address', // <-- See this!
+			 *     'company' => 'Company Name',
+			 * ));
+			 *
+			 * Both "phone" and "company" will use their respective 
+			 * value while "address" and all other metadata using 
+			 * the same structure will use $value.
+			 */
+			if (is_int($key))
+			{
+				$key = $val;
+				$val = $value;
+			}
+
+			// Check if the metadata exists first.
+			$md = $this->get($guid, $key);
 
 			// Found by same value? Nothing to do.
 			if ($md && $md->value == $val)
@@ -159,21 +186,41 @@ class Bkader_metadata extends CI_Driver
 			// Found by different value? Update it.
 			if ($md)
 			{
-				$this->ci->bkader_metadata_m->update($md->id, array(
-					'value' => $val,
-				));
+				$this->ci->db
+					->where('guid', $guid)
+					->where('name', $key)
+					->set('value', to_bool_or_serialize($val))
+					->update('metadata');
 			}
 			else
 			{
-				$this->ci->bkader_metadata_m->insert(array(
-					'guid'  => $id,
-					'name'  => $key,
-					'value' => $val,
-				));
+				$this->create($guid, $key, $val);
 			}
 		}
 
-		return true;
+		return ($this->ci->db->affected_rows() > 0);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Delete a single or multiple metadata.
+	 * @access 	public
+	 * @return 	boolean
+	 */
+	public function delete($guid, $name = null)
+	{
+		// Make sure the entity exists.
+		if ( ! $this->_parent->entities->get($guid))
+		{
+			return false;
+		}
+
+		// Proceed to deleting.
+		$this->ci->db->where('guid', $guid);
+		($name !== null) && $this->ci->db->where('name', $name);
+		$this->ci->db->delete('metadata');
+		return ($this->ci->db->affected_rows() > 0);
 	}
 
 	// ------------------------------------------------------------------------
@@ -186,20 +233,135 @@ class Bkader_metadata extends CI_Driver
 	 * @param 	bool 	$single Whether to return the metadata value.
 	 * @return 	mixed
 	 */
-	public function get_meta($guid, $name, $single = false)
+	public function get($guid, $name = null, $single = false)
 	{
-		$meta = $this->ci->bkader_metadata_m->get_by(array(
-			'guid' => $guid,
-			'name' => $name,
-		));
+		// We start the search by $guid.
+		$this->ci->db->where('guid', $guid);
 
-		// Returning a single ?
-		if ($meta && $single === true)
+		// If the name is provided, we look for that metadata.
+		if ($name !== null)
 		{
-			$meta = $meta->value;
+			// Complete DB query and attempt to get it.
+			$meta = $this->ci->db
+				->where('name', $name)
+				->get('metadata')
+				->row();
+
+			// Found?
+			if ($meta)
+			{
+				/**
+				 * Here we format the metadata value because it may
+				 * be an array or a string representation of a boolean.
+				 */
+				$meta->value = from_bool_or_serialize($meta->value);
+				
+				// Return only the value?
+				if ($single === true)
+				{
+					return $meta->value;
+				}
+			}
+
+			// Return the $meta object as-is.
+			return $meta;
 		}
 
+		// The $name is not provided, we look for all metadata.
+		$meta = $this->ci->db->get('metadata')->result();
+
+		// Found any?
+		if ($meta)
+		{
+			// Walk through all element and format their values.
+			foreach ($meta as &$_meta)
+			{
+				$_meta->value = from_bool_or_serialize($_meta->value);
+			}
+		}
+
+		// Return the final result.
 		return $meta;
 	}
 
+	// ------------------------------------------------------------------------
+
+	/**
+	 * This method deletes all metadata that have to owners.
+	 * @access 	public
+	 * @return 	boolean
+	 */
+	public function purge()
+	{
+		$this->ci->db
+			->where_not_in('guid', $this->_parent->entities->get_all_ids())
+			->delete('metadata');
+
+		return ($this->ci->db->affected_rows() > 0);
+	}
+
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('add_meta'))
+{
+	/**
+	 * Helper function to create a new meta data for the selected entity.
+	 * @param 	int 	$guid 	The entity's ID.
+	 * @param 	mixed 	$meta 	The metadata name or an associative array.
+	 * @param 	mixed 	$value 	The metadata value.
+	 * @return 	boolean
+	 */
+	function add_meta($guid, $meta, $value = null)
+	{
+		return get_instance()->app->metadata->create($guid, $meta, $value);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('update_meta'))
+{
+	/**
+	 * Update a single or multiple metadata for the selected entity.
+	 * @param 	int 	$guid 	The entity's ID.
+	 * @param 	mixed 	$meta 	The metadata name or associative array.
+	 * @param 	mixed 	$value 	The metadata value.
+	 * @return 	boolean.
+	 */
+	function update_meta($guid, $meta, $value = null)
+	{
+		return get_instance()->app->metadata->update($guid, $meta, $value);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('delete_meta'))
+{
+	function delete_meta($guid, $name = null)
+	{
+		return get_instance()->app->metadata->delete($guid, $name);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_meta'))
+{
+	function get_meta($guid, $name = null, $single = false)
+	{
+		return get_instance()->app->metadata->get($guid, $name, $single);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('clean_meta'))
+{
+	function clean_meta()
+	{
+		return get_instance()->app->metadata->purge();
+	}
 }
