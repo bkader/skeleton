@@ -38,33 +38,95 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Users Module Routes
+ * This file holds an array of languages details.
+ * You can add as many as you want, just respect the structure.
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @category 	Modules\Routes
+ * @category 	Third Party
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
+return array(
 
-// Login page and sub-pages.
-Route::any('login', 'users/login', function() {
-	Route::any('recover', 'users/recover');
-	Route::any('restore', 'users/restore');
-	Route::any('reset(.*)', 'users/reset$1');
-});
+	// Arabic
+	'arabic' => array(
+		'name'      => 'العربية',
+		'name_en'   => 'Arabic',
+		'folder'    => 'arabic',
+		'locale'    => 'ar-DZ',
+		'direction' => 'rtl',
+		'code'      => 'ar',
+		'flag'      => 'dz',
+	),
 
-// Register page and sub-pages.
-Route::any('register', 'users/register', function() {
-	Route::any('resend', 'users/resend');
-	Route::get('activate(.*)', 'users/activate$1');
-});
+	// English
+	'english' => array(
+		'name'      => 'English',
+		'name_en'   => 'English',
+		'folder'    => 'english',
+		'locale'    => 'en-US',
+		'direction' => 'ltr',
+		'code'      => 'en',
+		'flag'      => 'us',
+	),
 
-// Logout page.
-Route::get('logout', 'users/logout');
+	// French
+	'french' => array(
+		'name'      => 'Français',
+		'name_en'   => 'French',
+		'folder'    => 'french',
+		'locale'    => 'fr-FR',
+		'direction' => 'ltr',
+		'code'      => 'fr',
+		'flag'      => 'fr',
+	),
 
-// Block direct access to users controllers and methods.
-Route::block('users(.*)');
+	// German
+	'german' => array(
+		'name'      => 'Deutsch',
+		'name_en'   => 'German',
+		'folder'    => 'german',
+		'locale'    => 'de-DE',
+		'direction' => 'ltr',
+		'code'      => 'de',
+		'flag'      => 'de',
+	),
+
+	// Italian
+	'italian' => array(
+		'name'      => 'Italiano',
+		'name_en'   => 'Italian',
+		'folder'    => 'italian',
+		'locale'    => 'it-IT',
+		'direction' => 'ltr',
+		'code'      => 'it',
+		'flag'      => 'it',
+	),
+
+	// Portuguese
+	'portuguese' => array(
+		'name'      => 'Português',
+		'name_en'   => 'Portuguese',
+		'folder'    => 'portuguese',
+		'locale'    => 'pt-PT',
+		'direction' => 'ltr',
+		'code'      => 'pt',
+		'flag'      => 'pt',
+	),
+
+	// Spanish
+	'spanish' => array(
+		'name'      => 'Español',
+		'name_en'   => 'Spanish',
+		'folder'    => 'spanish',
+		'locale'    => 'es-ES',
+		'direction' => 'ltr',
+		'code'      => 'es',
+		'flag'      => 'es',
+	),
+
+);

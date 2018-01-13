@@ -70,11 +70,178 @@ class Admin extends Admin_Controller
 	 */
 	public function index()
 	{
-		$data['plugins'] = $this->app->plugins->get_all_plugins();
+		// Get all plugins.
+		$data['plugins'] = $this->app->plugins->get_plugins();
 
+		// Add action buttons.
+		if ($data['plugins'])
+		{
+			foreach ($data['plugins'] as &$plugin)
+			{
+				// Activation/Deactivation link.
+				$plugin['actions'][] = ($plugin['enabled'])
+					? safe_admin_anchor('plugins/deactivate/'.$plugin['folder'], lang('deactivate'))
+					: safe_admin_anchor('plugins/activate/'.$plugin['folder'], lang('activate'));
+
+				// Plugin settings link.
+				if ($plugin['has_settings'])
+				{
+					$plugin['actions'][] = admin_anchor('plugins/settings/'.$plugin['folder'], lang('settings'));
+				}
+
+				// Plugin delete button.
+				$plugin['actions'][] = safe_admin_anchor('plugins/delete/'.$plugin['folder'], lang('delete'), 'class="text-danger"');
+			}
+		}
+
+		// Set page title and load view.
 		$this->theme
 			->set_title(lang('manage_plugins'))
 			// ->set_view('index')
 			->render($data);
 	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Display plugin's settings page.
+	 * @access 	public
+	 * @param 	string 	$plugin 	the plugin's name.
+	 * @return 	void
+	 */
+	public function settings($plugin = null)
+	{
+		$data['plugin'] = $this->app->plugins->get_plugin($plugin);
+
+		/**
+		 * We must check two things:
+		 * 1. The plugin mast exist.
+		 * 2. The plugin must be activated.
+		 */
+		if ( ! $data['plugin'])
+		{
+			set_alert(lang('missing_plugin'), 'error');
+			redirect('admin/plugins');
+			exit;
+		}
+		if ( ! $data['plugin']['enabled'])
+		{
+			set_alert(lang('plugin_disabled'), 'error');
+			redirect('admin/plugins');
+			exit;
+		}
+		if ( ! $data['plugin']['has_settings'])
+		{
+			set_alert(lang('plugin_with_no_settings'), 'error');
+			redirect('admin/plugins');
+			exit;
+		}
+
+		// Load the settings file now.
+		$data['settings_form'] = apply_filters('plugin_settings_'.$plugin, '');
+		$data['hidden'] = $this->create_csrf();
+		$this->theme
+			->set_title(lang('plugin_settings'))
+			->render($data);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Activate an existing plugin.
+	 * @access 	public
+	 * @param 	string 	$plugin 	THe plugin's folder name
+	 * @return 	void
+	 */
+	public function activate($plugin)
+	{
+		// Check safe URL first.
+		if ( ! check_safe_url())
+		{
+			set_alert(lang('error_safe_url'), 'error');
+		}
+
+		// Was the plugin activated?
+		elseif ($this->app->plugins->activate($plugin))
+		{
+			set_alert(lang('plugins_activate_success'), 'success');
+		}
+
+		// None of the above?
+		else
+		{
+			set_alert(lang('plugins_activate_error'), 'error');
+		}
+
+		// Redirect back to admin plugins page.
+		redirect('admin/plugins');
+		exit;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Deactivate an existing plugin.
+	 * @access 	public
+	 * @param 	string 	$plugin 	THe plugin's folder name
+	 * @return 	void
+	 */
+	public function deactivate($plugin)
+	{
+		// Check safe URL first.
+		if ( ! check_safe_url())
+		{
+			set_alert(lang('error_safe_url'), 'error');
+		}
+
+		// Was the plugin deactivated?
+		elseif ($this->app->plugins->deactivate($plugin))
+		{
+			set_alert(lang('plugins_deactivate_success'), 'success');
+		}
+
+		// None of the above?
+		else
+		{
+			set_alert(lang('plugins_deactivate_error'), 'error');
+		}
+
+		// Redirect back to admin plugins page.
+		redirect('admin/plugins');
+		exit;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Delete an existing plugin.
+	 * @access 	public
+	 * @param 	string 	$plugin 	THe plugin's folder name
+	 * @return 	void
+	 */
+	public function delete($plugin)
+	{
+		// Check safe URL first.
+		if ( ! check_safe_url())
+		{
+			set_alert(lang('error_safe_url'), 'error');
+		}
+
+		// Was the plugin deactivated?
+		elseif ($this->app->plugins->delete($plugin))
+		{
+			set_alert(lang('plugins_delete_success'), 'success');
+		}
+
+		// None of the above?
+		else
+		{
+			set_alert(lang('plugins_delete_error'), 'error');
+		}
+
+		// Redirect back to admin plugins page.
+		redirect('admin/plugins');
+		exit;
+	}
+
 }

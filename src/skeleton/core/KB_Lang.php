@@ -60,6 +60,18 @@ class KB_Lang extends CI_Lang
 	 */
 	protected $fallback = 'english';
 
+	/**
+	 * Array of cached languages details.
+	 * @var array
+	 */
+	protected $_languages;
+
+	/**
+	 * Details of the current language.
+	 * @var array
+	 */
+	public $lang;
+
 	// --------------------------------------------------------------------
 
 	/**
@@ -259,6 +271,131 @@ class KB_Lang extends CI_Lang
 		}
 
 		return $value;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the name or details about the language currently in use.
+	 * @access 	public
+	 * @param 	mixed 	what to retrieve.
+	 * @return 	mixed
+	 */
+	public function lang()
+	{
+		// Collect function arguments.
+		$args = func_get_args();
+
+		// Empty? Return the current language.
+		if (empty($args))
+		{
+			if (isset($this->lang))
+			{
+				return $this->lang['folder'];
+			}
+
+			$this->lang = $this->languages(config_item('language'));
+			return $this->lang['folder'];
+		}
+
+		// The language is already cached? Use it. Otherwise load it.
+		$return = (isset($this->lang)) 
+			? $this->lang 
+			: $this->languages(config_item('language'));
+
+		// Not found ?
+		if ( ! $return)
+		{
+			return FALSE;
+		}
+
+		// Get rid of nasty array.
+		(is_array($args[0])) && $args = $args[0];
+
+		if (is_bool($args[0]) && $args[0] === true)
+		{
+			return $return;
+		}
+
+		$_return = array();
+
+		foreach ($args as $arg)
+		{
+			if (isset($return[$arg]))
+			{
+				$_return[$arg] = $return[$arg];
+			}
+		}
+
+		return ($_return) ? $_return : $return;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns an array of languages details.
+	 * @access 	public
+	 * @param 	string 	$single 	The language to return.
+	 * @return 	array
+	 */
+	public function languages($single = null)
+	{
+		// If they are already cached, use them.
+		if (isset($this->_languages))
+		{
+			return ($single && isset($this->_languages[$single]))
+				? $this->_languages[$single]
+				: $this->_languages;
+		}
+
+		// User's file has the priority.
+		if (is_file(APPPATH.'third_party/languages.php'))
+		{
+			$this->_languages = include(APPPATH.'third_party/languages.php');
+		}
+		// If not found, use our.
+		elseif (is_file(KBPATH.'third_party/languages.php'))
+		{
+			$this->_languages = include(KBPATH.'third_party/languages.php');
+		}
+		// Otherwise, use an empty array.
+		else
+		{
+			$this->_languages = array();
+		}
+
+		return ($single && isset($this->_languages[$single]))
+			? $this->_languages[$single]
+			: $this->_languages;
+	}
+
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('lang'))
+{
+	/**
+	 * Lang
+	 *
+	 * Fetches a language variable and optionally outputs a form label.
+	 * The reason we are adding this here is to make the function available
+	 * even if the language helper is not loaded.
+	 * @param	string	$line		The language line
+	 * @param	string	$for		The "for" value (id of the form element)
+	 * @param	array	$attributes	Any additional HTML attributes
+	 * @return	string
+	 */
+	function lang($line, $for = '', $attributes = array())
+	{
+		$line = get_instance()->lang->line($line);
+
+		if ($for !== '')
+		{
+			$line = '<label for="'.$for.'"'._stringify_attributes($attributes).'>'.$line.'</label>';
+		}
+
+		return $line;
 	}
 }
 

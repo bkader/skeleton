@@ -1,0 +1,8 @@
+{
+	"name": "The Title",
+	"description": "This a plugin does nothing but adding site name to pages titles.",
+	"version": "1.0.0",
+	"author": "Kader Bouyakoub",
+	"author_uri": "https://github.com/bkader",
+	"author_email": "bkader@mail.com"
+}

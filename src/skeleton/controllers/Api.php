@@ -38,33 +38,31 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Users Module Routes
+ * Api Controllers
+ *
+ * This controllers is here as a placeholder because we 
+ * have to possibility to have AJAX controllers in each 
+ * module and the home page is set to ajax/index.
+ *
+ * @see 		application/config/routes.php
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @category 	Modules\Routes
+ * @category 	Controllers
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
+class Api extends Api_Controller
+{
+	/**
+	 * This method is here to avoid error 404
+	 * @access 	public
+	 * @return 	void
+	 */
+	public function index()
+	{}
 
-// Login page and sub-pages.
-Route::any('login', 'users/login', function() {
-	Route::any('recover', 'users/recover');
-	Route::any('restore', 'users/restore');
-	Route::any('reset(.*)', 'users/reset$1');
-});
-
-// Register page and sub-pages.
-Route::any('register', 'users/register', function() {
-	Route::any('resend', 'users/resend');
-	Route::get('activate(.*)', 'users/activate$1');
-});
-
-// Logout page.
-Route::get('logout', 'users/logout');
-
-// Block direct access to users controllers and methods.
-Route::block('users(.*)');
+}

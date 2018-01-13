@@ -99,3 +99,45 @@ $config['use_captcha']           = false;
 $config['use_recaptcha']         = false;
 $config['recaptcha_site_key']    = '';
 $config['recaptcha_private_key'] = '';
+
+// Users roles.
+$config['default_role'] = 'regular';
+$config['user_roles']   = array(
+
+	// Administrator
+	'administrator' => array(
+		'name'        => 'lang:administrator',
+		'permissions' => array(
+
+			// Themes actions.
+			'delete_themes' => true,
+			'switch_themes' => true,
+			'update_themes' => true,
+			'upload_themes' => true,
+
+			// Plugins.
+			'activate_plugins' => true,
+			'update_plugins'   => true,
+			'install_plugins'  => true,
+			'delete_plugins'   => true,
+
+			// Users
+			'edit_users'    => true,
+			'delete_users'  => true,
+			'create_users'  => true,
+			'list_users'    => true,
+			'remove_users'  => true,
+			'promote_users' => true,
+
+			// Site settings.
+			'manage_options' => true,
+
+		),
+	),
+
+	// Regular users
+	'regular' => array(
+		'name'        => 'lang:regular',
+		'permissions' => array(),
+	),
+);

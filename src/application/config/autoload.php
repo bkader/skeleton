@@ -79,7 +79,7 @@ $autoload['libraries'] = array();
 |	$autoload['drivers'] = array('cache' => 'cch');
 |
 */
-$autoload['drivers'] = array('bkader' => 'app');
+$autoload['drivers'] = array();
 
 /*
 | -------------------------------------------------------------------

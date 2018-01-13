@@ -1,15 +1,58 @@
 <?php
+/**
+ * CodeIgniter Skeleton
+ *
+ * A ready-to-use CodeIgniter skeleton  with tons of new features
+ * and a whole new concept of hooks (actions and filters) as well
+ * as a ready-to-use and application-free theme and plugins system.
+ *
+ * This content is released under the MIT License (MIT)
+ *
+ * Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package 	CodeIgniter
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
+ * @license 	http://opensource.org/licenses/MIT	MIT License
+ * @link 		https://github.com/bkader
+ * @since 		Version 1.0.0
+ */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * KB_Controller Class
  *
- * All controllers must extend this class.
+ * All controllers should extend this class if you want to use all skeleton 
+ * features OR you can create your own MY_Controller inside application/core 
+ * and make it extend this class. Then, all your controllers may extend your 
+ * custom class, MY_Controller.
  *
  * @package 	CodeIgniter
+ * @subpackage 	Skeleton
  * @category 	Core Extension
- * @author 	Kader Bouyakoub <bkader@mail.com>
- * @link 	https://github.com/bkader
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		Version 1.0.0
+ * @version 	1.0.0
  */
 class KB_Controller extends CI_Controller
 {
@@ -39,6 +82,9 @@ class KB_Controller extends CI_Controller
 	{
 		parent::__construct();
 
+		// Load application main library.
+		$this->load->driver('bkader', null, 'app');
+
 		// Load authentication library.
 		$this->c_user = $this->auth->user();
 		$this->theme->set('c_user', $this->c_user, true);
@@ -52,7 +98,7 @@ class KB_Controller extends CI_Controller
 		// Add all necessary meta tags.
 		$this->app->set_meta();
 
-		log_message('debug', 'KB_Controller Class Initialized');
+		log_message('info', 'KB_Controller Class Initialized');
 	}
 
 	// --------------------------------------------------------------------
@@ -210,7 +256,7 @@ class KB_Controller extends CI_Controller
 				'type'        => 'text',
 				'name'        => 'captcha',
 				'id'          => 'captcha',
-				'placeholder' => __('captcha'),
+				'placeholder' => 'lang:captcha',
 				'maxlength'   => $this->config->item('word_length', 'captcha'),
 			),
 		);
@@ -241,7 +287,7 @@ class KB_Controller extends CI_Controller
 			// Not set? Set the error message and return false.
 			if (empty($recaptcha))
 			{
-				$this->form_validation->set_message('check_captcha', __('form_validation_required'));
+				$this->form_validation->set_message('check_captcha', lang('form_validation_required'));
 				return false;
 			}
 
@@ -285,7 +331,7 @@ class KB_Controller extends CI_Controller
 			// Invalid captcha?
 			else
 			{
-				$this->form_validation->set_message('check_captcha', __('form_validation_required'));
+				$this->form_validation->set_message('check_captcha', lang('form_validation_required'));
 				return false;
 			}
 		}
@@ -293,7 +339,7 @@ class KB_Controller extends CI_Controller
 		// No captcha set?
 		if (empty($str))
 		{
-			$this->form_validation->set_message('check_captcha', __('form_validation_required'));
+			$this->form_validation->set_message('check_captcha', lang('form_validation_required'));
 			return false;
 		}
 
@@ -318,7 +364,7 @@ class KB_Controller extends CI_Controller
 		// Not found? Generate the error.
 		else
 		{
-			$this->form_validation->set_message('check_captcha', __('error_captcha'));
+			$this->form_validation->set_message('check_captcha', lang('error_captcha'));
 			return false;
 		}
 	}

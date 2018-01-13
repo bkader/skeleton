@@ -62,7 +62,7 @@ class Admin extends Admin_Controller
 		parent::__construct();
 
 		// Make sure to load language file.
-		$this->load->language('themes/kb_themes_admin');
+		$this->load->language('themes/themes_admin');
 	}
 
 	// ------------------------------------------------------------------------
@@ -105,6 +105,8 @@ class Admin extends Admin_Controller
 
 		$this->theme
 			->set_title(lang('theme_settings'))
+			->add('css', get_common_url('css/zoom'))
+			->add('js', get_common_url('js/zoom'))
 			->render($data);
 	}
 

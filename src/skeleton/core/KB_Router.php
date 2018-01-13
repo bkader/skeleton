@@ -108,6 +108,8 @@ class KB_Router extends CI_Router
 		// Now we set back config iteM
 		$this->config->set_item('modules_locations', $locations);
 
+		log_message('info', 'KB_Router Class Initialized');
+
 		// Call parent's constructor.
 		parent::__construct();
 	}
@@ -119,6 +121,8 @@ class KB_Router extends CI_Router
      * a "routes" folder inside their application folder in which they can 
      * store individual routes files which will be included and added to the 
      * global routes.php file.
+     * @access 	protected
+     * @return 	void
      */
     protected function _set_routing()
     {
@@ -412,34 +416,40 @@ class KB_Router extends CI_Router
                 }
 
                 // Module sub-directory?
-                if ($directory && is_dir($source.$directory.'/')) {
+                if ($directory && is_dir($source.$directory.'/'))
+                {
                     $source = $source.$directory.'/';
                     $this->directory .= $directory.'/';
 
                     // Module sub-directory controller?
-                    if (is_file($source.ucfirst($directory).'.php')) {
+                    if (is_file($source.ucfirst($directory).'.php'))
+                    {
                         return array_slice($segments, 1);
                     }
 
                     // Module sub-directory  default controller?
-                    if (is_file($source.ucfirst($this->default_controller).'.php')) {
+                    if (is_file($source.ucfirst($this->default_controller).'.php'))
+                    {
                         $segments[1] = $this->default_controller;
                         return array_slice($segments, 1);
                     }
 
                     // Module sub-directory sub-controller?
-                    if ($controller && is_file($source.ucfirst($controller).'.php')) {
+                    if ($controller && is_file($source.ucfirst($controller).'.php'))
+                    {
                         return array_slice($segments, 2);
                     }
                 }
 
                 // Module controller?
-                if (is_file($source.ucfirst($module).'.php')) {
+                if (is_file($source.ucfirst($module).'.php'))
+                {
                     return $segments;
                 }
 
                 // Module default controller?
-                if (is_file($source.ucfirst($this->default_controller).'.php')) {
+                if (is_file($source.ucfirst($this->default_controller).'.php'))
+                {
                     $segments[0] = $this->default_controller;
                     return $segments;
                 }
@@ -447,18 +457,21 @@ class KB_Router extends CI_Router
         }
 
         // Root folder controller?
-        if (is_file(APPPATH.'controllers/'.ucfirst($module).'.php')) {
+        if (is_file(APPPATH.'controllers/'.ucfirst($module).'.php'))
+        {
             return $segments;
         }
 
         // Sub-directory controller?
-        if ($directory && is_file(APPPATH.'controllers/'.$module.'/'.ucfirst($directory).'.php')) {
+        if ($directory && is_file(APPPATH.'controllers/'.$module.'/'.ucfirst($directory).'.php'))
+        {
             $this->directory = $module.'/';
             return array_slice($segments, 1);
         }
 
         // Default controller?
-        if (is_file(APPPATH.'controllers/'.$module.'/'.ucfirst($this->default_controller).'.php')) {
+        if (is_file(APPPATH.'controllers/'.$module.'/'.ucfirst($this->default_controller).'.php'))
+        {
             $segments[0] = $this->default_controller;
             return $segments;
         }

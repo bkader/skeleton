@@ -38,33 +38,30 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Users Module Routes
+ * Api_Controller Class
+ *
+ * Controllers extending this class accept only AJAX requests.
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @category 	Modules\Routes
+ * @category 	Core Extension
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
+class Api_Controller extends KB_Controller
+{
+	/**
+	 * Class constructor
+	 * @return 	void
+	 */
+	public function __construct()
+	{
+		parent::__construct();
 
-// Login page and sub-pages.
-Route::any('login', 'users/login', function() {
-	Route::any('recover', 'users/recover');
-	Route::any('restore', 'users/restore');
-	Route::any('reset(.*)', 'users/reset$1');
-});
-
-// Register page and sub-pages.
-Route::any('register', 'users/register', function() {
-	Route::any('resend', 'users/resend');
-	Route::get('activate(.*)', 'users/activate$1');
-});
-
-// Logout page.
-Route::get('logout', 'users/logout');
-
-// Block direct access to users controllers and methods.
-Route::block('users(.*)');
+		// Load Rest library.
+		$this->load->library('rest');
+	}
+}

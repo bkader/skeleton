@@ -51,5 +51,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 
 $lang['manage_plugins'] = 'Manage Plugins';
+$lang['plugin_settings'] = 'Plugin Settings';
 
 $lang['delete_plugin'] = 'Delete Plugin';
+
+$lang['missing_plugin']          = 'This plugin does not exists.';
+$lang['plugin_disabled']         = 'You can only edit settings of activated plugins.';
+$lang['plugin_with_no_settings'] = 'This plugin does not have a settings section.';
+
+// ------------------------------------------------------------------------
+
+$lang['plugins_activate_success'] = 'Plugin successfully activated.';
+$lang['plugins_activate_error']   = 'Unable to activate plugin.';
+
+$lang['plugins_deactivate_success'] = 'Plugin successfully deactivated.';
+$lang['plugins_deactivate_error']   = 'Unable to deactivate plugin.';
+
+$lang['plugins_delete_success'] = 'Plugin successfully deleted.';
+$lang['plugins_delete_error']   = 'Unable to delete plugin.';

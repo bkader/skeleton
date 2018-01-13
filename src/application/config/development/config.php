@@ -26,7 +26,7 @@ $config['language']	= 'english';
 $config['log_threshold'] = 4;
 
 /**
- * Encryption Key
- * @see application/config/config.php:318
+ * Cookie related variables.
+ * @see application/config/config.php:397
  */
-$config['encryption_key'] = '';
+$config['cookie_domain'] = '.example.com';

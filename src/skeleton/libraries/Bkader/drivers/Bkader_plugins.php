@@ -55,10 +55,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Bkader_plugins extends CI_Driver
 {
 	/**
-	 * Holds the path to plugins.
+	 * Holds the path where plugins are located.
 	 * @var string
 	 */
-	private $_plugins_path;
+	private $_plugins_dir;
 
 	/**
 	 * Array of all available plugins.
@@ -67,56 +67,10 @@ class Bkader_plugins extends CI_Driver
 	private $_plugins;
 
 	/**
-	 * Array of plugins stored in database.
-	 * @var array
-	 */
-	private $_db_plugins;
-
-	/**
-	 * Array of activated plugins.
+	 * Holds the array of active plugins.
 	 * @var array
 	 */
 	private $_active_plugins;
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Method call catcher to always see if plugins system is on or not.
-	 * @access 	public
-	 * @param 	string 	$method 	The method to call.
-	 * @param 	mixed 	$params 	methods arguments
-	 * @return 	depends on the method.
-	 */
-	public function __call($method, $params = array())
-	{
-		// All our methods have a prepended underscore.
-		$_method = '_' . $method;
-		
-		// We throw a BadMethodCallException if no method exists.
-		if ( ! method_exists($this, $_method))
-		{
-			throw new BadMethodCallException("Call to a private method Bkader_plugins::{$method}()");
-		}
-
-
-		/**
-		 * By using the ReflectionMethod class we make sure to
-		 * call only public or protected method but never
-		 * private one.
-		 */
-		$reflection = new ReflectionMethod($this, $_method);
-
-		if ($reflection->isPrivate())
-		{
-			throw new BadMethodCallException("Call to a private method Bkader_plugins::{$method}()");
-		}
-
-		// We proceed only if plugins system is enabled.
-		if ($this->use_plugins())
-		{
-			return call_user_func_array(array($this, $_method), $params);
-		}
-	}
 
 	// --------------------------------------------------------------------
 
@@ -127,26 +81,8 @@ class Bkader_plugins extends CI_Driver
 	 */
 	public function initialize()
 	{
-		// Set the path to plugins folder.
-		$this->_plugins_path = (function_exists('plugins_path'))
-			? plugins_path()
-			: realpath(FCPATH.'content/plugins');
-		($this->_plugins_path) && $this->_plugins_path .= DIRECTORY_SEPARATOR;
-
-		/**
-		 * We proceed only if the plugins folder if found and
-		 * the plugins system is enabled.
-		 */
-		if (false === $this->_plugins_path)
-		{
-			return;
-		}
-
-		// Make sure to load needed resources.
-		$this->ci->load->helper(array('url', 'directory', 'file'));
-
-		// List all available plugins.
-		$this->_plugins = $this->_get_all_plugins();
+		// Always keep the path to plugins directory.
+		$this->_plugins_dir = FCPATH.(config_item('plugins_dir') ?: 'content/plugins/');
 
 		log_message('info', 'Bkader_plugins Class Initialize');
 	}
@@ -154,213 +90,233 @@ class Bkader_plugins extends CI_Driver
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Checks if the using plugins is enabled.
+	 * Returns a list of available plugins.
 	 * @access 	public
-	 * @return 	boolean
+	 * @param 	bool 	$details Whether to get details
+	 * @return 	array
 	 */
-	public function use_plugins()
+	public function get_plugins($details = true)
 	{
-		return ($this->ci->config->item('use_plugins') === true && false !== $this->_plugins_path);
+		// Not cached? Cache them first.
+		if ( ! isset($this->_plugins))
+		{
+			$this->_plugins = $this->_fetch_plugins_dir($details);
+		}
+
+		return $this->_plugins;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Load active plugins.
-	 * @access 	protected
-	 * @return 	void
+	 * Get the list of active plugins.
+	 * @access 	public
+	 * @return 	array
 	 */
-	protected function _load_plugins()
+	public function get_active_plugins()
 	{
-		// Prepare the list or activated plugins.
-		$this->_active_plugins = $this->__get_active_plugins();
+		// Not cached? Cache them first.
+		if ( ! isset($this->_active_plugins))
+		{
+			$this->_active_plugins = $this->_parent->options->item('active_plugins', array());
+		}
 
-		// Now we instantiate plugins.
-		$this->__initialize_plugins();
+		return $this->_active_plugins;
 	}
 
-	// --------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns details about the selected plugin.
+	 * @access 	public
+	 * @param 	string 	$name 	The plugin's name.
+	 * @return 	array if found, else false.
+	 */
+	public function get_plugin($name)
+	{
+		$plugins = $this->get_plugins();
+		return (isset($plugins[$name])) ? $plugins[$name] : false;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Reads details about the plugin from the manifest.json file.
+	 * @access 	public
+	 * @param 	string 	$name 	the plugin's name.
+	 * @return 	array if found, else false.
+	 */
+	public function get_plugin_info($name)
+	{
+		// The plugin's folder name is required.
+		if (empty($name))
+		{
+			return false;
+		}
+
+		// Make sure the manifest exists.
+		$manifest = $this->plugins_path($name.'/manifest.json');
+		if ( ! $manifest)
+		{
+			return false;
+		}
+
+		//
+		$manifest = json_decode(file_get_contents($manifest), true);
+		if (empty($manifest) OR ! is_array($manifest))
+		{
+			return false;
+		}
+
+		// Adding the folder.
+		$manifest['folder'] = $name;
+
+		// Is it enabled?
+		$manifest['enabled'] = $this->_is_enabled($name);
+
+		// Does it have a settings page?
+		$manifest['has_settings'] = has_filter('plugin_settings_'.$name);
+
+		// Complete missing data.
+		$defaults = array(
+			'name'         => null,
+			'folder'       => null,
+			'plugin_uri'   => null,
+			'description'  => 'This plugin has no description',
+			'version'      => null,
+			'license'      => 'MIT',
+			'license_uri'  => 'https://opensource.org/licenses/MIT',
+			'author'       => 'Kader Bouyakoub',
+			'author_uri'   => 'https://github.com/bkader',
+			'author_email' => 'bkader@mail.com',
+			'tags'         => null,
+			'enabled'      => false,
+			'has_settings' => false,
+		);
+
+		return array_replace($defaults, $manifest);
+	}
+
+	// ------------------------------------------------------------------------
 
 	/**
 	 * Activate the selected plugin.
-	 * @access 	protected
-	 * @param 	string 	$name 	the plugin's folder name.
-	 * @return 	bool
+	 * @access 	public
+	 * @param 	string 	$name 	The plugin's folder name.
+	 * @return 	boolean
 	 */
-	protected function _activate($name)
+	public function activate($name)
 	{
-		// Prepare the name.
-		$name = strtolower(rtrim($name, DIRECTORY_SEPARATOR));
+		$plugins        = $this->get_plugins();
+		$active_plugins = $this->get_active_plugins();
 
-		// Prepare process status.
-		$status = false;
-
-		// Proceed only if the plugin exists and is not active.
-		if (! isset($this->_active_plugins[$name]))
+		if (isset($plugins[$name]) && ! in_array($active_plugins))
 		{
-			$plugins = $this->__get_db_plugins();
-
-			// Plugins are store in database?
-			if ($plugins)
-			{
-				// Make sure it's a valid array.
-				(is_array($plugins->value)) OR $plugins->value = array();
-
-				// Add the plugin.
-				$plugins->value[$name] = array('folder' => $name);
-				$status = $this->_parent->options->update('active_plugins', array(
-					'value' => $plugins->value,
-				));
-			}
-			// Store the plugins in database.
-			else
-			{
-				// For security, delete it first.
-				$this->_parent->options->delete_by('name', 'active_plugins');
-
-				// Then we insert it.
-				$this->_parent->options->insert(array(
-					'name'  => 'active_plugins',
-					'value' => array($name => array('folder' => $name)),
-					'tab'   => 'plugins',
-				));
-
-				$status = true;
-			}
-
+			$active_plugins[] = $name;
+			return $this->_set_plugins($active_plugins);
 		}
 
-		// If the plugin is enabled, do the action.
-		if ($status === true)
-		{
-			do_action('plugin_activate_'.$name);
-		}
-
-		// Return the process status.
-		return $status;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Deactivate the selected plugin.
-	 * @access 	protected
-	 * @param 	string 	$name 	Plugin name.
-	 * @return 	bool
-	 */
-	protected function _deactivate($name)
-	{
-		// Prepare the name.
-		$name = strtolower(rtrim($name, DIRECTORY_SEPARATOR));
-
-		// Prepare process status.
-		$status = false;
-
-		if (isset($this->_active_plugins[$name]))
-		{
-			// Get all activated plugins and remove the selected one.
-			$plugins = $this->__get_db_plugins();
-			unset($plugins->value[$name]);
-
-			// Update database.
-			$status = $this->_parent->options->set_item('active_plugins', $plugins->value);
-
-			// Unset the item and do action if success.
-			if ($status === true)
-			{
-				unset($this->_active_plugins[$name]);
-				do_action('plugin_deactivate_'.$name);
-			}
-		}
-
-		return $status;
+		return false;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Delete a plugin from plugins directory.
-	 * @access 	protected
-	 * @param 	string 	$plugin 	Plugin's slug.
+	 * Deactivate the selected plugin.
+	 * @access 	public
+	 * @param 	string 	$name 	The plugin's folder name.
 	 * @return 	boolean
 	 */
-	protected function _delete($name)
+	public function deactivate($name)
 	{
-		// Prepare the name.
-		$name = strtolower(rtrim($name, DIRECTORY_SEPARATOR));
+		$plugins        = $this->get_plugins();
+		$active_plugins = $this->get_active_plugins();
 
-		// Make sure the plugin exists.
-		if ( ! isset($this->_plugins[$name]))
+		if (isset($plugins[$name]) 
+			&& in_array($name, $active_plugins)
+			 && false !== ($key = array_search($name, $active_plugins)))
+		{
+			unset($active_plugins[$key]);
+			return $this->_set_plugins($active_plugins);
+		}
+
+
+		return false;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Delete the selected plugin.
+	 * @access 	public
+	 * @param 	string 	$name 	The plugin's folder name.
+	 * @return 	boolean
+	 */
+	public function delete($name)
+	{
+		// Make sure the plugins exists.
+		$plugins = $this->get_plugins();
+		if ( ! isset($plugins[$name]))
 		{
 			return false;
 		}
 
 		// Make sure the directory is found.
-		$plugin_path = realpath(plugins_path().'/'.$name);
-		if (false === $plugin_path)
+		if (false === $this->plugins_path($name))
 		{
-			return;
+			return false;
 		}
 
 		/**
-		 * Two steps here: 1. delete all files within the plugin's folder,
-		 * then 2. delete the folder.
+		 * Two steps here: 
+		 * 1. delete all files within the plugin's folder.
+		 * 2. delete the folder.
 		 */
-		array_map('unlink', glob($plugin_path.'/*.*'));
-		rmdir($plugin_path);
-		return $this->_deactivate($name);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Returns all available plugins at the plugins directory.
-	 * @access 	protected
-	 * @param 	none
-	 * @return 	array
-	 */
-	protected function _get_all_plugins()
-	{
-		// Get all plugins if not already set.
-		$plugins = (isset($this->_plugins)) ? $this->_plugins : $this->__get_all_plugins();
-
-		// Get all active plugins.
-		$active_plugins = (isset($this->_active_plugins))
-			? $this->_active_plugins
-			: $this->__get_active_plugins();
-
-		// Mark active plugins as enabled.
-		if ( ! empty($plugins))
-		{
-			foreach ($plugins as $slug => &$plugin)
-			{
-				$plugin['enabled'] = (isset($active_plugins[$slug]));
-			}
-		}
-
-		return $plugins;
+		$this->deactivate($name);
+		array_map('unlink', glob($this->plugins_path($name).'/*.*'));
+		rmdir($this->plugins_path($name));
+		return true;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * List all available plugins in plugins directory.
+	 * Load all plugins in order to do all their actions.
+	 * @access 	public
+	 * @return 	void
+	 */
+	public function load_plugins()
+	{
+		// Get the list of active plugins.
+		$plugins = $this->get_active_plugins();
+
+		// Lopp through all plugins.
+		foreach ($plugins as $plugin)
+		{
+			// Include their main file.
+			include_once($this->plugins_path("{$plugin}/{$plugin}.php"));
+
+			// Do the action related to each plugin.
+			do_action('plugin_install_'.$plugin);
+		}
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * List all plugins found inside plugins folder.
 	 * @access 	private
+	 * @param 	bool 	$details 	whether to retrieve details or not.
 	 * @return 	array
 	 */
-	private function __get_all_plugins()
+	private function _fetch_plugins_dir($details = true)
 	{
-		// Already cached? Return them.
-		if (isset($this->_plugins))
-		{
-			return $this->_plugins;
-		}
-
 		// Prepare empty array of plugins.
 		$plugins = array();
 
+
 		// Let's go through folders and check if there are any.
-		if ($handle = opendir($this->_plugins_path))
+		if ($handle = opendir($this->_plugins_dir))
 		{
 			$_to_eliminate = array(
 				'.',
@@ -378,155 +334,110 @@ class Bkader_plugins extends CI_Driver
 			}
 		}
 
+		// No details needed?
+		if ($details === false)
+		{
+			return $details;
+		}
+
 		// If there are folders, we get plug-ins details.
 		if ( ! empty($plugins))
 		{
 			foreach ($plugins as $key => $plugin)
 			{
-				// A valid plugin comes with 'manifest.json' file.
-				if (false !== realpath($this->_plugins_path.$plugin.DS.'manifest.json'))
+				if ($this->_is_valid($plugin))
 				{
-					// The manifest.json must contain a valid array.
-					$details = $this->__get_plugin_details($plugin, false);
-
-					// Cache plugins to avoid repeating.
-					if ($details !== null)
-					{
-						$this->_plugins[$plugin] = $details;
-					}
+					$plugins[$plugin] = $this->get_plugin_info($plugin);
 				}
 				unset($plugins[$key]);
 			}
 		}
 
 		// Return the result.
-		return $this->_plugins;
+		return $plugins;
 	}
 
-	// --------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
 	/**
-	 * Retrieve a single plugins details from manifest.json
-	 * @access 	private
-	 * @param 	string 	$name 	plugin's name.
-	 * @param 	bool 	$check 	whether to validate the manifest.
-	 * @return 	array if valid, else false.
+	 * Returns the real path to plugins directory.
+	 * @access 	public
+	 * @param 	string 	$uri 	The URI to append.
+	 * @return 	string if a real path, else false.
 	 */
-	private function __get_plugin_details($name, $check = true)
+	public function plugins_path($uri = '')
 	{
-		$manifest = file_get_contents($this->_plugins_path.$name.'/manifest.json');
-		$manifest = json_decode($manifest, true);
-		if ( ! is_array($manifest))
-		{
-			if ($check === true)
-			{
-				show_error("The 'manifest.json' file of '{$name}' plugin does not contain a valid array.");
-			}
-
-			return $manifest;
-		}
-
-		// Always add the folder.
-		$manifest['folder'] = $name;
-
-		// Prepare default details.
-		$defaults = array(
-			'name'         => null,
-			'folder'       => null,
-			'plugin_uri'    => null,
-			'description'  => 'This plugin has no description',
-			'version'      => null,
-			'license'      => 'MIT',
-			'license_uri'  => 'https://opensource.org/licenses/MIT',
-			'author'       => 'Kader Bouyakoub',
-			'author_uri'   => 'https://github.com/bkader',
-			'author_email' => 'bkader@mail.com',
-			'tags'         => null,
-		);
-
-		return array_replace($defaults, $manifest);
+		return realpath($this->_plugins_dir.'/'.$uri);
 	}
 
-	// --------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
 	/**
-	 * Returns the list of activated plugins.
-	 * @access 	private
-	 * @return 	array if found, else null.
+	 * Return the URL to plugins folder.
+	 * @access 	public
+	 * @param 	string 	$uri
+	 * @return 	string
 	 */
-	private function __get_active_plugins()
+	public function plugins_url($uri = '')
 	{
-		// Start an empty array.
-		$this->_active_plugins = array();
-
-		// Get plugins from database.
-		$plugins = $this->__get_db_plugins();
-
-		// Found?
-		if ($plugins && count($plugins) > 0)
-		{
-			foreach ($plugins as $plugin)
-			{
-				$details = $this->__get_plugin_details($plugin['folder']);
-
-				// Cache the plugin.
-				$this->_active_plugins[$plugin['folder']] = $details;
-			}
-		}
-
-		return $this->_active_plugins;
+		$path = config_item('plugins_dir') ?: 'content/plugins';
+		return base_url("{$path}/{$uri}");
 	}
 
-	// --------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
 	/**
-	 * Get active plugins from database.
+	 * Updates or create active plugins options item.
 	 * @access 	private
-	 * @return 	array if found, else null.
+	 * @param 	array 	$plugins
+	 * @return 	bool
 	 */
-	protected function ___get_db_plugins()
+	private function _set_plugins($plugins = array())
 	{
-		// Already cached? Return them.
-		if (isset($this->_db_plugins))
+		// Check if the option exists first.
+		$found = $this->_parent->options->get_by('name', 'active_plugins');
+
+		// If found and updated, return TRUE.
+		if ($found && $this->_parent->options->set_item('active_plugins', $plugins))
 		{
-			return $this->_db_plugins;
+			return true;
 		}
 
-		// Cache them to reduce BD access.
-		$db_plugins = $this->_parent->options->item('active_plugins');
-		$this->_db_plugins = ($db_plugins) ? $db_plugins : array();
-		return $this->_db_plugins;
+		// Create it because it was not found.
+		$this->_parent->options->insert(array(
+			'name'  => 'active_plugins',
+			'value' => $plugins,
+			'tab'   => 'plugins',
+		));
+		return true;
 	}
 
-	// --------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
 	/**
-	 * Instantiate plugins actions.
+	 * Returns TRUE if the selected plugin is valid.
 	 * @access 	private
-	 * @return 	void
+	 * @param 	string 	$name
+	 * @return 	boolean
 	 */
-	private function __initialize_plugins()
+	private function _is_valid($name)
 	{
-		if (isset($this->_active_plugins))
-		{
-			// For comparison reason.
-			$db_plugins = $this->__get_db_plugins();
+		return ($name 
+			&& false !== $this->plugins_path("{$name}/{$name}.php")
+			&& false !== $this->plugins_path("{$name}/manifest.json"));
+	}
 
-			foreach ($this->_active_plugins as $folder => $details)
-			{
-				// Update plugin details only if incomplete.
-				if ($db_plugins[$folder] <> $details)
-				{
-					$db_plugins[$folder] = $details;
-					$this->_parent->options->set_item('active_plugins', $db_plugins);
-				}
-				// Include the plugin file.
-				include_once $this->_plugins_path.$folder.'/'.$folder.'.php';
+	// ------------------------------------------------------------------------
 
-				// Do the install action.
-				do_action('plugin_install_'.$folder);
-			}
-		}
+	/**
+	 * Returns TRUE if the selected plugin is enabled.
+	 * @access 	private
+	 * @param 	string 	$name
+	 * @return 	boolean
+	 */
+	private function _is_enabled($name)
+	{
+		return (in_array($name, $this->get_active_plugins(false)));
 	}
 
 }
@@ -539,9 +450,9 @@ if ( ! function_exists('plugins_path'))
 	 * Return the real path to plugins folder.
 	 * @return 	string if found, else false.
 	 */
-	function plugins_path()
+	function plugins_path($uri = '')
 	{
-		return realpath(FCPATH.'content/plugins/');
+		return get_instance()->app->plugins->plugins_path($uri);
 	}
 }
 
@@ -556,7 +467,7 @@ if ( ! function_exists('plugins_url'))
 	 */
 	function plugins_url($uri = '')
 	{
-		return base_url('content/plugins/'.$uri);
+		return get_instance()->app->plugins->plugins_url($uri);
 	}
 }
 
@@ -566,7 +477,7 @@ if ( ! function_exists('activate_plugin'))
 {
 	/**
 	 * Activate the selected plugin.
-	 * @access 	protected
+	 * @access 	public
 	 * @param 	string 	$name 	the plugin's folder name.
 	 * @return 	bool
 	 */
@@ -582,12 +493,28 @@ if ( ! function_exists('deactivate_plugin'))
 {
 	/**
 	 * Deactivate the selected plugin.
-	 * @access 	protected
+	 * @access 	public
 	 * @param 	string 	$name 	the plugin's folder name.
 	 * @return 	bool
 	 */
 	function deactivate_plugin($plugin)
 	{
 		return get_instance()->app->plugins->deactivate($plugin);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('delete_plugin'))
+{
+	/**
+	 * Delete the selected plugin.
+	 * @access 	public
+	 * @param 	string 	$name 	the plugin's folder name.
+	 * @return 	bool
+	 */
+	function delete_plugin($plugin)
+	{
+		return get_instance()->app->plugins->delete($plugin);
 	}
 }

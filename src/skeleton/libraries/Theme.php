@@ -544,7 +544,6 @@ EOT;
 			'the_content',
 			'the_title',
 			'theme_layout',
-			'theme_layout',
 			'theme_layout_fallback',
 			'theme_layouts_path',
 			'theme_menus',
@@ -1003,7 +1002,7 @@ EOT;
 		if ( ! empty($args))
 		{
 			(is_array($args[0])) && $args = $args[0];
-			$this->_title = implode(': ', $args);
+			$this->_title = implode($this->_title_sep, $args);
 		}
 		return $this;
 	}
@@ -1017,17 +1016,22 @@ EOT;
 	 */
 	public function get_title($before = null, $after = null)
 	{
-		(is_array($this->_title)) OR $this->_title = array(
-			$this->_title
-		);
+		// Already set? Return it.
+		if (isset($this->_title))
+		{
+			return apply_filters('the_title', $before.$this->_title.$after);
+		}
+
+		// Make sure it's an array.
+		(is_array($this->_title)) OR $this->_title = array($this->_title);
 		
 		$this->_title = array_filter($this->_title);
 		
 		// If the title is empty, we guess.
 		(empty($this->_title)) && $this->_title = $this->_guess_title();
-		
+
 		// Apply filter if there are any.
-		$this->_title = apply_filters('the_title', $this->_title);
+		$this->_title = apply_filters('before_title', $this->_title);
 		
 		if ($before !== null)
 		{
@@ -1040,7 +1044,7 @@ EOT;
 		}
 		
 		// Create the title string.
-		$this->_title = implode($this->_title_sep, $this->_title);
+		$this->_title = implode($this->_title_sep, array_unique($this->_title, SORT_STRING));
 		
 		// Return the title.
 		return $before . $this->_title . $after;

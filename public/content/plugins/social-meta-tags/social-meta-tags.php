@@ -38,11 +38,13 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Users Module Routes
+ * Social Head Plugin
+ *
+ * This is a another example plugin that demonstrate the plugins system.
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @category 	Modules\Routes
+ * @category 	Plugins
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
@@ -50,21 +52,46 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @version 	1.0.0
  */
 
-// Login page and sub-pages.
-Route::any('login', 'users/login', function() {
-	Route::any('recover', 'users/recover');
-	Route::any('restore', 'users/restore');
-	Route::any('reset(.*)', 'users/reset$1');
+// Action to do after plugin's activation.
+add_action('plugin_activate_social-meta-tags', function() {
+	return true;
 });
 
-// Register page and sub-pages.
-Route::any('register', 'users/register', function() {
-	Route::any('resend', 'users/resend');
-	Route::get('activate(.*)', 'users/activate$1');
+// Action to do after plugin's deactivation.
+add_action('plugin_deactivate_social-meta-tags', function() {
+	return true;
 });
 
-// Logout page.
-Route::get('logout', 'users/logout');
+/**
+ * SEO plugin dummy class.
+ */
+class Social_meta_tags
+{
+	/**
+	 * Initializing plugin's action.
+	 */
+	public static function init()
+	{
+		// Nothing to do on dashboard.
+		if (is_controller('admin'))
+		{
+			return;
+		}
 
-// Block direct access to users controllers and methods.
-Route::block('users(.*)');
+		// Get instance of CI object.
+		$CI =& get_instance();
+
+		// Add some twitter meta tags.
+		add_metadata('twitter:card',    'summary');
+		add_metadata('twitter:site',    config_item('site_name'));
+		add_metadata('twitter:creator', config_item('site_author'));
+
+		// 
+		add_metadata('og:url', current_url());
+		add_metadata('og:title', $CI->theme->get_title());
+		add_metadata('og:type', 'website');
+		add_metadata('og:image', get_common_url('img/default.png'));
+	}
+}
+// Action to do if the plugin is used.
+add_action('plugin_install_social-meta-tags', 'Social_meta_tags::init', 0);

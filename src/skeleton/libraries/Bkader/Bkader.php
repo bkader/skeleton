@@ -94,9 +94,17 @@ class Bkader extends CI_Driver_Library
 			$this->{$driver}->initialize();
 		}
 
-		// Load the rest.
+		// Make sure to load the URL helper.
 		$this->ci->load->helper('url');
-		$this->ci->load->helper('language');
+
+		/**
+		 * Loading the language helper is now useless because the 
+		 * lang() function was moved to KB_Lang.php file so it is
+		 * available even if we don't load the helpe.
+		 */
+		// $this->ci->load->helper('language');
+
+		// Loading theme library.
 		$this->ci->load->library('theme');
 
 		// Load main language file.
@@ -107,10 +115,7 @@ class Bkader extends CI_Driver_Library
 		$this->ci->load->library('users/auth', array('app' => $this));
 
 		// Initialize plugins if plugins system is enabled.
-		if ($this->options->item('use_plugins', false) === true)
-		{
-			$this->plugins->load_plugins();
-		}
+		$this->plugins->load_plugins();
 
 		log_message('info', 'Bkader Class Initialized');
 	}
@@ -181,19 +186,19 @@ class Bkader extends CI_Driver_Library
 		// Add canonical tag.
 		$this->ci->theme->add_meta('canonical', current_url(), 'rel');
 
-		if ($this->ci->config->item('site_name'))
-		{
-			$this->ci->theme->add_meta('og:title', $this->ci->config->item('site_name'));
-		}
+		// if ($this->ci->config->item('site_name'))
+		// {
+		// 	$this->ci->theme->add_meta('og:title', $this->ci->config->item('site_name'));
+		// }
 
-		if ($this->ci->config->item('site_description'))
-		{
-			$this->ci->theme->add_meta('og:description', $this->ci->config->item('site_description'));
-		}
+		// if ($this->ci->config->item('site_description'))
+		// {
+		// 	$this->ci->theme->add_meta('og:description', $this->ci->config->item('site_description'));
+		// }
 
-		// Default open graph tags.
-		$this->ci->theme->add_meta('og:type', 'website');
-		$this->ci->theme->add_meta('og:url', current_url());
+		// // Default open graph tags.
+		// $this->ci->theme->add_meta('og:type', 'website');
+		// $this->ci->theme->add_meta('og:url', current_url());
 
 		// If no $object provided, we stop.
 		if ( ! empty($object))

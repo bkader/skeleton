@@ -97,4 +97,18 @@ class KB_Config extends CI_Config
 			$this->config[$index][$item] = $value;
 		}
 	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the name or details about the language currently in use.
+	 * @access 	public
+	 * @param 	mixed 	what to retrieve.
+	 * @return 	mixed
+	 */
+	public function lang()
+	{
+		return call_user_func_array(array(get_instance()->lang, 'lang'), func_get_args());
+	}
+
 }

@@ -533,6 +533,8 @@ class CI_Plugins
 		{
 			foreach((array)current($this->_filters[$tag]) as $filter)
 			{
+				// echo print_d($filter);
+				// exit;
 				if ( ! is_null($filter['function']))
 				{
 					call_user_func_array($filter['function'], array_slice($args, 0, (int)$filter['accepted_args']));

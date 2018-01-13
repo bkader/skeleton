@@ -324,7 +324,27 @@ $config['cache_query_string'] = FALSE;
 | https://codeigniter.com/user_guide/libraries/encryption.html
 |
 */
-$config['encryption_key'] = '';
+// $config['encryption_key'] = '';
+
+if ( ! is_file(APPPATH.'config/encryption_key.php'))
+{
+	if ( ! is_writable(APPPATH.'config/'))
+	{
+		show_error('The '.APPPATH.'config/ folder is not writable');
+	}
+
+	$encryption_file = fopen(APPPATH.'config/encryption_key.php', 'w');
+
+	$encryption_key = uniqid().uniqid().uniqid().uniqid();
+	$content = file_get_contents(KBPATH.'config/encryption_key.php.dist');
+	$content = '<?php'.PHP_EOL.str_replace('{KEY}', $encryption_key, $content);
+
+	fwrite($encryption_file, $content);
+	fclose($encryption_file);
+}
+
+// Include the file then use it.
+include_once(APPPATH.'config/encryption_key.php');
 
 /*
 |--------------------------------------------------------------------------
@@ -383,10 +403,10 @@ $config['encryption_key'] = '';
 | except for 'cookie_prefix' and 'cookie_httponly', which are ignored here.
 |
 */
-$config['sess_driver'] = 'files';
-$config['sess_cookie_name'] = 'ci_session';
+$config['sess_driver'] = 'database';
+$config['sess_cookie_name'] = 'c_sess';
 $config['sess_expiration'] = 7200;
-$config['sess_save_path'] = NULL;
+$config['sess_save_path'] = 'sessions';
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;
 $config['sess_regenerate_destroy'] = FALSE;

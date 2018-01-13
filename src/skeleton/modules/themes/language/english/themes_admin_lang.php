@@ -38,33 +38,32 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Users Module Routes
+ * Themes Module - Language File (English)
  *
  * @package 	CodeIgniter
- * @subpackage 	Skeleton
- * @category 	Modules\Routes
- * @author 		Kader Bouyakoub <bkader@mail.com>
- * @link 		https://github.com/bkader
- * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @subpackage 	Modules
+ * @category 	Language
+ * @author 	Kader Bouyakoub <bkader@mail.com>
+ * @link 	https://github.com/bkader
  */
 
-// Login page and sub-pages.
-Route::any('login', 'users/login', function() {
-	Route::any('recover', 'users/recover');
-	Route::any('restore', 'users/restore');
-	Route::any('reset(.*)', 'users/reset$1');
-});
 
-// Register page and sub-pages.
-Route::any('register', 'users/register', function() {
-	Route::any('resend', 'users/resend');
-	Route::get('activate(.*)', 'users/activate$1');
-});
+// ------------------------------------------------------------------------
+// Themes Settings.
+// ------------------------------------------------------------------------
+$lang['theme_settings'] = 'Themes Settings';
 
-// Logout page.
-Route::get('logout', 'users/logout');
 
-// Block direct access to users controllers and methods.
-Route::block('users(.*)');
+// Theme details.
+$lang['author']        = 'Author';
+$lang['author_email']  = 'Author Email';
+$lang['version']       = 'Version';
+$lang['license']       = 'License';
+$lang['tags']          = 'Tags';
+
+// Theme activation.
+$lang['theme_activate_success'] = 'Theme successfully changed.';
+$lang['theme_activate_error']   = 'Unable to change theme.';
+
+// ------------------------------------------------------------------------
+$lang['add_theme'] = 'Add Theme';

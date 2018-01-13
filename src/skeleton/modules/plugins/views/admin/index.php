@@ -12,12 +12,8 @@
 <?php foreach ($plugins as $plugin): ?>
 		<tr>
 			<td>
-				<?php echo ($plugin['enabled']) ? '<strong>'.$plugin['name'].'</strong>' : $plugin['name']; ?><br /><small>
-				<?php if ($plugin['enabled']): ?>
-					<a href="<?php echo safe_admin_url('plugins/deactivate/'.$plugin['folder']); ?>"><?php _e('deactivate'); ?></a>&nbsp;&#124;&nbsp;
-				<?php else: ?>
-					<a href="<?php echo safe_admin_url('plugins/activate/'.$plugin['folder']); ?>"><?php _e('deactivate'); ?></a>&nbsp;&#124;&nbsp;
-				<?php endif; ?><a class="text-danger" onclick="return confirm('<?php printf(line('are_you_sure'), line('delete_plugin')) ?>');" href="<?php echo safe_admin_url('plugins/delete/'.$plugin['folder']); ?>"><?php _e('delete'); ?></a></small>
+				<?php echo ($plugin['enabled']) ? '<strong>'.$plugin['name'].'</strong>' : $plugin['name']; ?><br />
+				<small><?php echo implode('&nbsp;&#124;&nbsp;', $plugin['actions']); ?></small>
 			</td>
 			<td>
 				<p><?php echo $plugin['description']; ?></p>

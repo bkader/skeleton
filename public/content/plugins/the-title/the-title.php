@@ -38,11 +38,13 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Users Module Routes
+ * Site Title Plugin
+ *
+ * This is a another example plugin that demonstrate the plugins system.
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @category 	Modules\Routes
+ * @category 	Plugins
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
@@ -50,21 +52,54 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @version 	1.0.0
  */
 
-// Login page and sub-pages.
-Route::any('login', 'users/login', function() {
-	Route::any('recover', 'users/recover');
-	Route::any('restore', 'users/restore');
-	Route::any('reset(.*)', 'users/reset$1');
+// Action to do after plugin's activation.
+add_action('plugin_activate_the-title', function() {
+	return true;
 });
 
-// Register page and sub-pages.
-Route::any('register', 'users/register', function() {
-	Route::any('resend', 'users/resend');
-	Route::get('activate(.*)', 'users/activate$1');
+// Action to do after plugin's deactivation.
+add_action('plugin_deactivate_the-title', function() {
+	return true;
 });
 
-// Logout page.
-Route::get('logout', 'users/logout');
+// Action to do if the plugin is used.
+add_action('plugin_install_the-title', 'pages_title_add_site_name');
 
-// Block direct access to users controllers and methods.
-Route::block('users(.*)');
+/**
+ * Adding site name to pages title.
+ * @param 	none
+ * @return 	void.
+ */
+function pages_title_add_site_name()
+{
+	// We simply apply the filter.
+	add_filter('the_title', function($title)
+	{
+		// We only add the site name if not detected.
+		$site_name = config_item('site_name');
+		if (strpos($title, $site_name) === false)
+		{
+			$title .= ' &#150; '.config_item('site_name');
+		}
+		return $title;
+	});
+}
+
+add_filter('plugin_settings_the-title', 'the_title_proceed');
+
+if ( ! function_exists('the_title_proceed'))
+{
+	function the_title_proceed($content)
+	{
+		$content .=<<<EOT
+	<h4 class="page-header">The Title Plugin Settings</h4>
+	<p>The content you see on this page is found within this plugins main file <strong>the-title.php</strong>. Look for a function called <strong>the_title_proceed</strong></p>
+
+	<h4>How to create settings page for a plugin?</h4>
+	<p>Easy! Simply add a new filter with your plugin's folder name, like so:</p>
+	<pre><code>// Here I am using this plugin's folder name, "the-title".<br />add_filter('plugin_settings_<strong>the-title</strong>', function(\$content) {<br />&nbsp;&nbsp;&nbsp;&nbsp;\$content .= '&lt;h1&gt;Hell There&lt;/h1&gt;';<br/>&nbsp;&nbsp;&nbsp;&nbsp;return \$content;<br />});</code></pre><br />
+	<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem voluptas pariatur necessitatibus quod porro amet libero molestias hic debitis commodi quos doloribus reprehenderit sequi, recusandae, voluptatem aut dolores voluptate in!</p>
+EOT;
+		return $content;
+	}
+}

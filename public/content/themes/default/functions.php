@@ -18,32 +18,6 @@ add_filter('theme_views_path', function($path) {
 // 	return $args;
 // });
 
-/**
- * Use the following filter if you want to add
- * extra profile details or edit/delete exsting ones.
- */
-// add_filter('user_profile_update_fields', function($post) {
-// 	$post[] = 'address';
-// 	return $post;
-// });
-
-// add_filter('user_profile_form_fields', function($fields) {
-// 	$fields['address'] = array(
-// 		'type'        => 'textarea',
-// 		'name'        => 'address',
-// 		'id'          => 'address',
-// 		'placeholder' => __('address'),
-// 		'value' => set_value(
-// 			'address',
-// 			$this->_ci->app->metadata->get_meta(
-// 				$this->_ci->auth->user()->id,
-// 				'address',
-// 				true
-// 			)),
-// 	);
-// 	return $fields;
-// });
-
 // ------------------------------------------------------------------------
 
 add_action('after_theme_setup', function() {
@@ -63,10 +37,6 @@ add_filter('theme_translation', function($path) {
 	return get_theme_path('langs');
 });
 
-// add_filter('theme_translation_index', function($index) {
-// 	return 'default';
-// });
-
 // ------------------------------------------------------------------------
 
 add_action('theme_menus', function() {
@@ -77,7 +47,6 @@ add_action('theme_menus', function() {
 		'sidebar-menu' => 'lang:sidebar_menu',
 	));
 });
-
 
 // ------------------------------------------------------------------------
 
@@ -117,16 +86,7 @@ add_filter('theme_layout', function($layout) {
 
 // Partials enqueue for caching purpose.
 add_action('enqueue_partials', function() {
-	if (is_controller('admin'))
-	{
-		add_partial('admin_navbar', null, 'navbar');
-		add_partial('admin_sidebar', null, 'sidebar');
-	}
-	elseif ( ! is_module('users'))
-	{
-		add_partial('navbar');
-	}
-
+	add_partial('navbar');
 	add_partial('footer');
 });
 

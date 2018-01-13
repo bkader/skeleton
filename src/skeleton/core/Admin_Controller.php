@@ -64,7 +64,7 @@ class Admin_Controller extends User_Controller
 		// Make sure the user is an administrator.
 		if ( ! $this->auth->is_admin())
 		{
-			set_alert(__('error_permission'), 'error');
+			set_alert(lang('error_permission'), 'error');
 			redirect('');
 			exit;
 		}
@@ -95,10 +95,20 @@ class Admin_Controller extends User_Controller
 	{
 		/**
 		 * Here we are resetting all applied filters and actions to
-		 * force using default admin panel theme. Except for 'theme_menus'
-		 * and 'theme_translation'
+		 * force using default admin panel theme. Except these:
 		 */
-		$this->theme->reset('theme_menus', 'theme_translation');
+		$this->theme->reset(
+			'after_metadata',
+			'before_metadata',
+			'after_scripts',
+			'after_styles',
+			'before_scripts',
+			'before_styles',
+			'enqueue_metadata',
+			'the_title',
+			'theme_menus',
+			'theme_translation'
+		);
 
 		// Remove extra filters added by libraries.
 		remove_all_filters('pagination');
