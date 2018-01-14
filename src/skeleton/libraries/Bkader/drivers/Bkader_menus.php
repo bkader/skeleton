@@ -602,7 +602,7 @@ class Bkader_menus extends CI_Driver
 				// Get all locations to user their name and slug.
 				$locations = $this->get_locations();
 
-				$menu->location = $this->_parent->metadata->get_meta($menu->id, 'menu_location', true);
+				$menu->location = $this->_parent->metadata->get($menu->id, 'menu_location', true);
 				$menu->location_name = null;
 				if ($menu->location && isset($locations[$menu->location]))
 				{
@@ -647,7 +647,7 @@ class Bkader_menus extends CI_Driver
 			// Loop through menus and add location's name and slug.
 			foreach ($menus as $menu)
 			{
-				$menu->location = $this->_parent->metadata->get_meta($menu->id, 'menu_location', true);
+				$menu->location = $this->_parent->metadata->get($menu->id, 'menu_location', true);
 				$menu->location_name = null;
 				if ($menu->location && isset($locations[$menu->location]))
 				{
@@ -768,7 +768,7 @@ class Bkader_menus extends CI_Driver
 		if ($status === true)
 		{
 			// Get attributes stored in database.
-			$db_attrs = $this->_parent->metadata->get_meta($id, 'attributes');
+			$db_attrs = $this->_parent->metadata->get($id, 'attributes');
 
 			// Update only if different!
 			if ($attrs <> $db_attrs->value)
@@ -828,8 +828,8 @@ class Bkader_menus extends CI_Driver
 			// Found? Get attributes and order.
 			if ($item)
 			{
-				$item->order      = abs($this->_parent->metadata->get_meta($id, 'order', true));
-				$item->attributes = $this->_parent->metadata->get_meta($id, 'attributes', true);
+				$item->order      = abs($this->_parent->metadata->get($id, 'order', true));
+				$item->attributes = $this->_parent->metadata->get($id, 'attributes', true);
 
 				// Cache it to reduce DB access.
 				$this->_items[$id] = $item;
@@ -887,8 +887,8 @@ class Bkader_menus extends CI_Driver
 		{
 			foreach ($db_items as &$item)
 			{
-				$item->order      = abs($this->_parent->metadata->get_meta($item->id, 'order', true));
-				$item->attributes = $this->_parent->metadata->get_meta($item->id, 'attributes', true);
+				$item->order      = abs($this->_parent->metadata->get($item->id, 'order', true));
+				$item->attributes = $this->_parent->metadata->get($item->id, 'attributes', true);
 
 				// Cache items to reduce DB access.
 				$this->_items[$item->id] = $item;
@@ -969,8 +969,8 @@ class Bkader_menus extends CI_Driver
 		{
 			foreach ($db_items as &$item)
 			{
-				$item->order      = abs($this->_parent->metadata->get_meta($item->id, 'order', true));
-				$item->attributes = $this->_parent->metadata->get_meta($item->id, 'attributes', true);
+				$item->order      = abs($this->_parent->metadata->get($item->id, 'order', true));
+				$item->attributes = $this->_parent->metadata->get($item->id, 'attributes', true);
 
 				// Cache items to reduce DB access.
 				$this->_items[$item->id] = $item;
