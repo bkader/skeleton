@@ -28,128 +28,149 @@ So you make sure all these conditions are full-filled before proceeding.
 
 In order to create a new entity, you may use the **create** method or its helper **add_entity** like so:  
 
-    // $guid is the new create entity's ID.
-    $guid = $this->app->entities->create(array(
-	    'type'     => 'user',
-	    'subtype'  => 'administrator',
-	    'username' => 'bkader',
-	    'language' => 'arabic',
-	    'private'  => 1,
-	    ...
-    ));
-    // Of its helper:
-    $guid = add_entity(...);
+```php
+// $guid is the new create entity's ID.
+$guid = $this->app->entities->create(array(
+	'type'     => 'user',
+	'subtype'  => 'administrator',
+	'username' => 'bkader',
+	'language' => 'arabic',
+	'privacy'  => 1,
+...
+));
+// Of its helper:
+$guid = add_entity(...);
+```
 As you have certainly noticed, these method and function will always return the new created entity's **ID** IF created, otherwise they will return **FALSE**.
 
 ### Updating Entities:
 There are two (**2**) method to update entities (+3 helpers). The **update** method targets a single entity and it uses its **ID** or **username** because they are the unique values on the table. The **update_by** method will target a single, mutiple or even all entities.  
 To update a single entity, you may have in your controller:  
+```php
+$this->app->entities->update($id, array(
+	'username' => 'new_username', // An example only.
+));
 
-    $this->app->entities->update($id, array(
-	    'username' => 'new_username', // An example only.
-    ));
-    // Or the helper:
-    update_entity($id, array(...));
+// Or the helper:
+update_entity($id, array(...));
+```
 In order to update multiple entities you may use the following:   
+```php
+$this->app->entities->update_by($where, $data);
+// Or: $this->app->entities->update_by($data) to update all.
 
-    $this->app->entities->update_by($where, $data);
-    // Or: $this->app->entities->update_by($data) to update all.
-    // Or use the helper:
-    update_entity_by(...); // Alias: update_entities(...)
+// Or use the helper:
+update_entity_by(...); // Alias: update_entities(...)
+```
 **Note**: These method and functions can be used to target a single entity as well as long as you use unique values columns for the *WHERE* clause. Example:
-
-    $this->app->entities->update_by(
-	    array('id' => 1), 
-	    array('username' => 'new_username)
-    );
+```php
+$this->app->entities->update_by(
+	array('id' => 1),					// Where id=1 
+	array('username' => 'new_username)	// Change username.
+);
+```
 Also, the *WHERE* clause is arbitrary, so if you simply pass an array of data, all your entities will be updated (**$data** must always be the last OR unique argument).
 
 ### Deleting and Removing Entities:
 The difference between **delete** and **remove** is obvious. The first one marks the entity as **deleted** but keeps all its data on the database while the other one **erases** it completely from the database and walks through all other tables in order to remove all what's related to it.  
 
 In order to delete/remove a single entity, you can do:  
+```php
+$this->app->entities->delete($id); // ID or username.
+$this->app->entities->remove($id); // ID or username.
 
-    $this->app->entities->delete($id); // ID or username.
-    $this->app->entities->remove($id); // ID or username.
-    // Or you can user helpers:
-    delete_entity($id);
-    remove_entity($id);
+// Or you can user helpers:
+delete_entity($id);
+remove_entity($id);
+```
 To delete/remove a single, multiple or all entities, you can do like the following:  
+```php
+$this->app->entities->delete_by($field, $match);
+$this->app->entities->remove_by($field, $match);
 
-    $this->app->entities->delete_by($field, $match);
-    $this->app->entities->remove_by($field, $match);
-    // Or their respective helpers:
-    delete_entity_by(...); // Alias: delete_entities(...);
-    remove_entity_by(...); // Alias: remove_entities(...);
+// Or their respective helpers:
+delete_entity_by(...); // Alias: delete_entities(...);
+remove_entity_by(...); // Alias: remove_entities(...);
+```
 The **match** field is optional in case **field** is an array. Let's see some examples (We will use **delete** only because it's done the same way for remove).  
+```php
+// Delete an entity with username "bkader".
+$this->app->entities->delete_by('username', 'bkader');
 
-    // Delete an entity with username "bkader".
-    $this->app->entities->delete_by('username', 'bkader');
+// Delete multiple entities where ID in array.
+$this->app->entities->delete_by('id', array(1, 7, 13));
 
-    // Delete multiple entities where ID in array.
-    $this->app->entities->delete_by('id', array(1, 7, 13));
-
-    // Delete multiple entities by arbitrary WHERE clause.
-    $this->app->entities->delete_by(array(
-	    'type'         => 'user',
-	    'enabled'      => 0,
-	    'created_at <' => (DAY_IN_SECONDS * 2),
-    ));
+// Delete multiple entities by arbitrary WHERE clause.
+$this->app->entities->delete_by(array(
+	'type'         => 'user',
+	'enabled'      => 0,
+	'created_at <' => (DAY_IN_SECONDS * 2), // Added constant.
+));
+```
 In the last example, we are deleting all **users** accounts that have not been activated and that were created 2 days ago (It would be better to **remove** them instead don't you think?).
 
 ### Restoring Entities:
 Unfortunatly, entities that were **removed** they can **NO LONGER** be stored, they are permanently erased from database and all what's related to them to. But, those that were **deleted** or better, flagged as deleted can be restored anytime using the examples below:  
+```php
+// If you want to restore a single entity:
+$this->app->entities->restore($id); // ID or username.
 
-	// If you want to restore a single entity:
-    $this->app->entities->restore($id); // ID or username.
-    // Or its helper:
-    restore_entity($id);
+// Or its helper:
+restore_entity($id);
 
-    // In case you want to restore multiple entities:
-    $this->app->entities->restore_by($field, $match);
-    // Or its helper:
-    restore_entity_by(...); // Alias: restore_entities(...);
+// In case you want to restore multiple entities:
+$this->app->entities->restore_by($field, $match);
+
+// Or its helper:
+restore_entity_by(...); // Alias: restore_entities(...);
+```
 **Note**: _restore_entity_by_ and _restore_entities_ are certainly used to restore multiple entities, but their can also be used to restore a single entity by arbitrary _WHERE_ clause. Example:  
 
-    $this->app->entities->restore_by('username', 'bkader');
+```php
+$this->app->entities->restore_by('username', 'bkader');
+```
 
 ### Retrieving Entities:
 Three (**3**) method and their helpers are available to retrieve entities.  
-In order to retrieve a single entity, you have two options:
+In order to retrieve a single entity, you have two options:  
 
-    // Option 1: Retreiving the entity by its ID or username.
-    $this->app->entities->get($id);
-    // Or its helper:
-    get_entity($id);
+```php
+// Option 1: Retreiving the entity by its ID or username.
+$this->app->entities->get($id);
+// Or its helper:
+get_entity($id);
 
-    // Option 2: Retrieve a single entity by arbitrary WHERE clause
-    $this->app->entities->get_by($field, $match);
-    // Or its helper:
-    get_entity_by($field, $match);
+// Option 2: Retrieve a single entity by arbitrary WHERE clause
+$this->app->entities->get_by($field, $match);
+// Or its helper:
+get_entity_by($field, $match);
+```
 In case you want to retrieve multiple entities:  
-
-    $this->app->entities->get_many($field, $match);
-    // Or its helper:
-    get_entities($field, $match);
+```php
+$this->app->entities->get_many($field, $match);
+// Or its helper:
+get_entities($field, $match);
+```
 These method and functions, if used without arguments will return an array of all existing entities.  
 Let's see a more elaborated example:  
+```php
+// This will retrieve all entities of type "user".
+get_entities('type', 'user');
 
-    // This will retrieve all entities of type "user".
-    get_entities('type', 'user');
+// This will retrieve all entities of type "user"
+// and subtype "administrator".
+get_entities(array(
+	'type'    => 'user',
+	'subtype' => 'administrator',
+));
 
-    // This will retrieve all entities of type "user"
-    // and subtype "administrator".
-    get_entities(array(
-	    'type'    => 'user',
-	    'subtype' => 'administrator',
-    ));
-
-    // Retrieve all users groups where privacy > 1
-    get_entities(array(
-	    'type'      => 'group',
-	    'subtype'   => 'users',
-	    'privacy >' => 1,
-    ));
+// Retrieve all users groups where privacy > 1
+get_entities(array(
+	'type'      => 'group',
+	'subtype'   => 'users',
+	'privacy >' => 1,
+));
+```
 *Play with it the way you want*.
 
 ## More Details:
