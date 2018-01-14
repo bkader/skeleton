@@ -9,6 +9,7 @@
 
 ## What are options?
 Options are simply site settings stored in **options** table. Even if this table is empty, options are still found and they are stored inside *skeleton/config/defaults.php* file.  
+
 ![Options Table](table_options.png)  
 
 ### Creating Options:

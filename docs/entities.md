@@ -136,6 +136,7 @@ Let's see a more elaborated example:
 
 ## More Details:
 Let's us now talk in depth about **entities** an their table.  
+
 ![Entities Table](table_entities.png)  
 
 If you check the table, the most important columns are:  
