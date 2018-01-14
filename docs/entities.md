@@ -5,6 +5,7 @@
 * [Creating Entities](#markdown-header-creating-entities)
 * [Updating Entities](#markdown-header-updating-entities)
 * [Deleting and Removing Entities](#markdown-header-deleting-and-removing-entities)
+* [Restoring Entities](#markdown-header-restoring-entities)
 * [Retrieving Entities](#markdown-header-retrieving-entities)
 * [More Details](#markdown-header-more-details)
 * [IMPORTANT!](#markdown-header-important)  
@@ -95,6 +96,22 @@ The **match** field is optional in case **field** is an array. Let's see some ex
 	    'created_at <' => (DAY_IN_SECONDS * 2),
     ));
 In the last example, we are deleting all **users** accounts that have not been activated and that were created 2 days ago (It would be better to **remove** them instead don't you think?).
+
+### Restoring Entities:
+Unfortunatly, entities that were **removed** they can **NO LONGER** be stored, they are permanently erased from database and all what's related to them to. But, those that were **deleted** or better, flagged as deleted can be restored anytime using the examples below:  
+
+	// If you want to restore a single entity:
+    $this->app->entities->restore($id); // ID or username.
+    // Or its helper:
+    restore_entity($id);
+
+    // In case you want to restore multiple entities:
+    $this->app->entities->restore_by($field, $match);
+    // Or its helper:
+    restore_entity_by(...); // Alias: restore_entities(...);
+**Note**: _restore_entity_by_ and _restore_entities_ are certainly used to restore multiple entities, but their can also be used to restore a single entity by arbitrary _WHERE_ clause. Example:  
+
+    $this->app->entities->restore_by('username', 'bkader');
 
 ### Retrieving Entities:
 Three (**3**) method and their helpers are available to retrieve entities.  

@@ -348,6 +348,62 @@ class Bkader_entities extends CI_Driver
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Restore a previously soft deleted entity by ID or username.
+	 * @access 	public
+	 * @param 	mixed 	$id 	The entity's ID or username.
+	 * @return 	boolean
+	 */
+	public function restore($id)
+	{
+		return (is_numeric($id))
+			? $this->restore_by('id', $id)
+			: $this->restore_by('username', $id);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Restore multiple entities previously soft deleted by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$param
+	 * @return 	boolean
+	 */
+	public function restore_by($field = null, $match = null)
+	{
+		// Make sure only deleted entities are restore.
+		$this->ci->db->where('deleted', 1);
+
+		// Prepare our WHERE clause.
+		if ( ! empty($field))
+		{
+			if (is_array($field))
+			{
+				$this->ci->db->where($field);
+			}
+			elseif (is_array($match))
+			{
+				$this->ci->db->where_in($field, $match);
+			}
+			else
+			{
+				$this->ci->db->where($field, $match);
+			}
+		}
+
+		// Proceed to sort delete.
+		$this->ci->db
+			->set('deleted', 0)
+			->set('deleted_at', 0)
+			->update('entities');
+
+		// Return TRUE if there are some affected rows.
+		return ($this->ci->db->affected_rows() > 0);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Retrieve a single entity by its ID OR username.
 	 * @access 	public
 	 * @param 	int 	$id 	The entity's ID or username.
@@ -589,6 +645,58 @@ if ( ! function_exists('remove_entities'))
 	function remove_entities($field = null, $match = null)
 	{
 		return get_instance()->app->entities->remove_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('restore_entity'))
+{
+	/**
+	 * Restore a previously soft deleted entity by ID or username.
+	 * @access 	public
+	 * @param 	mixed 	$id 	The entity's ID or username.
+	 * @return 	boolean
+	 */
+	function restore_entity($id)
+	{
+		return get_instance()->app->entities->restore($id);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('restore_entity_by'))
+{
+	/**
+	 * Restore a single or multiple entities previously soft deleted 
+	 * by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$param
+	 * @return 	boolean
+	 */
+	function restore_entity_by($field = null, $match = null)
+	{
+		return get_instance()->app->entities->restore_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('restore_entities'))
+{
+	/**
+	 * Restore a single or multiple entities previously soft deleted 
+	 * by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$param
+	 * @return 	boolean
+	 */
+	function restore_entities($field = null, $match = null)
+	{
+		return get_instance()->app->entities->restore_by($field, $match);
 	}
 }
 
