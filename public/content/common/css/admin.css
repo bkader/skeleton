@@ -25,8 +25,12 @@ body {
 	background-color: #ecf4fc;
 }
 
-.panel.panel-custom {
-	border: 1px solid #d4dce2;
+.tab-settings > .tab-pane {
+	padding: 20px;
+	background-color: #fff;
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
 }
 
 .help-block {
