@@ -77,8 +77,10 @@ class Admin_Controller extends User_Controller
 
 		// Now we add dashboard needed CSS and JS files.
 		$this->theme
-			->add('css', get_common_url('css/font-awesome.min'), 'fontawesome')
+			->add('css', get_common_url('vendor/fira-sans/css/fira-sans.min'), 'fira-sans')
+			->add('css', get_common_url('css/font-awesome.min'), 'font-awesome')
 			->add('css', get_common_url('css/bootstrap.min'), 'bootstrap')
+			->add('css', get_common_url('css/bootstrap-theme.min'), 'bootstrap-theme')
 			->add('css', get_common_url('css/admin'), 'admin')
 			->add('js', get_common_url('js/bootstrap.min'), 'bootstrap')
 			->add('js', get_common_url('js/admin'), 'admin');
