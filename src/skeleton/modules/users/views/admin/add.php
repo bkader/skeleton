@@ -1,9 +1,8 @@
-<h2 class="page-header"><?php _e('us_manage_users') ?> <?php echo admin_anchor('users', lang('us_manage_users'), 'class="btn btn-primary btn-sm pull-right"') ?></h2>
+<h2 class="page-header"><?php _e('add_user') ?> <?php echo admin_anchor('users', lang('us_manage_users'), 'class="btn btn-primary btn-sm pull-right"') ?></h2>
 
 <div class="row">
 	<div class="col-md-4 col-md-offset-4">
-		<div class="panel panel-default">
-			<div class="panel-heading"><h3 class="panel-title"><?php _e('add_user') ?></h3></div>
+		<div class="panel panel-custom">
 			<div class="panel-body">
 				<?php echo form_open('admin/users/add', 'role="form"', @$hidden) ?>
 					<fieldset>

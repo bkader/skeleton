@@ -2,8 +2,7 @@
 
 <div class="row">
 	<div class="col-md-4 col-md-offset-4">
-		<div class="panel panel-default">
-			<div class="panel-heading"><h3 class="panel-title"><?php _e('edit_user') ?></h3></div>
+		<div class="panel panel-custom">
 			<div class="panel-body">
 				<?php echo form_open('admin/users/edit/'.$user->id, 'role="form"', @$hidden) ?>
 					<fieldset>
