@@ -116,6 +116,37 @@ class Bkader_entities extends CI_Driver
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns an array of stored entities.
+	 * @access 	public
+	 * @return 	array
+	 */
+	public function get_all_ids()
+	{
+		// Prepare an empty $ids array.
+		$ids = array();
+
+		// Try to get all entities.
+		$entities = $this->ci->db
+			->select('id')
+			->get('entities')
+			->result();
+
+		// If found any, store their IDs.
+		if ($entities)
+		{
+			foreach ($entities as $ent)
+			{
+				$ids[] = $ent->id;
+			}
+		}
+
+		// Return the final result.
+		return $ids;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Once the entity is remove, we remove everything that is
 	 * related to it: users, groups, objects, metadata, variables
 	 * and relations.
