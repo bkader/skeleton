@@ -3,7 +3,7 @@
 
 <div class="row">
 	<div class="col-sm-12 col-md-4 col-md-offset-4">
-		<div class="panel panel-custom">
+		<div class="panel panel-default">
 			<div class="panel-heading clearfix text-right">
 				<a href="#advanced" role="button" data-toggle="collapse" aria-expanded="false" aria-controls="advanced"><?php _e('advanced'); ?></a>
 			</div>

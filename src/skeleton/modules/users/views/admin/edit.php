@@ -2,7 +2,7 @@
 
 <div class="row">
 	<div class="col-md-4 col-md-offset-4">
-		<div class="panel panel-custom">
+		<div class="panel panel-default">
 			<div class="panel-body">
 				<?php echo form_open('admin/users/edit/'.$user->id, 'role="form"', @$hidden) ?>
 					<fieldset>
@@ -47,7 +47,7 @@
 							</span>
 						</div>
 
-						<button type="submit" class="btn btn-primary btn-block"><?php _e('edit_user') ?></button>
+						<button type="submit" class="btn btn-primary btn-sm btn-block"><?php _e('edit_user') ?></button>
 					</fieldset>
 				<?php echo form_close() ?>
 			</div>

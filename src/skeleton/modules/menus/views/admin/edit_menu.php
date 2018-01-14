@@ -2,7 +2,7 @@
 
 <div class="row">
 	<div class="col-sm-12 col-md-4 col-md-offset-4">
-		<div class="panel panel-custom">
+		<div class="panel panel-default">
 			<div class="panel-body">
 				<?php echo form_open('admin/menus/edit/menu/'.$menu->id, 'role="form"', $hidden); ?>
 

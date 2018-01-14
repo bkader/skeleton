@@ -1,6 +1,6 @@
 <h2 class="page-header"><?php _e('us_manage_users') ?> <?php echo admin_anchor('users/add', lang('add_user'), 'class="btn btn-primary btn-sm pull-right"') ?></h2>
 
-<div class="panel panel-custom">
+<div class="panel panel-default">
 	<div class="panel-body">
 		<table class="table table-hover table-condensed">
 			<thead>

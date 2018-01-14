@@ -5,7 +5,7 @@
 	</span>
 </h2>
 
-<div class="panel panel-custom">
+<div class="panel panel-default">
 	<div class="panel-body">
 		<table class="table table-hover table-condensed">
 			<thead>
