@@ -6,30 +6,35 @@
 <div class="row">
 	<!-- Menus items -->
 	<div class="col-sm-12 col-md-9 col-md-push-3">
-		<h4 class="page-header"><?php _e('menu_structure'); ?> &nbsp;<small><?php _e('menu_structure_tip'); ?></small><span class="pull-right"><button class="btn btn-primary btn-xs" id="save-menu"><?php _e('save_menu'); ?></button></span></h4>
-		<table class="table table-hover table-striped">
-			<thead>
-				<tr>
-					<th class="col-md-3"><?php _e('title') ?></th>
-					<th class="col-md-6"><?php _e('description') ?></th>
-					<th class="col-md-3 text-right"><?php _e('action') ?></th>
-				</tr>
-			</thead>
-		<?php if ($items): ?>
-			<tbody id="sortable">
-		<?php foreach ($items as $item): ?>
-				<tr id="item-<?php echo $item->id; ?>">
-					<td><?php echo htmlspecialchars_decode($item->title) ?><br><small><em><?php echo anchor($item->href, null, 'target="_blank"') ?></em></small></td>
-					<td><?php echo $item->description ?></td>
-					<td class="text-right">
-						<a class="btn btn-default btn-xs" href="<?php echo admin_url('menus/edit/item/'.$item->id) ?>" title="<?php _e('edit_menu') ?>"><i class="fa fa-edit"></i></a>&nbsp;
-						<a class="btn btn-danger btn-xs" onclick="return confirm('<?php _e('are_your_sure', lang('delete_item')) ?>');" href="<?php echo safe_admin_url('menus/delete/item/'.$item->id) ?>" title="<?php _e('delete_menu') ?>"><i class="fa fa-times"></i></a>
-					</td>
-				</tr>
-		<?php endforeach; ?>
-			</tbody>
-		<?php endif; ?>
-		</table>
+
+		<div class="panel panel-default">
+			<div class="panel-body">
+			<h4><?php _e('menu_structure'); ?> &nbsp;<small><?php _e('menu_structure_tip'); ?></small><span class="pull-right"><button class="btn btn-primary btn-sm" id="save-menu"><?php _e('save_menu'); ?></button></span></h4><br />
+				<table class="table table-hover table-striped">
+					<thead>
+						<tr>
+							<th class="col-md-3"><?php _e('title') ?></th>
+							<th class="col-md-6"><?php _e('description') ?></th>
+							<th class="col-md-3 text-right"><?php _e('action') ?></th>
+						</tr>
+					</thead>
+				<?php if ($items): ?>
+					<tbody id="sortable">
+				<?php foreach ($items as $item): ?>
+						<tr id="item-<?php echo $item->id; ?>">
+							<td><?php echo htmlspecialchars_decode($item->title) ?><br><small><em><?php echo anchor($item->href, null, 'target="_blank"') ?></em></small></td>
+							<td><?php echo $item->description ?></td>
+							<td class="text-right">
+								<a class="btn btn-default btn-xs" href="<?php echo admin_url('menus/edit/item/'.$item->id) ?>" title="<?php _e('edit_menu') ?>"><i class="fa fa-edit"></i></a>&nbsp;
+								<a class="btn btn-danger btn-xs" onclick="return confirm('<?php _e('are_your_sure', lang('delete_item')) ?>');" href="<?php echo safe_admin_url('menus/delete/item/'.$item->id) ?>" title="<?php _e('delete_menu') ?>"><i class="fa fa-times"></i></a>
+							</td>
+						</tr>
+				<?php endforeach; ?>
+					</tbody>
+				<?php endif; ?>
+				</table>
+			</div>
+		</div>
 	</div>
 	<!-- Add items. -->
 	<div class="col-sm-12 col-md-3 col-md-pull-9">

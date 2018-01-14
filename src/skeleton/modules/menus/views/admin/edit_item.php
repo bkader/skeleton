@@ -1,15 +1,11 @@
-<h3 class="page-header"><?php _e('edit_item'); ?></h3>
+<h2 class="page-header"><?php _e('edit_item'); ?><span class="pull-right"><?php echo admin_anchor('menus/items/'.$item->menu_id, lang('back'), 'class="btn btn-default btn-sm"'); ?></span>
+</h2>
 
 <div class="row">
 	<div class="col-sm-12 col-md-4 col-md-offset-4">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<div class="panel-title">
-					<?php _e('edit_item'); ?>
-					<small class="pull-right">
-						<a href="#advanced" role="button" data-toggle="collapse" aria-expanded="false" aria-controls="advanced"><?php _e('advanced'); ?></a>
-					</small>
-				</div>
+		<div class="panel panel-custom">
+			<div class="panel-heading clearfix text-right">
+				<a href="#advanced" role="button" data-toggle="collapse" aria-expanded="false" aria-controls="advanced"><?php _e('advanced'); ?></a>
 			</div>
 			<div class="panel-body">
 				<?php echo form_open('admin/menus/edit/item/'.$item->id, 'role="form"', $hidden); ?>
@@ -50,8 +46,8 @@
 						<?php echo form_error('description', '<p class="help-block">', '</p>') ?: '<p class="help-block">'.lang('item_description_tip').'</p>' ?>
 					</div>
 
-					<button type="submit" class="btn btn-primary pull-right"><?php _e('save_item'); ?></button>
-					<?php echo anchor('admin/menus/items/'.$item->menu_id, lang('cancel'), 'class="btn btn-default"'); ?>
+					<button type="submit" class="btn btn-primary btn-sm pull-right"><?php _e('save_item'); ?></button>
+					<?php echo anchor('admin/menus/items/'.$item->menu_id, lang('cancel'), 'class="btn btn-default btn-sm"'); ?>
 
 				<?php echo form_close(); ?>
 			</div>

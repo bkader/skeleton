@@ -1,8 +1,8 @@
-<h3 class="page-header"><?php _e('add_menu'); ?></h3>
+<h2 class="page-header"><?php _e('add_menu') ?> <?php echo admin_anchor('menus', lang('manage_menus'), 'class="btn btn-primary btn-sm pull-right"') ?></h2>
 
 <div class="row">
 	<div class="col-sm-12 col-md-4 col-md-offset-4">
-		<div class="panel panel-default">
+		<div class="panel panel-custom">
 			<div class="panel-body">
 				<?php echo form_open('admin/menus/add', 'role="form"', $hidden); ?>
 
@@ -18,8 +18,8 @@
 						<p class="help-block"><?php _e('menu_description_tip'); ?></p>
 					</div>
 
-					<button type="submit" class="btn btn-primary pull-right"><?php _e('add_menu'); ?></button>
-					<?php echo anchor('admin/menus', lang('cancel'), 'class="btn btn-default"'); ?>
+					<button type="submit" class="btn btn-primary btn-sm pull-right"><?php _e('add_menu'); ?></button>
+					<?php echo anchor('admin/menus', lang('cancel'), 'class="btn btn-default btn-sm"'); ?>
 
 				<?php echo form_close(); ?>
 			</div>

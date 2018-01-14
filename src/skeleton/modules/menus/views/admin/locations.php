@@ -29,7 +29,7 @@
 
 					<div class="form-group">
 						<div class="col-sm-8 col-sm-offset-4">
-							<button type="submit" class="btn btn-primary"><?php _e('save_changes'); ?></button>
+							<button type="submit" class="btn btn-primary btn-sm"><?php _e('save_changes'); ?></button>
 						</div>
 					</div>
 
