@@ -17,7 +17,7 @@ There are four (**4**) important methods (or functions if you want) that you can
 * **create()** (or *add_meta()*);
 * **update()** (or *update_meta()*);
 * **get()** (or *get_meta()*);
-* **delete()** (or *delete_meta()).
+* **delete()** (or *delete_meta()*).
 
 There is another method available that you can use but we will leave it for later.  
 
@@ -60,7 +60,14 @@ To update multiple metadata, pass an array as the second parameter like so:
     // Or use the helper function:
     update_meta(...)
 
-**NOTE**: This method or its helper will not only update the selected metadata but they will create it if it does not exists. So you can use it to create metadata as well.
+**NOTE**: This method or its helper will not only update the selected metadata but they will create it if it does not exists. So you can use it to create metadata as well.  
+
+If you want to update a single or multiple metadata by arbitrary _WHERE_ clause, you can use the following method:
+
+    $this->app->metadata->update_by($where, $data);
+    // Or the helper:
+    update_meta_by($where, $data);
+**Note**: if you pass only **where**, it will be treated as the **data** to updated and all metadata will be updated.
 
 ### Deleting Metadata:
 In order to delete metadata, you can use the method **delete** or the helper **delete_meta**. So in your controllers, you may have:

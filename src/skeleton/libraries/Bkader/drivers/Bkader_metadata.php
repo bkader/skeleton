@@ -204,6 +204,64 @@ class Bkader_metadata extends CI_Driver
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Update a single or multiple metadata.
+	 * @access 	public
+	 * @return 	boolean
+	 *
+	 * @example:
+	 * $this->app->metadata->update_by(
+	 * 		array('guid' => 1, 'name' => 'var_name'),
+	 *   	array(
+	 *   		'value'  => 'new_value',
+	 *   		'params' => 'new_params'
+	 *   	)
+	 * );
+	 */
+	public function update_by()
+	{
+		// Let's first collect method arguments.
+		$args = func_get_args();
+
+		// If there are not, nothing to do.
+		if (empty($args))
+		{
+			return false;
+		}
+
+		/**
+		 * Data to update is always the last argument
+		 * and it must be an array.
+		 */
+		$data = array_pop($args);
+		if ( ! is_array($data) OR empty($data))
+		{
+			return false;
+		}
+
+		// Prepare the value and params.
+		(isset($data['value'])) && $data['value'] = to_bool_or_serialize($data['value']);
+
+		// Prepare our query.
+		$this->ci->db->set($data);
+
+		// If there are any arguments left, they will use as WHERE clause.
+		if ( ! empty($args))
+		{
+			// Get rid of nasty deep array.
+			(is_array($args[0])) && $args = $args[0];
+
+			// Add the WHERE clause.
+			$this->ci->db->where($args);
+		}
+
+		// Proceed to update an return TRUE if all went good.
+		$this->ci->db->update('metadata');
+		return ($this->ci->db->affected_rows() > 0);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Delete a single or multiple metadata.
 	 * @access 	public
 	 * @return 	boolean
@@ -394,6 +452,23 @@ if ( ! function_exists('update_meta'))
 	function update_meta($guid, $meta, $value = null)
 	{
 		return get_instance()->app->metadata->update($guid, $meta, $value);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('update_meta_by'))
+{
+	/**
+	 * Update a single or multiple metadata.
+	 * @return 	boolean
+	 */
+	function update_meta_by()
+	{
+		return call_user_func_array(
+			array(get_instance()->app->metadata, 'update_by'),
+			func_get_args()
+		);
 	}
 }
 
