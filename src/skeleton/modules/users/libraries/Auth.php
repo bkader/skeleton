@@ -425,7 +425,7 @@ class Auth
 		$this->ci->session->set_userdata($sess_data);
 
 		// Now we create/update the variable.
-		$this->app->variables->create_or_update($user_id, 'online_token', $token);
+		$this->app->variables->set($user_id, 'online_token', $token);
 
 		// Put the user online.
 		$this->app->users->update($user_id, array('online' => 1));
