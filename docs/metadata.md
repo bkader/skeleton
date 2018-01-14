@@ -129,6 +129,7 @@ There is additional methods and their helpers that you can use to retrieve a sin
     get_many_meta($field, $match);
 
 ## What else?
+![Metadata Table](table_metadata.png)  
 Sometimes users, objects or groups are deleted from **entities** table. And because they no longer exist, it is kind of useless to keep their metadata, this is why the **purge** method or **purge_meta** function were added.  
 These funtions will simply delete ALL metadata of entity's that do not exist. That's all. To use them:
 

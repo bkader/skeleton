@@ -16,7 +16,9 @@ They can be used to store session-related data, temporary string used for accoun
 Even almost alike, **metadata** and **variables** tables are different. Variables table has three (**3**) additional columns:  
 * **params**: think of them as additional data you want to store.
 * **created_at**: you guessed right? (*UNIX_TIMESTAMP*)
-* **updated_at**: You guessed as well? No! Oh come on, the date in which the variable was updated! And the one above it holds the date in which it was created.
+* **updated_at**: You guessed as well? No! Oh come on, the date in which the variable was updated! And the one above it holds the date in which it was created.  
+
+![Varibles Table](table_variables.png)  
 
 ## How to use?
 There are eight (**8**) method (and their helpers) that you can use in order to manage your application's variables. Some of them are for a **single** variable operations and others are for **multiple** variables.  

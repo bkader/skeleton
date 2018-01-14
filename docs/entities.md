@@ -136,6 +136,8 @@ Let's see a more elaborated example:
 
 ## More Details:
 Let's us now talk in depth about **entities** an their table.  
+![Entities Table](table_entities.png)  
+
 If you check the table, the most important columns are:  
 * __parent_id__: This is useful if you want to make your entities hierarchical.
 * __owner_id__: If a group or object is created by a user, it's a good practice to put his/her id there. Not only that, if for instead objects belong to a given group, this column is also useful to say that the group owns those objects ... etc ! *Use your imagination*.
