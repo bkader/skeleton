@@ -1,3 +1,4 @@
+
 # Entities
 
 * [Definition](#markdown-header-definition)  
@@ -140,17 +141,18 @@ Let's us now talk in depth about **entities** an their table.
 ![Entities Table](table_entities.png)  
 
 If you check the table, the most important columns are:  
-* __parent_id__: This is useful if you want to make your entities hierarchical.
-* __owner_id__: If a group or object is created by a user, it's a good practice to put his/her id there. Not only that, if for instead objects belong to a given group, this column is also useful to say that the group owns those objects ... etc ! *Use your imagination*.
-* __type__: Entities types are important. There are three types of entities: **user**, **group** and **object**. To know more about them, please refer to their corresponding documentation.
-* __subtype__: This is the column that plays the biggest role. All of your site's entities are divided into subtypes **YOU CHOOSE**. For instance, the provided **menus** module stores menus as **group** entities while using **menu** as the **subtype**. This module store menus items (links) as **object** entities whil using **menu_item** as **subtype**... ect! *Use your imagination*.
-* __username__: This is one of the unique columns (with ID). It is an optional column for certain entities that do not require usernames but are necessary for others (such as users).
-* __language__: Even if it is an optional column, it comes handy if you want to make your website multilingual. For instance, if a user uses **french**, when he/she logs in, the site's language changes. If you store static pages for insteace and you want to translate them, you can store their languages there as well.
-* __privacy__: This is as well an optional column with default value **2**. The idea behind this is to make entities access by privacy level. By default, we are using:
-	* __-1__: For entities accessible to owners only.
-	* __0__: For entities accessible to owners only. If you allow user to follow each other for instance or develop a friendship system between users, this can be used to display entities for entities in relation with the owner only.
-	* __1__: For entities accessible to registered and logged in users.
-	* __2__: For entities that are publicaly accessible.
+
+- __parent_id__: This is useful if you want to make your entities hierarchical.
+- __owner_id__: If a group or object is created by a user, it's a good practice to put his/her id there. Not only that, if for instead objects belong to a given group, this column is also useful to say that the group owns those objects ... etc ! *Use your imagination*.
+- __type__: Entities types are important. There are three types of entities: **user**, **group** and **object**. To know more about them, please refer to their corresponding documentation.
+- __subtype__: This is the column that plays the biggest role. All of your site's entities are divided into subtypes **YOU CHOOSE**. For instance, the provided **menus** module stores menus as **group** entities while using **menu** as the **subtype**. This module store menus items (links) as **object** entities whil using **menu_item** as **subtype**... ect! *Use your imagination*.
+- __username__: This is one of the unique columns (with ID). It is an optional column for certain entities that do not require usernames but are necessary for others (such as users).
+- __language__: Even if it is an optional column, it comes handy if you want to make your website multilingual. For instance, if a user uses **french**, when he/she logs in, the site's language changes. If you store static pages for insteace and you want to translate them, you can store their languages there as well.
+- __privacy__: This is as well an optional column with default value **2**. The idea behind this is to make entities access by privacy level. By default, we are using:
+	- __-1__: For entities accessible to owners only.
+	- __0__: For entities accessible to owners only. If you allow user to follow each other for instance or develop a friendship system between users, this can be used to display entities for entities in relation with the owner only.
+	- __1__: For entities accessible to registered and logged in users.
+	- __2__: For entities that are publicaly accessible.
 
 Other columns, *enabled*, *deleted*, *created_at*, *updated_at* and *deleted_at* are automatically handled so you don't worry about them.  
 **Note**: The *deleted* column is the one used to **soft delete** entities. It is set to **1** after deletion and the *deleted_at* will hold the timestamp.
