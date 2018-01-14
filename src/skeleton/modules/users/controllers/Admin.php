@@ -65,7 +65,7 @@ class Admin extends Admin_Controller
 
 		// Pagination configuration.
 		$config['base_url']   = $config['first_link'] = admin_url('users');
-		$config['total_rows'] = $this->app->users->count_all();
+		$config['total_rows'] = $this->app->users->count();
 		$config['per_page']   = $this->config->item('per_page');
 
 		// Initialize pagination.
@@ -83,7 +83,7 @@ class Admin extends Admin_Controller
 		$limit = $config['per_page'];
 
 		// Get all users.
-		$data['users'] = $this->app->users->get_all_users($limit, $offset);
+		$data['users'] = $this->app->users->get_all($limit, $offset);
 		$this->theme
 			->set_title(lang('us_manage_users'))
 			->render($data);
@@ -122,9 +122,10 @@ class Admin extends Admin_Controller
 		));
 
 		// Were form fields stored in session?
-		if (is_array($this->session->flashdata('form')))
+		$cached = $this->session->flashdata('form');
+		if ($cached && is_array($cached))
 		{
-			extract($this->session->flashdata('from'));
+			extract($cached);
 		}
 
 		// Before form processing
@@ -167,16 +168,16 @@ class Admin extends Admin_Controller
 		// Process form.
 		else
 		{
-			// Passed CSRF?
-			if ( ! $this->check_csrf())
-			{
-				// Store form values in session
-				$this->session->set_flashdata('form', $this->input->post(null, true));
+			// // Passed CSRF?
+			// if ( ! $this->check_csrf())
+			// {
+			// 	// Store form values in session
+			// 	$this->session->set_flashdata('form', $this->input->post(null, true));
 
-				set_alert(lang('error_csrf'), 'error');
-				redirect('admin/users/add', 'refresh');
-				exit;
-			}
+			// 	set_alert(lang('error_csrf'), 'error');
+			// 	redirect('admin/users/add', 'refresh');
+			// 	exit;
+			// }
 
 			$user_data            = $this->input->post(array('first_name', 'last_name', 'email', 'username', 'password'), true);
 			$user_data['enabled'] = ($this->input->post('enabled') == '1') ? 1 : 0;
@@ -257,12 +258,6 @@ class Admin extends Admin_Controller
 		// Prepare form validation and rules.
 		$this->prep_form($rules);
 
-		// Were form fields stored in session?
-		if ($this->session->flashdata('form'))
-		{
-			extract($this->session->flashdata('from'));
-		}
-
 		// Before form processing
 		if ($this->form_validation->run() == false)
 		{
@@ -302,15 +297,12 @@ class Admin extends Admin_Controller
 		else
 		{
 			// Passed CSRF?
-			if ( ! $this->check_csrf())
-			{
-				// Store form values in session
-				$this->session->set_flashdata('form', $this->input->post(null, true));
-
-				set_alert(lang('error_csrf'), 'error');
-				redirect($this->agent->referrer(), 'refresh');
-				exit;
-			}
+			// if ( ! $this->check_csrf())
+			// {
+			// 	set_alert(lang('error_csrf'), 'error');
+			// 	redirect($this->agent->referrer(), 'refresh');
+			// 	exit;
+			// }
 
 			$user_data = $this->input->post(array('first_name', 'last_name', 'email', 'username', 'password', 'gender'), true);
 			$user_data['enabled'] = ($this->input->post('enabled') == '1') ? 1 : 0;
@@ -350,7 +342,7 @@ class Admin extends Admin_Controller
 			else
 			{
 				set_alert(lang('us_admin_edit_error'), 'error');
-				redirect('admin/users/edit/'.$user->id, 'refresh');
+				redirect('admin/users/edit/'.$data['user']->id, 'refresh');
 			}
 			exit;
 		}

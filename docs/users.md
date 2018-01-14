@@ -1,0 +1,191 @@
+# Users
+Users are one of available (allowed) entities types. Their data are stored in two (**2**) tables: **entities** and **users**.  
+
+* [Table Structure?](#markdown-header-table-structure)  
+* [Creating Users](#markdown-header-creating-users)
+* [Updating Users](#markdown-header-updating-users)
+* [Deleting and Removing Users](#markdown-header-deleting-and-removing-users)
+* [Retrieving Users](#markdown-header-retrieving-users)
+* [Counting Users](#markdown-header-counting-users)
+* [IMPORTANT!](#markdown-header-important) 
+
+## Table Structure:
+![Users Table](table_users.png)  
+
+All common data are stored in **entities** table (creation date, update date, status, privacy ...), the rest is stored inside **users** table: email, password, first name, last name, gender and online.
+
+### Creating Users:
+In order to create a new user account, you can use the **create** method or its helper **add_user**. Example:
+```php
+$id = $this->app->users->create(array(
+	'username'   => 'bkader',
+	'email'      => 'bkader@mail.com',
+	'password'   => 'this_is_MY_pa33w0rd',
+	'first_name' => 'Kader',
+	'last_name'  => 'Bouyakoub',
+	'gender'     => 'male',
+	'subtype'    => 'regular', // (*)
+));
+```
+(*) The subtype is important! If you don't set your own, the default one **regular** will be used. This is what divide your users into groups.  
+Here are some examples:
+```php
+'subtype' => 'administrator', // This is an admin.
+'subtype' => 'premium', // Example for premium users ... etc
+```
+You can use the helper in your controllers as well:
+```php
+$id = add_user(array(
+	'username'   => 'bkader',
+	'email'      => 'bkader@mail.com',
+	'password'   => 'this_is_MY_pa33w0rd',
+	'first_name' => 'Kader',
+	'last_name'  => 'Bouyakoub',
+	'gender'     => 'male',
+	'subtype'    => 'regular', // (*)
+));
+```
+This function and the method abouve it will return the newly created user's **ID**, IF created! Otherwise they will return `FALSE`.
+
+
+### Updating Users:
+To update a user, you can use the **update** method or the **update_user** helper. They both take the user ID as the first argument, and the array of data to set as the second (*array*). Example:  
+```php
+$this->app->users->update(1, array(
+	'first_name' => 'Ian',		// This is in "users" table.
+	'language'   => 'english',	// This is in "entities" table.
+	'privacy'    => 2,			// This one is in "entities" too.
+));
+
+// Or you can use the helper:
+update_user(1, array(
+	'first_name' => 'Ian',		// This is in "users" table.
+	'language'   => 'english',	// This is in "entities" table.
+	'privacy'    => 2,			// This one is in "entities" too.
+));
+```
+This function and the method above it will return `TRUE` if the account is updated. Otherwise they will return `FALSE`.
+
+### Deleting and Removing Users:
+As explained on **entities** documentation, **delete** and **remove** are not alike. A deleted user still exists on the database but is flagged as **deleted**. Remove users are gone and all their data too. So be careful what to you want to use. Because delete and remove functions are almost alike in structure but different in function, we will only use **delete** as an example:  
+```php
+$this->app->users->delete($id); // ID, username or email address.
+// Or you can use the helper:
+delete_user($id);
+```
+If you want a little more freedom, you can use the following method:  
+```php
+$this->app->users->delete_by($field, $match);
+// Or you can user the helper:
+delete_user_by($field, $match); // Alias: delete_users(...)
+
+// Example #1:
+delete_user_by('username', 'bkader'); // Only one target.
+
+// Example #2:
+delete_user_by('id', [1, 2, 3]); // Multiple targets.
+
+// Example #3 (another version of Example #1):
+delete_user_by(array('username' => 'bkader')); // Single target.
+
+// Example #4 (delete_users is an alias of delete_user_by).
+delete_users(array(
+	'subtype'      => 'regular',
+	'enabled'      => 0,
+	'created_at <' => time() - (DAY_IN_SECONDS * 2)
+));
+```
+In the example #4, we are deleting all accounts of type **regular**, that has not been activated yet AND were created two (**2**) days ago.  
+
+As I said earlier in this section, remove methods and functions are like those of delete. (BUT, don't forget that they completely erase data from database).  
+```php
+// Single user by ID, username or email address.
+$this->app->users->remove($id);
+remove_user($id);
+
+// Multiple users.
+$this->app->users->remove_by($field, $match);
+remove_user_by($field, $match);
+remove_users($field, $match);
+```
+
+### Restoring Users:
+Only **soft-deleted** users can be restored! Not **removed** ones, these ones are completely erased. To restore users you do like the example below:  
+```php
+// Restore a single user by ID.
+$this->app->users->restore($id);
+// Or you can use the helper:
+restore_user($id);
+
+// To restore multiple users.
+$this->app->users->restore_by($field, $match);
+// Or user can use helpers:
+restore_user_by($field, $match);
+restore_users($field, $match);
+```
+
+### Retrieving Users:
+In order to retrieve a single, multiple or all users, four (**4**) methods and their helpers and available to use.  
+
+To retrieve a single user, you have two options:  
+
+```php
+// Option 1
+$user = $this->app->users->get($id);
+// Or you can use the helper:
+$user = get_user($id);
+// $id here can be: INT, username or email address.
+```
+```php
+// Option 2: arbitrary WHERE clause.
+$user = $this->app->users->get_by($field, $match);
+// Or you can user the helper:
+$user = get_user_by($field, $match);
+```
+To retrieve multiple users, you can user the **get_many** method like so:
+```php
+$users = $this->app->users->get_many($field, $match);
+// Or you can use the helper:
+$users = get_users($field, $match);
+```
+In the example above, **field** can be a string for a column name, or an associative array while **match** is the comparison value and can be anything even an *array* so that you can use the query builder's *where_in* method. Exampe:
+```php
+$users = $this->app->users->get_many('id', [1, 7, 13]);
+// To retrieve all users where ID is in the list.
+// Or the helper:
+$users = get_users('id', [1, 7, 13]);
+```
+This method and its helper accept two more arguments (3rd and 4th) which are **limit** and **offset**. Example:
+```php
+$users = get_users('subtype', 'regular', 10, 1);
+```
+To retrieve all users from database, you can use the **get_all** method or its helper:   
+```php
+$all_users = $this->app->users->get_all();
+// Or the helper:
+$all_users = get_all_users();
+```
+This method and its helper accept two arguments, **limit** and **offset** in case you want to use pagination. Example:  
+```php
+$all_users = $this->app->user->get_all(10, 2);
+// Or the helper:
+$all_users = get_all_users(10, 2);
+```
+**Note**: the method **get_many** can retrieve all users as well, all you have to do is to pass `NULL` as the 1st and 2nd argument then pass you *limit* and *offset*. Example: 
+```php
+$all_users = $this->app->users->get_many(NULL, NULL, 10, 2);
+// Or the helper:
+$all_users = get_users(NULL, NULL, 10, 2);
+```
+
+### Counting Users:
+You can count app existing users in your database like so:  
+```php
+$count = $this->app->users->count($field, $match);
+// Or you can user the helper:
+count_users($field, $match);
+```
+Without arguments, these method an function will count all users.
+
+## IMPORTANT:
+All methods and functions are to be used inside controllers. In case you want to use them inside libraries, make sure to never use helpers because they will trigger an `undefined property: $app`  error.

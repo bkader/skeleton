@@ -137,7 +137,7 @@ class Bkader_entities extends CI_Driver
 		 * 4. The entity username is available.
 		 */
 		if (empty($data) 
-			OR ( ! isset($data['subtype']) OR ! in_array($data['subtype'], array('user', 'group', 'object'))) 
+			OR ( ! isset($data['type']) OR ! in_array($data['type'], array('user', 'group', 'object'))) 
 			OR ! isset($data['subtype']) 
 			OR (isset($data['username']) && $this->get_by('username', $data['username'])))
 		{
@@ -164,8 +164,8 @@ class Bkader_entities extends CI_Driver
 	public function update($id, array $data = array())
 	{
 		return (is_numeric($id))
-			? $this->update_by(array('id', $id), $data)
-			: $this->update_by(array('username', $id), $data);
+			? $this->update_by(array('id' => $id), $data)
+			: $this->update_by(array('username' => $id), $data);
 	}
 
 	// ------------------------------------------------------------------------

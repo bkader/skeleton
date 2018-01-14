@@ -66,32 +66,7 @@ class Bkader_users extends CI_Driver
 	 */
 	public function initialize()
 	{
-		// Make sure to load entities model.
-		$this->ci->load->model('bkader_users_m');
-
 		log_message('info', 'Bkader_users Class Initialized');
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Magic __call method to use users model methods too.
-	 * @access 	public
-	 * @param 	string 	$method 	the method's name.
-	 * @param 	array 	$params 	arguments to pass to method.
-	 * @return 	mixed 	depends on the called method.
-	 */
-	public function __call($method, $params = array())
-	{
-		if (method_exists($this->ci->bkader_users_m, $method))
-		{
-			return call_user_func_array(
-				array($this->ci->bkader_users_m, $method),
-				$params
-			);
-		}
-
-		throw new BadMethodCallException("No such method ".get_called_class()."::{$method}().");
 	}
 
 	// ------------------------------------------------------------------------
@@ -141,10 +116,10 @@ class Bkader_users extends CI_Driver
 		}
 
 		// Split data.
-		list($entity, $user, $meta) = $this->_split_data($data);
+		list($entity, $user) = $this->_split_data($data);
 
 		// Make sure to alwayas add the entity's type.
-		(isset($entity['type']) && $entity['type'] == 'user') OR $entity['type'] = 'user';
+		$entity['type'] = 'user';
 
 		// Make sure user's type is always set.
 		(isset($entity['subtype'])) OR $entity['subtype'] = 'regular';
@@ -158,12 +133,12 @@ class Bkader_users extends CI_Driver
 			$entity['enabled'] = 0;
 
 			// Generate the activation code for later use.
-			(class_exists('CI_Hash', false)) OR $this->ci->load->library('hash');
-			$activation_code = $this->ci->hash->random(40);
+			(function_exists('random_string')) OR $this->ci->load->helper('string');
+			$activation_code = random_string('alnum', 40);
 		}
 
 		// Let's insert the entity first and make sure it's created.
-		$guid = $this->_parent->entities->insert($entity);
+		$guid = $this->_parent->entities->create($entity);
 		if ( ! $guid)
 		{
 			return false;
@@ -172,25 +147,33 @@ class Bkader_users extends CI_Driver
 		// Add the id to user.
 		$user['guid'] = $guid;
 
-		// Insert the user.
-		$this->ci->bkader_users_m->insert($user);
-
-		// If there are any metadata, insert them.
-		if ( ! empty($meta))
+		// Hash the password!
+		// Hash the password if present.
+		if (isset($user['password']) && ! empty($user['password']))
 		{
-			$this->_parent->metadata->create_for($guid, $meta);
+			$user['password'] = password_hash($user['password'], PASSWORD_BCRYPT);
 		}
+
+		// Make sure the the gender is valid.
+		if (isset($user['gender']) 
+			&& ! in_array($user['gender'], array('unspecified', 'male', 'female')))
+		{
+			$user['gender'] = 'unspecified';
+		}
+
+		// Insert the user.
+		$this->ci->db->insert('users', $user);
 
 		// Is the user enabled?
 		if ($activation_code !== null)
 		{
 			// Create the variable.
-			$this->_parent->variables->insert(array(
-				'guid'   => $guid,
-				'name'   => 'activation_code',
-				'value'  => $activation_code,
-				'params' => 'requested from: '.$this->ci->input->ip_address(),
-			));
+			$this->_parent->variables->create(
+				$guid,
+				'activation_code',
+				$activation_code,
+				'requested from: '.$this->ci->input->ip_address()
+			);
 		}
 
 		return $guid;
@@ -205,7 +188,7 @@ class Bkader_users extends CI_Driver
 	 * @param 	array 	$data
 	 * @return 	bool
 	 */
-	public function update($user_id, array $data = array())
+	public function update($id, array $data = array())
 	{
 		// Empty $data? Nothing to do.
 		if (empty($data))
@@ -214,55 +197,313 @@ class Bkader_users extends CI_Driver
 		}
 
 		// Split data.
-		list($entity, $user, $meta) = $this->_split_data($data);
+		list($entity, $user) = $this->_split_data($data);
 
 		// Update entity.
-		if ( ! empty($entity) && ! $this->_parent->entities->update($user_id, $entity))
+		if ( ! empty($entity) && ! $this->_parent->entities->update($id, $entity))
 		{
 			return false;
 		}
 
-		// Update user.
-		if ( ! empty($user) && ! $this->ci->bkader_users_m->update($user_id, $user))
-		{
-			return false;
-		}
-
-		// Some metadata.
-		if ( ! empty($meta) && ! $this->_parent->metadata->update_for($user_id, $meta))
-		{
-			return false;
-		}
-
+		$this->ci->db->update('users', $user, array('guid' => $id));
 		return true;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Count all users.
-	 *
+	 * Delete a single user by ID, username or email address.
 	 * @access 	public
-	 * @return 	int
+	 * @param 	mixed 	$id
+	 * @return 	boolean
 	 */
-	public function count_all()
+	public function delete($id)
 	{
-		return $this->ci->bkader_users_m->count_all();
+		// Delete by ID.
+		if (is_numeric($id))
+		{
+			return $this->_parent->entities->delete($id);
+		}
+
+		// Delete by username.
+		$user = (false !== filter_var($id, FILTER_VALIDATE_EMAIL))
+			? $this->get_by('users.email', $id)
+			: $this->get_by('entities.username', $id);
+
+		return ($user) ? $this->ci->_parent->entities->delete($user->id) : false;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Get all users.
-	 *
+	 * Delete multiple users by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	boolean
+	 */
+	public function delete_by($field = null, $match = null)
+	{
+		// See if users exist.
+		$users = $this->get_many($field, $match);
+
+		// If there are any, we collect their IDs to send only one request.
+		if ($users)
+		{
+			$ids = array();
+			foreach ($users as $user)
+			{
+				$ids[] = $user->id;
+			}
+
+			return $this->_parent->entities->delete_by('id', $ids);
+		}
+
+		return false;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Completely remove a single user by ID, username or email address.
+	 * @access 	public
+	 * @param 	mixed 	$id
+	 * @return 	boolean
+	 */
+	public function remove($id)
+	{
+		// Completely remove by ID.
+		if (is_numeric($id))
+		{
+			return $this->_parent->entities->remove($id);
+		}
+
+		// Completely remove by username.
+		$user = (false !== filter_var($id, FILTER_VALIDATE_EMAIL))
+			? $this->get_by('users.email', $id)
+			: $this->get_by('entities.username', $id);
+
+		return ($user) ? $this->ci->_parent->entities->remove($user->id) : false;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Completely remove multiple users by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	boolean
+	 */
+	public function remove_by($field = null, $match = null)
+	{
+		// See if users exist.
+		$users = $this->get_many($field, $match);
+
+		// If there are any, we collect their IDs to send only one request.
+		if ($users)
+		{
+			$ids = array();
+			foreach ($users as $user)
+			{
+				$ids[] = $user->id;
+			}
+
+			return $this->_parent->entities->remove_by('id', $ids);
+		}
+
+		return false;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Restore a previously soft-deleted user.
+	 * @access 	public
+	 * @param 	int 	$id 	The user's ID.
+	 * @return 	boolean
+	 */
+	public function restore($id)
+	{
+		// Restore only entities of type "user".
+		return $this->_parent->entities->restore_by(array(
+			'id'   => $id,
+			'type' => 'user',
+		));
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Restore multiple or all soft-deleted users.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	boolean
+	 */
+	public function restore_by($field = null, $match = null)
+	{
+		// Collect users.
+		$users = $this->get_many($field, $match);
+
+		if ($users)
+		{
+			$ids = array();
+			foreach ($users as $user)
+			{
+				if ($user->deleted > 0)
+				{
+					$ids[] = $user->id;
+				}
+			}
+
+			// Restore users in IDS.
+			return ( ! empty($ids))
+				? $this->_parent->entities->restore_by('id', $ids)
+				: false;
+		}
+
+		return false;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Count all users.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	int
+	 */
+	public function count($field = null, $match = null)
+	{
+		$this->ci->db->where('entities.type', 'user');
+
+		if ( ! empty($field))
+		{
+			if (is_array($field))
+			{
+				$this->ci->db->where($field);
+			}
+			elseif (is_array($match))
+			{
+				$this->ci->db->where($field, $match);
+			}
+			else
+			{
+				$this->ci->db->where($field, $match);
+			}
+		}
+
+		$rows = $this->ci->db
+			->join('users', 'users.guid = entities.id')
+			->get('entities');
+
+		return $rows->num_rows();
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve a single user by ID, username OR email address.
+	 * @access 	public
+	 * @param 	mixed 	$id 	The user's ID, username or email address.
+	 * @return 	object if found, else null.
+	 */
+	public function get($id)
+	{
+		// Getting by ID?
+		if (is_numeric($id))
+		{
+			return $this->get_by('entities.id', $id);
+		}
+
+		// Retrieving by email address?
+		if (false !== filter_var($id, FILTER_VALIDATE_EMAIL))
+		{
+			return 'here';
+			return $this->get_by('users.email', $id);
+		}
+
+		// Retrieve by username.
+		if (is_string($id))
+		{
+			return $this->get_by('entities.username', $id);
+		}
+
+		// Fall-back to get_by method.
+		return $this->get_by($id);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve a single user by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	object if found, else null.
+	 */
+	public function get_by($field, $match = null)
+	{
+		// Try to get the user and make sure only one row it found.
+		$user = $this->get_many($field, $match);
+		return ($user && count($user) === 1) ? $user[0] : null;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve multiple users by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	array of objects if found, else null.
+	 */
+	public function get_many($field = null, $match = null, $limit = 0, $offset = 0)
+	{
+		// Prepare entities type.
+		$this->ci->db->where('entities.type', 'user');
+
+		// There some arguments?
+		if ( ! empty($field))
+		{
+			if (is_array($field))
+			{
+				$this->ci->db->where($field);
+			}
+			elseif (is_array($match))
+			{
+				$this->ci->db->where_in($field, $match);
+			}
+			else
+			{
+				$this->ci->db->where($field, $match);
+			}
+		}
+
+		// Proceed to join and get.
+		return $this->ci->db
+			->join('users', 'users.guid = entities.id')
+			->limit($limit, $offset)
+			->get('entities')
+			->result();
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve all users with optional limit and offset.
 	 * @access 	public
 	 * @param 	int 	$limit
 	 * @param 	int 	$offset
 	 * @return 	array of objects.
 	 */
-	public function get_all_users($limit = 0, $offset = 0)
+	public function get_all($limit = 0, $offset = 0)
 	{
-		return $this->ci->bkader_users_m->limit($limit, $offset)->get_all();
+		return $this->get_many(null, null, $limit, $offset);
 	}
 
 	// ------------------------------------------------------------------------
@@ -294,11 +535,6 @@ class Bkader_users extends CI_Driver
 			{
 				$_data[1][$key] = $val;
 			}
-			// Anything else is metadata.
-			else
-			{
-				$_data[2][$key] = $val;
-			}
 		}
 
 		if (empty($_data))
@@ -309,7 +545,6 @@ class Bkader_users extends CI_Driver
 		// Make sure all three elements are set.
 		(isset($_data[0])) OR $_data[0] = array();
 		(isset($_data[1])) OR $_data[1] = array();
-		(isset($_data[2])) OR $_data[2] = array();
 
 		// Sort things up.
 		ksort($_data);
@@ -317,9 +552,280 @@ class Bkader_users extends CI_Driver
 		return $_data;
 	}
 
+	// ------------------------------------------------------------------------
+
+	private function _update($id, array $data = array())
+	{
+		if (empty($data))
+		{
+			return false;
+		}
+
+		$this->ci->db->update('users', $data, "guid={$id}");
+		return ($this->ci->db->affected_rows() > 0);
+	}
+
 }
 
-// --------------------------------------------------------------------
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('add_user'))
+{
+	/**
+	 * Create a single user.
+	 * @param 	array 	$data 	array of data to insert.
+	 * @return 	int 	The user's id if created, else false.
+	 */
+	function add_user(array $data = array())
+	{
+		return get_instance()->app->users->create($data);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('update_user'))
+{
+	/**
+	 * Update a single user by ID.
+	 * @param 	int 	$id 	The user's ID.
+	 * @param 	array 	$data 	Array of data to set.
+	 * @return 	boolean
+	 */
+	function update_user($id, array $data = array())
+	{
+		return get_instance()->app->users->update($id, $data);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('delete_user'))
+{
+	/**
+	 * Delete a single user by ID, username or email address.
+	 * @param 	mixed 	$id 	ID, username or email address.
+	 * @return 	boolean
+	 */
+	function delete_user($id)
+	{
+		return get_instance()->app->users->delete($id);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('delete_user_by'))
+{
+	/**
+	 * Soft delete multiple users by arbitrary WHERE clause.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	boolean
+	 */
+	function delete_user_by($field, $match = null)
+	{
+		return get_instance()->app->users->delete_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('delete_users'))
+{
+	/**
+	 * Soft delete multiple or all users by arbitrary WHERE clause.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	boolean
+	 */
+	function delete_users($field = null, $match = null)
+	{
+		return get_instance()->app->users->delete_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('remove_user'))
+{
+	/**
+	 * Completely remove a user from database.
+	 * @param 	int 	$id 	The user's ID, username or email address.
+	 * @return 	boolean
+	 */
+	function remove_user($id)
+	{
+		return get_instance()->app->users->remove($id);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('remove_user_by'))
+{
+	/**
+	 * Completely remove multiple users from database.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	boolean
+	 */
+	function remove_user_by($field, $match = null)
+	{
+		return get_instance()->app->users->remove_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('remove_users'))
+{
+	/**
+	 * Completely remove multiple or all users from database.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	boolean
+	 */
+	function remove_users($field = null, $match = null)
+	{
+		return get_instance()->app->users->remove_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('restore_user'))
+{
+	/**
+	 * Restore a previously soft-deleted user.
+	 * @access 	public
+	 * @param 	int 	$id 	The user's ID.
+	 * @return 	boolean
+	 */
+	function restore_user($id)
+	{
+		return get_instance()->app->users->restore($id);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('restore_user_by'))
+{
+	/**
+	 * Restore multiple soft-deleted users.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	boolean
+	 */
+	function restore_user_by($field, $match = null)
+	{
+		return get_instance()->app->users->restore_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('restore_users'))
+{
+	/**
+	 * Restore multiple or all soft-deleted users.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	boolean
+	 */
+	function restore_users($field, $match = null)
+	{
+		return get_instance()->app->users->restore_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('count_users'))
+{
+	/**
+	 * Count all users on database with arbitrary WHERE clause.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	int
+	 */
+	function count_users($field = null, $match = null)
+	{
+		return get_instance()->app->users->count($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_user'))
+{
+	/**
+	 * Retrieve a single user by ID, username, email or arbitrary
+	 * WHERE clause if $id an array.
+	 * @param 	mixed 	$id
+	 * @return 	object if found, else null.
+	 */
+	function get_user($id)
+	{
+		return get_instance()->app->users->get($id);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_user_by'))
+{
+	/**
+	 * Retrieve a single user by arbitrary WHERE clause.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	object if found, else null.
+	 */
+	function get_user_by($field, $match = null)
+	{
+		return get_instance()->app->users->get_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_users'))
+{
+	/**
+	 * Retrieve multiple users by arbitrary WHERE clause.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	array of objects if found, else null.
+	 */
+	function get_users($field = null, $match = null, $limit = 0, $offset = 0)
+	{
+		return get_instance()->app->users->get_many($field, $match, $limit, $offset);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_all_users'))
+{
+	/**
+	 * Retrieve all users with optional limit and offset.
+	 * @access 	public
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	array of objects.
+	 */
+	function get_all_users($limit = 0, $offset = 0)
+	{
+		return get_instance()->app->users->get_all($limit, $offset);
+	}
+}
+
+// ------------------------------------------------------------------------
 
 if ( ! function_exists('user_avatar')):
 	/**
