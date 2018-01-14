@@ -87,7 +87,7 @@ class Admin extends Admin_Controller
 
 			// Set page title and load view.
 			$this->theme
-				->set_title(__('site_settings'))
+				->set_title(lang('site_settings'))
 				->render($data);
 		}
 		else
@@ -95,7 +95,7 @@ class Admin extends Admin_Controller
 			// Check CSRF.
 			if ( ! $this->check_csrf())
 			{
-				set_alert(__('error_csrf'), 'error');
+				set_alert(lang('error_csrf'), 'error');
 				redirect('admin/settings', 'refresh');
 				exit;
 			}
@@ -114,13 +114,13 @@ class Admin extends Admin_Controller
 			{
 				if ( ! $this->app->options->set_item($key, $val))
 				{
-					set_alert(__('set_update_error'), 'error');
+					set_alert(lang('set_update_error'), 'error');
 					redirect('admin/settings', 'refresh');
 					exit;
 				}
 			}
 
-			set_alert(__('set_update_success'), 'success');
+			set_alert(lang('set_update_success'), 'success');
 			redirect('admin/settings', 'refresh');
 			exit;
 		}
@@ -148,7 +148,7 @@ class Admin extends Admin_Controller
 
 			// Set page title and load view.
 			$this->theme
-				->set_title(__('users_settings'))
+				->set_title(lang('users_settings'))
 				->render($data);
 		}
 		else
@@ -156,7 +156,7 @@ class Admin extends Admin_Controller
 			// Check CSRF.
 			if ( ! $this->check_csrf())
 			{
-				set_alert(__('error_csrf'), 'error');
+				set_alert(lang('error_csrf'), 'error');
 				redirect('admin/settings/users', 'refresh');
 				exit;
 			}
@@ -167,13 +167,13 @@ class Admin extends Admin_Controller
 			{
 				if ( ! $this->app->options->set_item($key, $val))
 				{
-					set_alert(__('set_update_error'), 'error');
+					set_alert(lang('set_update_error'), 'error');
 					redirect('admin/settings/users', 'refresh');
 					exit;
 				}
 			}
 
-			set_alert(__('set_update_success'), 'success');
+			set_alert(lang('set_update_success'), 'success');
 			redirect('admin/settings/users', 'refresh');
 			exit;
 		}
@@ -241,7 +241,7 @@ class Admin extends Admin_Controller
 
 			// Set page title and load view.
 			$this->theme
-				->set_title(__('email_settings'))
+				->set_title(lang('email_settings'))
 				->render($data);
 		}
 		else
@@ -249,7 +249,7 @@ class Admin extends Admin_Controller
 			// Check CSRF.
 			if ( ! $this->check_csrf())
 			{
-				set_alert(__('error_csrf'), 'error');
+				set_alert(lang('error_csrf'), 'error');
 				redirect('admin/settings/email', 'refresh');
 				exit;
 			}
@@ -270,13 +270,13 @@ class Admin extends Admin_Controller
 			{
 				if ( ! $this->app->options->set_item($key, $val))
 				{
-					set_alert(__('set_update_error'), 'error');
+					set_alert(lang('set_update_error'), 'error');
 					redirect('admin/settings/email', 'refresh');
 					exit;
 				}
 			}
 
-			set_alert(__('set_update_success'), 'success');
+			set_alert(lang('set_update_success'), 'success');
 			redirect('admin/settings/email', 'refresh');
 			exit;
 		}
@@ -304,7 +304,7 @@ class Admin extends Admin_Controller
 
 			// Set page title and load view.
 			$this->theme
-				->set_title(__('upload_settings'))
+				->set_title(lang('upload_settings'))
 				->render($data);
 		}
 		else
@@ -312,7 +312,7 @@ class Admin extends Admin_Controller
 			// Check CSRF.
 			if ( ! $this->check_csrf())
 			{
-				set_alert(__('error_csrf'), 'error');
+				set_alert(lang('error_csrf'), 'error');
 				redirect('admin/settings/uploads', 'refresh');
 				exit;
 			}
@@ -323,13 +323,13 @@ class Admin extends Admin_Controller
 			{
 				if ( ! $this->app->options->set_item($key, $val))
 				{
-					set_alert(__('set_update_error'), 'error');
+					set_alert(lang('set_update_error'), 'error');
 					redirect('admin/settings/uploads', 'refresh');
 					exit;
 				}
 			}
 
-			set_alert(__('set_update_success'), 'success');
+			set_alert(lang('set_update_success'), 'success');
 			redirect('admin/settings/uploads', 'refresh');
 			exit;
 		}
@@ -375,7 +375,7 @@ class Admin extends Admin_Controller
 
 			// Set page title and load view.
 			$this->theme
-				->set_title(__('captcha_settings'))
+				->set_title(lang('captcha_settings'))
 				->render($data);
 		}
 		else
@@ -383,7 +383,7 @@ class Admin extends Admin_Controller
 			// Check CSRF.
 			if ( ! $this->check_csrf())
 			{
-				set_alert(__('error_csrf'), 'error');
+				set_alert(lang('error_csrf'), 'error');
 				redirect('admin/settings/captcha', 'refresh');
 				exit;
 			}
@@ -394,13 +394,13 @@ class Admin extends Admin_Controller
 			{
 				if ( ! $this->app->options->set_item($key, $val))
 				{
-					set_alert(__('set_update_error'), 'error');
+					set_alert(lang('set_update_error'), 'error');
 					redirect('admin/settings/captcha', 'refresh');
 					exit;
 				}
 			}
 
-			set_alert(__('set_update_success'), 'success');
+			set_alert(lang('set_update_success'), 'success');
 			redirect('admin/settings/captcha', 'refresh');
 			exit;
 		}
@@ -448,7 +448,7 @@ class Admin extends Admin_Controller
 						return $val;
 					}
 
-					return (sscanf($val, 'lang:%s', $lang_val) === 1) ? __($lang_val) : $val;
+					return (sscanf($val, 'lang:%s', $lang_val) === 1) ? lang($lang_val) : $val;
 				}, $option->options);
 
 				if ( ! empty(to_bool_or_serialize($option->value)))
@@ -463,7 +463,7 @@ class Admin extends Admin_Controller
 			}
 			else
 			{
-				$data[$option->name]['placeholder'] = __('set_'.$option->name);
+				$data[$option->name]['placeholder'] = lang('set_'.$option->name);
 			}
 		}
 

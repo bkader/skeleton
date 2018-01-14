@@ -69,7 +69,7 @@ class Settings_lib
 	{
 		if (empty($user_id) OR empty($data))
 		{
-			set_alert(__('error_fields_required'), 'error');
+			set_alert(lang('error_fields_required'), 'error');
 			return false;
 		}
 
@@ -77,14 +77,14 @@ class Settings_lib
 
 		if ($status === true)
 		{
-			set_alert(__('set_profile_success'), 'success');
+			set_alert(lang('set_profile_success'), 'success');
 
 			// Log the activity.
 			log_activity($user_id, 'updated profile');
 		}
 		else
 		{
-			set_alert(__('set_profile_error'), 'error');
+			set_alert(lang('set_profile_error'), 'error');
 		}
 
 		return $status;

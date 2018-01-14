@@ -234,7 +234,7 @@ class Auth
 	{
 		if (empty($identity) OR empty($password))
 		{
-			set_alert(__('error_fields_required'), 'error');
+			set_alert(lang('error_fields_required'), 'error');
 			return false;
 		}
 
@@ -260,7 +260,7 @@ class Auth
 				$user = $this->app->users->get_by('entities.username', $identity);
 				if ( ! $user)
 				{
-					set_alert(__('us_wrong_credentials'), 'error');
+					set_alert(lang('us_wrong_credentials'), 'error');
 					return false;
 				}
 				break;
@@ -270,7 +270,7 @@ class Auth
 				$user = $this->app->users->get_by('users.email', $identity);
 				if ( ! $user)
 				{
-					set_alert(__('us_wrong_credentials'), 'error');
+					set_alert(lang('us_wrong_credentials'), 'error');
 					return false;
 				}
 				break;
@@ -286,7 +286,7 @@ class Auth
 
 				if ( ! $user OR count($user) !== 1)
 				{
-					set_alert(__('us_wrong_credentials'), 'error');
+					set_alert(lang('us_wrong_credentials'), 'error');
 					return false;
 				}
 
@@ -298,7 +298,7 @@ class Auth
 		// Check the password.
 		if ( ! password_verify($password, $user->password))
 		{
-			set_alert(__('us_wrong_credentials'), 'error');
+			set_alert(lang('us_wrong_credentials'), 'error');
 			return false;
 		}
 
@@ -306,8 +306,8 @@ class Auth
 		if ($user->enabled == 0)
 		{
 			set_alert(sprintf(
-				__('us_account_disabled'),
-				anchor('register/resend', __('click_here'))
+				lang('us_account_disabled'),
+				anchor('register/resend', lang('click_here'))
 			), 'error');
 			return false;
 		}
@@ -315,7 +315,7 @@ class Auth
 		// Make sure the account is not banned.
 		if ($user->enabled < 0)
 		{
-			set_alert(__('us_account_banned'), 'error');
+			set_alert(lang('us_account_banned'), 'error');
 			return false;
 		}
 
@@ -323,8 +323,8 @@ class Auth
 		if ($user->deleted > 0)
 		{
 			set_alert(sprintf(
-				__('us_account_deleted'),
-				anchor('login/restore', __('click_here'))
+				lang('us_account_deleted'),
+				anchor('login/restore', lang('click_here'))
 			), 'error');
 			return false;
 		}

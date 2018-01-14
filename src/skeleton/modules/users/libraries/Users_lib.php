@@ -76,7 +76,7 @@ class Users_lib
 	{
 		if (empty($data))
 		{
-			set_alert(__('error_fields_required'), 'error');
+			set_alert(lang('error_fields_required'), 'error');
 			return false;
 		}
 
@@ -88,11 +88,11 @@ class Users_lib
 			if ( ! isset($data['enabled'])
 				&& $this->app->options->item('email_activation', false) === true)
 			{
-				set_alert(__('us_register_info'), 'info');
+				set_alert(lang('us_register_info'), 'info');
 			}
 			else
 			{
-				set_alert(__('us_register_success'), 'success');
+				set_alert(lang('us_register_success'), 'success');
 			}
 
 			// Log the activity.
@@ -100,7 +100,7 @@ class Users_lib
 		}
 		else
 		{
-			set_alert(__('us_register_error'), 'error');
+			set_alert(lang('us_register_error'), 'error');
 		}
 
 		return $guid;
@@ -121,7 +121,7 @@ class Users_lib
 		// All fields are required.
 		if (empty($identity))
 		{
-			set_alert(__('error_fields_required'), 'error');
+			set_alert(lang('error_fields_required'), 'error');
 			return false;
 		}
 
@@ -142,7 +142,7 @@ class Users_lib
 			->get_all();
 		if ( ! $user OR count($user) !== 1)
 		{
-			set_alert(__('us_wrong_credentials'), 'error');
+			set_alert(lang('us_wrong_credentials'), 'error');
 			return false;
 		}
 
@@ -152,7 +152,7 @@ class Users_lib
 		// User already enabled?
 		if ($user->enabled == 1)
 		{
-			set_alert(__('us_resend_enabled'), 'error');
+			set_alert(lang('us_resend_enabled'), 'error');
 			return false;
 		}
 
@@ -200,14 +200,14 @@ class Users_lib
 
 		if ($status === true)
 		{
-			set_alert(__('us_resend_success'), 'success');
+			set_alert(lang('us_resend_success'), 'success');
 
 			// Log the activity.
 			log_activity($user->id, 'new activation code: '.$activation_code);
 		}
 		else
 		{
-			set_alert(__('us_resend_error'), 'error');
+			set_alert(lang('us_resend_error'), 'error');
 		}
 
 		return $status;
@@ -226,7 +226,7 @@ class Users_lib
 	{
 		if (empty($identity) OR empty($password))
 		{
-			set_alert(__('error_fields_required'), 'error');
+			set_alert(lang('error_fields_required'), 'error');
 			return false;
 		}
 
@@ -247,7 +247,7 @@ class Users_lib
 			->get_all();
 		if ( ! $user OR count($user) !== 1)
 		{
-			set_alert(__('us_wrong_credentials'), 'error');
+			set_alert(lang('us_wrong_credentials'), 'error');
 			return false;
 		}
 
@@ -257,14 +257,14 @@ class Users_lib
 		// Check the password.
 		if ( ! password_verify($password, $user->password))
 		{
-			set_alert(__('us_wrong_credentials'), 'error');
+			set_alert(lang('us_wrong_credentials'), 'error');
 			return false;
 		}
 
 		// The user is not really deleted?
 		if ($user->deleted == 0)
 		{
-			set_alert(__('us_restore_deleted'), 'error');
+			set_alert(lang('us_restore_deleted'), 'error');
 			return false;
 		}
 
@@ -298,7 +298,7 @@ class Users_lib
 		// Check whether it's set and check its length.
 		if (empty($code) OR strlen($code) !== 40)
 		{
-			set_alert(__('us_activate_invalid_key'), 'error');
+			set_alert(lang('us_activate_invalid_key'), 'error');
 			return false;
 		}
 
@@ -310,7 +310,7 @@ class Users_lib
 		));
 		if ( ! $var)
 		{
-			set_alert(__('us_activate_invalid_key'), 'error');
+			set_alert(lang('us_activate_invalid_key'), 'error');
 			return false;
 		}
 
@@ -319,7 +319,7 @@ class Users_lib
 		// Everything went well?
 		if ($status === true)
 		{
-			set_alert(__('us_activate_success'), 'success');
+			set_alert(lang('us_activate_success'), 'success');
 
 			// Delete activation code.
 			$this->delete_activation_codes($var->guid);
@@ -329,7 +329,7 @@ class Users_lib
 		}
 		else
 		{
-			set_alert(__('us_activate_error'), 'error');
+			set_alert(lang('us_activate_error'), 'error');
 		}
 
 		return $status;
@@ -350,7 +350,7 @@ class Users_lib
 		// $identity is empty?
 		if (empty($identity))
 		{
-			set_alert(__('error_fields_required'), 'error');
+			set_alert(lang('error_fields_required'), 'error');
 			return false;
 		}
 
@@ -374,7 +374,7 @@ class Users_lib
 		// The user does not exist?
 		if ( ! $user OR count($user) !== 1)
 		{
-			set_alert(__('us_wrong_credentials'), 'error');
+			set_alert(lang('us_wrong_credentials'), 'error');
 			return false;
 		}
 
@@ -384,7 +384,7 @@ class Users_lib
 		// Make sure the account is not banned.
 		if ($user->enabled < 0)
 		{
-			set_alert(__('us_account_banned'), 'error');
+			set_alert(lang('us_account_banned'), 'error');
 			return false;
 		}
 
@@ -392,8 +392,8 @@ class Users_lib
 		if ($user->deleted > 0)
 		{
 			set_alert(sprintf(
-				__('us_account_deleted'),
-				anchor('login/restore', __('click_here'))
+				lang('us_account_deleted'),
+				anchor('login/restore', lang('click_here'))
 			), 'error');
 			return false;
 		}
@@ -443,14 +443,14 @@ class Users_lib
 
 		if ($status === true)
 		{
-			set_alert(__('us_recover_success'), 'success');
+			set_alert(lang('us_recover_success'), 'success');
 
 			// Log the activity.
 			log_activity($user->id, 'new password code: '.$password_code);
 		}
 		else
 		{
-			set_alert(__('us_recover_error'), 'error');
+			set_alert(lang('us_recover_error'), 'error');
 		}
 
 		return $status;
@@ -494,7 +494,7 @@ class Users_lib
 		// Make sure all data are provided.
 		if (empty($user_id) OR empty($password))
 		{
-			set_alert(__('us_reset_error'), 'error');
+			set_alert(lang('us_reset_error'), 'error');
 			return false;
 		}
 
@@ -505,7 +505,7 @@ class Users_lib
 		if ($status === true)
 		{
 			// Set success message.
-			set_alert(__('us_reset_success'), 'success');
+			set_alert(lang('us_reset_success'), 'success');
 
 			// Log the activity.
 			log_activity($user_id, 'changed password');
@@ -517,7 +517,7 @@ class Users_lib
 		else
 		{
 			// Set error message.
-			set_alert(__('us_reset_error'), 'error');
+			set_alert(lang('us_reset_error'), 'error');
 		}
 
 		// Return the process status.
