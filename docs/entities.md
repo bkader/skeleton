@@ -1,12 +1,12 @@
 # Entities
 
-* [Definition](#definition)  
-* [Creating Entities](#creating-entities)
-* [Updating Entities](#updating-entities)
-* [Deleting and Removing Entities](#deleting-and-removing-entities)
-* [Retrieving Entities](#retrieving-entities)
-* [More Details](#more-details)
-* [IMPORTANT!](#important)  
+* [Definition](#markdown-header-definition)  
+* [Creating Entities](#markdown-header-creating-entities)
+* [Updating Entities](#markdown-header-updating-entities)
+* [Deleting and Removing Entities](#markdown-header-deleting-and-removing-entities)
+* [Retrieving Entities](#markdown-header-retrieving-entities)
+* [More Details](#markdown-header-more-details)
+* [IMPORTANT!](#markdown-header-important)  
 
 ## Definition:
 All what's on the website is considered to be an **entity**. Users, groups, and objects are all entities. The reason behind this approach if to have real **Global Unique IDs** and unique usernames. This way, if you displaying the entity's page is done by simply going to "*site_url/__username__*".  

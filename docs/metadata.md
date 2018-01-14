@@ -1,13 +1,13 @@
 # Metadata
 
-* [What are metadata?](#what-are-metadata)  
-* [How to use?](#how-to-use)
-* [Creating metadata](#creating-metadata)
-* [Updating metadata](#updating-metadata)
-* [Deleting metadata](#deleting-metadata)
-* [Retrieving metadata](#retrieving-metadata)
-* [What else?](#what-else)
-* [IMPORTANT!](#important)  
+* [What are metadata?](#markdown-header-what-are-metadata)  
+* [How to use?](#markdown-header-how-to-use)
+* [Creating metadata](#markdown-header-creating-metadata)
+* [Updating metadata](#markdown-header-updating-metadata)
+* [Deleting metadata](#markdown-header-deleting-metadata)
+* [Retrieving metadata](#markdown-header-retrieving-metadata)
+* [What else?](#markdown-header-what-else)
+* [IMPORTANT!](#markdown-header-important)  
 
 ## What are metadata?
 As their name means, these are additional informations about an existing entity. The difference between them and **variables** is that these are kind of permanent informations that do get updated but not as often as variables do.  

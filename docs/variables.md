@@ -1,12 +1,14 @@
 # Variables
-* [What are variables?](#what-are-variables)  
-* [How to use?](#how-to-use)
-* [Creating Variables](#creating-variables)
-* [Updating Variables](#updating-variables)
-* [Deleting Variables](#deleting-variables)
-* [Retrieving Variables](#retrieving-variables)
-* [What else?](#what-else)
-* [IMPORTANT!](#important)  
+
+* [What are variables?](#markdown-header-what-are-variables)  
+* [How to use?](#markdown-header-how-to-use)
+* [Creating Variables](#markdown-header-creating-variables)
+* [Updating Variables](#markdown-header-updating-variables)
+* [Deleting Variables](#markdown-header-deleting-variables)
+* [Retrieving Variables](#markdown-header-retrieving-variables)
+* [What else?](#markdown-header-what-else)
+* [IMPORTANT!](#markdown-header-important)  
+
 ## What are variables?
 Unlike **metadata**, variables are exactly
  what their name means! They varies often, they get created, updated and deleted all the time. Think of them as **temporary** metadata.  

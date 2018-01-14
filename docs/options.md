@@ -1,11 +1,11 @@
 # Options
 
-* [What are options?](#what-are-options)  
-* [Creating Options](#creating-options)
-* [Updating Options](#updating-options)
-* [Deleting Options](#deleting-options)
-* [Retrieving Options](#retrieving-options)
-* [IMPORTANT!](#important)  
+* [What are options?](#markdown-header-what-are-options)  
+* [Creating Options](#markdown-header-creating-options)
+* [Updating Options](#markdown-header-updating-options)
+* [Deleting Options](#markdown-header-deleting-options)
+* [Retrieving Options](#markdown-header-retrieving-options)
+* [IMPORTANT!](#markdown-header-important)  
 
 ## What are options?
 Options are simply site settings stored in **options** table. Even if this table is empty, options are still found and they are stored inside *skeleton/config/defaults.php* file.  
