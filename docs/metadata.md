@@ -1,5 +1,15 @@
-
 # Metadata
+
+* [What are metadata?](#what-are-metadata)  
+* [How to use?](#how-to-use)
+* [Creating metadata](#creating-metadata)
+* [Updating metadata](#updating-metadata)
+* [Deleting metadata](#deleting-metadata)
+* [Retrieving metadata](#retrieving-metadata)
+* [What else?](#what-else)
+* [IMPORTANT!](#important)  
+
+## What are metadata?
 As their name means, these are additional informations about an existing entity. The difference between them and **variables** is that these are kind of permanent informations that do get updated but not as often as variables do.  
 
 ## How yo use?  
@@ -11,7 +21,7 @@ There are four (**4**) important methods (or functions if you want) that you can
 
 There is another method available that you can use but we will leave it for later.  
 
-### Creating metadata.  
+### Creating Metadata:
 After creating the entity you want (user, group or object), you can (MUST) use its ID to create metadata for it. In your controllers, you can use:  
 
     // To create a single metadata.
@@ -32,7 +42,7 @@ If you want to create multiple metadata for the selected entity, you only need t
     // created by but they will use the third argument ($value) 
     // as a value. Default: NULL
 
-### Update Metadata.
+### Updating Metadata:
 To update a metadata, you can use either the **update** method or the **update_meta** function. So in your controllers, you can do like the following:  
 
     // To update a single metadata.
@@ -52,7 +62,7 @@ To update multiple metadata, pass an array as the second parameter like so:
 
 **NOTE**: This method or its helper will not only update the selected metadata but they will create it if it does not exists. So you can use it to create metadata as well.
 
-### Deleting Metadata.
+### Deleting Metadata:
 In order to delete metadata, you can use the method **delete** or the helper **delete_meta**. So in your controllers, you may have:
 
     // Delete a single metadata.
@@ -69,7 +79,8 @@ To delete multiple metadata, you have two options, pass an array as the second p
     
     // You can use the helper function:
     delete_meta(...); // The same as above.
-### Retrieving Metadata.
+
+### Retrieving Metadata:
 You can retrieve metadata by using the **get** method or the **get_meta** function. Theses functions accept three (**3**) arguments:  
 * **$guid**: (*int*) which is the entity's ID.
 * **$name**: (*string*) if empty, you will get all metadata for that entity; if you pass a string, you will get the selected metadata.
@@ -98,8 +109,19 @@ If you want to retrieve all metadata of the selected entity, just use its ID and
     $metadata = $this->app->metadata->get($guid);
     // Or
     $metadata = get_meta($guid);
+There is additional methods and their helpers that you can use to retrieve a single or multiple metadata by arbitrary _WHERE_ clause: **get_by** and **get_many**.  
 
-### What is the other method/function?
+    // To retrieve a single metadata:
+    $this->app->metadata->get_by($field, $match);
+    // Or its helper:
+    get_meta_by($field, $match);
+
+    // To retrieve multiple metadata:
+    $this->app->metadata->get_many($field, $match);
+    // Or its helper:
+    get_many_meta($field, $match);
+
+## What else?
 Sometimes users, objects or groups are deleted from **entities** table. And because they no longer exist, it is kind of useless to keep their metadata, this is why the **purge** method or **purge_meta** function were added.  
 These funtions will simply delete ALL metadata of entity's that do not exist. That's all. To use them:
 
@@ -107,4 +129,4 @@ These funtions will simply delete ALL metadata of entity's that do not exist. Th
     // OR
     purge_meta();
 ## IMPORTANT:
-All methods and functions are to be used inside controllers. In case you want to use them inside libraries, make sure to never use helpers because they will trigger and `undefined property: $app`  error.
+All methods and functions are to be used inside controllers. In case you want to use them inside libraries, make sure to never use helpers because they will trigger an `undefined property: $app`  error.

@@ -260,45 +260,80 @@ class Bkader_metadata extends CI_Driver
 	 */
 	public function get($guid, $name = null, $single = false)
 	{
-		// We start the search by $guid.
-		$this->ci->db->where('guid', $guid);
-
-		// If the name is provided, we look for that metadata.
-		if ($name !== null)
+		// A single metadata to retrieve?
+		if ( ! empty($name))
 		{
-			// Complete DB query and attempt to get it.
-			$meta = $this->ci->db
-				->where('name', $name)
-				->get('metadata')
-				->row();
+			$meta = $this->get_by(array(
+				'guid' => $guid,
+				'name' => $name,
+			));
 
-			// Found?
-			if ($meta)
-			{
-				/**
-				 * Here we format the metadata value because it may
-				 * be an array or a string representation of a boolean.
-				 */
-				$meta->value = from_bool_or_serialize($meta->value);
-				
-				// Return only the value?
-				if ($single === true)
-				{
-					return $meta->value;
-				}
-			}
-
-			// Return the $meta object as-is.
-			return $meta;
+			// Return the value or the whole object if found.
+			return ($meta && $single === true) ? $meta->value : $meta;
 		}
 
-		// The $name is not provided, we look for all metadata.
-		$meta = $this->ci->db->get('metadata')->result();
+		// Multiple metadata.
+		return $this->get_many('guid', $guid);
+	}
 
-		// Found any?
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve a single metadata by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	object if found, else null
+	 */
+	public function get_by($field, $match = null)
+	{
+		(is_array($field)) OR $field = array($field => $match);
+
+		$meta = $this->ci->db->get_where('metadata', $field, 1)->row();
+
+		// Found?
 		if ($meta)
 		{
-			// Walk through all element and format their values.
+			$meta->value = from_bool_or_serialize($meta->value);
+		}
+
+		return $meta;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve multiple metadata by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	array of objects if found, else null
+	 */
+	public function get_many($field = null, $match = null)
+	{
+		// Argument provided?
+		if ( ! empty($field))
+		{
+			if (is_array($field))
+			{
+				$this->ci->db->where($field);
+			}
+			elseif (is_array($match))
+			{
+				$this->ci->db->where_in($field, $match);
+			}
+			else
+			{
+				$this->ci->db->where($field, $match);
+			}
+		}
+
+		// Proceed to retrieving.
+		$meta = $this->ci->db->get('metadata')->result();
+
+		// Found? Format the value.
+		if ($meta)
+		{
 			foreach ($meta as &$_meta)
 			{
 				$_meta->value = from_bool_or_serialize($_meta->value);
@@ -308,6 +343,7 @@ class Bkader_metadata extends CI_Driver
 		// Return the final result.
 		return $meta;
 	}
+	
 
 	// ------------------------------------------------------------------------
 
@@ -397,11 +433,44 @@ if ( ! function_exists('get_meta'))
 
 // ------------------------------------------------------------------------
 
+if ( ! function_exists('get_meta_by'))
+{
+	/**
+	 * Retrieve a single metadata by arbitrary WHERE clause.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	object if found, else null
+	 */
+	function get_meta_by($field, $match = null)
+	{
+		return get_instance()->app->metadata->get_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_many_meta'))
+{
+	/**
+	 * Retrieve multiple metadata by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	array of objects if found, else null
+	 */
+	function get_many_meta($field, $match = null)
+	{
+		return get_instance()->app->metadata->get_many($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
 if ( ! function_exists('purge_meta'))
 {
 	/**
 	 * Clean up metadata table from meta that have no existing entities.
-	 * @return 	void
+	 * @return 	boolean
 	 */
 	function purge_meta()
 	{
