@@ -62,25 +62,6 @@ class Bkader_options extends CI_Driver
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Magic __call method to use options model methods as well.
-	 * @access 	public
-	 * @param 	string 	$method 	the method's name.
-	 * @param 	array 	$params 	array or method arguments.
-	 * @return 	mixed 	depends on the called method.
-	 */
-	public function __call($method, $params = array())
-	{
-		if (method_exists($this->ci->bkader_options_m, $method))
-		{
-			return call_user_func_array(array($this->ci->bkader_options_m, $method), $params);
-		}
-
-		throw new BadMethodCallException("No such method ".get_called_class()."::{$method}().");
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
 	 * Get all autoloaded options from database and assign
 	 * them to CodeIgniter config array.
 	 * @access 	public
@@ -89,13 +70,8 @@ class Bkader_options extends CI_Driver
 	 */
 	public function initialize()
 	{
-		// Make sure to load options model.
-		$this->ci->load->model('bkader_options_m');
-
-		// Get all options from database.
-		$rows = $this->ci->bkader_options_m->get_all();
-
-		foreach ($rows as $row)
+		// Assign all options to config.
+		foreach ($this->get_many() as $row)
 		{
 			// Cache them first.
 			$this->cached[$row->name] = $row->value;
@@ -112,15 +88,29 @@ class Bkader_options extends CI_Driver
 	/**
 	 * Create a new option item.
 	 * @access 	public
-	 * @param 	string 	$name 	the option's name.
-	 * @param 	mixed 	$value 	the option's value.
+	 * @param 	string 	$name 		the option's name.
+	 * @param 	mixed 	$value 		the option's value.
+	 * @param 	string 	$tab 		Where the option should be listed.
+	 * @param 	string 	$field_type What type of filed input to display
+	 * @param 	mixed 	$options 	Options to display on settings page.
+	 * @param 	bool 	$required 	Whether to make the field required.
 	 * @return 	bool
 	 */
-	public function create($name, $value = null)
+	public function create(
+		$name, 
+		$value = null, 
+		$tab = '', 
+		$field_type = 'text', 
+		$options = null, 
+		$required = true)
 	{
-		$this->ci->bkader_options_m->insert(array(
-			'name'  => $name,
-			'value' => $value,
+		$this->ci->db->insert('options', array(
+			'name'       => strtolower($name),
+			'value'      => to_bool_or_serialize($value),
+			'tab'        => $tab,
+			'field_type' => $field_type,
+			'options'    => to_bool_or_serialize($options),
+			'required'   => ($required === true) ? 1 : 0,
 		));
 
 		return ($this->ci->db->affected_rows() > 0);
@@ -129,7 +119,52 @@ class Bkader_options extends CI_Driver
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Update an option item if it exists.
+	 * Delete a single option item by it's name.
+	 * @access 	public
+	 * @param 	mixed 	$name 	string|string[]
+	 * @return 	boolean
+	 */
+	public function delete($name)
+	{
+		return $this->delete_by('name', $name);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Delete a single or multiple options by arbitrary WHERE clause.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	boolean
+	 */
+	public function delete_by($field = null, $match = null)
+	{
+		// Arguments provided?
+		if ( ! empty($field))
+		{
+			if (is_array($field))
+			{
+				$this->ci->db->where($field);
+			}
+			elseif (is_array($match))
+			{
+				$this->ci->db->where_in($field, $match);
+			}
+			else
+			{
+				$this->ci->db->where($field, $match);
+			}
+		}
+
+		// Proceed to deleting.
+		$this->ci->db->delete('options');
+		return ($this->ci->db->affected_rows() > 0);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Update an option item if it exists or create it if it does not.
 	 * @access 	public
 	 * @param 	string 	$name 		the item name.
 	 * @param 	mixed 	$new_value 	the new value.
@@ -137,7 +172,87 @@ class Bkader_options extends CI_Driver
 	 */
 	public function set_item($name, $new_value = null)
 	{
-		return $this->ci->bkader_options_m->update($name, array('value' => $new_value));
+		// Not found? Create it.
+		if ( ! $this->item($name, false))
+		{
+			return $this->create($name, $new_value);
+		}
+
+		// Found? update it.
+		$this->ci->db
+			->where('LOWER(name)', strtolower($name))
+			->set('value', to_bool_or_serialize($new_value));
+
+		return ($this->ci->db->affected_rows() > 0);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve a single option item by it's name (primary key)
+	 * @access 	public
+	 * @param 	string 	$name 	The item's name.
+	 * @return 	object if found, else null
+	 */
+	public function get($name)
+	{
+		$row = $this->ci->db
+			->where('LOWER(name)', strtolower($name))
+			->get('options')
+			->row();
+
+		// Found? cache it then return it.
+		if ($row)
+		{
+			$row->value = from_bool_or_serialize($row->value);
+			$this->cached[$name] = $row->value;
+		}
+
+		return $row;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve multiple options by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	array of objects if found, else null.
+	 */
+	public function get_many($field = null, $match = null)
+	{
+		// Arguments passed?
+		if ( ! empty($field))
+		{
+			if (is_array($field))
+			{
+				$this->ci->db->where($field);
+			}
+			elseif (is_array($match))
+			{
+				$this->ci->db->where_in($field, $match);
+			}
+			else
+			{
+				$this->ci->db->where($field, $match);
+			}
+		}
+
+		$rows = $this->ci->db->get('options')->result();
+
+		// Found any? Format them.
+		if ($rows)
+		{
+			foreach ($rows as &$row)
+			{
+				(empty($row->value)) OR $row->value = from_bool_or_serialize($row->value);
+				(empty($row->options)) OR $row->options = from_bool_or_serialize($row->options);
+			}
+		}
+
+		// Return the final result.
+		return $rows;
 	}
 
 	// ------------------------------------------------------------------------
@@ -158,13 +273,10 @@ class Bkader_options extends CI_Driver
 			return $this->cached[$name];
 		}
 
-		// Attempt to get it from database.
-		$row = $this->ci->bkader_options_m->get($name);
-
-		// Found? Return it.
-		if ($row)
+		// Try to get it.
+		if ($item = $this->get($name))
 		{
-			return $row->value;
+			return $item->value;
 		}
 
 		// Found in CodeIgniter config?
@@ -187,7 +299,7 @@ class Bkader_options extends CI_Driver
 	 */
 	public function get_by_tab($tab = 'general')
 	{
-		return $this->ci->bkader_options_m->get_many_by('tab', $tab);
+		return $this->get_many('tab', $tab);
 	}
 
 }
@@ -208,19 +320,45 @@ if ( ! function_exists('get_option'))
 	}
 }
 
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_options'))
+{
+	/**
+	 * Retrieve multiple options by arbitrary WHERE clause.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	array of objects if found, else null.
+	 */
+	function get_options($field = null, $match = null)
+	{
+		return get_instance()->app->options->get_many($field, $match);
+	}
+}
+
 // --------------------------------------------------------------------
 
 if ( ! function_exists('add_option'))
 {
 	/**
 	 * Create a new option item.
-	 * @param 	string 	$name 	the option's name.
-	 * @param 	mixed 	$value 	the option's value.
+	 * @param 	string 	$name 		the option's name.
+	 * @param 	mixed 	$value 		the option's value.
+	 * @param 	string 	$tab 		Where the option should be listed.
+	 * @param 	string 	$field_type What type of filed input to display
+	 * @param 	mixed 	$options 	Options to display on settings page.
+	 * @param 	bool 	$required 	Whether to make the field required.
 	 * @return 	bool
 	 */
-	function add_option($name, $value = null)
+	function add_option(
+		$name, 
+		$value = null, 
+		$tab = '', 
+		$field_type = 'text', 
+		$options = null, 
+		$required = true)
 	{
-		return get_instance()->app->options->create($name, $value);
+		return get_instance()->app->options->create($name, $value, $tab, $field_type, $options, $required);
 	}
 }
 
@@ -229,7 +367,7 @@ if ( ! function_exists('add_option'))
 if ( ! function_exists('set_option'))
 {
 	/**
-	 * Update a single option item.
+	 * Update a single option item if found, else creates it.
 	 * @param 	string 	$name 		the option's name.
 	 * @param 	mixed 	$new_value 	the new option value.
 	 * @return 	bool
@@ -252,5 +390,32 @@ if ( ! function_exists('delete_option'))
 	function delete_option($name)
 	{
 		return get_instance()->app->options->delete($name);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('delete_option_by'))
+{
+	/**
+	 * Delete a single or multiple options by arbitrary WHERE clause.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	boolean
+	 */
+	function delete_option_by($field, $match = null)
+	{
+		return get_instance()->app->options->delete_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('delete_options'))
+{
+	// Alias of the function above.
+	function delete_options($field, $match = null)
+	{
+		return get_instance()->app->options->delete_by($field, $match);
 	}
 }
