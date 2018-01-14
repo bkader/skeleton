@@ -1,7 +1,7 @@
 # Users
 Users are one of available (allowed) entities types. Their data are stored in two (**2**) tables: **entities** and **users**.  
 
-* [Table Structure?](#markdown-header-table-structure)  
+* [Table Structure](#markdown-header-table-structure)  
 * [Creating Users](#markdown-header-creating-users)
 * [Updating Users](#markdown-header-updating-users)
 * [Deleting and Removing Users](#markdown-header-deleting-and-removing-users)
@@ -179,7 +179,7 @@ $all_users = get_users(NULL, NULL, 10, 2);
 ```
 
 ### Counting Users:
-You can count app existing users in your database like so:  
+You can count all existing users in your database like so:  
 ```php
 $count = $this->app->users->count($field, $match);
 // Or you can user the helper:

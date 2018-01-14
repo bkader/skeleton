@@ -1,4 +1,3 @@
-
 # Metadata
 
 * [What are metadata?](#markdown-header-what-are-metadata)  
@@ -12,6 +11,9 @@
 
 ## What are metadata?
 As their name means, these are additional informations about an existing entity. The difference between them and **variables** is that these are kind of permanent informations that do get updated but not as often as variables do.  
+
+For example, you can use metadata to store users phone numbers; address; website; biographies; social links ... etc.  
+You can use them to store products prices; products wishlists; users, objects or groups extra details that cannot be put inside their respective tables.
 
 ## How yo use?  
 There are four (**4**) important methods (or functions if you want) that you can use:  
