@@ -46,10 +46,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 	https://github.com/bkader
  */
 
-$lang['dashboard'] = 'Dashboard';
-$lang['status']    = 'Status';
-$lang['action']    = 'Action';
-$lang['advanced']  = 'Advanced';
+$lang['dashboard']  = 'Dashboard';
+$lang['status']     = 'Status';
+$lang['action']     = 'Action';
+$lang['advanced']   = 'Advanced';
+$lang['created_by'] = 'Created by';
+$lang['updated_by'] = 'Created by';
 
 $lang['are_your_sure'] = 'Are you sure you want to %s?';
 
