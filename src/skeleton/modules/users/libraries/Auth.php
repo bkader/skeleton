@@ -160,15 +160,23 @@ class Auth
 			return false;
 		}
 
-		// Get the variable from database.
-		$var = $this->app->variables->get_by(array(
-			'guid'  => $this->ci->session->user_id,
-			'name'  => 'online_token',
-			'value' => $this->ci->session->token,
-		));
-		if ( ! $var)
+		/**
+		 * If multiple sessions are not allowed, we compare 
+		 * stored tokens and make sure only a single user 
+		 * per session is allowed.
+		 */
+		if (get_option('allow_multi_session', true) === false)
 		{
-			return false;
+			// Get the variable from database.
+			$var = $this->app->variables->get_by(array(
+				'guid'  => $this->ci->session->user_id,
+				'name'  => 'online_token',
+				'value' => $this->ci->session->token,
+			));
+			if ( ! $var)
+			{
+				return false;
+			}
 		}
 
 		// Get the user from database.
@@ -241,17 +249,6 @@ class Auth
 		// Fires before processing.
 		do_action_ref_array('user_login', array(&$identity, &$password));
 
-		// Get the user from database.
-		$selects = array(
-			'entities.id',
-			'entities.subtype',
-			'entities.username',
-			'entities.enabled',
-			'entities.deleted',
-			'users.email',
-			'users.password',
-		);
-
 		// What type of login to use?
 		switch (get_option('login_type', 'both'))
 		{
@@ -278,20 +275,14 @@ class Auth
 			// Get user by username or email address.
 			case 'both':
 			default:
-				$user = $this->app->users
-					->select($selects)
-					->where('entities.username', $identity)
-					->or_where('users.email', $identity)
-					->get_all();
+				$user = $this->app->users->get($identity);
 
-				if ( ! $user OR count($user) !== 1)
+				if ( ! $user)
 				{
 					set_alert(lang('us_wrong_credentials'), 'error');
 					return false;
 				}
 
-				// Get rid of deep array.
-				$user = $user['0'];
 				break;
 		}
 

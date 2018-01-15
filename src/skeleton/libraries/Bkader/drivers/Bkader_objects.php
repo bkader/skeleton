@@ -40,7 +40,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 /**
  * Bkader_objects Class
  *
- * Handles all operations done on any thing tagged as object.
+ * Handles operations done on any thing tagged as a object.
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
@@ -66,33 +66,19 @@ class Bkader_objects extends CI_Driver
 	 */
 	public function initialize()
 	{
-		// Make sure to load entities model.
-		$this->ci->load->model('bkader_objects_m');
-
 		log_message('info', 'Bkader_objects Class Initialized');
 	}
 
-	// ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
-	/**
-	 * Magic __call method to use objects model methods too.
-	 * @access 	public
-	 * @param 	string 	$method 	the method's name.
-	 * @param 	array 	$params 	arguments to pass to method.
-	 * @return 	mixed 	depends on the called method.
-	 */
-	public function __call($method, $params = array())
-	{
-		if (method_exists($this->ci->bkader_objects_m, $method))
-		{
-			return call_user_func_array(
-				array($this->ci->bkader_objects_m, $method),
-				$params
-			);
-		}
-
-		throw new BadMethodCallException("No such method ".get_called_class()."::{$method}().");
-	}
+    /**
+     * Generates the SELECT portion of the query
+     */
+    public function select($select = '*', $escape = null)
+    {
+    	$this->ci->db->select($select, $escape);
+    	return $this;
+    }
 
 	// ------------------------------------------------------------------------
 
@@ -130,13 +116,13 @@ class Bkader_objects extends CI_Driver
 		}
 
 		// Split data.
-		list($entity, $object, $meta) = $this->_split_data($data);
+		list($entity, $object) = $this->_split_data($data);
 
 		// Make sure to alwayas add the entity's type.
-		(isset($entity['type']) && $entity['type'] == 'object') OR $entity['type'] = 'object';
+		$entity['type'] = 'object';
 
 		// Let's insert the entity first and make sure it's created.
-		$guid = $this->_parent->entities->insert($entity);
+		$guid = $this->_parent->entities->create($entity);
 		if ( ! $guid)
 		{
 			return false;
@@ -146,13 +132,7 @@ class Bkader_objects extends CI_Driver
 		$object['guid'] = $guid;
 
 		// Insert the object.
-		$this->ci->bkader_objects_m->insert($object);
-
-		// If there are any metadata, insert them.
-		if ( ! empty($meta))
-		{
-			$this->_parent->metadata->create_for($guid, $meta);
-		}
+		$this->ci->db->insert('objects', $object);
 
 		return $guid;
 	}
@@ -175,61 +155,308 @@ class Bkader_objects extends CI_Driver
 		}
 
 		// Split data.
-		list($entity, $object, $meta) = $this->_split_data($data);
+		list($entity, $object) = $this->_split_data($data);
 
 		// Update entity.
-		if ( ! empty($entity) && ! $this->_parent->entities->update($object_id, $entity))
+		if ( ! empty($entity) && ! $this->_parent->entities->update($id, $entity))
 		{
 			return false;
 		}
 
-		// Update object.
-		if ( ! empty($object) && ! $this->ci->bkader_objects_m->update($object_id, $object))
-		{
-			return false;
-		}
-
-		// Some metadata.
-		if ( ! empty($meta) && ! $this->_parent->metadata->update_for($object_id, $meta))
-		{
-			return false;
-		}
-
+		$this->ci->db->update('objects', $object, array('guid' => $id));
 		return true;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Count all objects.
-	 *
+	 * Delete a single object by ID or username.
 	 * @access 	public
-	 * @return 	int
+	 * @param 	mixed 	$id
+	 * @return 	boolean
 	 */
-	public function count_all()
+	public function delete($id)
 	{
-		return $this->ci->bkader_objects_m->count_all();
+		// Delete by ID.
+		if (is_numeric($id))
+		{
+			return $this->_parent->entities->delete($id);
+		}
+
+		// Delete by username.
+		$object = $this->get_by('entities.username', $id);
+
+		return ($object) ? $this->ci->_parent->entities->delete($object->id) : false;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Get all objects.
-	 *
+	 * Delete multiple objects by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	boolean
+	 */
+	public function delete_by($field = null, $match = null)
+	{
+		// See if objects exist.
+		$objects = $this->get_many($field, $match);
+
+		// If there are any, we collect their IDs to send only one request.
+		if ($objects)
+		{
+			$ids = array();
+			foreach ($objects as $user)
+			{
+				$ids[] = $user->id;
+			}
+
+			return $this->_parent->entities->delete_by('id', $ids);
+		}
+
+		return false;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Completely remove a single object by ID or username.
+	 * @access 	public
+	 * @param 	mixed 	$id
+	 * @return 	boolean
+	 */
+	public function remove($id)
+	{
+		// Completely remove by ID.
+		if (is_numeric($id))
+		{
+			return $this->_parent->entities->remove($id);
+		}
+
+		// Completely remove by username.
+		$object = $this->get_by('entities.username', $id);
+
+		return ($object) ? $this->ci->_parent->entities->remove($object->id) : false;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Completely remove multiple objects by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	boolean
+	 */
+	public function remove_by($field = null, $match = null)
+	{
+		// See if objects exist.
+		$objects = $this->get_many($field, $match);
+
+		// If there are any, we collect their IDs to send only one request.
+		if ($objects)
+		{
+			$ids = array();
+			foreach ($objects as $user)
+			{
+				$ids[] = $user->id;
+			}
+
+			return $this->_parent->entities->remove_by('id', $ids);
+		}
+
+		return false;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Restore a previously soft-deleted object.
+	 * @access 	public
+	 * @param 	int 	$id 	The object's ID.
+	 * @return 	boolean
+	 */
+	public function restore($id)
+	{
+		// Restore only entities of type "object".
+		return $this->_parent->entities->restore_by(array(
+			'id'   => $id,
+			'type' => 'object',
+		));
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Restore multiple or all soft-deleted objects.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	boolean
+	 */
+	public function restore_by($field = null, $match = null)
+	{
+		// Collect objects.
+		$objects = $this->get_many($field, $match);
+
+		if ($objects)
+		{
+			$ids = array();
+			foreach ($objects as $user)
+			{
+				if ($user->deleted > 0)
+				{
+					$ids[] = $user->id;
+				}
+			}
+
+			// Restore objects in IDS.
+			return ( ! empty($ids))
+				? $this->_parent->entities->restore_by('id', $ids)
+				: false;
+		}
+
+		return false;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Count all objects.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	int
+	 */
+	public function count($field = null, $match = null)
+	{
+		$this->ci->db->where('entities.type', 'object');
+
+		if ( ! empty($field))
+		{
+			if (is_array($field))
+			{
+				$this->ci->db->where($field);
+			}
+			elseif (is_array($match))
+			{
+				$this->ci->db->where($field, $match);
+			}
+			else
+			{
+				$this->ci->db->where($field, $match);
+			}
+		}
+
+		$rows = $this->ci->db
+			->join('objects', 'objects.guid = entities.id')
+			->get('entities');
+
+		return $rows->num_rows();
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve a single object by ID or username.
+	 * @access 	public
+	 * @param 	mixed 	$id 	The object's ID or username.
+	 * @return 	object if found, else null.
+	 */
+	public function get($id)
+	{
+		// Getting by ID?
+		if (is_numeric($id))
+		{
+			return $this->get_by('entities.id', $id);
+		}
+
+		// Retrieve by username.
+		if (is_string($id))
+		{
+			return $this->get_by('entities.username', $id);
+		}
+
+		// Fall-back to get_by method.
+		return $this->get_by($id);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve a single object by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	object if found, else null.
+	 */
+	public function get_by($field, $match = null)
+	{
+		// Try to get the object and make sure only one row it found.
+		$object = $this->get_many($field, $match);
+		return ($object && count($object) === 1) ? $object[0] : null;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve multiple objects by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	array of objects if found, else null.
+	 */
+	public function get_many($field = null, $match = null, $limit = 0, $offset = 0)
+	{
+		// Prepare entities type.
+		$this->ci->db->where('entities.type', 'object');
+
+		// There some arguments?
+		if ( ! empty($field))
+		{
+			if (is_array($field))
+			{
+				$this->ci->db->where($field);
+			}
+			elseif (is_array($match))
+			{
+				$this->ci->db->where_in($field, $match);
+			}
+			else
+			{
+				$this->ci->db->where($field, $match);
+			}
+		}
+
+		// Proceed to join and get.
+		return $this->ci->db
+			->join('objects', 'objects.guid = entities.id')
+			->limit($limit, $offset)
+			->get('entities')
+			->result();
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve all users with optional limit and offset.
 	 * @access 	public
 	 * @param 	int 	$limit
 	 * @param 	int 	$offset
 	 * @return 	array of objects.
 	 */
-	public function get_all_objects($limit = 0, $offset = 0)
+	public function get_all($limit = 0, $offset = 0)
 	{
-		return $this->ci->bkader_objects_m->limit($limit, $offset)->get_all();
+		return $this->get_many(null, null, $limit, $offset);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Split data upon creation or update into entities, objects and metadata.
+	 * Split data upon creation or update into entity and object.
 	 * @access 	private
 	 * @param 	array 	$data
 	 * @return 	array.
@@ -250,15 +477,10 @@ class Bkader_objects extends CI_Driver
 			{
 				$_data[0][$key] = $val;
 			}
-			// Objects table.
+			// Users table.
 			elseif (in_array($key, $this->fields()))
 			{
 				$_data[1][$key] = $val;
-			}
-			// Anything else is metadata.
-			else
-			{
-				$_data[2][$key] = $val;
 			}
 		}
 
@@ -270,7 +492,6 @@ class Bkader_objects extends CI_Driver
 		// Make sure all three elements are set.
 		(isset($_data[0])) OR $_data[0] = array();
 		(isset($_data[1])) OR $_data[1] = array();
-		(isset($_data[2])) OR $_data[2] = array();
 
 		// Sort things up.
 		ksort($_data);
@@ -278,4 +499,262 @@ class Bkader_objects extends CI_Driver
 		return $_data;
 	}
 
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('add_object'))
+{
+	/**
+	 * Create a single object.
+	 * @param 	array 	$data 	array of data to insert.
+	 * @return 	int 	The object's id if created, else false.
+	 */
+	function add_object(array $data = array())
+	{
+		return get_instance()->app->objects->create($data);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('update_object'))
+{
+	/**
+	 * Update a single object by ID.
+	 * @param 	int 	$id 	The object's ID.
+	 * @param 	array 	$data 	Array of data to set.
+	 * @return 	boolean
+	 */
+	function update_object($id, array $data = array())
+	{
+		return get_instance()->app->objects->update($id, $data);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('delete_object'))
+{
+	/**
+	 * Delete a single object by ID or username.
+	 * @param 	mixed 	$id 	ID or username.
+	 * @return 	boolean
+	 */
+	function delete_object($id)
+	{
+		return get_instance()->app->objects->delete($id);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('delete_object_by'))
+{
+	/**
+	 * Soft delete multiple objects by arbitrary WHERE clause.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	boolean
+	 */
+	function delete_object_by($field, $match = null)
+	{
+		return get_instance()->app->objects->delete_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('delete_objects'))
+{
+	/**
+	 * Soft delete multiple or all objects by arbitrary WHERE clause.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	boolean
+	 */
+	function delete_objects($field = null, $match = null)
+	{
+		return get_instance()->app->objects->delete_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('remove_object'))
+{
+	/**
+	 * Completely remove a object from database.
+	 * @param 	int 	$id 	The object's ID or username.
+	 * @return 	boolean
+	 */
+	function remove_object($id)
+	{
+		return get_instance()->app->objects->remove($id);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('remove_object_by'))
+{
+	/**
+	 * Completely remove multiple objects from database.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	boolean
+	 */
+	function remove_object_by($field, $match = null)
+	{
+		return get_instance()->app->objects->remove_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('remove_objects'))
+{
+	/**
+	 * Completely remove multiple or all objects from database.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	boolean
+	 */
+	function remove_objects($field = null, $match = null)
+	{
+		return get_instance()->app->objects->remove_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('restore_object'))
+{
+	/**
+	 * Restore a previously soft-deleted object.
+	 * @access 	public
+	 * @param 	int 	$id 	The object's ID.
+	 * @return 	boolean
+	 */
+	function restore_object($id)
+	{
+		return get_instance()->app->objects->restore($id);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('restore_object_by'))
+{
+	/**
+	 * Restore multiple soft-deleted objects.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	boolean
+	 */
+	function restore_object_by($field, $match = null)
+	{
+		return get_instance()->app->objects->restore_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('restore_objects'))
+{
+	/**
+	 * Restore multiple or all soft-deleted objects.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	boolean
+	 */
+	function restore_objects($field, $match = null)
+	{
+		return get_instance()->app->objects->restore_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('count_objects'))
+{
+	/**
+	 * Count all objects on database with arbitrary WHERE clause.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	int
+	 */
+	function count_objects($field = null, $match = null)
+	{
+		return get_instance()->app->objects->count($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_object'))
+{
+	/**
+	 * Retrieve a single object by ID, objectname, email or arbitrary
+	 * WHERE clause if $id an array.
+	 * @param 	mixed 	$id
+	 * @return 	object if found, else null.
+	 */
+	function get_object($id)
+	{
+		return get_instance()->app->objects->get($id);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_object_by'))
+{
+	/**
+	 * Retrieve a single object by arbitrary WHERE clause.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	object if found, else null.
+	 */
+	function get_object_by($field, $match = null)
+	{
+		return get_instance()->app->objects->get_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_objects'))
+{
+	/**
+	 * Retrieve multiple objects by arbitrary WHERE clause.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	array of objects if found, else null.
+	 */
+	function get_objects($field = null, $match = null, $limit = 0, $offset = 0)
+	{
+		return get_instance()->app->objects->get_many($field, $match, $limit, $offset);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_all_objects'))
+{
+	/**
+	 * Retrieve all objects with optional limit and offset.
+	 * @access 	public
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	array of objects.
+	 */
+	function get_all_objects($limit = 0, $offset = 0)
+	{
+		return get_instance()->app->objects->get_all($limit, $offset);
+	}
 }

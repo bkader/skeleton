@@ -420,7 +420,7 @@ class Users extends KB_Controller
 			);
 
 			// Success? Redirect to homepage, else, back to login page.
-			redirect(($status === true ? '' : 'login'), 'refresh');
+			redirect(($status === true ? $this->redirect : 'login'), 'refresh');
 			exit;
 		}
 	}

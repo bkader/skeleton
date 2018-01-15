@@ -362,6 +362,69 @@ class KB_Router extends CI_Router
 
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Return an array of the selected module's details.
+	 * @access 	public
+	 * @param 	string 	$module 	The module's name (folder).
+	 * @return 	array if found, else false.
+	 */
+	public function module_details($module)
+	{
+		if (empty($module))
+		{
+			return false;
+		}
+
+		// Prepare the module's path first and make sure it's valid.
+		$module_path = $this->module_path($module);
+		if (false === $module_path)
+		{
+			return false;
+		}
+
+		// Let's see if the manifest.json is found.
+		if ( ! is_file($module_path.'manifest.json'))
+		{
+			return false;
+		}
+
+		// Get the content of the file and make sure it's well formatted.
+		$manifest = file_get_contents($module_path.'manifest.json');
+		$manifest = json_decode($manifest, true);
+		if ( ! is_array($manifest))
+		{
+			return false;
+		}
+
+		// Default headers.
+		$defaults = array(
+			'name'         => null,
+			'folder'       => $module_path,
+			'module_uri'   => null,
+			'description'  => null,
+			'version'      => null,
+			'license'      => null,
+			'license_uri'  => null,
+			'author'       => null,
+			'author_uri'   => null,
+			'author_email' => null,
+			'tags'         => null,
+		);
+
+		// Replace all keys.
+		$manifest = array_replace_recursive($defaults, $manifest);
+
+		// Add URI to MIT license.
+		if ($manifest['license'] == 'MIT' && empty($manifest['license_uri']))
+		{
+			$manifest['license_uri'] = 'http://opensource.org/licenses/MIT';
+		}
+
+		return $manifest;
+	}
+
+	// ------------------------------------------------------------------------
+
     /**
      * This method attempts to locate the controller of a module if 
      * detected in the URI.

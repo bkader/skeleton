@@ -55,7 +55,7 @@ class KB_Input extends CI_Input
 {
 	/**
 	 * Fetch an item from the REQUEST array
-	 * @param	mixed	$index		Index for item to be fetched from $_GET
+	 * @param	mixed	$index		Index for item to be fetched from $_REQUEST
 	 * @param	bool	$xss_clean	Whether to apply XSS filtering
 	 * @return	mixed
 	 */

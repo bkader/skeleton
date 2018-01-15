@@ -107,6 +107,10 @@ $lang['set_manual_activation_tip'] = 'Whether to manually verify users accounts.
 $lang['set_login_type']     = 'Login Type';
 $lang['set_login_type_tip'] = 'Users may log in using usernames, email addresses or both.';
 
+// Allow multi sessions.
+$lang['set_allow_multi_session']     = 'Allow Multi Sessions';
+$lang['set_allow_multi_session_tip'] = 'Whether to allow multiple users to login to the same account at the same time.';
+
 // Use Gravatar.
 $lang['set_use_gravatar']     = 'Use Gravatar';
 $lang['set_use_gravatar_tip'] = 'Use gravatar or allow users to upload their avatars.';

@@ -38,31 +38,20 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Because this file is the first one to be loaded, we make sure
- * to load our needed resources here.
- */
-require_once(KBPATH.'core/compat/print_d.php');
-require_once(KBPATH.'core/compat/str_to_bool.php');
-require_once(KBPATH.'core/compat/is_serialized.php');
-require_once(KBPATH.'core/compat/is_json.php');
-require_once(KBPATH.'core/compat/bool_or_serialize.php');
-
-/**
- * KB_Config Class
+ * Bkader_options_m Class
  *
- * This file extending CI_Config class in order to add, alter
- * or enhance some of the parent's methods.
+ * This model handles operations done on options table.
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @category 	Core Extension
+ * @category 	Models
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
-class KB_Config extends CI_Config
+class Bkader_options_m extends KB_Model
 {
 	/**
 	 * Class constructor
@@ -70,48 +59,17 @@ class KB_Config extends CI_Config
 	 */
 	public function __construct()
 	{
-		// Our our custom config path.
-		$this->_config_paths[] = KBPATH;
+		// Model preferences.
+		$this->_table      = 'options';
+		$this->primary_key = 'name';
 
-		// Now we call parent's constructor.
+		// Add observers.
+		array_unshift($this->before_create, 'prepare_input(value,options)');
+		array_unshift($this->before_update, 'prepare_input(value,options)');
+		array_unshift($this->after_get,     'prepare_output(value,options)');
+
+		// Call parent's constructor.
 		parent::__construct();
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Add the possibility to set an item with an index.
-	 * @access 	public
-	 * @param 	string 	$item 	The key of the item.
-	 * @param 	mixed 	$value 	The value of the item.
-	 * @param 	mixed 	$index 	The index of the item.
-	 */
-	public function set_item($item, $value = null, $index = '')
-	{
-		if ($index == '')
-		{
-			$this->config[$item] = $value;
-		}
-		else
-		{
-			$this->config[$index][$item] = $value;
-		}
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Returns the name or details about the language currently in use.
-	 * @access 	public
-	 * @param 	mixed 	what to retrieve.
-	 * @return 	mixed
-	 */
-	public function lang()
-	{
-		return call_user_func_array(
-			array(get_instance()->lang, 'lang'),
-			func_get_args()
-		);
 	}
 
 }

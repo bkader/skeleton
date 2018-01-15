@@ -82,7 +82,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 	require_once(BASEPATH.'core/Common.php');
 
-
 /*
  * ------------------------------------------------------
  * Security procedures
@@ -197,27 +196,6 @@ if ( ! is_php('5.4'))
 
 /*
  * ------------------------------------------------------
- *  Instantiate the config class
- * ------------------------------------------------------
- *
- * Note: It is important that Config is loaded first as
- * most other classes depend on it either directly or by
- * depending on another class that uses it.
- *
- */
-	$CFG =& load_class('Config', 'core');
-
-	// Do we have any manually set config items in the index.php file?
-	if (isset($assign_to_config) && is_array($assign_to_config))
-	{
-		foreach ($assign_to_config as $key => $value)
-		{
-			$CFG->set_item($key, $value);
-		}
-	}
-
-/*
- * ------------------------------------------------------
  *  Instantiate the plugins class
  * ------------------------------------------------------
  */
@@ -237,6 +215,27 @@ if ( ! is_php('5.4'))
  */
 	$EXT->call_hook('pre_system');
 	$PLG->do_action('pre_system');
+
+/*
+ * ------------------------------------------------------
+ *  Instantiate the config class
+ * ------------------------------------------------------
+ *
+ * Note: It is important that Config is loaded first as
+ * most other classes depend on it either directly or by
+ * depending on another class that uses it.
+ *
+ */
+	$CFG =& load_class('Config', 'core');
+
+	// Do we have any manually set config items in the index.php file?
+	if (isset($assign_to_config) && is_array($assign_to_config))
+	{
+		foreach ($assign_to_config as $key => $value)
+		{
+			$CFG->set_item($key, $value);
+		}
+	}
 
 /*
  * ------------------------------------------------------

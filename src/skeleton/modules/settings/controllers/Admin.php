@@ -62,7 +62,7 @@ class Admin extends Admin_Controller
 		parent::__construct();
 
 		// Load settings language file.
-		$this->load->language('settings/kb_settings_admin');
+		$this->load->language('settings/settings_admin');
 	}
 
 	// ------------------------------------------------------------------------
@@ -154,14 +154,21 @@ class Admin extends Admin_Controller
 		else
 		{
 			// Check CSRF.
-			if ( ! $this->check_csrf())
-			{
-				set_alert(lang('error_csrf'), 'error');
-				redirect('admin/settings/users', 'refresh');
-				exit;
-			}
+			// if ( ! $this->check_csrf())
+			// {
+			// 	set_alert(lang('error_csrf'), 'error');
+			// 	redirect('admin/settings/users', 'refresh');
+			// 	exit;
+			// }
 
-			$settings = $this->input->post(array('allow_registration', 'email_activation', 'manual_activation', 'login_type', 'use_gravatar'), true);
+			$settings = $this->input->post(array(
+				'allow_registration',
+				'email_activation',
+				'manual_activation',
+				'login_type',
+				'allow_multi_session',
+				'use_gravatar'
+			), true);
 
 			foreach ($settings as $key => $val)
 			{

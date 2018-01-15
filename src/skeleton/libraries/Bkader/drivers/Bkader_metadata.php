@@ -198,6 +198,8 @@ class Bkader_metadata extends CI_Driver
 			}
 		}
 
+		return true;
+
 		return ($this->ci->db->affected_rows() > 0);
 	}
 

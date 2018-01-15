@@ -101,7 +101,7 @@ class Bkader_options extends CI_Driver
 		$value = null, 
 		$tab = '', 
 		$field_type = 'text', 
-		$options = null, 
+		$options = '', 
 		$required = true)
 	{
 		$this->ci->db->insert('options', array(
@@ -173,7 +173,7 @@ class Bkader_options extends CI_Driver
 	public function set_item($name, $new_value = null)
 	{
 		// Not found? Create it.
-		if ( ! $this->item($name, false))
+		if ( ! $this->get($name, false))
 		{
 			return $this->create($name, $new_value);
 		}
@@ -181,8 +181,10 @@ class Bkader_options extends CI_Driver
 		// Found? update it.
 		$this->ci->db
 			->where('LOWER(name)', strtolower($name))
-			->set('value', to_bool_or_serialize($new_value));
+			->set('value', to_bool_or_serialize($new_value))
+			->update('options');
 
+			return true;
 		return ($this->ci->db->affected_rows() > 0);
 	}
 
@@ -355,7 +357,7 @@ if ( ! function_exists('add_option'))
 		$value = null, 
 		$tab = '', 
 		$field_type = 'text', 
-		$options = null, 
+		$options = '',
 		$required = true)
 	{
 		return get_instance()->app->options->create($name, $value, $tab, $field_type, $options, $required);

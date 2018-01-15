@@ -328,7 +328,7 @@ class CI_Loader {
 					throw new RuntimeException($app_path.$class.".php exists, but doesn't declare class ".$class);
 				}
 
-				log_message('info', config_item('subclass_prefix').'Model class loaded');
+				log_message('info', $this->config->item('subclass_prefix').'Model class loaded');
 			}
 		}
 

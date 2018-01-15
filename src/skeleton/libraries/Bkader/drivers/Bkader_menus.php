@@ -391,22 +391,19 @@ class Bkader_menus extends CI_Driver
 	 */
 	public function set_menu_location($location, $menu_id = null)
 	{
-		// Holds available location for eventual check.
-		$locations = $this->_locations();
-
 		// Multiple locations and menus?
 		if (is_array($location))
 		{
 			foreach (array_unique($location) as $key => $val)
 			{
-				if ( ! $this->set_menu_location($key, $val))
-				{
-					return false;
-				}
+				$this->set_menu_location($key, $val);
 			}
 
 			return true;
 		}
+
+		// Holds available location for eventual check.
+		$locations = $this->_locations();
 
 		// Make sure the location exists.
 		if ( ! isset($locations[$location]))
@@ -433,7 +430,7 @@ class Bkader_menus extends CI_Driver
 			return false;
 		}
 
-		return $this->_parent->metadata->update_for($menu_id, 'menu_location', $location);
+		return $this->_parent->metadata->update($menu_id, 'menu_location', $location);
 	}
 
 	// ------------------------------------------------------------------------
@@ -636,7 +633,7 @@ class Bkader_menus extends CI_Driver
 		// Try to get menus from database.
 		$menus = $this->_parent->groups
 			->select($this->_menu_columns)
-			->get_many_by('subtype', 'menu');
+			->get_many('subtype', 'menu');
 
 		// If there are any menus, get their location.
 		if ($menus)
@@ -700,7 +697,7 @@ class Bkader_menus extends CI_Driver
 		// If the item was created, add attributes.
 		if ($item_id > 0)
 		{
-			$this->_parent->metadata->create_for($item_id, array(
+			$this->_parent->metadata->create($item_id, array(
 				'attributes' => $attrs,
 				'order'      => 0,
 			));
@@ -871,7 +868,7 @@ class Bkader_menus extends CI_Driver
 		{
 			$db_items = $this->_parent->objects
 				->select($this->_item_columns)
-				->get_many_by('subtype', 'menu_item');
+				->get_many('subtype', 'menu_item');
 		}
 		// If there are cached items, exclude them.
 		else
@@ -879,7 +876,7 @@ class Bkader_menus extends CI_Driver
 			$db_items = $this->_parent->objects
 				->select($this->_item_columns)
 				->where_not_in('id', $cached_ids)
-				->get_many_by('subtype', 'menu_item');
+				->get_many('subtype', 'menu_item');
 		}
 
 		// Found? Get attributes and order.
@@ -948,7 +945,7 @@ class Bkader_menus extends CI_Driver
 		{
 			$db_items = $this->_parent->objects
 				->select($this->_item_columns)
-				->get_many_by(array(
+				->get_many(array(
 					'owner_id' => $id,
 					'subtype'  => 'menu_item',
 				));
@@ -958,7 +955,7 @@ class Bkader_menus extends CI_Driver
 			$db_items = $this->_parent->objects
 				->select($this->_item_columns)
 				->where_not_in('id', $cached_ids)
-				->get_many_by(array(
+				->get_many(array(
 					'owner_id' => $id,
 					'subtype'  => 'menu_item',
 				));
@@ -1020,7 +1017,7 @@ class Bkader_menus extends CI_Driver
 			 * We try to update menu item' order! If it fails, we
 			 * return FALSE right away.
 			 */
-			if ( ! $this->_parent->metadata->update_for($item_id, 'order', $i))
+			if ( ! $this->_parent->metadata->update($item_id, 'order', $i))
 			{
 				return false;
 			}

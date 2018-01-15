@@ -210,7 +210,7 @@ class Bkader_plugins extends CI_Driver
 		$plugins        = $this->get_plugins();
 		$active_plugins = $this->get_active_plugins();
 
-		if (isset($plugins[$name]) && ! in_array($active_plugins))
+		if (isset($plugins[$name]) && ! in_array($name, $active_plugins))
 		{
 			$active_plugins[] = $name;
 			return $this->_set_plugins($active_plugins);
@@ -395,7 +395,7 @@ class Bkader_plugins extends CI_Driver
 	private function _set_plugins($plugins = array())
 	{
 		// Check if the option exists first.
-		$found = $this->_parent->options->get_by('name', 'active_plugins');
+		$found = $this->_parent->options->get('active_plugins');
 
 		// If found and updated, return TRUE.
 		if ($found && $this->_parent->options->set_item('active_plugins', $plugins))

@@ -69,6 +69,17 @@ class Bkader_users extends CI_Driver
 		log_message('info', 'Bkader_users Class Initialized');
 	}
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * Generates the SELECT portion of the query
+     */
+    public function select($select = '*', $escape = null)
+    {
+    	$this->ci->db->select($select, $escape);
+    	return $this;
+    }
+
 	// ------------------------------------------------------------------------
 
 	/**
@@ -509,7 +520,7 @@ class Bkader_users extends CI_Driver
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Split data upon creation or update into entities, users and metadata.
+	 * Split data upon creation or update into entity and user.
 	 * @access 	private
 	 * @param 	array 	$data
 	 * @return 	array.
@@ -550,19 +561,6 @@ class Bkader_users extends CI_Driver
 		ksort($_data);
 
 		return $_data;
-	}
-
-	// ------------------------------------------------------------------------
-
-	private function _update($id, array $data = array())
-	{
-		if (empty($data))
-		{
-			return false;
-		}
-
-		$this->ci->db->update('users', $data, "guid={$id}");
-		return ($this->ci->db->affected_rows() > 0);
 	}
 
 }

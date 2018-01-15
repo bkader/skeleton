@@ -51,6 +51,15 @@
 					</div>
 				</div>
 
+				<!-- Multiple sessions -->
+				<div class="form-group<?php echo form_error('allow_multi_session') ? ' has-error' : ''?>">
+					<label for="allow_multi_session" class="col-sm-2 control-label"><?php _e('set_allow_multi_session') ?></label>
+					<div class="col-sm-10">
+						<?php echo print_input($allow_multi_session, array('class' => 'form-control')) ?>
+						<div class="help-block"><?php echo form_error('allow_multi_session') ?: lang('set_allow_multi_session_tip') ?></div>
+					</div>
+				</div>
+
 				<!-- Use Gravatar -->
 				<div class="form-group<?php echo form_error('use_gravatar') ? ' has-error' : ''?>">
 					<label for="use_gravatar" class="col-sm-2 control-label"><?php _e('set_use_gravatar') ?></label>
