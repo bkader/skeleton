@@ -1,6 +1,6 @@
 # Activities
 
-* [Definition](#markdown-header-what-are-metadata)  
+* [Definition](#markdown-header-definition)  
 * [Creating Activities](#markdown-header-creating-activities)
 * [Updating Activities](#markdown-header-updating-activities)
 * [Deleting Activities](#markdown-header-deleting-activities)
