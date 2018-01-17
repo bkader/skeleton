@@ -5,7 +5,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * Base Site URL.
  * @see application/config/config.php:6
  */
-$config['base_url'] = 'http://stage.example.com/cibase/';
+$config['base_url'] = 'http://demo.ianhub.com/skeleton/';
 
 /**
  * Index File
@@ -24,9 +24,3 @@ $config['language']	= 'english';
  * @see application/config/config.php:206
  */
 $config['log_threshold'] = 2;
-
-/**
- * Encryption Key
- * @see application/config/config.php:318
- */
-$config['encryption_key'] = '';

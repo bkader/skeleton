@@ -73,12 +73,12 @@ class Bkader_metadata extends CI_Driver
 	 * @param 	mixed 	$value
 	 * @return 	bool
 	 */
-	public function create($guid, $meta, $value = null)
+	public function create($guid, $meta, $value = NULL)
 	{
 		// We make sure the entity exists and $meta is provided.
 		if ( ! $this->_parent->entities->get($guid) OR empty($meta))
 		{
-			return false;
+			return FALSE;
 		}
 
 		// Turn things into an array.
@@ -126,7 +126,124 @@ class Bkader_metadata extends CI_Driver
 		// Proceed only if $data is not empty.
 		return ( ! empty($data))
 			? ($this->ci->db->insert_batch('metadata', $data) > 0)
-			: false;
+			: FALSE;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve a single or multiple metadata of the selected entity.
+	 * @access 	public
+	 * @param 	int 	$guid 	The entiti'y id.
+	 * @param 	string 	$name 	The metadata name
+	 * @param 	bool 	$single Whether to return the metadata value.
+	 * @return 	mixed
+	 */
+	public function get($guid, $name = NULL, $single = FALSE)
+	{
+		// A single metadata to retrieve?
+		if ( ! empty($name))
+		{
+			$meta = $this->get_by(array(
+				'guid' => $guid,
+				'name' => $name,
+			));
+
+			// Return the value or the whole object if found.
+			return ($meta && $single === TRUE) ? $meta->value : $meta;
+		}
+
+		// Multiple metadata.
+		return $this->get_many('guid', $guid);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve a single metadata by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	object if found, else NULL
+	 */
+	public function get_by($field, $match = NULL)
+	{
+		(is_array($field)) OR $field = array($field => $match);
+
+		foreach ($field as $key => $val)
+		{
+			if (is_int($key) && is_array($val))
+			{
+				$this->ci->db->where($val);
+			}
+			elseif (is_array($val))
+			{
+				$this->ci->db->where_in($key, $val);
+			}
+			else
+			{
+				$this->ci->db->where($key, $val);
+			}
+		}
+
+		$meta = $this->ci->db->get('metadata')->row();
+
+		// Found?
+		if ($meta)
+		{
+			$meta->value = from_bool_or_serialize($meta->value);
+		}
+
+		return $meta;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve multiple metadata by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	array of objects if found, else NULL
+	 */
+	public function get_many($field = NULL, $match = NULL)
+	{
+		// Argument provided?
+		if ( ! empty($field))
+		{
+			(is_array($field)) OR $field = array($field => $match);
+
+			foreach ($field as $key => $val)
+			{
+				if (is_int($key) && is_array($val))
+				{
+					$this->ci->db->where($val);
+				}
+				elseif (is_array($val))
+				{
+					$this->ci->db->where_in($key, $val);
+				}
+				else
+				{
+					$this->ci->db->where($key, $val);
+				}
+			}
+		}
+
+		// Proceed to retrieving.
+		$meta = $this->ci->db->get('metadata')->result();
+
+		// Found? Format the value.
+		if ($meta)
+		{
+			foreach ($meta as &$_meta)
+			{
+				$_meta->value = from_bool_or_serialize($_meta->value);
+			}
+		}
+
+		// Return the final result.
+		return $meta;
 	}
 
 	// ------------------------------------------------------------------------
@@ -139,12 +256,12 @@ class Bkader_metadata extends CI_Driver
 	 * @param 	mixed 	$value
 	 * @return 	bool
 	 */
-	public function update($guid, $meta, $value = null)
+	public function update($guid, $meta, $value = NULL)
 	{
 		// Make sure the entity exists and metadata are provided.
 		if ( ! $this->_parent->entities->get($guid) OR empty($meta))
 		{
-			return false;
+			return FALSE;
 		}
 
 		// Turn things into an array.
@@ -178,7 +295,7 @@ class Bkader_metadata extends CI_Driver
 			$md = $this->get($guid, $key);
 
 			// Found by same value? Nothing to do.
-			if ($md && $md->value == $val)
+			if ($md && from_bool_or_serialize($md->value) === $val)
 			{
 				continue;
 			}
@@ -186,11 +303,13 @@ class Bkader_metadata extends CI_Driver
 			// Found by different value? Update it.
 			if ($md)
 			{
-				$this->ci->db
-					->where('guid', $guid)
-					->where('name', $key)
-					->set('value', to_bool_or_serialize($val))
-					->update('metadata');
+				$this->update_by(
+					array(
+						'guid' => $guid,
+						'name' => $key,
+					),
+					array('value' => $val)
+				);
 			}
 			else
 			{
@@ -198,9 +317,7 @@ class Bkader_metadata extends CI_Driver
 			}
 		}
 
-		return true;
-
-		return ($this->ci->db->affected_rows() > 0);
+		return TRUE;
 	}
 
 	// ------------------------------------------------------------------------
@@ -227,7 +344,7 @@ class Bkader_metadata extends CI_Driver
 		// If there are not, nothing to do.
 		if (empty($args))
 		{
-			return false;
+			return FALSE;
 		}
 
 		/**
@@ -237,7 +354,7 @@ class Bkader_metadata extends CI_Driver
 		$data = array_pop($args);
 		if ( ! is_array($data) OR empty($data))
 		{
-			return false;
+			return FALSE;
 		}
 
 		// Prepare the value and params.
@@ -252,8 +369,21 @@ class Bkader_metadata extends CI_Driver
 			// Get rid of nasty deep array.
 			(is_array($args[0])) && $args = $args[0];
 
-			// Add the WHERE clause.
-			$this->ci->db->where($args);
+			foreach ($args as $key => $val)
+			{
+				if (is_int($key) && is_array($val))
+				{
+					$this->ci->db->where($val);
+				}
+				elseif (is_array($val))
+				{
+					$this->ci->db->where_in($key, $val);
+				}
+				else
+				{
+					$this->ci->db->where($key, $val);
+				}
+			}
 		}
 
 		// Proceed to update an return TRUE if all went good.
@@ -276,134 +406,71 @@ class Bkader_metadata extends CI_Driver
 	 */
 	public function delete()
 	{
-		// Collect method arguments and make sure there are any.
 		$args = func_get_args();
 		if (empty($args))
 		{
-			return false;
+			return FALSE;
 		}
 
-		// The entity's ID is always the first argument.
+		// $guid is always the first element.
 		$guid = array_shift($args);
-
-		// Make sure it's numeric and the entity exists.
-		if ( ! is_numeric($guid) OR ! $this->_parent->entities->get($guid))
+		if ( ! is_numeric($guid))
 		{
-			return false;
+			return FALSE;
 		}
 
-		// Proceed to deleting.
-		$this->ci->db->where('guid', $guid);
+		// Prepare WHERE clause.
+		$where = array('guid' => $guid);
 
-		// There are some arguments left?
+		// Are there arguments left?
 		if ( ! empty($args))
 		{
-			// Get rid of nasty deep array.
+			// Get rid of deep nasty array.
 			(is_array($args[0])) && $args = $args[0];
-
-			$this->ci->db->where_in('name', $args);
+			$where['name'] = $args;
 		}
 
+		return $this->delete_by($where);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Delete multiple metadata by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	boolean
+	 */
+	public function delete_by($field = null, $match = null)
+	{
+		// Prepare our WHERE clause.
+		if ( ! empty($field))
+		{
+			// Turn things into an array first.
+			(is_array($field)) OR $field = array($field => $match);
+
+			foreach ($field as $key => $val)
+			{
+				if (is_int($key) && is_array($val))
+				{
+					$this->ci->db->where($val);
+				}
+				elseif (is_array($val))
+				{
+					$this->ci->db->where_in($key, $val);
+				}
+				else
+				{
+					$this->ci->db->where($key, $val);
+				}
+			}
+		}
+
+		// Proceed to deletion.
 		$this->ci->db->delete('metadata');
 		return ($this->ci->db->affected_rows() > 0);
 	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Retrieve a single or multiple metadata of the selected entity.
-	 * @access 	public
-	 * @param 	int 	$guid 	The entiti'y id.
-	 * @param 	string 	$name 	The metadata name
-	 * @param 	bool 	$single Whether to return the metadata value.
-	 * @return 	mixed
-	 */
-	public function get($guid, $name = null, $single = false)
-	{
-		// A single metadata to retrieve?
-		if ( ! empty($name))
-		{
-			$meta = $this->get_by(array(
-				'guid' => $guid,
-				'name' => $name,
-			));
-
-			// Return the value or the whole object if found.
-			return ($meta && $single === true) ? $meta->value : $meta;
-		}
-
-		// Multiple metadata.
-		return $this->get_many('guid', $guid);
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Retrieve a single metadata by arbitrary WHERE clause.
-	 * @access 	public
-	 * @param 	mixed 	$field
-	 * @param 	mixed 	$match
-	 * @return 	object if found, else null
-	 */
-	public function get_by($field, $match = null)
-	{
-		(is_array($field)) OR $field = array($field => $match);
-
-		$meta = $this->ci->db->get_where('metadata', $field, 1)->row();
-
-		// Found?
-		if ($meta)
-		{
-			$meta->value = from_bool_or_serialize($meta->value);
-		}
-
-		return $meta;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Retrieve multiple metadata by arbitrary WHERE clause.
-	 * @access 	public
-	 * @param 	mixed 	$field
-	 * @param 	mixed 	$match
-	 * @return 	array of objects if found, else null
-	 */
-	public function get_many($field = null, $match = null)
-	{
-		// Argument provided?
-		if ( ! empty($field))
-		{
-			if (is_array($field))
-			{
-				$this->ci->db->where($field);
-			}
-			elseif (is_array($match))
-			{
-				$this->ci->db->where_in($field, $match);
-			}
-			else
-			{
-				$this->ci->db->where($field, $match);
-			}
-		}
-
-		// Proceed to retrieving.
-		$meta = $this->ci->db->get('metadata')->result();
-
-		// Found? Format the value.
-		if ($meta)
-		{
-			foreach ($meta as &$_meta)
-			{
-				$_meta->value = from_bool_or_serialize($_meta->value);
-			}
-		}
-
-		// Return the final result.
-		return $meta;
-	}
-	
 
 	// ------------------------------------------------------------------------
 
@@ -434,9 +501,59 @@ if ( ! function_exists('add_meta'))
 	 * @param 	mixed 	$value 	The metadata value.
 	 * @return 	boolean
 	 */
-	function add_meta($guid, $meta, $value = null)
+	function add_meta($guid, $meta, $value = NULL)
 	{
 		return get_instance()->app->metadata->create($guid, $meta, $value);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_meta'))
+{
+	/**
+	 * Retrieve a single or multiple metadata for the selected entity.
+	 * @param 	int 	$guid 	The entity's ID.
+	 * @param 	mixed 	$name 	The metadata name or array.
+	 * @param 	bool 	$single Whether to retrieve the value instead of the object.
+	 * @return 	mixed 	depends on the value of the metadata.
+	 */
+	function get_meta($guid, $name = NULL, $single = FALSE)
+	{
+		return get_instance()->app->metadata->get($guid, $name, $single);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_meta_by'))
+{
+	/**
+	 * Retrieve a single metadata by arbitrary WHERE clause.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	object if found, else NULL
+	 */
+	function get_meta_by($field, $match = NULL)
+	{
+		return get_instance()->app->metadata->get_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_many_meta'))
+{
+	/**
+	 * Retrieve multiple metadata by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	array of objects if found, else NULL
+	 */
+	function get_many_meta($field, $match = NULL)
+	{
+		return get_instance()->app->metadata->get_many($field, $match);
 	}
 }
 
@@ -451,7 +568,7 @@ if ( ! function_exists('update_meta'))
 	 * @param 	mixed 	$value 	The metadata value.
 	 * @return 	boolean.
 	 */
-	function update_meta($guid, $meta, $value = null)
+	function update_meta($guid, $meta, $value = NULL)
 	{
 		return get_instance()->app->metadata->update($guid, $meta, $value);
 	}
@@ -480,64 +597,30 @@ if ( ! function_exists('delete_meta'))
 {
 	/**
 	 * Delete a single or multiple metadata for the selected entity.
+	 * @param 	int 	$guid 	The entity's ID.
+	 * @param 	mixed 	$name 	The meta name or array.
 	 * @return 	boolean
 	 */
-	function delete_meta()
+	function delete_meta($guid, $name = NULL)
 	{
-		return call_user_func_array(
-			array(get_instance()->app->metadata, 'delete'),
-			func_get_args()
-		);
+		return get_instance()->app->metadata->delete($guid, $name);
 	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('get_meta'))
+if ( ! function_exists('delete_meta_by'))
 {
 	/**
-	 * Retrieve a single or multiple metadata for the selected entity.
-	 * @param 	int 	$guid 	The entity's ID.
-	 * @param 	mixed 	$name 	The metadata name or array.
-	 * @param 	bool 	$single Whether to retrieve the value instead of the object.
-	 * @return 	mixed 	depends on the value of the metadata.
-	 */
-	function get_meta($guid, $name = null, $single = false)
-	{
-		return get_instance()->app->metadata->get($guid, $name, $single);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('get_meta_by'))
-{
-	/**
-	 * Retrieve a single metadata by arbitrary WHERE clause.
-	 * @param 	mixed 	$field
-	 * @param 	mixed 	$match
-	 * @return 	object if found, else null
-	 */
-	function get_meta_by($field, $match = null)
-	{
-		return get_instance()->app->metadata->get_by($field, $match);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('get_many_meta'))
-{
-	/**
-	 * Retrieve multiple metadata by arbitrary WHERE clause.
+	 * Delete multiple metadata by arbitrary WHERE clause.
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
-	 * @return 	array of objects if found, else null
+	 * @return 	boolean
 	 */
-	function get_many_meta($field, $match = null)
+	function delete_meta_by($field = null, $match = null)
 	{
-		return get_instance()->app->metadata->get_many($field, $match);
+		return get_instance()->app->metadata->delete_by($field, $match);
 	}
 }
 

@@ -24,9 +24,3 @@ $config['language']	= 'english';
  * @see application/config/config.php:206
  */
 $config['log_threshold'] = 0;
-
-/**
- * Encryption Key
- * @see application/config/config.php:318
- */
-$config['encryption_key'] = '';

@@ -21,7 +21,7 @@
 									<option value="0"><?php _e('select_menu'); ?></option>
 								<?php foreach ($menus as $menu): ?>
 									<option value="<?php echo $menu->id; ?>"<?php if ($menu->location === $slug): ?> selected="selected"<?php endif; ?>><?php echo $menu->name; ?></option>
-								<?php endforeach; ?>
+								<?php endforeach; unset($menu); ?>
 								</select>
 							</div>
 						</div>

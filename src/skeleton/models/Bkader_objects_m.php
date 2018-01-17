@@ -82,7 +82,7 @@ class Bkader_objects_m extends KB_Model
 	 */
 	protected function join_entity()
 	{
-		$this->_database->join('entities', 'entities.id = objects.guid');
+		$this->_database->join('entities', 'objects.guid = entities.id');
 		$this->_database->where('entities.type', 'object');
 	}
 

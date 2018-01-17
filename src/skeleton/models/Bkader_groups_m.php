@@ -82,7 +82,7 @@ class Bkader_groups_m extends KB_Model
 	 */
 	protected function join_entity()
 	{
-		$this->_database->join('entities', 'entities.id = groups.guid');
+		$this->_database->join('entities', 'groups.guid = entities.id');
 		$this->_database->where('entities.type', 'group');
 	}
 

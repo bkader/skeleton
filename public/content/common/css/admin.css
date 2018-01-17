@@ -22,7 +22,7 @@ body {
 	font-weight: 400;
 	line-height: 16px;
 	padding-top: 50px;
-	background-color: #ecf4fc;
+	background-color: #f1f1f1;
 }
 
 .tab-settings > .tab-pane {
@@ -70,7 +70,7 @@ img {
 .navbar-fixed-top {
 	border: 0;
 	border-radius: 0;
-	background: #182232;
+	background: #23282d;
 	border-bottom: 1px solid #222324;
 	color: #fff;
 }

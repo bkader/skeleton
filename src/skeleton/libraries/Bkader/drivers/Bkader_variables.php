@@ -110,6 +110,130 @@ class Bkader_variables extends CI_Driver
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Retrieve a single variable by its ID.
+	 * @access 	public
+	 * @param 	int 	$id 	The variable's ID.
+	 * @param 	bool 	$single Whether to return the value.
+	 * @return 	mixed.
+	 */
+	public function get($id, $single = false)
+	{
+		$var = $this->get_by('id', $id);
+
+		if ($var && $single === true)
+		{
+			return $var->value;
+		}
+
+		return $var;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve a single variable by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field 	The column name or array.
+	 * @param 	mixed 	$match 	It can be anything.
+	 * @return 	mixed.
+	 */
+	public function get_by($field, $match = null)
+	{
+		// Prepare the where array.
+		(is_array($field)) OR $field = array($field => $match);
+
+		// Prepare everything so we can accepts arrays as value.
+		foreach ($field as $key => &$val)
+		{
+			if ($key == 'value' OR $key == 'options')
+			{
+				$val = to_bool_or_serialize($val);
+			}
+		}
+
+		$var = $this->ci->db
+			->where($field)
+			->get('variables')
+			->row();
+
+		if ($var)
+		{
+			// Let's first format the value.
+			if ( ! empty($var->value))
+			{
+				$var->value = from_bool_or_serialize($var->value);
+			}
+
+			// Let's now format variable options.
+			if ( ! empty($var->options))
+			{
+				$var->options = from_bool_or_serialize($var->options);
+			}
+		}
+
+		return $var;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve multiple or all variables from database.
+	 * @access 	public
+	 * @param 	mixed 	$field 	Null, string or associative array.
+	 * @param 	mixed 	$match 	It can be anything.
+	 * @return 	array of objects if found, else null.
+	 */
+	public function get_many($field = null, $match = null)
+	{
+		// In case $field is an array, we use it as WHERE clause.
+		if (is_array($field))
+		{
+			$this->ci->db->where($field);
+		}
+		/**
+		 * In case $match is an array, we retrieve all variables
+		 * where $field is in $match.
+		 */
+		elseif (is_array($match))
+		{
+			$this->ci->db->where_in($field, $match);
+		}
+		// Otherwise, use it as-is.
+		elseif ( ! empty($field))
+		{
+			$this->ci->db->where($field, $match);
+		}
+
+		// Attempts to get variables from database.
+		$vars = $this->ci->db->get('variables')->result();
+
+		// Found any?
+		if ($vars)
+		{
+			// Loop through variables to prepare them for output.
+			foreach ($vars as &$var)
+			{
+				// Let's first format the value.
+				if ( ! empty($var->value))
+				{
+					$var->value = from_bool_or_serialize($var->value);
+				}
+
+				// Let's now format variable options.
+				if ( ! empty($var->options))
+				{
+					$var->options = from_bool_or_serialize($var->options);
+				}
+			}
+		}
+
+		// Return the final result.
+		return $vars;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Update a single variable by its ID.
 	 * @access 	public
 	 * @param 	int 	$id 	The variable's ID.
@@ -258,130 +382,6 @@ class Bkader_variables extends CI_Driver
 		return ($var)
 			? $this->update($var->id, $value, $params)
 			: $this->create($guid, $name, $value, $params);
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Retrieve a single variable by its ID.
-	 * @access 	public
-	 * @param 	int 	$id 	The variable's ID.
-	 * @param 	bool 	$single Whether to return the value.
-	 * @return 	mixed.
-	 */
-	public function get($id, $single = false)
-	{
-		$var = $this->get_by('id', $id);
-
-		if ($var && $single === true)
-		{
-			return $var->value;
-		}
-
-		return $var;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Retrieve a single variable by arbitrary WHERE clause.
-	 * @access 	public
-	 * @param 	mixed 	$field 	The column name or array.
-	 * @param 	mixed 	$match 	It can be anything.
-	 * @return 	mixed.
-	 */
-	public function get_by($field, $match = null)
-	{
-		// Prepare the where array.
-		(is_array($field)) OR $field = array($field => $match);
-
-		// Prepare everything so we can accepts arrays as value.
-		foreach ($field as $key => &$val)
-		{
-			if ($key == 'value' OR $key == 'options')
-			{
-				$val = to_bool_or_serialize($val);
-			}
-		}
-
-		$var = $this->ci->db
-			->where($field)
-			->get('variables')
-			->row();
-
-		if ($var)
-		{
-			// Let's first format the value.
-			if ( ! empty($var->value))
-			{
-				$var->value = from_bool_or_serialize($var->value);
-			}
-
-			// Let's now format variable options.
-			if ( ! empty($var->options))
-			{
-				$var->options = from_bool_or_serialize($var->options);
-			}
-		}
-
-		return $var;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Retrieve multiple or all variables from database.
-	 * @access 	public
-	 * @param 	mixed 	$field 	Null, string or associative array.
-	 * @param 	mixed 	$match 	It can be anything.
-	 * @return 	array of objects if found, else null.
-	 */
-	public function get_many($field = null, $match = null)
-	{
-		// In case $field is an array, we use it as WHERE clause.
-		if (is_array($field))
-		{
-			$this->ci->db->where($field);
-		}
-		/**
-		 * In case $match is an array, we retrieve all variables
-		 * where $field is in $match.
-		 */
-		elseif (is_array($match))
-		{
-			$this->ci->db->where_in($field, $match);
-		}
-		// Otherwise, use it as-is.
-		elseif ( ! empty($field))
-		{
-			$this->ci->db->where($field, $match);
-		}
-
-		// Attempts to get variables from database.
-		$vars = $this->ci->db->get('variables')->result();
-
-		// Found any?
-		if ($vars)
-		{
-			// Loop through variables to prepare them for output.
-			foreach ($vars as &$var)
-			{
-				// Let's first format the value.
-				if ( ! empty($var->value))
-				{
-					$var->value = from_bool_or_serialize($var->value);
-				}
-
-				// Let's now format variable options.
-				if ( ! empty($var->options))
-				{
-					$var->options = from_bool_or_serialize($var->options);
-				}
-			}
-		}
-
-		// Return the final result.
-		return $vars;
 	}
 
 	// ------------------------------------------------------------------------

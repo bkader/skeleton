@@ -76,14 +76,31 @@ class Admin_Controller extends User_Controller
 		$this->load->language('bkader_admin');
 
 		// Now we add dashboard needed CSS and JS files.
-		$this->theme
-			->add('css', get_common_url('vendor/fira-sans/css/fira-sans.min'), 'fira-sans')
-			->add('css', get_common_url('css/font-awesome.min'), 'font-awesome')
-			->add('css', get_common_url('css/bootstrap.min'), 'bootstrap')
-			->add('css', get_common_url('css/bootstrap-theme.min'), 'bootstrap-theme')
-			->add('css', get_common_url('css/admin'), 'admin')
-			->add('js', get_common_url('js/bootstrap.min'), 'bootstrap')
-			->add('js', get_common_url('js/admin'), 'admin');
+		if (ENVIRONMENT === 'production')
+		{
+			$this->theme
+				->add('css', 'https://fonts.googleapis.com/css?family=Fira+Sans:400,400i,700,700i|Oswald')
+				->add('css', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css')
+				->add('css', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+				->add('css', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css')
+				->add('css', get_common_url('css/admin.min'))
+				->add('js', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
+				->add('js', get_common_url('js/admin.min'));
+		}
+		else
+		{
+			$this->theme
+				->add('css', get_common_url('vendor/fira-sans/css/fira-sans.min'), 'fira-sans')
+				->add('css', get_common_url('css/font-awesome.min'), 'font-awesome')
+				->add('css', get_common_url('css/bootstrap.min'), 'bootstrap')
+				->add('css', get_common_url('css/bootstrap-theme.min'), 'bootstrap-theme')
+				->add('css', get_common_url('css/admin'), 'admin')
+				->add('js', get_common_url('js/bootstrap.min'), 'bootstrap')
+				->add('js', get_common_url('js/admin'), 'admin');
+		}
+
+		// Prepare dashboard sidebar.
+		$this->theme->set('admin_menu', $this->_admin_menu(), true);
 	}
 
 	// ------------------------------------------------------------------------
@@ -148,7 +165,7 @@ class Admin_Controller extends User_Controller
 
 		// Add IE9 support.
 		add_filter('extra_head', function($output) {
-			add_ie9_support($output, false);
+			add_ie9_support($output, (ENVIRONMENT === 'production'));
 			return $output;
 		});
 	}
@@ -227,6 +244,35 @@ EOT;
 
 		// No we add it as an inline script.
 		$this->theme->add_inline('js', $script);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Prepare dashboard sidebar menu.
+	 * @access 	public
+	 * @param 	none
+	 * @return 	array
+	 */
+	protected function _admin_menu()
+	{
+		$menu = array();
+		$modules = $this->router->list_modules(true);
+
+		// Sort modules.
+		uasort($modules, function($a, $b) {
+			return $a['admin_order'] - $b['admin_order'];
+		});
+
+		foreach ($modules as $folder => $details)
+		{
+			if ($this->router->has_admin($folder))
+			{
+				$menu[$folder] = $details['admin_menu'];
+			}
+		}
+
+		return $menu;
 	}
 
 }

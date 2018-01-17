@@ -181,7 +181,7 @@ class Admin extends Admin_Controller
 
 			$user_data            = $this->input->post(array('first_name', 'last_name', 'email', 'username', 'password'), true);
 			$user_data['enabled'] = ($this->input->post('enabled') == '1') ? 1 : 0;
-			$user_data['subtype'] = ($this->input->post('admin') == '1') ? 'admin' : 'regular';
+			$user_data['subtype'] = ($this->input->post('admin') == '1') ? 'administrator' : 'regular';
 
 			$guid = $this->users->create_user($user_data);
 			redirect(($guid > 0) ? 'admin/users' : 'admin/users/add', 'refresh');
@@ -208,7 +208,7 @@ class Admin extends Admin_Controller
 			exit;
 		}
 
-		$data['user']->admin = ($data['user']->subtype === 'admin');
+		$data['user']->admin = ($data['user']->subtype === 'administrator');
 
 		// Prepare form validation.
 		$rules = array(
@@ -306,7 +306,7 @@ class Admin extends Admin_Controller
 
 			$user_data = $this->input->post(array('first_name', 'last_name', 'email', 'username', 'password', 'gender'), true);
 			$user_data['enabled'] = ($this->input->post('enabled') == '1') ? 1 : 0;
-			$user_data['subtype']   = ($this->input->post('admin') == '1') ? 'admin' : 'regular';
+			$user_data['subtype']   = ($this->input->post('admin') == '1') ? 'administrator' : 'regular';
 
 			// Remove username if it's the same.
 			if ($user_data['username'] == $data['user']->username)

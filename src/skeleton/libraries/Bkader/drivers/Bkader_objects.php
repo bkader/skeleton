@@ -69,7 +69,7 @@ class Bkader_objects extends CI_Driver
 		log_message('info', 'Bkader_objects Class Initialized');
 	}
 
-    // ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
     /**
      * Generates the SELECT portion of the query
@@ -116,7 +116,7 @@ class Bkader_objects extends CI_Driver
 		}
 
 		// Split data.
-		list($entity, $object) = $this->_split_data($data);
+		list($entity, $object, $meta) = $this->_split_data($data);
 
 		// Make sure to alwayas add the entity's type.
 		$entity['type'] = 'object';
@@ -134,7 +134,120 @@ class Bkader_objects extends CI_Driver
 		// Insert the object.
 		$this->ci->db->insert('objects', $object);
 
+		// Some metadata?
+		if ( ! empty($meta))
+		{
+			$this->_parent->metadata->create($guid, $meta);
+		}
+
 		return $guid;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve a single object by ID or username.
+	 * @access 	public
+	 * @param 	mixed 	$id 	The object's ID or username.
+	 * @return 	object if found, else null.
+	 */
+	public function get($id)
+	{
+		// Getting by ID?
+		if (is_numeric($id))
+		{
+			return $this->get_by('entities.id', $id);
+		}
+
+		// Retrieve by username.
+		if (is_string($id))
+		{
+			return $this->get_by('entities.username', $id);
+		}
+
+		// Fall-back to get_by method.
+		return $this->get_by($id);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve a single object by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	object if found, else null.
+	 */
+	public function get_by($field, $match = null)
+	{
+		// Try to get the object and make sure only one row it found.
+		$object = $this->get_many($field, $match);
+		return ($object && count($object) === 1) ? $object[0] : null;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve multiple objects by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	array of objects if found, else null.
+	 */
+	public function get_many($field = null, $match = null, $limit = 0, $offset = 0)
+	{
+		// Prepare entities type.
+		$this->ci->db->where('entities.type', 'object');
+
+		// There some arguments?
+		if ( ! empty($field))
+		{
+			(is_array($field)) OR $field = array($field => $match);
+
+			foreach ($field as $key => $val)
+			{
+				if (is_int($key) && is_array($val))
+				{
+					$this->ci->db->where($val);
+				}
+				elseif (is_array($val))
+				{
+					$this->ci->db->where_in($key, $val);
+				}
+				else
+				{
+					$this->ci->db->where($key, $val);
+				}
+			}
+		}
+
+		// Is there a limit?
+		if ($limit > 0)
+		{
+			$this->ci->db->limit($limit, $offset);
+		}
+
+		// Proceed to join and get.
+		return $this->ci->db
+			->join('objects', 'objects.guid = entities.id')
+			->get('entities')
+			->result();
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve all users with optional limit and offset.
+	 * @access 	public
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	array of objects.
+	 */
+	public function get_all($limit = 0, $offset = 0)
+	{
+		return $this->get_many(null, null, $limit, $offset);
 	}
 
 	// ------------------------------------------------------------------------
@@ -142,11 +255,11 @@ class Bkader_objects extends CI_Driver
 	/**
 	 * Update a single object.
 	 * @access 	public
-	 * @param 	int 	$object_id
+	 * @param 	int 	$id
 	 * @param 	array 	$data
 	 * @return 	bool
 	 */
-	public function update($object_id, array $data = array())
+	public function update($id, array $data = array())
 	{
 		// Empty $data? Nothing to do.
 		if (empty($data))
@@ -154,8 +267,9 @@ class Bkader_objects extends CI_Driver
 			return false;
 		}
 
+
 		// Split data.
-		list($entity, $object) = $this->_split_data($data);
+		list($entity, $object, $meta) = $this->_split_data($data);
 
 		// Update entity.
 		if ( ! empty($entity) && ! $this->_parent->entities->update($id, $entity))
@@ -163,7 +277,17 @@ class Bkader_objects extends CI_Driver
 			return false;
 		}
 
-		$this->ci->db->update('objects', $object, array('guid' => $id));
+		if ( ! empty($object))
+		{
+			$this->ci->db->update('objects', $object, array('guid' => $id));
+		}
+
+		// Some metadata?
+		if ( ! empty($meta))
+		{
+			$this->_parent->metadata->update($id, $meta);
+		}
+
 		return true;
 	}
 
@@ -177,16 +301,9 @@ class Bkader_objects extends CI_Driver
 	 */
 	public function delete($id)
 	{
-		// Delete by ID.
-		if (is_numeric($id))
-		{
-			return $this->_parent->entities->delete($id);
-		}
-
-		// Delete by username.
-		$object = $this->get_by('entities.username', $id);
-
-		return ($object) ? $this->ci->_parent->entities->delete($object->id) : false;
+		return (is_numeric($id))
+			? $this->_parent->entities->delete_by('id', $id)
+			: $this->_parent->entities->delete_by('username', $id);
 	}
 
 	// ------------------------------------------------------------------------
@@ -228,16 +345,9 @@ class Bkader_objects extends CI_Driver
 	 */
 	public function remove($id)
 	{
-		// Completely remove by ID.
-		if (is_numeric($id))
-		{
-			return $this->_parent->entities->remove($id);
-		}
-
-		// Completely remove by username.
-		$object = $this->get_by('entities.username', $id);
-
-		return ($object) ? $this->ci->_parent->entities->remove($object->id) : false;
+		return (is_numeric($id))
+			? $this->_parent->entities->remove_by('id', $id)
+			: $this->_parent->entities->remove_by('username', $id);
 	}
 
 	// ------------------------------------------------------------------------
@@ -359,103 +469,6 @@ class Bkader_objects extends CI_Driver
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Retrieve a single object by ID or username.
-	 * @access 	public
-	 * @param 	mixed 	$id 	The object's ID or username.
-	 * @return 	object if found, else null.
-	 */
-	public function get($id)
-	{
-		// Getting by ID?
-		if (is_numeric($id))
-		{
-			return $this->get_by('entities.id', $id);
-		}
-
-		// Retrieve by username.
-		if (is_string($id))
-		{
-			return $this->get_by('entities.username', $id);
-		}
-
-		// Fall-back to get_by method.
-		return $this->get_by($id);
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Retrieve a single object by arbitrary WHERE clause.
-	 * @access 	public
-	 * @param 	mixed 	$field
-	 * @param 	mixed 	$match
-	 * @return 	object if found, else null.
-	 */
-	public function get_by($field, $match = null)
-	{
-		// Try to get the object and make sure only one row it found.
-		$object = $this->get_many($field, $match);
-		return ($object && count($object) === 1) ? $object[0] : null;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Retrieve multiple objects by arbitrary WHERE clause.
-	 * @access 	public
-	 * @param 	mixed 	$field
-	 * @param 	mixed 	$match
-	 * @param 	int 	$limit
-	 * @param 	int 	$offset
-	 * @return 	array of objects if found, else null.
-	 */
-	public function get_many($field = null, $match = null, $limit = 0, $offset = 0)
-	{
-		// Prepare entities type.
-		$this->ci->db->where('entities.type', 'object');
-
-		// There some arguments?
-		if ( ! empty($field))
-		{
-			if (is_array($field))
-			{
-				$this->ci->db->where($field);
-			}
-			elseif (is_array($match))
-			{
-				$this->ci->db->where_in($field, $match);
-			}
-			else
-			{
-				$this->ci->db->where($field, $match);
-			}
-		}
-
-		// Proceed to join and get.
-		return $this->ci->db
-			->join('objects', 'objects.guid = entities.id')
-			->limit($limit, $offset)
-			->get('entities')
-			->result();
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Retrieve all users with optional limit and offset.
-	 * @access 	public
-	 * @param 	int 	$limit
-	 * @param 	int 	$offset
-	 * @return 	array of objects.
-	 */
-	public function get_all($limit = 0, $offset = 0)
-	{
-		return $this->get_many(null, null, $limit, $offset);
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
 	 * Split data upon creation or update into entity and object.
 	 * @access 	private
 	 * @param 	array 	$data
@@ -477,10 +490,14 @@ class Bkader_objects extends CI_Driver
 			{
 				$_data[0][$key] = $val;
 			}
-			// Users table.
+			// Objects table.
 			elseif (in_array($key, $this->fields()))
 			{
 				$_data[1][$key] = $val;
+			}
+			else
+			{
+				$_data[2][$key] = $val;
 			}
 		}
 
@@ -492,6 +509,7 @@ class Bkader_objects extends CI_Driver
 		// Make sure all three elements are set.
 		(isset($_data[0])) OR $_data[0] = array();
 		(isset($_data[1])) OR $_data[1] = array();
+		(isset($_data[2])) OR $_data[2] = array();
 
 		// Sort things up.
 		ksort($_data);

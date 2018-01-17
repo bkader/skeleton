@@ -153,7 +153,7 @@ class Admin extends Admin_Controller
 			if ($status === false)
 			{
 				// Store the details in session.
-				$this->session->set_flashdata('form', $data);
+				$this->session->set_flashdata('form', $this->input->post());
 
 				// Set alert and redirect back.
 				set_alert(lang('add_menu_error'), 'error');
@@ -163,8 +163,8 @@ class Admin extends Admin_Controller
 
 			// Set alert and redirect to menus list.
 			set_alert(lang('add_menu_success'), 'success');
-			redirect('admin/menus', 'refresh');
-			exit;
+			// redirect('admin/menus', 'refresh');
+			// exit;
 		}
 	}
 
@@ -517,16 +517,16 @@ class Admin extends Admin_Controller
 		else
 		{
 			// Check CSRF.
-			if ( ! $this->check_csrf())
-			{
-				// Store the details in session.
-				$this->session->set_flashdata('form', $this->input->post());
+			// if ( ! $this->check_csrf())
+			// {
+			// 	// Store the details in session.
+			// 	$this->session->set_flashdata('form', $this->input->post());
 
-				// Set alert and redirect back.
-				set_alert(lang('error_csrf'), 'error');
-				redirect('admin/menus/items/'.$data['item']->menu_id, 'refresh');
-				exit;
-			}
+			// 	// Set alert and redirect back.
+			// 	set_alert(lang('error_csrf'), 'error');
+			// 	redirect('admin/menus/items/'.$data['item']->menu_id, 'refresh');
+			// 	exit;
+			// }
 
 			// Proceed
 			$status = $this->app->menus->update_item(
@@ -604,14 +604,13 @@ class Admin extends Admin_Controller
 		// Get all locations and menus.
 		$data['locations'] = $this->app->menus->get_locations();
 		$data['menus']     = $this->app->menus->get_menus();
-		$rules = array(
+
+		// Prepare form validation and rules.
+		$this->prep_form(array(array(
 			'field' => 'menu_location[]',
 			'label' => 'lang:menu_location',
 			'rules' => 'required',
-		);
-
-		// Prepare form validation and rules.
-		$this->prep_form(array($rules));
+		)));
 
 
 		// Before the form is processed.

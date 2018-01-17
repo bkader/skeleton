@@ -249,12 +249,24 @@ class Auth
 		// Fires before processing.
 		do_action_ref_array('user_login', array(&$identity, &$password));
 
+		$selects = array(
+			'entities.id',
+			'entities.subtype',
+			'entities.username',
+			'entities.enabled',
+			'entities.deleted',
+			'users.email',
+			'users.password',
+		);
+
 		// What type of login to use?
 		switch (get_option('login_type', 'both'))
 		{
 			// Get the user by username.
 			case 'username':
-				$user = $this->app->users->get_by('entities.username', $identity);
+				$user = $this->app->users
+					->select($selects)
+					->get_by('entities.username', $identity);
 				if ( ! $user)
 				{
 					set_alert(lang('us_wrong_credentials'), 'error');
@@ -264,7 +276,9 @@ class Auth
 
 			// Get user by email address.
 			case 'email':
-				$user = $this->app->users->get_by('users.email', $identity);
+				$user = $this->app->users
+					->select($selects)
+					->get_by('users.email', $identity);
 				if ( ! $user)
 				{
 					set_alert(lang('us_wrong_credentials'), 'error');
@@ -275,7 +289,9 @@ class Auth
 			// Get user by username or email address.
 			case 'both':
 			default:
-				$user = $this->app->users->get($identity);
+				$user = $this->app->users
+					->select($selects)
+					->get($identity);
 
 				if ( ! $user)
 				{

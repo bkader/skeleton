@@ -85,15 +85,15 @@ function pages_title_add_site_name()
 	});
 }
 
-add_filter('plugin_settings_the-title', 'the_title_proceed');
+add_filter('plugin_settings_the-title', 'the_title_settings');
 
-if ( ! function_exists('the_title_proceed'))
+if ( ! function_exists('the_title_settings'))
 {
-	function the_title_proceed($content)
+	function the_title_settings($content)
 	{
 		$content .=<<<EOT
 	<h4 class="page-header">The Title Plugin Settings</h4>
-	<p>The content you see on this page is found within this plugins main file <strong>the-title.php</strong>. Look for a function called <strong>the_title_proceed</strong></p>
+	<p>The content you see on this page is found within this plugins main file <strong>the-title.php</strong>. Look for a function called <strong>the_title_settings</strong></p>
 
 	<h4>How to create settings page for a plugin?</h4>
 	<p>Easy! Simply add a new filter with your plugin's folder name, like so:</p>

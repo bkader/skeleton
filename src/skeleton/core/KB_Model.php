@@ -180,9 +180,30 @@ class KB_Model extends CI_Model
     /**
      * Fetch a single record based on the primary key. Returns an object.
      */
-    public function get($primary_value)
+    public function get($primary_value = null)
     {
-        return $this->get_by($this->primary_key, $primary_value);
+    	if ( ! empty($primary_value))
+    	{
+    		return $this->get_by($this->primary_key, $primary_value);
+    	}
+		
+		if ($this->soft_delete && $this->_temporary_with_deleted !== true)
+		{
+			$this->_database->where($this->soft_delete_key, (bool) $this->_temporary_with_deleted);
+		}
+
+		$this->trigger('before_get');
+
+		$row = $this->_database
+			->get($this->_table)
+			->{$this->_return_type()}();
+		$this->_temporary_return_type = $this->return_type;
+
+		$row = $this->trigger('after_get', $row);
+
+		$this->_with = array();
+
+		return $row;
     }
 
     // ------------------------------------------------------------------------

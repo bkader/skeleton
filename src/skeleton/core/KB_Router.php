@@ -343,26 +343,6 @@ class KB_Router extends CI_Router
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Returns and array of modules locations.
-	 * @access 	public
-	 * @return 	array.
-	 */
-	public function modules_locations()
-	{
-		// Already cached? Return it.
-		if (isset($this->_locations))
-		{
-			return $this->_locations;
-		}
-
-		// Get modules locations from config, cache it then return it.
-		$this->_locations = $this->config->item('modules_locations');
-		return $this->_locations;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
 	 * Return an array of the selected module's details.
 	 * @access 	public
 	 * @param 	string 	$module 	The module's name (folder).
@@ -409,10 +389,25 @@ class KB_Router extends CI_Router
 			'author_uri'   => null,
 			'author_email' => null,
 			'tags'         => null,
+			'admin_menu'   => null,
+			'admin_order'  => 0
 		);
 
 		// Replace all keys.
 		$manifest = array_replace_recursive($defaults, $manifest);
+
+		// Add dashboard menu label.
+		if ($this->has_admin($module))
+		{
+			if (empty($manifest['admin_menu']))
+			{
+				$manifest['admin_menu'] = lang($module);
+			}
+			elseif (sscanf($manifest['admin_menu'], 'lang:%s', $line))
+			{
+				$manifest['admin_menu'] = lang($line);
+			}
+		}
 
 		// Add URI to MIT license.
 		if ($manifest['license'] == 'MIT' && empty($manifest['license_uri']))
@@ -421,6 +416,88 @@ class KB_Router extends CI_Router
 		}
 
 		return $manifest;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * List all available modules.
+	 * @access 	public
+	 * @param 	none
+	 * @return 	array
+	 */
+	public function list_modules($details = false)
+	{
+		// Prepare an empty array of modules.
+		$modules = array();
+		
+		// Let's go through folders and check if there are any.
+		foreach ($this->modules_locations() as $location)
+		{
+			if ($handle = opendir($location))
+			{
+				$_to_eliminate = array(
+					'.',
+					'..',
+					'.gitkeep',
+					'index.html',
+					'.htaccess'
+				);
+				
+				while (false !== ($file = readdir($handle)))
+				{
+					if ( ! in_array($file, $_to_eliminate))
+					{
+						$modules[] = $file;
+					}
+				}
+			}
+		}
+
+		if ( ! empty($modules) && $details === true)
+		{
+			foreach ($modules as $key => $module)
+			{
+				$modules[$module] = $this->module_details($module);
+				unset($modules[$key]);
+			}
+		}
+		
+		// Now we return the final result.
+		return $modules;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns and array of modules locations.
+	 * @access 	public
+	 * @return 	array.
+	 */
+	public function modules_locations()
+	{
+		// Already cached? Return it.
+		if (isset($this->_locations))
+		{
+			return $this->_locations;
+		}
+
+		// Get modules locations from config, cache it then return it.
+		$this->_locations = $this->config->item('modules_locations');
+		return $this->_locations;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns TRUE if an Admin controllers is found.
+	 * @access 	public
+	 * @param 	string 	$module 	The module's name.
+	 * @return 	boolean
+	 */
+	public function has_admin($module)
+	{
+		return (is_file($this->module_path($module).'controllers/Admin.php'));
 	}
 
 	// ------------------------------------------------------------------------

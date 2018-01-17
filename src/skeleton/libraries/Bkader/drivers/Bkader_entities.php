@@ -100,11 +100,11 @@ class Bkader_entities extends CI_Driver
 		// Prepare an empty $ids array.
 		$ids = array();
 
+
 		// Try to get all entities.
 		$entities = $this->ci->db
 			->select('id')
-			->get('entities')
-			->result();
+			->get_all();
 
 		// If found any, store their IDs.
 		if ($entities)
@@ -119,6 +119,8 @@ class Bkader_entities extends CI_Driver
 		return $ids;
 	}
 
+	// ------------------------------------------------------------------------
+	// Create Entities.
 	// ------------------------------------------------------------------------
 
 	/**
@@ -144,14 +146,102 @@ class Bkader_entities extends CI_Driver
 			return false;
 		}
 
-		// Make sure add the date of creation.
+		// Add date of created.
 		(isset($data['created_at'])) OR $data['created_at'] = time();
 
-		// Let's now created the entity and return the ID.
+		// Proceed to insert.
 		$this->ci->db->insert('entities', $data);
 		return $this->ci->db->insert_id();
 	}
 
+	// ------------------------------------------------------------------------
+	// Getters.
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve a single entity by its ID or username.
+	 * @access 	public
+	 * @param 	mixed 	$id 	The entity's ID or username.
+	 * @return 	object if found, else null.
+	 */
+	public function get($id)
+	{
+		if ( ! empty($id))
+		{
+			return (is_numeric($id))
+				? $this->get_by('id', $id)
+				: $this->get_by('username', $id);
+		}
+		return null;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve a single entity by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	object if a single row if found, else null.
+	 */
+	public function get_by($field, $match = null)
+	{
+		// Use the get many to make sure to find only a single entity.
+		$ent = $this->get_many($field, $match);
+
+		/**
+		 * The reason we are doing this is to make sure the found 
+		 * entity is unique, so if we find more than one, it means 
+		 * that we better use the get_many.
+		 */
+		return ($ent && count($ent) == 1) ? $ent[0] : null;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve multiple entities by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field 	Column name or array.
+	 * @param 	mixed 	$match 	Comparison value or null.
+	 * @param 	int 	$limit 	Limit of rows to retrieve.
+	 * @param 	int 	$offset MySQL offset.
+	 * @return 	array of objects if found, else null
+	 */
+	public function get_many($field = null, $match = null, $limit = 0, $offset = 0)
+	{
+		// Prepare the WHERE clause.
+		if ( ! empty($field))
+		{
+			(is_array($field)) OR $field = array($field => $match);
+			foreach ($field as $key => $val)
+			{
+				if (is_int($key) && is_array($val))
+				{
+					$this->ci->db->where($val);
+				}
+				elseif (is_array($val))
+				{
+					$this->ci->db->where_in($key, $val);
+				}
+				else
+				{
+					$this->ci->db->where($key, $val);
+				}
+			}
+		}
+
+		// Is limit provided?
+		if ($limit > 0)
+		{
+			$this->ci->db->limit($limit, $offset);
+		}
+
+		return $this->ci->db->get('entities')->result();
+	}
+
+	// ------------------------------------------------------------------------
+	// Update Entities.
 	// ------------------------------------------------------------------------
 
 	/**
@@ -163,186 +253,253 @@ class Bkader_entities extends CI_Driver
 	 */
 	public function update($id, array $data = array())
 	{
-		return (is_numeric($id))
-			? $this->update_by(array('id' => $id), $data)
-			: $this->update_by(array('username' => $id), $data);
+		if ( ! empty($id))
+		{
+			return (is_numeric($id))
+				? $this->update_by(array('id' => $id), $data)
+				: $this->update_by(array('username' => $id), $data);
+		}
+
+		return false;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Update a single or multiple entities by arbitrary WHERE clause.
+	 * Update a single, all or multiple entities by arbitrary WHERE clause.
 	 * @access 	public
 	 * @return 	boolean
 	 */
 	public function update_by()
 	{
-		// Collect function arguments and make sure there are some.
+		// Collect arguments and make sure there are some.
 		$args = func_get_args();
 		if (empty($args))
 		{
 			return false;
 		}
 
-		// The data to set is always the last argument.
+		// Data to update is always the last element.
 		$data = array_pop($args);
-		if ( ! is_array($data) OR empty($data))
+		if (empty($data))
 		{
 			return false;
 		}
 
-		// Make sure to add the update date.
-		(isset($data['updated_at'])) OR $data['updated_at'] = time();
 
-		// Proceed to update.
+		// Make sure to add the update date.
+		(isset($data['updated_at'])) OR $ata['updated_at'] = time();
+
+		// Prepare out update statement.
 		$this->ci->db->set($data);
 
-		// If there are arguments left, use them as WHERE clause.
+		// Are there where conditions?
 		if ( ! empty($args))
 		{
-			// Get rid of deep nasty array.
 			(is_array($args[0])) && $args = $args[0];
-			$this->ci->db->where($args);
+			foreach ($args as $key => $val)
+			{
+				if (is_int($key) && is_array($val))
+				{
+					$this->ci->db->where($val);
+				}
+				elseif (is_array($val))
+				{
+					$this->ci->db->where_in($key, $val);
+				}
+				else
+				{
+					$this->ci->db->where($key, $val);
+				}
+			}
 		}
 
-		// Update the table.
-		$this->ci->db->update('entities');
-		return ($this->ci->db->affected_rows() > 0);
+		// Proceed to update.
+		return $this->ci->db->update('entities');
 	}
 
 	// ------------------------------------------------------------------------
+	// Delete Entities.
+	// ------------------------------------------------------------------------
 
 	/**
-	 * Soft delete an existing entity by its ID or username.
+	 * Soft delete a single entity by its ID or username.
 	 * @access 	public
 	 * @param 	mixed 	$id 	The entity's ID or username.
 	 * @return 	boolean
 	 */
 	public function delete($id)
 	{
-		return (is_numeric($id))
-			? $this->delete_by('id', $id)
-			: $this->delete_by('username', $id);
+		if ( ! empty($id))
+		{
+			// Prepare the column to target.
+			$column = (is_numeric($id)) ? 'id' : 'username';
+			return $this->delete_by($column, $id);
+		}
+
+		return false;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Soft delete a single or multiple entities by arbitrary WHERE clause.
+	 * Delete a single, all or multiple entities by arbitrary WHERE clause.
 	 * @access 	public
+	 * @param 	mixed 	$field 	This is required to avoid deleting all.
+	 * @param 	mixed 	$match
 	 * @return 	boolean
 	 */
 	public function delete_by($field = null, $match = null)
 	{
-		// Prepare our WHERE clause.
-		if ( ! empty($field))
+		if ( ! empt($field))
 		{
-			if (is_array($field))
+			(is_array($field)) OR $field = array($field => $match);
+			foreach ($field as $key => $val)
 			{
-				$this->ci->db->where($field);
-			}
-			elseif (is_array($match))
-			{
-				$this->ci->db->where_in($field, $match);
-			}
-			else
-			{
-				$this->ci->db->where($field, $match);
+				if (is_int($key) && is_array($val))
+				{
+					$this->ci->db->where($val);
+				}
+				elseif (is_array($val))
+				{
+					$this->ci->db->where_in($key, $val);
+				}
+				else
+				{
+					$this->ci->db->where($key, $val);
+				}
 			}
 		}
 
-		// Proceed to sort delete.
+		// Process to soft-delete.
 		$this->ci->db
+			->where('deleted', 0)
 			->set('deleted', 1)
 			->set('deleted_at', time())
 			->update('entities');
 
-		// Return TRUE if there are some affected rows.
 		return ($this->ci->db->affected_rows() > 0);
+	}
+
+	// ------------------------------------------------------------------------
+	// Remove Entities.
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Completely remove a single entity by its ID or username.
+	 * @access 	public
+	 * @param 	mixed 	$id 	The entity's ID or username.
+	 * @return 	boolean
+	 */
+	public function remove($id)
+	{
+		if (empty($id))
+		{
+			return false;
+		}
+
+		// Get the entity so we can delete everything related to it.
+		$ent = (is_numeric($id))
+			? $this->get_by('id', $id)
+			: $this->get_by('username', $id);
+
+		// The entity not found?
+		if ( ! $ent)
+		{
+			return false;
+		}
+
+		// Get the ID for later use.
+		(is_numeric($id)) OR $id = $ent->id;
+
+		// Attempt to delete the entity.
+		$this->ci->db->delete('entities', array('id' => $id));
+
+		// Not deleted? Nothing to do.
+		if ($this->ci->db->affected_rows() < 1)
+		{
+			return false;
+		}
+
+		// Everything went well, we proceed to remove everything.
+		switch ($ent->type)
+		{
+			/**
+			 * NOTE:
+			 * Because users, objects and groups libraries have their delete
+			 * methods that will call this class methods, the final result 
+			 * will be FALSE, because when the entity is removed and we 
+			 * target others tables (users, objects and group) to delete rows 
+			 * they will return FALSE and rows are not deleted (soft-delete).
+			 * This is why with are using below:
+			 * 
+			 * $this->ci->db->delete('users' ...);
+			 * $this->ci->db->delete('object' ...);
+			 * $this->ci->db->delete('groups' ...);
+			 *
+			 * Instead of calling libraries methods.
+			 */
+
+			// In case of a user.
+			case 'user':
+				// Delete all activities.
+				$this->_parent->activities->delete_by('user_id', $id);
+
+				// Remove user from "users" table.
+				$this->ci->db->delete('users', array('guid' => $id));
+				break;
+
+			// In case of a group.
+			case 'group':
+				$this->ci->db->delete('groups', array('guid' => $id));
+				break;
+
+			// In case of an object.
+			case 'object':
+				$this->ci->db->delete('objects', array('guid' => $id));
+				break;
+		}
+
+		// Delete all entities having this entity as parent or owner.
+		$this->remove_by('parent_id', $id);
+		$this->remove_by('owner_id', $id);
+
+		// Delete metadata and variables.
+		$this->_parent->metadata->delete_by('guid', $id);
+		$this->_parent->variables->delete_by('guid', $id);
+
+		// Now delete all relations.
+		$this->_parent->relations->delete_by('guid_from', $id);
+		$this->_parent->relations->delete_by('guid_to', $id);
+
+		return true;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Once the entity is remove, we remove everything that is
-	 * related to it: users, groups, objects, metadata, variables
-	 * and relations.
+	 * Complete remove a single, all or multiple entities by arbitrary WHERE clause.
 	 * @access 	public
-	 * @param 	int 	$id 	the entity's ID.
-	 * @return 	bool
-	 */
-	public function remove($id)
-	{
-		return (is_numeric($id))
-			? $this->remove_by('id', $id)
-			: $this->remove_by('username', $id);	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Unlike the delete method, this one completely remove the entities from 
-	 * database and makes sure to delete anything related to id.
-	 * @access 	public
-	 * @param 	mixed 	$field
+	 * @param 	mixed 	$field 	This is required to avoid deleting all.
 	 * @param 	mixed 	$match
 	 * @return 	boolean
 	 */
-	public function remove_by($field = null, $match = null)
+	public function remove_by($field, $match = null)
 	{
-		// Collect all entities first and make sure there are some.
-		$ents = $this->get_many($field, $match);
-		if (empty($ents))
+		// Get all entities first.
+		$entities = $this->get_many($field, $match);
+
+		if ( ! $entities)
 		{
 			return false;
 		}
 
-		// Let's loop through all and prepare our delete.
-		$ids = array();
-		foreach ($ents as $ent)
+		foreach ($entities as $ent)
 		{
-			$ids[] = $ent->id;
+			$this->remove($ent->id);
 		}
 
-		// Now we delete entities.
-		$this->ci->db->where_in('id', $ids)->delete('entities');
-
-		// Prepare the process status.
-		$status = ($this->ci->db->affected_rows() > 0);
-
-		// If deleted, we remove everything related to them.
-		if ($status === true)
-		{
-			// Activities.
-			$this->ci->db->where_in('user_id', $ids)->delete('activities');
-
-			// Owner and children entities.
-			$this->remove_by('parent_id', $ids);
-			$this->remove_by('owner_id', $ids);
-
-			// Groups.
-			$this->ci->db->where_in('guid', $ids)->delete('groups');
-			
-			// Metadata.
-			$this->ci->db->where_in('guid', $ids)->delete('metadata');
-
-			// Objects.
-			$this->ci->db->where_in('guid', $ids)->delete('objects');
-
-			// Relations.
-			$this->ci->db
-				->where_in('guid_from', $ids)
-				->or_where_in('guid_to', $ids)
-				->delete('relations');
-
-			// Users.
-			$this->ci->db->where_in('guid', $ids)->delete('users');
-
-			// Variables.
-			$this->ci->db->where_in('guid', $ids)->delete('variables');
-		}
-
-		// Return the process status.
-		return $status;
+		return true;
 	}
 
 	// ------------------------------------------------------------------------
@@ -371,104 +528,36 @@ class Bkader_entities extends CI_Driver
 	 */
 	public function restore_by($field = null, $match = null)
 	{
-		// Make sure only deleted entities are restore.
-		$this->ci->db->where('deleted', 1);
-
 		// Prepare our WHERE clause.
 		if ( ! empty($field))
 		{
-			if (is_array($field))
+			(is_array($field)) OR $field = array($field => $match);
+			foreach ($field as $key => $val)
 			{
-				$this->ci->db->where($field);
-			}
-			elseif (is_array($match))
-			{
-				$this->ci->db->where_in($field, $match);
-			}
-			else
-			{
-				$this->ci->db->where($field, $match);
+				if (is_int($key) && is_array($val))
+				{
+					$this->ci->db->where($val);
+				}
+				elseif (is_array($val))
+				{
+					$this->ci->db->where_in($key, $val);
+				}
+				else
+				{
+					$this->ci->db->where($key, $val);
+				}
 			}
 		}
 
 		// Proceed to sort delete.
 		$this->ci->db
+			->where('deleted', 1)
 			->set('deleted', 0)
 			->set('deleted_at', 0)
 			->update('entities');
 
 		// Return TRUE if there are some affected rows.
 		return ($this->ci->db->affected_rows() > 0);
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Retrieve a single entity by its ID OR username.
-	 * @access 	public
-	 * @param 	int 	$id 	The entity's ID or username.
-	 * @return 	object if found, else null.
-	 */
-	public function get($id)
-	{
-		return (is_numeric($id))
-			? $this->get_by('id', $id)
-			: $this->get_by('username', $id);
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Retrieve a single entity by arbitrary WHERE clause.
-	 * @access 	public
-	 * @param 	mixed 	$field 	The column name or associative array.
-	 * @param 	mixed 	$field 	The comparison value.
-	 * @return 	object if found, else null.
-	 */
-	public function get_by($field, $match = null)
-	{
-		// Turn things into an array.
-		(is_array($field)) OR $field = array($field => $match);
-
-		// Use the get many to make sure to find only a single entity.
-		$ent = $this->get_many($field);
-
-		/**
-		 * The reason we are doing this is to make sure the found 
-		 * entity is unique, so if we find more than one, it means 
-		 * that we better use the get_many.
-		 */
-		return (count($ent) == 1) ? $ent[0] : null;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Retrieve multiple entities by arbitrary WHER clause.
-	 * @access 	public
-	 * @param 	mixed 	$field 	The column name or associative array.
-	 * @param 	mixed 	$field 	The comparison value.
-	 * @return 	array ofbjects if found, else null.
-	 */
-	public function get_many($field = null, $match = null)
-	{
-		if ( ! empty($field))
-		{
-			if (is_array($field))
-			{
-				$this->ci->db->where($field);
-			}
-			elseif (is_array($match))
-			{
-				$this->ci->db->where_in($field, $match);
-			}
-			else
-			{
-				$this->ci->db->where($field, $match);
-			}
-		}
-
-		return $this->ci->db->get('entities')->result();
 	}
 
 }
@@ -500,6 +589,53 @@ if ( ! function_exists('add_entity'))
 	function add_entity(array $data = array())
 	{
 		return get_instance()->app->entities->create($data);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_entity'))
+{
+	/**
+	 * Retrieve a single entity byt its ID or username.
+	 * @param 	mixed 	$id 	The entity's ID or username.
+	 * @return 	object if found, else null.
+	 */
+	function get_entity($id)
+	{
+		return get_instance()->app->entities->get($id);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_entity_by'))
+{
+	/**
+	 * Retrieve a single entity by arbitrary WHERE clause.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	object if found, else null.
+	 */
+	function get_entity_by($field, $match = null)
+	{
+		return get_instance()->app->entities->get_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_entities'))
+{
+	/**
+	 * Retrieve multiple entities by arbitrary WHERE clause.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	array of object if found, else null.
+	 */
+	function get_entities($field = null, $match = null)
+	{
+		return get_instance()->app->entities->get_many($field, $match);
 	}
 }
 
@@ -697,52 +833,5 @@ if ( ! function_exists('restore_entities'))
 	function restore_entities($field = null, $match = null)
 	{
 		return get_instance()->app->entities->restore_by($field, $match);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('get_entity'))
-{
-	/**
-	 * Retrieve a single entity byt its ID or username.
-	 * @param 	mixed 	$id 	The entity's ID or username.
-	 * @return 	object if found, else null.
-	 */
-	function get_entity($id)
-	{
-		return get_instance()->app->entities->get($id);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('get_entity_by'))
-{
-	/**
-	 * Retrieve a single entity by arbitrary WHERE clause.
-	 * @param 	mixed 	$field
-	 * @param 	mixed 	$match
-	 * @return 	object if found, else null.
-	 */
-	function get_entity_by($field, $match = null)
-	{
-		return get_instance()->app->entities->get_by($field, $match);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('get_entities'))
-{
-	/**
-	 * Retrieve multiple entities by arbitrary WHERE clause.
-	 * @param 	mixed 	$field
-	 * @param 	mixed 	$match
-	 * @return 	array of object if found, else null.
-	 */
-	function get_entities($field = null, $match = null)
-	{
-		return get_instance()->app->entities->get_many($field, $match);
 	}
 }

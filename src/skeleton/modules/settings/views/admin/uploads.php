@@ -34,7 +34,7 @@
 				</div>
 
 				<div class="text-right">
-					<button class="btn btn-primary" type="submit"><?php _e('save_changes') ?></button>
+					<button class="btn btn-primary btn-sm" type="submit"><?php _e('save_changes') ?></button>
 				</div>
 			</fieldset>
 

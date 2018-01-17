@@ -116,7 +116,7 @@ class Bkader_groups extends CI_Driver
 		}
 
 		// Split data.
-		list($entity, $group) = $this->_split_data($data);
+		list($entity, $group, $meta) = $this->_split_data($data);
 
 		// Make sure to alwayas add the entity's type.
 		$entity['type'] = 'group';
@@ -132,7 +132,13 @@ class Bkader_groups extends CI_Driver
 		$group['guid'] = $guid;
 
 		// Insert the group.
-		$this->ci->db->insert('groups', $group);
+		$this->ci->bkader_groups_m->insert($group);
+
+		// If the are any metadata, create them.
+		if ( ! empty($meta))
+		{
+			$this->_parent->metadata->create($guid, $meta);
+		}
 
 		return $guid;
 	}
@@ -142,11 +148,11 @@ class Bkader_groups extends CI_Driver
 	/**
 	 * Update a single group.
 	 * @access 	public
-	 * @param 	int 	$group_id
+	 * @param 	int 	$id
 	 * @param 	array 	$data
 	 * @return 	bool
 	 */
-	public function update($group_id, array $data = array())
+	public function update($id, array $data = array())
 	{
 		// Empty $data? Nothing to do.
 		if (empty($data))
@@ -155,7 +161,7 @@ class Bkader_groups extends CI_Driver
 		}
 
 		// Split data.
-		list($entity, $group) = $this->_split_data($data);
+		list($entity, $group, $meta) = $this->_split_data($data);
 
 		// Update entity.
 		if ( ! empty($entity) && ! $this->_parent->entities->update($id, $entity))
@@ -163,7 +169,18 @@ class Bkader_groups extends CI_Driver
 			return false;
 		}
 
-		$this->ci->db->update('groups', $group, array('guid' => $id));
+		// Update groups table.
+		if ( ! empty($group) && ! $this->ci->bkader_groups_m->update($id, $group))
+		{
+			return false;
+		}
+
+		// If there are any metadata to update.
+		if ( ! empty($meta))
+		{
+			$this->_parent->metadata->update($id, $meta);
+		}
+
 		return true;
 	}
 
@@ -477,10 +494,15 @@ class Bkader_groups extends CI_Driver
 			{
 				$_data[0][$key] = $val;
 			}
-			// Users table.
+			// Groups table.
 			elseif (in_array($key, $this->fields()))
 			{
 				$_data[1][$key] = $val;
+			}
+			// The rest are metadata.
+			else
+			{
+				$_data[2][$key] = $val;
 			}
 		}
 
@@ -492,6 +514,7 @@ class Bkader_groups extends CI_Driver
 		// Make sure all three elements are set.
 		(isset($_data[0])) OR $_data[0] = array();
 		(isset($_data[1])) OR $_data[1] = array();
+		(isset($_data[2])) OR $_data[2] = array();
 
 		// Sort things up.
 		ksort($_data);

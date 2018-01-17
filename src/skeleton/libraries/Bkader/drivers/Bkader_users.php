@@ -127,7 +127,7 @@ class Bkader_users extends CI_Driver
 		}
 
 		// Split data.
-		list($entity, $user) = $this->_split_data($data);
+		list($entity, $user, $meta) = $this->_split_data($data);
 
 		// Make sure to alwayas add the entity's type.
 		$entity['type'] = 'user';
@@ -158,7 +158,6 @@ class Bkader_users extends CI_Driver
 		// Add the id to user.
 		$user['guid'] = $guid;
 
-		// Hash the password!
 		// Hash the password if present.
 		if (isset($user['password']) && ! empty($user['password']))
 		{
@@ -187,6 +186,12 @@ class Bkader_users extends CI_Driver
 			);
 		}
 
+		// Some metadata?
+		if ( ! empty($meta))
+		{
+			$this->_parent->metadata->create($guid, $meta);
+		}
+
 		return $guid;
 	}
 
@@ -208,7 +213,7 @@ class Bkader_users extends CI_Driver
 		}
 
 		// Split data.
-		list($entity, $user) = $this->_split_data($data);
+		list($entity, $user, $meta) = $this->_split_data($data);
 
 		// Update entity.
 		if ( ! empty($entity) && ! $this->_parent->entities->update($id, $entity))
@@ -216,7 +221,27 @@ class Bkader_users extends CI_Driver
 			return false;
 		}
 
+		// Hash the password if present.
+		if (isset($user['password']) && ! empty($user['password']))
+		{
+			$user['password'] = password_hash($user['password'], PASSWORD_BCRYPT);
+		}
+
+		// Make sure the the gender is valid.
+		if (isset($user['gender']) 
+			&& ! in_array($user['gender'], array('unspecified', 'male', 'female')))
+		{
+			$user['gender'] = 'unspecified';
+		}
+
 		$this->ci->db->update('users', $user, array('guid' => $id));
+
+		// Some metadata?
+		if ( ! empty($meta))
+		{
+			$this->_parent->metadata->update($id, $meta);
+		}
+
 		return true;
 	}
 
@@ -546,6 +571,10 @@ class Bkader_users extends CI_Driver
 			{
 				$_data[1][$key] = $val;
 			}
+			else
+			{
+				$_data[2][$key] = $val;
+			}
 		}
 
 		if (empty($_data))
@@ -556,6 +585,7 @@ class Bkader_users extends CI_Driver
 		// Make sure all three elements are set.
 		(isset($_data[0])) OR $_data[0] = array();
 		(isset($_data[1])) OR $_data[1] = array();
+		(isset($_data[2])) OR $_data[2] = array();
 
 		// Sort things up.
 		ksort($_data);

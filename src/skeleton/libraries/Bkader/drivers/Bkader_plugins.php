@@ -404,11 +404,11 @@ class Bkader_plugins extends CI_Driver
 		}
 
 		// Create it because it was not found.
-		$this->_parent->options->insert(array(
-			'name'  => 'active_plugins',
-			'value' => $plugins,
-			'tab'   => 'plugins',
-		));
+		$this->_parent->options->create(
+			'active_plugins',
+			$plugins,
+			'plugins'
+		);
 		return true;
 	}
 

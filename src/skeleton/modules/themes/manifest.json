@@ -4,5 +4,6 @@
 	"version": "0.5.0",
 	"author": "Kader Bouyakoub",
 	"author_uri": "https://github.com/bkader",
-	"author_email": "bkader@mail.com"
+	"author_email": "bkader@mail.com",
+	"admin_order": 1
 }

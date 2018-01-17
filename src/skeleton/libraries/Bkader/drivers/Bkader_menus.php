@@ -114,8 +114,8 @@ class Bkader_menus extends CI_Driver
 	 */
 	private $_item_columns = array(
 		'entities.id',
-		'entities.owner_id AS menu_id',
 		'entities.parent_id',
+		'entities.owner_id AS menu_id',
 		'objects.name AS title',
 		'objects.description',
 		'objects.content AS href',
@@ -298,7 +298,7 @@ class Bkader_menus extends CI_Driver
 	 * @access 	private
 	 * @return 	array
 	 */
-	public function _locations()
+	private function _locations()
 	{
 		// Already cached? Return them.
 		if (isset($this->_locations))
@@ -361,7 +361,7 @@ class Bkader_menus extends CI_Driver
 		else
 		{
 			$meta = $this->_parent->metadata->get_by(array(
-				'name'  => 'menu_location',
+				'name' => 'menu_location',
 				'value' => $location,
 			));
 
@@ -394,7 +394,8 @@ class Bkader_menus extends CI_Driver
 		// Multiple locations and menus?
 		if (is_array($location))
 		{
-			foreach (array_unique($location) as $key => $val)
+			$location = array_unique($location);
+			foreach ($location as $key => $val)
 			{
 				$this->set_menu_location($key, $val);
 			}
@@ -402,10 +403,14 @@ class Bkader_menus extends CI_Driver
 			return true;
 		}
 
-		// Holds available location for eventual check.
-		$locations = $this->_locations();
+		// Make sure the menu exists.
+		if ( ! $this->get_menu($menu_id))
+		{
+			return false;
+		}
 
 		// Make sure the location exists.
+		$locations = $this->_locations();
 		if ( ! isset($locations[$location]))
 		{
 			return false;
@@ -416,18 +421,11 @@ class Bkader_menus extends CI_Driver
 		{
 			return $this->_parent->metadata->update_by(
 				array(
-					'name' => 'menu_location',
+					'name'  => 'menu_location',
 					'value' => $location,
 				),
 				array('value' => null)
 			);
-		}
-
-
-		// Make sure both location and menu exist.
-		if ( ! $this->get_menu($menu_id))
-		{
-			return false;
 		}
 
 		return $this->_parent->metadata->update($menu_id, 'menu_location', $location);
@@ -575,23 +573,27 @@ class Bkader_menus extends CI_Driver
 		else
 		{
 			// Prepare the search criteria.
-			$where['subtype'] = 'menu';
+			$where['entities.type']    = 'group';
+			$where['entities.subtype'] = 'menu';
 
 			// In case of using an id.
 			if (is_numeric($id))
 			{
-				$where['id'] = $id;
+				$where['entities.id'] = $id;
 			}
 			// By slug?
 			else
 			{
-				$where['username'] = $id;
+				$where['entities.username'] = $id;
 			}
 
 			// Attempt to get the menu from database.
-			$menu = $this->_parent->groups
+			$menu = $this->ci->db
 				->select($this->_menu_columns)
-				->get_by($where);
+				->where($where)
+				->join('groups', 'groups.guid = entities.id')
+				->get('entities')
+				->row();
 
 			// If the menu was found, add location and location's name.
 			if ($menu)
@@ -599,8 +601,12 @@ class Bkader_menus extends CI_Driver
 				// Get all locations to user their name and slug.
 				$locations = $this->get_locations();
 
-				$menu->location = $this->_parent->metadata->get($menu->id, 'menu_location', true);
+
+				// $menu->location = $this->_parent->metadata->get($menu->id, 'menu_location', true);
+				$menu->location      = $this->_get_menu_location($menu->id);
 				$menu->location_name = null;
+
+				// Get the name of the location.
 				if ($menu->location && isset($locations[$menu->location]))
 				{
 					$menu->location_name = $locations[$menu->location];
@@ -613,6 +619,19 @@ class Bkader_menus extends CI_Driver
 
 		// Return the menu.
 		return $menu;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the selected menu location if found.
+	 * @access 	private
+	 * @param 	int 	$menu_id
+	 * @return 	string 	if found, else null.
+	 */
+	private function _get_menu_location(int $menu_id = 0)
+	{
+		return $this->_parent->metadata->get($menu_id, 'menu_location', true);
 	}
 
 	// ------------------------------------------------------------------------
@@ -633,7 +652,7 @@ class Bkader_menus extends CI_Driver
 		// Try to get menus from database.
 		$menus = $this->_parent->groups
 			->select($this->_menu_columns)
-			->get_many('subtype', 'menu');
+			->get_many('entities.subtype', 'menu');
 
 		// If there are any menus, get their location.
 		if ($menus)
@@ -672,9 +691,10 @@ class Bkader_menus extends CI_Driver
 	 * @param 	string 	$href 		the item's URL.
 	 * @param 	string 	$description the item's description.
 	 * @param 	array 	$attrs 		array of additional attributes.
+	 * @param 	int  	$parent_id 	the parent's ID.
 	 * @return 	int 	the item's id if created, else false.
 	 */
-	public function add_item($menu_id, $title, $href = '#', $description = null, $attrs = array())
+	public function add_item($menu_id, $title, $href = '#', $description = null, $attrs = array(), $parent_id = 0)
 	{
 		// Make sure the menu exists.
 		if ( ! $this->get_menu($menu_id) OR empty($title))
@@ -684,6 +704,7 @@ class Bkader_menus extends CI_Driver
 
 		// Prepare data to insert.
 		$data = array(
+			'parent_id'   => $parent_id,
 			'owner_id'    => $menu_id,
 			'subtype'     => 'menu_item',
 			'name'        => htmlspecialchars($title, ENT_QUOTES, 'UTF-8'),
@@ -699,7 +720,7 @@ class Bkader_menus extends CI_Driver
 		{
 			$this->_parent->metadata->create($item_id, array(
 				'attributes' => $attrs,
-				'order'      => 0,
+				'order'      => count($this->get_menu_items($menu_id)),
 			));
 		}
 
@@ -753,33 +774,19 @@ class Bkader_menus extends CI_Driver
 		}
 
 		/**
+		 * We add attributes to $data array because objects
+		 * library will split it anyways
+		 */
+		$data['attributes'] = $attrs;
+
+		/**
 		 * If the update $data is empty, nothing to do
 		 * concerning the menu item, so we set $status to true.
 		 * Otherwise, the status will be the update process status.
 		 */
-		$status = (empty($data))
+		return (empty($data))
 			? true
 			: $this->_parent->objects->update($id, $data);
-
-		// If the item was updated, see if we need to update $attrs.
-		if ($status === true)
-		{
-			// Get attributes stored in database.
-			$db_attrs = $this->_parent->metadata->get($id, 'attributes');
-
-			// Update only if different!
-			if ($attrs <> $db_attrs->value)
-			{
-				$db_attrs->value = $attrs;
-				$this->_parent->metadata->update($db_attrs->id, array(
-					'value' => $db_attrs->value,
-				));
-			}
-		}
-
-		// Return the final status.
-		return $status;
-
 	}
 
 	// ------------------------------------------------------------------------
@@ -946,19 +953,20 @@ class Bkader_menus extends CI_Driver
 			$db_items = $this->_parent->objects
 				->select($this->_item_columns)
 				->get_many(array(
-					'owner_id' => $id,
-					'subtype'  => 'menu_item',
+					'entities.owner_id' => $id,
+					'entities.subtype' => 'menu_item',
 				));
 		}
 		else
 		{
-			$db_items = $this->_parent->objects
+			$db_items = $this->ci->db
 				->select($this->_item_columns)
-				->where_not_in('id', $cached_ids)
-				->get_many(array(
-					'owner_id' => $id,
-					'subtype'  => 'menu_item',
-				));
+				->join('objects', 'objects.guid = entities.id')
+				->where('entities.type', 'object')
+				->where('entities.subtype', 'menu_item')
+				->where_not_in('entities.id', $cached_ids)
+				->get('entities')
+				->result();
 		}
 
 		// Found? Get attributes and order.
@@ -1142,10 +1150,15 @@ class Bkader_menus extends CI_Driver
 		$container_allowed_tags = apply_filters('menu_container_allowed_tags', array('div', 'nav'));
 		if (isset($container) && in_array($container, $container_allowed_tags))
 		{
+			$container_attr['aria-label'] = $menu->name;
 			$container_attr['class'] = (isset($container_attr['class']))
 				? "menu-container menu-container-{$menu->id} menu-{$menu->slug}-container ".$container_attr['class']
 				: "menu-container menu-container-{$menu->id} menu-{$menu->slug}-container";
 			$output = html_tag($container, $container_attr, '%s');
+		}
+		else
+		{
+			$menu_attr['aria-label'] = $menu->name;
 		}
 
 		// Menu.

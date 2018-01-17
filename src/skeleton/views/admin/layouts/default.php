@@ -31,11 +31,15 @@
 		<div class="col-xs-12 col-sm-3 col-md-2 sidebar">
 			<ul class="nav nav-sidebar">
 				<li<?php echo (get_the_module() == null) ? ' class="active"' : '' ?>><?php echo admin_anchor('', lang('dashboard')) ?></li>
-				<li<?php echo is_module('users') ? ' class="active"' : '' ?>><?php echo admin_anchor('users', lang('users')) ?></li>
+				<!--<li<?php echo is_module('users') ? ' class="active"' : '' ?>><?php echo admin_anchor('users', lang('users')) ?></li>
 				<li<?php echo is_module('themes') ? ' class="active"' : '' ?>><?php echo admin_anchor('themes', lang('themes')) ?></li>
 				<li<?php echo is_module('menus') ? ' class="active"' : '' ?>><?php echo admin_anchor('menus', lang('menus')) ?></li>
 				<li<?php echo is_module('plugins') ? ' class="active"' : '' ?>><?php echo admin_anchor('plugins', lang('plugins')) ?></li>
-				<li<?php echo is_module('settings') ? ' class="active"' : '' ?>><?php echo admin_anchor('settings', lang('settings')) ?></li>
+				<li<?php echo is_module('settings') ? ' class="active"' : '' ?>><?php echo admin_anchor('settings', lang('settings')) ?></li>-->
+
+				<?php foreach ($admin_menu as $url => $title): ?>
+				<li<?php echo is_module($url) ? ' class="active"' : '' ?>><?php echo admin_anchor($url, $title) ?></li>
+				<?php endforeach; ?>
 			</ul>
 		</div>
 		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
