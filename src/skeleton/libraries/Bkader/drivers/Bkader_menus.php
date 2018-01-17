@@ -282,12 +282,12 @@ class Bkader_menus extends CI_Driver
 		}
 
 		// If the option does not exist, create it.
-		return $this->_parent->options->insert(array(
-			'name'     => $option_name,
-			'value'    => $locations,
-			'tab'      => 'menus',
-			'required' => 0,
-		));
+		return $this->_parent->options->create(
+			$option_name,
+			$locations,
+			'menus',
+			0
+		);
 	}
 
 	// --------------------------------------------------------------------
@@ -629,7 +629,7 @@ class Bkader_menus extends CI_Driver
 	 * @param 	int 	$menu_id
 	 * @return 	string 	if found, else null.
 	 */
-	private function _get_menu_location(int $menu_id = 0)
+	private function _get_menu_location($menu_id = 0)
 	{
 		return $this->_parent->metadata->get($menu_id, 'menu_location', true);
 	}

@@ -26,7 +26,7 @@
 					<td class="text-right">
 						<a class="btn btn-default btn-xs" target="_blank" href="<?php echo site_url($user->username) ?>" title="<?php _e('view_profile') ?>"><i class="fa fa-eye"></i></a>&nbsp;
 						<a class="btn btn-primary btn-xs" href="<?php echo admin_url('users/edit/'.$user->id) ?>" title="<?php _e('edit_user') ?>"><i class="fa fa-edit"></i></a>&nbsp;
-						<a class="btn btn-danger btn-xs" onclick="return confirm('<?php printf(line('are_you_sure'), line('delete_user')) ?>');" href="<?php echo safe_admin_url('users/delete/'.$user->id) ?>" title="<?php _e('delete_user') ?>"><i class="fa fa-times"></i></a>&nbsp;
+						<a class="btn btn-danger btn-xs" href="#" data-confirm="<?php printf(line('are_you_sure'), line('delete_user')) ?>" data-href="<?php echo safe_admin_url('users/delete/'.$user->id) ?>" title="<?php _e('delete_user') ?>"><i class="fa fa-times"></i></a>&nbsp;
 					<?php if ($user->enabled == 0): ?>
 						<a class="btn btn-success btn-xs" href="<?php echo safe_admin_url('users/activate/'.$user->id) ?>" title="<?php _e('activate') ?>"><i class="fa fa-unlock-alt"></i></a>
 					<?php else: ?>

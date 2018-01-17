@@ -85,6 +85,7 @@ class Admin_Controller extends User_Controller
 				->add('css', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css')
 				->add('css', get_common_url('css/admin.min'))
 				->add('js', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
+				->add('js', 'https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js')
 				->add('js', get_common_url('js/admin.min'));
 		}
 		else
@@ -93,9 +94,12 @@ class Admin_Controller extends User_Controller
 				->add('css', get_common_url('vendor/fira-sans/css/fira-sans.min'), 'fira-sans')
 				->add('css', get_common_url('css/font-awesome.min'), 'font-awesome')
 				->add('css', get_common_url('css/bootstrap.min'), 'bootstrap')
+				//->add('css', get_common_url('css/bootstrap-rtl.min'), 'bootstrap-rtl')
 				->add('css', get_common_url('css/bootstrap-theme.min'), 'bootstrap-theme')
 				->add('css', get_common_url('css/admin'), 'admin')
+				//->add('css', get_common_url('css/admin-rtl'), 'admin-rtl')
 				->add('js', get_common_url('js/bootstrap.min'), 'bootstrap')
+				->add('js', get_common_url('js/bootbox.min'), 'bootbox')
 				->add('js', get_common_url('js/admin'), 'admin');
 		}
 
