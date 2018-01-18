@@ -38,12 +38,16 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Main ACP language file (English)
+ * Main admin language (English)
  *
  * @package 	CodeIgniter
+ * @subpackage 	Skeleton
  * @category 	Language
- * @author 	Kader Bouyakoub <bkader@mail.com>
- * @link 	https://github.com/bkader
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		Version 1.0.0
+ * @version 	1.0.0
  */
 
 $lang['dashboard']  = 'Dashboard';
@@ -51,7 +55,7 @@ $lang['status']     = 'Status';
 $lang['action']     = 'Action';
 $lang['advanced']   = 'Advanced';
 $lang['created_by'] = 'Created by';
-$lang['updated_by'] = 'Created by';
+$lang['updated_by'] = 'Updated by';
 
 $lang['are_your_sure'] = 'Are you sure you want to %s?';
 

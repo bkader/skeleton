@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
-class Bkader_entities extends CI_Driver
+class Bkader_entities extends CI_Driver implements CRUD_interface
 {
 	/**
 	 * Holds entities table fields.
@@ -159,20 +159,14 @@ class Bkader_entities extends CI_Driver
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Retrieve a single entity by its ID or username.
+	 * Retrieve a single entity by its ID.
 	 * @access 	public
 	 * @param 	mixed 	$id 	The entity's ID or username.
 	 * @return 	object if found, else null.
 	 */
 	public function get($id)
 	{
-		if ( ! empty($id))
-		{
-			return (is_numeric($id))
-				? $this->get_by('id', $id)
-				: $this->get_by('username', $id);
-		}
-		return null;
+		return $this->get_by('id', $id);
 	}
 
 	// ------------------------------------------------------------------------
@@ -241,11 +235,25 @@ class Bkader_entities extends CI_Driver
 	}
 
 	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve all entities from table.
+	 * @access 	public
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	array of objects if found, else null.
+	 */
+	public function get_all($limit = 0, $offset = 0)
+	{
+		return $this->get_many(null, null, $limit, $offset);
+	}
+
+	// ------------------------------------------------------------------------
 	// Update Entities.
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Update a single entity by its ID or username.
+	 * Update a single entity by its ID.
 	 * @access 	public
 	 * @param 	mixed 	$id 	The entity's ID (or username).
 	 * @param 	array 	$data 	The array of data to update.
@@ -323,7 +331,7 @@ class Bkader_entities extends CI_Driver
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Soft delete a single entity by its ID or username.
+	 * Soft delete a single entity by its ID.
 	 * @access 	public
 	 * @param 	mixed 	$id 	The entity's ID or username.
 	 * @return 	boolean
@@ -386,7 +394,7 @@ class Bkader_entities extends CI_Driver
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Completely remove a single entity by its ID or username.
+	 * Completely remove a single entity by its ID.
 	 * @access 	public
 	 * @param 	mixed 	$id 	The entity's ID or username.
 	 * @return 	boolean
@@ -644,7 +652,7 @@ if ( ! function_exists('get_entities'))
 if ( ! function_exists('update_entity'))
 {
 	/**
-	 * Update a single entity by its ID or username.
+	 * Update a single entity by its ID.
 	 * @param 	mixed 	$id 	The entity's ID or username.
 	 * @return 	boolean
 	 */
@@ -693,7 +701,7 @@ if ( ! function_exists('update_entities'))
 if ( ! function_exists('delete_entity'))
 {
 	/**
-	 * Delete a single entity by its ID or username.
+	 * Delete a single entity by its ID.
 	 * @param 	mixed 	$id 	The entity's ID or username
 	 * @return 	boolean
 	 */

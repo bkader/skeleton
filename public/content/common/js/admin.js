@@ -1,5 +1,9 @@
-(function($) {
+(function(window, undefined) {
 	'use strict';
+
+	// Localize globals.
+	var document = window.document,
+		$ = window.$;
 
 	$(document).ready(function() {
 
@@ -8,24 +12,22 @@
 		});
 
 		$('[data-confirm]').click(function(e) {
-			e.preventDefault();
+			var that = $(this);
 			bootbox.confirm({
 				size: "small",
-				title: $(this).attr('title') || null,
-				message: $(this).attr('data-confirm'),
+				title: that.attr('title') || null,
+				message: that.attr('data-confirm'),
 				callback: function(result) {
 					if (result == true) {
-						$.get($(this).attr('data-href'), function(html) {
-							console.log(html);
-						});
+						window.location.href = that.attr('data-href');
+					} else {
+						bootbox.hideAll()
 					}
-					console.log(result);
-					return false;
 				}
 			});
-			return false;
+			e.preventDefault();
 		});
 
 	});
 
-})(jQuery);
+})(window);

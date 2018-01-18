@@ -100,7 +100,7 @@ $lang['edit_item_no_menu'] = 'This menu item does not exist.';
 
 // Delete item.
 $lang['delete_item']         = 'Delete Item';
-$lang['delete_item_success'] = 'Item item successfully deleted.';
+$lang['delete_item_success'] = 'Menu item successfully deleted.';
 $lang['delete_item_error']   = 'Unable to delete menu item.';
 
 // Item title.
@@ -123,6 +123,10 @@ $lang['item_order_tip'] = '(Optional) The order of your item within the menu.';
 $lang['title_attr'] = 'Title Attribute';
 $lang['css_classes'] = 'CSS Classes';
 $lang['link_relation'] = 'Link Relationship (XFN)';
+
+// Linkt target.
+$lang['link_target']     = 'Link Target';
+$lang['link_target_tip'] = 'Open the link in a new window.';
 
 // ------------------------------------------------------------------------
 

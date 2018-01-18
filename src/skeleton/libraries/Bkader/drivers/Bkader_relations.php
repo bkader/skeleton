@@ -60,9 +60,6 @@ class Bkader_relations extends CI_Driver
 	 */
 	public function initialize()
 	{
-		// Make sure to load entities model.
-		$this->ci->load->model('bkader_relations_m');
-
 		log_message('info', 'Bkader_relations Class Initialized');
 	}
 

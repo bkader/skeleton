@@ -37,6 +37,8 @@
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+require_once('CRUD_interface.php');
+
 /**
  * Main application library.
  *

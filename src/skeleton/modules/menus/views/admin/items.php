@@ -26,7 +26,7 @@
 							<td><?php echo $item->description ?></td>
 							<td class="text-right">
 								<a class="btn btn-default btn-xs" href="<?php echo admin_url('menus/edit/item/'.$item->id) ?>" title="<?php _e('edit_menu') ?>"><i class="fa fa-edit"></i></a>&nbsp;
-								<a class="btn btn-danger btn-xs" onclick="return confirm('<?php printf(lang('are_your_sure'), lang('delete_item')) ?>');" href="<?php echo safe_admin_url('menus/delete/item/'.$item->id) ?>" title="<?php _e('delete_menu') ?>"><i class="fa fa-times"></i></a>
+								<a class="btn btn-danger btn-xs" href="#" data-confirm="<?php printf(line('are_you_sure'), line('delete_item')) ?>" data-href="<?php echo safe_admin_url('menus/delete/item/'.$item->id) ?>" title="<?php _e('delete_item') ?>"><i class="fa fa-times"></i></a>
 							</td>
 						</tr>
 				<?php endforeach; ?>
@@ -73,10 +73,14 @@
 							<label for="attrs_class" class="sr-only"><?php _e('css_classes'); ?></label>
 							<input type="text" name="attrs[class]" id="attrs_class" placeholder="<?php _e('css_classes'); ?>" value="<?php echo set_value('attrs["css_classes"]'); ?>" class="form-control input-sm">
 						</div>
-						<!-- CSS Classes -->
+						<!-- Rel attribute -->
 						<div class="form-group">
 							<label for="attrs_rel" class="sr-only"><?php _e('link_relation'); ?></label>
 							<input type="text" name="attrs[rel]" id="attrs_rel" placeholder="<?php _e('link_relation'); ?>" value="<?php echo set_value('attrs["rel"]'); ?>" class="form-control input-sm">
+						</div>
+						<!-- Link target -->
+						<div class="form-group">
+							<label class="text-small text-normal"><input type="checkbox" name="attrs[target]" id="attrs_target" value="1" <?php echo set_checkbox('attrs_target', '1', false); ?>>&nbsp;<?php _e('link_target_tip'); ?></label>
 						</div>
 					</div>
 

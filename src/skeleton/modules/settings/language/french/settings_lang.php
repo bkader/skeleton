@@ -36,40 +36,34 @@
  * @since 		Version 1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
-defined('DOING_AJAX') OR define('DOING_AJAX', true);
 
 /**
- * Ajax_Controller Class
- *
- * Controllers extending this class accept only AJAX requests.
+ * Settings Module - Language File (French)
  *
  * @package 	CodeIgniter
- * @subpackage 	Skeleton
- * @category 	Core Extension
- * @author 		Kader Bouyakoub <bkader@mail.com>
- * @link 		https://github.com/bkader
- * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @subpackage 	Modules
+ * @category 	Language
+ * @author 	Kader Bouyakoub <bkader@mail.com>
+ * @link 	https://github.com/bkader
  */
-class Ajax_Controller extends KB_Controller
-{
-	/**
-	 * Class constructor
-	 * @return 	void
-	 */
-	public function __construct()
-	{
-		parent::__construct();
 
-		/**
-		 * Here we make sure that the controller accepts only
-		 * AJAX requests and the parameter 'action' is set.
-		 */
-		if ( ! $this->input->is_ajax_request() OR empty($_REQUEST['action']))
-		{
-			show_404();
-		}
-	}
+// Update profile page.
+$lang['set_profile_title']   = 'Mettre à jour le profil';
+$lang['set_profile_heading'] = 'Mettre à jour le profil';
+$lang['set_profile_success'] = 'Profil mis à jour avec succès.';
+$lang['set_profile_error']   = 'Impossible de mettre à jour le profil.';
 
-}
+// ------------------------------------------------------------------------
+
+// Update avatar page.
+$lang['set_avatar_title'] = 'Mettre à jour Avatar';
+
+// ------------------------------------------------------------------------
+
+// Change password page.
+$lang['set_password_title'] = 'Changer le mot de passe';
+
+// ------------------------------------------------------------------------
+
+// Change email page.
+$lang['set_email_title'] = 'Changer l\'e-mail';

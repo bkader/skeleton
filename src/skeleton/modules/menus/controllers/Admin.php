@@ -132,16 +132,16 @@ class Admin extends Admin_Controller
 		else
 		{
 			// Check CSRF.
-			if ( ! $this->check_csrf())
-			{
-				// Store the details in session.
-				$this->session->set_flashdata('form', $this->input->post());
+			// if ( ! $this->check_csrf())
+			// {
+			// 	// Store the details in session.
+			// 	$this->session->set_flashdata('form', $this->input->post());
 
-				// Set alert and redirect back.
-				set_alert(lang('error_csrf'), 'error');
-				redirect('admin/menus/add', 'refresh');
-				exit;
-			}
+			// 	// Set alert and redirect back.
+			// 	set_alert(lang('error_csrf'), 'error');
+			// 	redirect('admin/menus/add', 'refresh');
+			// 	exit;
+			// }
 
 			// Proceed
 			$status = $this->app->menus->add_menu(
@@ -163,8 +163,8 @@ class Admin extends Admin_Controller
 
 			// Set alert and redirect to menus list.
 			set_alert(lang('add_menu_success'), 'success');
-			// redirect('admin/menus', 'refresh');
-			// exit;
+			redirect('admin/menus', 'refresh');
+			exit;
 		}
 	}
 
@@ -421,12 +421,19 @@ class Admin extends Admin_Controller
 		else
 		{
 			// Check CSRF.
-			if ( ! $this->check_csrf())
+			// if ( ! $this->check_csrf())
+			// {
+			// 	// Set alert and redirect back.
+			// 	set_alert(lang('error_csrf'), 'error');
+			// 	redirect('admin/menus/items/'.$id, 'refresh');
+			// 	exit;
+			// }
+
+			// Let's collect attributes first.
+			$attrs = $this->input->post('attrs', true);
+			if ($this->input->post('attrs[target]') == '1')
 			{
-				// Set alert and redirect back.
-				set_alert(lang('error_csrf'), 'error');
-				redirect('admin/menus/items/'.$id, 'refresh');
-				exit;
+				$attrs['target'] = '_blank';
 			}
 
 			// Proceed.
@@ -435,7 +442,7 @@ class Admin extends Admin_Controller
 				$this->input->post('name', true),
 				$this->input->post('href', true),
 				$this->input->post('description', true),
-				$this->input->post('attrs', true)
+				array_filter($attrs) // So we don't insert empty attributes.
 			);
 
 			// Set alert message.
@@ -528,13 +535,20 @@ class Admin extends Admin_Controller
 			// 	exit;
 			// }
 
-			// Proceed
+			// Let's collect attributes first.
+			$attrs = $this->input->post('attrs', true);
+			if ($this->input->post('attrs[target]') == '1')
+			{
+				$attrs['target'] = '_blank';
+			}
+
+			// Proceed.
 			$status = $this->app->menus->update_item(
 				$id,
 				$this->input->post('name', true),
 				$this->input->post('href', true),
 				$this->input->post('description', true),
-				$this->input->post('attrs', true)
+				array_filter($attrs) // No array_filter here to override.
 			);
 
 			// Did not pass?

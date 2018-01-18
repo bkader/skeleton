@@ -201,3 +201,10 @@ background-color: #428bca;
 .alert:empty {
 	display: none;
 }
+
+.text-small {
+	font-size: 0.83em;
+}
+.text-normal {
+	font-weight: normal;
+}

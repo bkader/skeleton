@@ -36,40 +36,36 @@
  * @since 		Version 1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
-defined('DOING_AJAX') OR define('DOING_AJAX', true);
 
 /**
- * Ajax_Controller Class
- *
- * Controllers extending this class accept only AJAX requests.
+ * Plugins module language file (French)
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @category 	Core Extension
+ * @category 	Modules\Language
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
-class Ajax_Controller extends KB_Controller
-{
-	/**
-	 * Class constructor
-	 * @return 	void
-	 */
-	public function __construct()
-	{
-		parent::__construct();
 
-		/**
-		 * Here we make sure that the controller accepts only
-		 * AJAX requests and the parameter 'action' is set.
-		 */
-		if ( ! $this->input->is_ajax_request() OR empty($_REQUEST['action']))
-		{
-			show_404();
-		}
-	}
+$lang['manage_plugins'] = 'Gestion des extensions';
+$lang['plugin_settings'] = 'Paramètres de l\'extension';
 
-}
+$lang['delete_plugin'] = 'Supprimer l\'extension';
+
+$lang['missing_plugin']          = 'Cette extension n\'existe page.';
+$lang['plugin_disabled']         = 'Vous pouvez uniquement modifier les paramètres des extensions activées.';
+$lang['plugin_with_no_settings'] = 'Cette extension ne possède pas de paramètres.';
+
+// ------------------------------------------------------------------------
+
+$lang['plugins_activate_success'] = 'Extension activée avec succès.';
+$lang['plugins_activate_error']   = 'Impossible d\'active l\'extension.';
+
+$lang['plugins_deactivate_success'] = 'Extension désactivée avec succès.';
+$lang['plugins_deactivate_error']   = 'Impossible de désactiver l\'extension.';
+
+$lang['plugins_delete_success'] = 'Extension supprimée avec succès.';
+$lang['plugins_delete_error']   = 'Impossible de supprimer l\'extension.';

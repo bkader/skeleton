@@ -27,7 +27,7 @@
 					<td class="text-right">
 						<a class="btn btn-default btn-xs" href="<?php echo admin_url('menus/edit/menu/'.$menu->id) ?>" title="<?php _e('edit_menu') ?>"><i class="fa fa-edit"></i></a>&nbsp;
 						<a class="btn btn-primary btn-xs" href="<?php echo admin_url('menus/items/'.$menu->id) ?>" title="<?php _e('menu_items') ?>"><i class="fa fa-list-ul"></i></a>&nbsp;
-						<a class="btn btn-danger btn-xs" onclick="return confirm('<?php printf(lang('are_your_sure'), lang('delete_menu')) ?>');" href="<?php echo safe_admin_url('menus/delete/menu/'.$menu->id) ?>" title="<?php _e('delete_menu') ?>"><i class="fa fa-times"></i></a>&nbsp;
+						<a class="btn btn-danger btn-xs" href="#" data-confirm="<?php printf(line('are_you_sure'), line('delete_menu')) ?>" data-href="<?php echo safe_admin_url('menus/delete/menu/'.$menu->id) ?>" title="<?php _e('delete_menu') ?>"><i class="fa fa-times"></i></a>
 					</td>
 				</tr>
 		<?php endforeach; ?>

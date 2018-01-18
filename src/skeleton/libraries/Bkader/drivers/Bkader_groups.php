@@ -132,7 +132,7 @@ class Bkader_groups extends CI_Driver
 		$group['guid'] = $guid;
 
 		// Insert the group.
-		$this->ci->bkader_groups_m->insert($group);
+		$this->ci->db->insert('groups', $group);
 
 		// If the are any metadata, create them.
 		if ( ! empty($meta))

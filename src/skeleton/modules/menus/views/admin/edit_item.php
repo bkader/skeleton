@@ -38,6 +38,10 @@
 							<label for="attrs_rel" class="sr-only"><?php _e('link_relation'); ?></label>
 							<input type="text" name="attrs[rel]" id="attrs_rel" placeholder="<?php _e('link_relation'); ?>" value="<?php echo set_value('attrs["rel"]', @$item->attributes['rel']); ?>" class="form-control input-sm">
 						</div>
+						<!-- Link target -->
+						<div class="form-group">
+							<label class="text-small text-normal"><input type="checkbox" name="attrs[target]" id="attrs_target" value="1" <?php echo set_checkbox('attrs_target', '1', isset($item->attributes['target'])); ?>>&nbsp;<?php _e('link_target_tip'); ?></label>
+						</div>
 					</div>
 
 					<div class="form-group<?php echo form_error('description') ? ' has-error' : ''; ?>">

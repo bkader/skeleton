@@ -324,7 +324,7 @@ class Route
 		if (is_array($controller))
 		{
 			$options    = $controller;
-			$controller = null;
+			$controller = $name;
 		}
 
 		if (empty($controller))
@@ -420,6 +420,3 @@ class Route
 			: self::$nested_depth - 1;
 	}
 }
-
-/* End of file Route.php */
-/* Location: ./application/third_party/Route.php */

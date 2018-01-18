@@ -94,3 +94,6 @@ Route::context('api', array('home' => 'api/index'));
  * bottom of this file.
  */
 $route = Route::map($route);
+
+// echo print_d($route);
+// exit;

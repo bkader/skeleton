@@ -63,7 +63,7 @@ class Settings extends User_Controller
 		parent::__construct();
 
 		// Make sure to load settings language file.
-		$this->load->language('settings/kb_settings');
+		$this->load->language('settings/settings');
 		// Make sure to load settings_lib.
 		$this->load->library('settings/settings_lib', array(), 'settings');
 	}
@@ -104,7 +104,7 @@ class Settings extends User_Controller
 		$user = clone $this->c_user;
 
 		// Get user's metadata.
-		if ( ! empty($meta = $this->app->metadata->get_many_by('guid', $user->id)))
+		if ( ! empty($meta = $this->app->metadata->get_many('guid', $user->id)))
 		{
 			foreach ($meta as $single)
 			{
@@ -194,11 +194,11 @@ class Settings extends User_Controller
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Change account password.
+	 * Change profile avatar.
 	 * @access 	public
 	 * @return 	void
 	 */
-	public function password()
+	public function avatar()
 	{
 		//TODO: develop this method.
 	}

@@ -53,83 +53,83 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 // ------------------------------------------------------------------------
 // General Buttons and Links.
 // ------------------------------------------------------------------------
-$lang['home']        = 'Home';
-$lang['click_here']  = 'Click Here';
+$lang['home']        = 'Accueil';
+$lang['click_here']  = 'Cliquer Ici';
 
-$lang['admin_panel'] = 'Admin Panel';
-$lang['view_site']   = 'View Site';
-$lang['dashboard'] = 'Dashboard';
-$lang['settings'] = 'Settings';
+$lang['admin_panel'] = 'Administration';
+$lang['view_site']   = 'Voir le site';
+$lang['dashboard'] = 'Tableau de bord';
+$lang['settings'] = 'Paramètres';
 
 // ------------------------------------------------------------------------
 // Forms Input.
 // ------------------------------------------------------------------------
-$lang['name']        = 'Name';
-$lang['title']       = 'Title';
+$lang['name']        = 'Nom';
+$lang['title']       = 'Titre';
 $lang['description'] = 'Description';
-$lang['content']     = 'Content';
-$lang['unspecified'] = 'Unspecified';
-$lang['slug']        = 'Slug';
-$lang['order']       = 'Order';
+$lang['content']     = 'Contenu';
+$lang['unspecified'] = 'Non spécifié';
+$lang['slug']        = 'Limace';
+$lang['order']       = 'Ordre';
 
-$lang['meta_title']       = 'Meta Title';
+$lang['meta_title']       = 'Meta Titre';
 $lang['meta_description'] = 'Meta Description';
-$lang['meta_keywords']    = 'Meta Keywords';
+$lang['meta_keywords']    = 'Meta Mots-clés';
 
-$lang['email']   = 'Email';
+$lang['email']   = 'E-mail';
 $lang['captcha'] = 'Captcha';
 $lang['upload']  = 'Upload';
 $lang['uploads'] = 'Uploads';
 
-$lang['are_you_sure'] = 'Are you sure you want to %s?';
+$lang['are_you_sure'] = 'Êtes-vous sûr de vouloir %s?';
 
-$lang['save_changes'] = 'Save Changes';
+$lang['save_changes'] = 'Entregister les modifications';
 
-$lang['none'] = 'None';
-$lang['both'] = 'Both';
-$lang['all']  = 'All';
+$lang['none'] = 'Aucun';
+$lang['both'] = 'Les deux';
+$lang['all']  = 'Tout';
 
-$lang['more'] = 'More';
-$lang['more_details'] = 'More Details';
+$lang['more'] = 'Plus';
+$lang['more_details'] = 'Plus de détails';
 
-$lang['no']  = 'No';
-$lang['yes'] = 'Yes';
+$lang['no']  = 'Non';
+$lang['yes'] = 'Oui';
 
 // ------------------------------------------------------------------------
 // Application buttons.
 // ------------------------------------------------------------------------
-$lang['add']    = 'Add';
-$lang['new']    = 'new';
-$lang['create'] = 'create';
+$lang['add']    = 'Ajouter';
+$lang['new']    = 'Nouveau';
+$lang['create'] = 'Créer';
 
-$lang['edit']   = 'Edit';
-$lang['update'] = 'Update';
+$lang['edit']   = 'Modifier';
+$lang['update'] = 'Mettre à jour';
 
-$lang['delete'] = 'Delete';
-$lang['remove'] = 'Remove';
+$lang['delete'] = 'Supprimer';
+$lang['remove'] = 'Retirer';
 
-$lang['activate']   = 'Activate';
-$lang['deactivate'] = 'Deactivate';
+$lang['activate']   = 'Activer';
+$lang['deactivate'] = 'Déactiver';
 
-$lang['enable']  = 'Enable';
-$lang['disable'] = 'Disable';
+$lang['enable']  = 'Activer';
+$lang['disable'] = 'Déactiver';
 
-$lang['back']   = 'Back';
-$lang['cancel'] = 'Cancel';
+$lang['back']   = 'Retour';
+$lang['cancel'] = 'Annuler';
 
 // ------------------------------------------------------------------------
 // General notices and messages.
 // ------------------------------------------------------------------------
 
 // Error messages.
-$lang['error_csrf']            = 'This form did not pass our security controls.';
-$lang['error_safe_url']        = 'This action did not pass our security controls.';
-$lang['error_captcha']         = 'The captcha code your entered is incorrect.';
-$lang['error_fields_required'] = 'All fields are required.';
-$lang['error_permission']      = 'You do not have permission to access this page.';
-$lang['error_logged_in']       = 'You are already logged in.';
-$lang['error_logged_out']      = 'You must be logged in to access this page.';
-$lang['error_account_missing'] = 'That user does not exist.';
+$lang['error_csrf']            = "Ce formulaire n'a pas passé nos contrôles de sécurité.";
+$lang['error_safe_url']        = "Cette action n'a pas passé nos contrôles de sécurité.";
+$lang['error_captcha']         = 'Le code captcha que vous avez entré est incorrect.';
+$lang['error_fields_required'] = 'Tous les champs sont requis.';
+$lang['error_permission']      = "Vous n'avez pas la permission d'accéder à cette page.";
+$lang['error_logged_in']       = 'Vous êtes déjà connecté.';
+$lang['error_logged_out']      = 'Vous devez être connecté pour accéder à cette page.';
+$lang['error_account_missing'] = "Cet utilisateur n'existe pas.";
 
 // Success Messages.
 

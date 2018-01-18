@@ -36,40 +36,34 @@
  * @since 		Version 1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
-defined('DOING_AJAX') OR define('DOING_AJAX', true);
 
 /**
- * Ajax_Controller Class
- *
- * Controllers extending this class accept only AJAX requests.
+ * Themes Module - Language File (French)
  *
  * @package 	CodeIgniter
- * @subpackage 	Skeleton
- * @category 	Core Extension
- * @author 		Kader Bouyakoub <bkader@mail.com>
- * @link 		https://github.com/bkader
- * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @subpackage 	Modules
+ * @category 	Language
+ * @author 	Kader Bouyakoub <bkader@mail.com>
+ * @link 	https://github.com/bkader
  */
-class Ajax_Controller extends KB_Controller
-{
-	/**
-	 * Class constructor
-	 * @return 	void
-	 */
-	public function __construct()
-	{
-		parent::__construct();
 
-		/**
-		 * Here we make sure that the controller accepts only
-		 * AJAX requests and the parameter 'action' is set.
-		 */
-		if ( ! $this->input->is_ajax_request() OR empty($_REQUEST['action']))
-		{
-			show_404();
-		}
-	}
 
-}
+// ------------------------------------------------------------------------
+// Themes Settings.
+// ------------------------------------------------------------------------
+$lang['theme_settings'] = 'Thèmes';
+
+
+// Theme details.
+$lang['author']        = 'Auteur';
+$lang['author_email']  = 'E-mail de l\'auteur';
+$lang['version']       = 'Version';
+$lang['license']       = 'Licence';
+$lang['tags']          = 'Mots clés';
+
+// Theme activation.
+$lang['theme_activate_success'] = 'Thème changé avec succès.';
+$lang['theme_activate_error']   = 'Impossible de changer le thème.';
+
+// ------------------------------------------------------------------------
+$lang['add_theme'] = 'Ajouter un thème';

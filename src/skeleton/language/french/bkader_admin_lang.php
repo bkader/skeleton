@@ -36,40 +36,50 @@
  * @since 		Version 1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
-defined('DOING_AJAX') OR define('DOING_AJAX', true);
 
 /**
- * Ajax_Controller Class
- *
- * Controllers extending this class accept only AJAX requests.
+ * Main admin language (English)
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @category 	Core Extension
+ * @category 	Language
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
-class Ajax_Controller extends KB_Controller
-{
-	/**
-	 * Class constructor
-	 * @return 	void
-	 */
-	public function __construct()
-	{
-		parent::__construct();
 
-		/**
-		 * Here we make sure that the controller accepts only
-		 * AJAX requests and the parameter 'action' is set.
-		 */
-		if ( ! $this->input->is_ajax_request() OR empty($_REQUEST['action']))
-		{
-			show_404();
-		}
-	}
+$lang['dashboard']  = 'Tableau de bord';
+$lang['status']     = 'État';
+$lang['action']     = 'Action';
+$lang['advanced']   = 'Avancé';
+$lang['created_by'] = 'Créé par';
+$lang['updated_by'] = 'Modifié par';
 
-}
+$lang['are_your_sure'] = 'Êtes-vous sûr de vouloir %s?';
+
+// General input fields and labels.
+$lang['name']        = 'Nom';
+$lang['slug']        = 'Limace';
+$lang['title']       = 'Titre';
+$lang['description'] = 'Description';
+$lang['content']     = 'Contenu';
+$lang['unspecified'] = 'Non spécifié';
+$lang['url']         = 'URL';
+
+$lang['meta_title']       = 'Meta Titre';
+$lang['meta_description'] = 'Meta Description';
+$lang['meta_keywords']    = 'Meta Mots-clés';
+
+// Themes.
+$lang['theme'] = 'Thème';
+$lang['themes'] = 'Thèmes';
+
+// Menus.
+$lang['menu'] = 'Menu';
+$lang['menus'] = 'Menus';
+
+// Menus.
+$lang['plugin'] = 'Extension';
+$lang['plugins'] = 'Extensions';

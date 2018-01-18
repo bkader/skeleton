@@ -51,8 +51,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
-class Api_Controller extends KB_Controller
+class Api_Controller extends REST_Controller
 {
+	/**
+	 * Instance of Slim object.
+	 * @var object
+	 */
+	protected $response = null;
+
 	/**
 	 * Class constructor
 	 * @return 	void
@@ -60,8 +66,5 @@ class Api_Controller extends KB_Controller
 	public function __construct()
 	{
 		parent::__construct();
-
-		// Load Rest library.
-		$this->load->library('rest');
 	}
 }

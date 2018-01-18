@@ -445,7 +445,7 @@ class Bkader_menus extends CI_Driver
 	public function add_menu($name, $description = null)
 	{
 		// Let's prepare $data to be inserted.
-		$data['subtype'] = 'menu';
+		// $data['subtype'] = 'menu';
 
 		// Let's generate the slug.
 		$slug = $maybe_slug = url_title($name, '-', true);

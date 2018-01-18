@@ -60,7 +60,7 @@ $lang['site_settings'] = 'Site Settings';
 
 // Site name.
 $lang['set_site_name']     = 'Site Name';
-$lang['set_site_name_tip'] = 'Enter the name of your website';
+$lang['set_site_name_tip'] = 'Enter the name of your website.';
 
 // Site description.
 $lang['set_site_description']     = 'Site Description';
