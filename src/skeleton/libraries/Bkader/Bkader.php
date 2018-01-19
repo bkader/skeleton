@@ -96,6 +96,12 @@ class Bkader extends CI_Driver_Library
 			$this->{$driver}->initialize();
 		}
 
+		// Store language in session.
+		if ( ! $this->ci->session->language)
+		{
+			$this->_set_language();
+		}
+
 		// Make sure to load the URL helper.
 		$this->ci->load->helper('url');
 
@@ -108,6 +114,29 @@ class Bkader extends CI_Driver_Library
 
 		// Loading theme library.
 		$this->ci->load->library('theme');
+
+		// Make current language available to themes.
+		$languages = $this->ci->lang->languages();
+		$this->ci->theme->set(
+			'current_language',
+			$languages[$this->ci->session->language],
+			true
+		);
+
+		// Make language selection available to themes.
+		$langs = array();
+		if (count($this->ci->config->item('languages')) > 0)
+		{
+			foreach ($languages as $folder => $details)
+			{
+				if (in_array($folder, $this->ci->config->item('languages')) 
+					&& $folder !== $this->ci->session->language)
+				{
+					$langs[$folder] = $details;
+				}
+			}
+		}
+		$this->ci->theme->set('site_languages', $langs, true);
 
 		// Load main language file.
 		$this->ci->load->language('bkader_main');
@@ -323,6 +352,41 @@ class Bkader extends CI_Driver_Library
 		}
 
 		return true;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Make sure to store language in session.
+	 * @access 	private
+	 * @param 	none
+	 * @return 	void
+	 */
+	private function _set_language()
+	{
+		// Hold the default language.
+		$default = $this->ci->config->item('language');
+
+		// Site available languages.
+		$site_languages = $this->ci->config->item('languages');
+
+		// All languages to details to search in.
+		$languages = $this->ci->lang->languages();
+
+		// Attempt to detect user's language.
+		$code = substr($this->ci->input->server('HTTP_ACCEPT_LANGUAGE', true), 0, 2);
+
+		foreach ($languages as $folder => $details)
+		{
+			if ($details['code'] === $code && in_array($folder, $site_languages))
+			{
+				$default = $folder;
+				break;
+			}
+		}
+
+		// Now we setup the session data.
+		$this->ci->session->set_userdata('language', $default);
 	}
 
 }

@@ -54,6 +54,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Admin extends Admin_Controller
 {
 	/**
+	 * Class constructor.
+	 * @return 	void
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+
+		// Load users admin language.
+		$this->load->language('users/users_admin');
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
 	 * List all site users.
 	 * @access 	public
 	 * @return 	void

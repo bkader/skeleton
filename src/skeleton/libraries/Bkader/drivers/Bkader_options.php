@@ -184,8 +184,7 @@ class Bkader_options extends CI_Driver
 			->set('value', to_bool_or_serialize($new_value))
 			->update('options');
 
-			return true;
-		return ($this->ci->db->affected_rows() > 0);
+		return true;
 	}
 
 	// ------------------------------------------------------------------------

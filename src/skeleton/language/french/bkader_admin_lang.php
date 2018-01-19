@@ -72,6 +72,10 @@ $lang['meta_title']       = 'Meta Titre';
 $lang['meta_description'] = 'Meta Description';
 $lang['meta_keywords']    = 'Meta Mots-clés';
 
+// Users.
+$lang['user'] = 'Utilisateur';
+$lang['users'] = 'Utilisateurs';
+
 // Themes.
 $lang['theme'] = 'Thème';
 $lang['themes'] = 'Thèmes';

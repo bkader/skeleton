@@ -238,12 +238,12 @@ class KB_Controller extends CI_Controller
 		// If not found, create it.
 		if ( ! $var)
 		{
-			$this->app->variables->insert(array(
-				'guid'   => $guid,
-				'name'   => 'captcha',
-				'value'  => $cap['word'],
-				'params' => $this->input->ip_address(),
-			));
+			$this->app->variables->add_var(
+				$guid,
+				'captcha',
+				$cap['word'],
+				$this->input->ip_address()
+			);
 		}
 		// Found? Update it.
 		else

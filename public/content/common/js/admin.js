@@ -11,6 +11,8 @@
 			$(this).alert('close');
 		});
 
+		$('[data-toggle="tooltip"]').tooltip();
+
 		$('[data-confirm]').click(function(e) {
 			var that = $(this);
 			bootbox.confirm({

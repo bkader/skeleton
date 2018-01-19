@@ -11,9 +11,19 @@
 
 		<div id="navbar" class="navbar-collapse collapse">
 			<ul class="nav navbar-nav navbar-right">
+			<?php if (isset($site_languages) && count($site_languages) >= 1): ?>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?php echo $current_language['name']; ?> <span class="caret"></span></a>
+					<ul class="dropdown-menu">
+					<?php foreach($site_languages as $folder => $lang): ?>
+						<li><a href="<?php echo site_url('language/switch/'.$folder); ?>"><?php echo $lang['name_en']; ?>&nbsp;<small class="text-muted pull-right"><?php echo $lang['name']; ?></small></a></li>
+					<?php endforeach; unset($folder, $lang); ?>
+					</ul>
+				</li>
+			<?php endif; ?>
 				<li><?php echo anchor('', lang('view_site')) ?></li>
 				<li class="user-menu dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?php echo $c_user->first_name; ?><?php echo user_avatar(24, $c_user->id, 'class="img-circle"'); ?></a>
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?php echo $c_user->first_name; ?> <?php echo user_avatar(24, $c_user->id, 'class="img-circle"'); ?></a>
 					<ul class="dropdown-menu">
 						<li><a href="<?php echo admin_url('users/edit/'.$c_user->id); ?>"><i class="fa fa-edit"></i><?php _e('edit_profile'); ?></a></li>
 						<li class="divider"></li>

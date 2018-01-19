@@ -89,37 +89,6 @@ class Bkader_entities extends CI_Driver implements CRUD_interface
 	}
 
 	// ------------------------------------------------------------------------
-
-	/**
-	 * Returns an array of stored entities.
-	 * @access 	public
-	 * @return 	array
-	 */
-	public function get_all_ids()
-	{
-		// Prepare an empty $ids array.
-		$ids = array();
-
-
-		// Try to get all entities.
-		$entities = $this->ci->db
-			->select('id')
-			->get_all();
-
-		// If found any, store their IDs.
-		if ($entities)
-		{
-			foreach ($entities as $ent)
-			{
-				$ids[] = $ent->id;
-			}
-		}
-
-		// Return the final result.
-		return $ids;
-	}
-
-	// ------------------------------------------------------------------------
 	// Create Entities.
 	// ------------------------------------------------------------------------
 
@@ -180,15 +149,30 @@ class Bkader_entities extends CI_Driver implements CRUD_interface
 	 */
 	public function get_by($field, $match = null)
 	{
-		// Use the get many to make sure to find only a single entity.
-		$ent = $this->get_many($field, $match);
+		// The WHERE clause depends on $field and $match.
+		(is_array($field)) OR $field = array($field => $match);
 
-		/**
-		 * The reason we are doing this is to make sure the found 
-		 * entity is unique, so if we find more than one, it means 
-		 * that we better use the get_many.
-		 */
-		return ($ent && count($ent) == 1) ? $ent[0] : null;
+		foreach ($field as $key => $val)
+		{
+			if (is_int($key) && is_array($val))
+			{
+				$this->ci->db->where($val);
+			}
+			elseif (is_array($val))
+			{
+				$this->ci->db->where_in($key, $val);
+			}
+			else
+			{
+				$this->ci->db->where($key, $val);
+			}
+		}
+
+		// Order activities and retrieve the last one.
+		return $this->ci->db
+			->order_by('id', 'DESC')
+			->get('entities')
+			->row();
 	}
 
 	// ------------------------------------------------------------------------
@@ -293,7 +277,6 @@ class Bkader_entities extends CI_Driver implements CRUD_interface
 		{
 			return false;
 		}
-
 
 		// Make sure to add the update date.
 		(isset($data['updated_at'])) OR $ata['updated_at'] = time();
@@ -566,6 +549,37 @@ class Bkader_entities extends CI_Driver implements CRUD_interface
 
 		// Return TRUE if there are some affected rows.
 		return ($this->ci->db->affected_rows() > 0);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns an array of stored entities.
+	 * @access 	public
+	 * @return 	array
+	 */
+	public function get_all_ids()
+	{
+		// Prepare an empty $ids array.
+		$ids = array();
+
+
+		// Try to get all entities.
+		$entities = $this->ci->db
+			->select('id')
+			->get_all();
+
+		// If found any, store their IDs.
+		if ($entities)
+		{
+			foreach ($entities as $ent)
+			{
+				$ids[] = $ent->id;
+			}
+		}
+
+		// Return the final result.
+		return $ids;
 	}
 
 }

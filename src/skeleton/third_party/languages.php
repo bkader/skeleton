@@ -96,6 +96,17 @@ return array(
 		'flag'      => 'de',
 	),
 
+	// Hebrew
+	'hebrew' => array(
+		'name'      => 'עִברִית',
+		'name_en'   => 'Hebrew',
+		'folder'    => 'hebrew',
+		'locale'    => 'he-IL',
+		'direction' => 'rtl',
+		'code'      => 'he',
+		'flag'      => 'il',
+	),
+
 	// Italian
 	'italian' => array(
 		'name'      => 'Italiano',

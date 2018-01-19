@@ -17,8 +17,8 @@ src/application/logs/*
 !**/.gitkeep
 
 # Ignore all captcha images.
-src/public/content/captcha/*
-!src/public/content/captcha/.index.html
+public/content/captcha/*
+!public/content/captcha/.index.html
 
 # Sublime Text cache files
 *.tmlanguage.cache

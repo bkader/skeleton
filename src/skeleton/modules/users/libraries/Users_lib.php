@@ -58,10 +58,9 @@ class Users_lib
 	 * Class constructor
 	 * @return 	void
 	 */
-	public function __construct($config = array())
+	public function __construct()
 	{
-		$this->app =& $config['app'];
-		$this->ci =& $this->app->ci;
+		$this->ci =& get_instance();
 	}
 
 	// ------------------------------------------------------------------------
@@ -80,13 +79,13 @@ class Users_lib
 			return false;
 		}
 
-		$guid = $this->app->users->create($data);
+		$guid = $this->ci->app->users->create($data);
 
 		if ($guid > 0)
 		{
 			// Account activation enabled?
 			if ( ! isset($data['enabled'])
-				&& $this->app->options->item('email_activation', false) === true)
+				&& $this->ci->app->options->item('email_activation', false) === true)
 			{
 				set_alert(lang('us_register_info'), 'info');
 			}
@@ -96,7 +95,7 @@ class Users_lib
 			}
 
 			// Log the activity.
-			log_activity($guid, 'registered');
+			$this->ci->app->activities->log_activity($guid, 'registered');
 		}
 		else
 		{
@@ -135,19 +134,14 @@ class Users_lib
 			'users.email',
 			'users.password',
 		);
-		$user = $this->app->users
+		$user = $this->ci->app->users
 			->select($selects)
-			->where('entities.username', $identity)
-			->or_where('users.email', $identity)
-			->get_all();
-		if ( ! $user OR count($user) !== 1)
+			->get($identity);
+		if ( ! $user)
 		{
 			set_alert(lang('us_wrong_credentials'), 'error');
 			return false;
 		}
-
-		// Get rid or deep array.
-		$user = $user[0];
 
 		// User already enabled?
 		if ($user->enabled == 1)
@@ -160,7 +154,7 @@ class Users_lib
 		$status = false;
 
 		// Check if a variable already exists.
-		$var = $this->app->variables->get_by(array(
+		$var = $this->ci->app->variables->get_by(array(
 			'guid' => $user->id,
 			'name' => 'activation_code',
 		));
@@ -178,7 +172,7 @@ class Users_lib
 			// If the variable exists, update it.
 			if ($var)
 			{
-				$status = (bool) $this->app->variables->update($var->id, array(
+				$status = (bool) $this->ci->app->variables->update($var->id, array(
 					'value'      => $activation_code,
 					'params'     => $this->ci->input->ip_address(),
 					'created_at' => time(),
@@ -187,12 +181,12 @@ class Users_lib
 			// Create it.
 			else
 			{
-				$status = (bool) $this->app->variables->insert(array(
-					'guid'   => $user->id,
-					'name'   => 'activation_code',
-					'value'  => $activation_code,
-					'params' => $this->ci->input->ip_address(),
-				));
+				$status = (bool) $this->ci->app->variables->add_var(
+					$user->id,
+					'activation_code',
+					$activation_code,
+					$this->ci->input->ip_address()
+				);
 			}
 		}
 
@@ -203,7 +197,10 @@ class Users_lib
 			set_alert(lang('us_resend_success'), 'success');
 
 			// Log the activity.
-			log_activity($user->id, 'new activation code: '.$activation_code);
+			$this->ci->app->activities->log_activity($user->id, 'new activation code: '.$activation_code);
+
+			// Purge user's captcha and old ones.
+			$this->delete_captcha();
 		}
 		else
 		{
@@ -233,26 +230,22 @@ class Users_lib
 		// Get the user from database.
 		$selects = array(
 			'entities.id',
-			'entities.username',
 			'entities.subtype',
+			'entities.username',
+			'entities.language',
 			'entities.enabled',
 			'entities.deleted',
 			'users.email',
 			'users.password',
 		);
-		$user = $this->app->users
+		$user = $this->ci->app->users
 			->select($selects)
-			->where('entities.username', $identity)
-			->or_where('users.email', $identity)
-			->get_all();
-		if ( ! $user OR count($user) !== 1)
+			->get($identity);
+		if ( ! $user)
 		{
 			set_alert(lang('us_wrong_credentials'), 'error');
 			return false;
 		}
-
-		// Get rid or deep array.
-		$user = $user[0];
 
 		// Check the password.
 		if ( ! password_verify($password, $user->password))
@@ -269,7 +262,7 @@ class Users_lib
 		}
 
 		// Restore the user and quick-login.
-		$status = $this->app->entities->update($user->id, array(
+		$status = $this->ci->app->entities->update($user->id, array(
 			'deleted'    => 0,
 			'deleted_at' => 0,
 		));
@@ -277,7 +270,10 @@ class Users_lib
 		if ($status === true)
 		{
 			// Log the activity.
-			log_activity($user->id, 'restored account');
+			$this->ci->app->activities->log_activity($user->id, 'restored account');
+
+			// Purge user's captcha and old ones.
+			$this->delete_captcha();
 
 			return $this->ci->auth->quick_login($user);
 		}
@@ -303,7 +299,7 @@ class Users_lib
 		}
 
 		// Get the variable from database.
-		$var = $this->app->variables->get_by(array(
+		$var = $this->ci->app->variables->get_by(array(
 			'name'          => 'activation_code',
 			'BINARY(value)' => $code,
 			'created_at >'  => time() - (DAY_IN_SECONDS * 2),
@@ -314,7 +310,7 @@ class Users_lib
 			return false;
 		}
 
-		$status = $this->app->entities->update($var->guid, array('enabled' => 1));
+		$status = $this->ci->app->entities->update($var->guid, array('enabled' => 1));
 
 		// Everything went well?
 		if ($status === true)
@@ -325,7 +321,7 @@ class Users_lib
 			$this->delete_activation_codes($var->guid);
 
 			// Log the activity.
-			log_activity($var->guid, 'activation code: '.$code);
+			$this->ci->app->activities->log_activity($var->guid, 'activation code: '.$code);
 		}
 		else
 		{
@@ -365,21 +361,16 @@ class Users_lib
 		);
 
 		// Grab the user from database.
-		$user = $this->app->users
+		$user = $this->ci->app->users
 			->select($selects)
-			->where('entities.username', $identity)
-			->or_where('users.email', $identity)
-			->get_all();
+			->get($identity);
 
 		// The user does not exist?
-		if ( ! $user OR count($user) !== 1)
+		if ( ! $user)
 		{
 			set_alert(lang('us_wrong_credentials'), 'error');
 			return false;
 		}
-
-		// Get rid of deep array.
-		$user = $user['0'];
 
 		// Make sure the account is not banned.
 		if ($user->enabled < 0)
@@ -402,9 +393,9 @@ class Users_lib
 		$status = false;
 
 		// Check if there is an existing password code.
-		$var = $this->app->variables->get_by(array(
-			'guid'          => $user->id,
-			'name'          => 'password_code',
+		$var = $this->ci->app->variables->get_by(array(
+			'guid' => $user->id,
+			'name' => 'password_code',
 		));
 
 		// Found?
@@ -421,7 +412,7 @@ class Users_lib
 			// If the variable exists, update it.
 			if ($var)
 			{
-				$status = (bool) $this->app->variables->update($var->id, array(
+				$status = (bool) $this->ci->app->variables->update($var->id, array(
 					'value'      => $password_code,
 					'params' => $this->ci->input->ip_address(),
 					'created_at' => time(),
@@ -430,12 +421,12 @@ class Users_lib
 			// Create it.
 			else
 			{
-				$status = (bool) $this->app->variables->insert(array(
-					'guid'   => $user->id,
-					'name'   => 'password_code',
-					'value'  => $password_code,
-					'params' => $this->ci->input->ip_address(),
-				));
+				$status = (bool) $this->ci->app->variables->add_var(
+					$user->id,
+					'password_code',
+					$password_code,
+					$this->ci->input->ip_address()
+				);
 			}
 		}
 
@@ -446,7 +437,7 @@ class Users_lib
 			set_alert(lang('us_recover_success'), 'success');
 
 			// Log the activity.
-			log_activity($user->id, 'new password code: '.$password_code);
+			$this->ci->app->activities->log_activity($user->id, 'new password code: '.$password_code);
 		}
 		else
 		{
@@ -471,7 +462,7 @@ class Users_lib
 		}
 
 		// Attempt to get the variable from database.
-		$var = $this->app->variables->get_by(array(
+		$var = $this->ci->app->variables->get_by(array(
 			'name'          => 'password_code',
 			'BINARY(value)' => $code,
 			'created_at >'  => time() - (DAY_IN_SECONDS * 2),
@@ -499,7 +490,7 @@ class Users_lib
 		}
 
 		// Attempt to update password.
-		$status = $this->app->users->update($user_id, array('password' => $password));
+		$status = $this->ci->app->users->update($user_id, array('password' => $password));
 
 		// Done?
 		if ($status === true)
@@ -508,7 +499,7 @@ class Users_lib
 			set_alert(lang('us_reset_success'), 'success');
 
 			// Log the activity.
-			log_activity($user_id, 'changed password');
+			$this->ci->app->activities->log_activity($user_id, 'changed password');
 
 			// Delete all password codes.
 			$this->delete_password_codes($user_id);
@@ -538,14 +529,14 @@ class Users_lib
 	{
 		if (is_numeric($user_id) && $user_id > 0)
 		{
-			$this->app->variables->delete_by(array(
+			$this->ci->app->variables->delete_by(array(
 				'guid' => $user_id,
 				'name' => 'online_token',
 			));
 		}
 
 		// Perform a clean up of older tokens.
-		$this->app->variables->delete_by(array(
+		$this->ci->app->variables->delete_by(array(
 			'name' => 'online_token',
 			'created_at <' => time() - (MONTH_IN_SECONDS * 2)
 		));
@@ -563,14 +554,14 @@ class Users_lib
 	{
 		if (is_numeric($user_id) && $user_id > 0)
 		{
-			$this->app->variables->delete_by(array(
+			$this->ci->app->variables->delete_by(array(
 				'guid' => $user_id,
 				'name' => 'password_code',
 			));
 		}
 
 		// Perform a clean up of older tokens.
-		$this->app->variables->delete_by(array(
+		$this->ci->app->variables->delete_by(array(
 			'name' => 'password_code',
 			'created_at <' => time() - (DAY_IN_SECONDS * 2)
 		));
@@ -588,19 +579,39 @@ class Users_lib
 	{
 		if (is_numeric($user_id) && $user_id > 0)
 		{
-			$this->app->variables->delete_by(array(
+			$this->ci->app->variables->delete_by(array(
 				'guid' => $user_id,
 				'name' => 'activation_code',
 			));
 		}
 
 		// Perfrom a clean up of older activation codes.
-		$this->app->variables->delete_by(array(
+		$this->ci->app->variables->delete_by(array(
 			'name'         => 'activation_code',
 			'created_at <' => time() - (DAY_IN_SECONDS * 2)
 		));
 	}
-}
 
-/* End of file Users_lib.php */
-/* Location: ./application/modules/users/libraries/Users_lib.php */
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Delete old captcha from database.
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
+	public function delete_captcha()
+	{
+		// Delete captcha of the current ip address.
+		$this->ci->app->variables->delete_by(array(
+			'name'   => 'captcha',
+			'params' => $this->ci->input->ip_address(),
+		));
+
+		// Delete old captcha.
+		$this->ci->app->variables->delete_by(array(
+			'name'         => 'captcha',
+			'created_at <' => time() - 7200
+		));
+	}
+}

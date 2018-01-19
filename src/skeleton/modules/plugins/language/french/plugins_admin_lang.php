@@ -38,7 +38,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Plugins module language file (French)
+ * Plugins Module - Admin Language (French)
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton

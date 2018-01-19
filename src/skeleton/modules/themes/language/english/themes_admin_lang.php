@@ -38,15 +38,17 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Themes Module - Language File (English)
+ * Theme Module - Admin Language (English)
  *
  * @package 	CodeIgniter
- * @subpackage 	Modules
- * @category 	Language
- * @author 	Kader Bouyakoub <bkader@mail.com>
- * @link 	https://github.com/bkader
+ * @subpackage 	Skeleton
+ * @category 	Modules\Language
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		Version 1.0.0
+ * @version 	1.0.0
  */
-
 
 // ------------------------------------------------------------------------
 // Themes Settings.

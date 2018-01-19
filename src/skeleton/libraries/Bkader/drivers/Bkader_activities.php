@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
-class Bkader_activities extends CI_Driver
+class Bkader_activities extends CI_Driver implements CRUD_interface
 {
 	/**
 	 * Initialize class preferences.
@@ -134,7 +134,11 @@ class Bkader_activities extends CI_Driver
 
 		foreach ($field as $key => $val)
 		{
-			if (is_array($field))
+			if (is_int($key) && is_array($val))
+			{
+				$this->ci->db->where($val);
+			}
+			elseif (is_array($val))
 			{
 				$this->ci->db->where_in($key, $val);
 			}
@@ -147,8 +151,8 @@ class Bkader_activities extends CI_Driver
 		// Order activities and retrieve the last one.
 		return $this->ci->db
 			->order_by('id', 'DESC')
-			->limit(1)
-			->get('activities')->row();
+			->get('activities')
+			->row();
 	}
 
 	// ------------------------------------------------------------------------
@@ -158,10 +162,13 @@ class Bkader_activities extends CI_Driver
 	 * @access 	public
 	 * @param 	mixed 	$field 	Column name or associative array.
 	 * @param 	mixed 	$match 	Comparison value, array or NULL.
+	 * @param 	int 	$limit 	Limit to use for getting records.
+	 * @param 	int 	$offset Database offset.
 	 * @return 	array of objects if found, else NULL.
 	 */
-	public function get_many($field = NULL, $match = NULL)
+	public function get_many($field = NULL, $match = NULL, $limit = 0, $offset = 0)
 	{
+		// Prepare where clause.
 		if ( ! empty($field))
 		{
 			// Turn things into an array.
@@ -169,7 +176,11 @@ class Bkader_activities extends CI_Driver
 
 			foreach ($field as $key => $val)
 			{
-				if (is_array($val))
+				if (is_int($key) && is_array($val))
+				{
+					$this->ci->db->where($val);
+				}
+				elseif (is_array($val))
 				{
 					$this->ci->db->where_in($key, $val);
 				}
@@ -180,10 +191,27 @@ class Bkader_activities extends CI_Driver
 			}
 		}
 
-		return $this->ci->db
-			->order_by('id', 'DESC')
-			->get('activities')
-			->result();
+		// If there a limit?
+		if ($limit > 0)
+		{
+			$this->ci->db->limit($limit, $offset);
+		}
+
+		return $this->ci->db->get('activities')->result();
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve all activities.
+	 * @access 	public
+	 * @param 	int 	$limit 	Limit to use for getting records.
+	 * @param 	int 	$offset Database offset.
+	 * @return 	array o objects if found, else null.
+	 */
+	public function get_all($limit = 0, $offset = 0)
+	{
+		return $this->get_many(null, null, $limit, $offset);
 	}
 
 	// ------------------------------------------------------------------------
@@ -234,7 +262,11 @@ class Bkader_activities extends CI_Driver
 
 			foreach ($args as $key => $val)
 			{
-				if (is_array($val))
+				if (is_int($key) && is_array($val))
+				{
+					$this->ci->db->where($val);
+				}
+				elseif (is_array($val))
 				{
 					$this->ci->db->where_in($key, $val);
 				}
@@ -281,7 +313,11 @@ class Bkader_activities extends CI_Driver
 
 			foreach ($field as $key => $val)
 			{
-				if (is_array($val))
+				if (is_int($key) && is_array($val))
+				{
+					$this->ci->db->where($val);
+				}
+				elseif (is_array($val))
 				{
 					$this->ci->db->where_in($key, $val);
 				}
@@ -374,9 +410,9 @@ if ( ! function_exists('get_activities'))
 	 * @param 	mixed 	$match 	Comparison value, array or NULL.
 	 * @return 	array of objects if found, else NULL.
 	 */
-	function get_activities($field = null, $match = null)
+	function get_activities($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		return get_instance()->app->activities->get_many($field, $match);
+		return get_instance()->app->activities->get_many($field, $match, $limit, $offset);
 	}
 }
 

@@ -38,13 +38,16 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Users Module - Users Language File (French)
+ * Users Module - Users Language (French)
  *
  * @package 	CodeIgniter
- * @subpackage 	Modules
- * @category 	Languages
- * @author 	Kader Bouyakoub <bkader@mail.com>
- * @link 	https://github.com/bkader
+ * @subpackage 	Skeleton
+ * @category 	Modules\Language
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		Version 1.0.0
+ * @version 	1.0.0
  */
 
 // ------------------------------------------------------------------------
@@ -118,101 +121,43 @@ $lang['us_resend_success'] = 'Account activation link successfully resent. Check
 // ------------------------------------------------------------------------
 // Login page.
 // ------------------------------------------------------------------------
-$lang['us_login_title']   = 'Sign In';
-$lang['us_login_heading'] = 'Member Login';
-$lang['remember_me']      = 'Remember me';
+$lang['us_login_title']   = 'Connexion';
+$lang['us_login_heading'] = 'Espace Membre';
+$lang['remember_me']      = 'Se souvenir de moi';
 
-$lang['us_wrong_credentials'] = 'Invalid username/email address and/or password.';
-$lang['us_account_disabled']  = 'You account is not yet active. Use the link that was sent to you or %s to receive a new one.';
-$lang['us_account_banned']    = 'This user is banned from the site.';
-$lang['us_account_deleted']   = 'Your account has been deleted by not yet removed from database. %s if you wish to restore it.';
+$lang['us_wrong_credentials'] = 'Identifiant/adresse e-mail et/ou mot de passe incorrect.';
+$lang['us_account_disabled']  = 'Votre compte n\'est pas encore actif. Utilisez le lien qui vous a été envoyé ou %s pour en recevoir un nouveau.';
+$lang['us_account_banned']    = 'Cet utilisateur est banni du site.';
+$lang['us_account_deleted']   = 'Votre compte a été supprimé mais pas encore supprimé de la base de données. %s si vous souhaitez le récupérer.';
 
 // ------------------------------------------------------------------------
 // Lost password page.
 // ------------------------------------------------------------------------
-$lang['us_recover_title']   = 'Lost Password';
-$lang['us_recover_heading'] = 'Lost Password';
+$lang['us_recover_title']   = 'Mot de passe perdu';
+$lang['us_recover_heading'] = 'Mot de passe perdu';
 
-$lang['us_recover_notice']  = 'Enter your username or email address and we will send you a link to reset your password.';
-$lang['us_recover_success'] = 'Password reset link successfully sent.';
-$lang['us_recover_error']   = 'Unable to send password reset link.';
+$lang['us_recover_notice']  = 'Entrez votre nom d\'utilisateur ou votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.';
+$lang['us_recover_success'] = 'Le lien de réinitialisation du mot de passe a été envoyé.';
+$lang['us_recover_error']   = 'Impossible d\'envoyer le lien de réinitialisation du mot de passe.';
 
 
 // ------------------------------------------------------------------------
 // Reset password page.
 // ------------------------------------------------------------------------
-$lang['us_reset_title']   = 'Reset Password';
-$lang['us_reset_heading'] = 'Reset Password';
+$lang['us_reset_title']   = 'Réinitialiser le mot de passe';
+$lang['us_reset_heading'] = 'Réinitialiser le mot de passe';
 
-$lang['us_reset_invalid_key'] = 'This password reset link is no longer valid.';
-$lang['us_reset_error']       = 'Unable to reset password.';
-$lang['us_reset_success']     = 'Password successfully reset.';
+$lang['us_reset_invalid_key'] = 'Ce lien de réinitialisation de mot de passe n\'est plus valide.';
+$lang['us_reset_error']       = 'Impossible de réinitialiser le mot de passe.';
+$lang['us_reset_success']     = 'Mot de passe réinitialisé avec succès.';
 
 // ------------------------------------------------------------------------
 // Restore account page.
 // ------------------------------------------------------------------------
-$lang['us_restore_title']   = 'Restore Account';
-$lang['us_restore_heading'] = 'Restore Account';
+$lang['us_restore_title']   = 'Récupérer le compte';
+$lang['us_restore_heading'] = 'Récupérer le compte';
 
-$lang['us_restore_notice']  = 'Enter your username/email address and password to restore your account.';
-$lang['us_restore_deleted'] = 'Only deleted accounts can be restored.';
-$lang['us_restore_error']   = 'Unable to restore account.';
-$lang['us_restore_success'] = 'Account successfully restored. Welcome back!';
-
-// ------------------------------------------------------------------------
-// Admin Panel
-// ------------------------------------------------------------------------
-$lang['users'] = 'Utilisateurs';
-$lang['us_manage_users'] = 'Gestion des utilisateurs';
-
-$lang['profile']      = 'Profil';
-$lang['view_profile'] = 'Voir le profil';
-$lang['edit_profile'] = 'Modifier le profil';
-
-$lang['delete_user'] = 'Supprimer l\'utilisateur';
-$lang['view_user']   = 'Voir l\'utilisateur';
-
-$lang['role']  = 'Rôle';
-$lang['roles'] = 'Rôles';
-
-$lang['regular']       = 'Ordinar';
-$lang['premium']       = 'Premium';
-$lang['author']        = 'Auteur';
-$lang['editor']        = 'Éditeur';
-$lang['admin']         = 'Admin';
-$lang['administrator'] = 'Administrateur';
-
-$lang['active']   = 'Actif';
-$lang['inactive'] = 'Inactif';
-
-// ------------------------------------------------------------------------
-
-// Add user.
-$lang['add_user']             = 'Ajouter un utilisateur';
-$lang['us_admin_add_success'] = 'Utilisteur ajouté avec succès.';
-$lang['us_admin_add_error']   = 'Impossible d\'ajouter l\'utilisateur.';
-
-// ------------------------------------------------------------------------
-
-// Edit user.
-$lang['edit_user']             = 'Modifier l\'utilisateur';
-$lang['us_admin_edit_success'] = 'Utilisteur mis à jour avec succès.';
-$lang['us_admin_edit_error']   = 'Impossible de mettre à jour l\'utilisateur.';
-
-// ------------------------------------------------------------------------
-
-// Activate user.
-$lang['us_admin_activate_success'] = 'Compte activé avec succès.';
-$lang['us_admin_activate_error']   = 'Impossible d\'activer l\'utilisateur.';
-
-// ------------------------------------------------------------------------
-
-// Deactivate user.
-$lang['us_admin_deactivate_success'] = 'Compte déactivé avec succès.';
-$lang['us_admin_deactivate_error']   = 'Impossible de désactiver l\'utilisateur.';
-
-// ------------------------------------------------------------------------
-
-// Delete user.
-$lang['us_admin_delete_success'] = 'Compte supprimé avec succès.';
-$lang['us_admin_delete_error']   = 'Impossible de supprimer l\'utilisateur.';
+$lang['us_restore_notice']  = 'Entrez votre nom d\'utilisateur/adresse e-mail et mot de passe pour récupérer votre compte.';
+$lang['us_restore_deleted'] = 'Seuls les comptes supprimés peuvent être restaurés.';
+$lang['us_restore_error']   = 'Impossible de récupérer le compte.';
+$lang['us_restore_success'] = 'Compte récupéré avec succès. Bon retour parmi nous!';

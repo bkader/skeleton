@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
-class Bkader_metadata extends CI_Driver
+class Bkader_metadata extends CI_Driver implements CRUD_interface
 {
 	/**
 	 * Initialize class preferences.
@@ -66,95 +66,62 @@ class Bkader_metadata extends CI_Driver
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Create multiple metadata for a given entity.
+	 * Create a single or multiple metadata.
 	 * @access 	public
-	 * @param 	int 	$guid 	the entity's ID.
-	 * @param 	mixed 	$meta 	string or array of name => value.
-	 * @param 	mixed 	$value
-	 * @return 	bool
+	 * @param 	array 	$data
+	 * @return 	mixed 	int for a single meta, array of ids for multiple.
 	 */
-	public function create($guid, $meta, $value = NULL)
+	public function create(array $data = array())
 	{
-		// We make sure the entity exists and $meta is provided.
-		if ( ! $this->_parent->entities->get($guid) OR empty($meta))
+		// Make sure there are some meta.
+		if (empty($data))
 		{
-			return FALSE;
+			return false;
 		}
 
-		// Turn things into an array.
-		(is_array($meta)) OR $meta = array($meta => $value);
-
-
-		// Prepare out array of metadata.
-		$data = array();
-
-		// Loop through elements and fill $data.
-		foreach ($meta as $key => $val)
+		// In case of multiple.
+		if (isset($data[0]) && is_array($data[0]))
 		{
-			/**
-			 * The reason we are doing this check is to allow
-			 * the user use the following structure:
-			 * @example:
-			 * 
-			 * update_meta(1, array(
-			 *     'phone' => '0123456789',
-			 *     'address', // <-- See this!
-			 *     'company' => 'Company Name',
-			 * ));
-			 *
-			 * Both "phone" and "company" will use their respective 
-			 * value while "address" and all other metadata using 
-			 * the same structure will use $value.
-			 */
-			if (is_int($key))
+			$ids = array();
+			foreach ($data as $_data)
 			{
-				$key = $val;
-				$val = $value;
+				$ids[] = $this->create($_data);
 			}
 
-			// We make sure it does not exists first.
-			if( ! $this->get($guid, $key))
-			{
-				$data[] = array(
-					'guid'  => $guid,
-					'name'  => $key,
-					'value' => to_bool_or_serialize($val),
-				);
-			}
+			return $ids;
 		}
 
-		// Proceed only if $data is not empty.
-		return ( ! empty($data))
-			? ($this->ci->db->insert_batch('metadata', $data) > 0)
-			: FALSE;
+		// Check the integrity of of $data.
+		if ( ! isset($data['guid']) 
+			OR ( ! isset($data['name']) OR empty($data['name'])))
+		{
+			return false;
+		}
+
+		// Make sure to prepare value.
+		if (isset($data['value']))
+		{
+			$data['value'] = to_bool_or_serialize($data['value']);
+		}
+
+		$this->ci->db->insert('metadata', $data);
+		return $this->ci->db->insert_id();
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Retrieve a single or multiple metadata of the selected entity.
+	 * Retrieve a single metadata by its ID.
 	 * @access 	public
-	 * @param 	int 	$guid 	The entiti'y id.
-	 * @param 	string 	$name 	The metadata name
-	 * @param 	bool 	$single Whether to return the metadata value.
-	 * @return 	mixed
+	 * @param 	int 	$id 	The meta ID.
+	 * @return 	object if found, else null.
 	 */
-	public function get($guid, $name = NULL, $single = FALSE)
+	public function get($id)
 	{
-		// A single metadata to retrieve?
-		if ( ! empty($name))
-		{
-			$meta = $this->get_by(array(
-				'guid' => $guid,
-				'name' => $name,
-			));
-
-			// Return the value or the whole object if found.
-			return ($meta && $single === TRUE) ? $meta->value : $meta;
-		}
-
-		// Multiple metadata.
-		return $this->get_many('guid', $guid);
+		return $this->ci->db
+			->where('id', $id)
+			->get('metadata')
+			->row();
 	}
 
 	// ------------------------------------------------------------------------
@@ -204,9 +171,11 @@ class Bkader_metadata extends CI_Driver
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
 	 * @return 	array of objects if found, else NULL
 	 */
-	public function get_many($field = NULL, $match = NULL)
+	public function get_many($field = NULL, $match = NULL, $limit = 0, $offset = 0)
 	{
 		// Argument provided?
 		if ( ! empty($field))
@@ -230,6 +199,12 @@ class Bkader_metadata extends CI_Driver
 			}
 		}
 
+		// Is there a limit?
+		if ($limit > 0)
+		{
+			$this->ci->db->limit($limit, $offset);
+		}
+
 		// Proceed to retrieving.
 		$meta = $this->ci->db->get('metadata')->result();
 
@@ -249,75 +224,46 @@ class Bkader_metadata extends CI_Driver
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Update a single or multiple metadat.
+	 * Retrieve all metadata.
 	 * @access 	public
-	 * @param 	int 	$guid 	the entity's ID.
-	 * @param 	mixed 	$meta 	string or array of name => value.
-	 * @param 	mixed 	$value
-	 * @return 	bool
+	 * @param 	int 	$limit 	Limit to use for getting records.
+	 * @param 	int 	$offset Database offset.
+	 * @return 	array of objects if found, else null.
 	 */
-	public function update($guid, $meta, $value = NULL)
+	public function get_all($limit = 0, $offset = 0)
 	{
-		// Make sure the entity exists and metadata are provided.
-		if ( ! $this->_parent->entities->get($guid) OR empty($meta))
+		return $this->get_many(null, null, $limit, $offset);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Update a single row by its primary key.
+	 * @access 	public
+	 * @param 	mixed 	$id 	The primary key value.
+	 * @param 	array 	$data 	Array of data to update.
+	 * @return 	boolean
+	 */
+	public function update($id, array $data = array())
+	{
+		// Make sure there are some data.
+		if (empty($data))
 		{
-			return FALSE;
+			return false;
 		}
 
-		// Turn things into an array.
-		(is_array($meta)) OR $meta = array($meta => $value);
-
-		// Loop through all, update if found, create if not.
-		foreach ($meta as $key => $val)
+		// Prepare value.
+		if (isset($data['value']))
 		{
-			/**
-			 * The reason we are doing this check is to allow
-			 * the user use the following structure:
-			 * @example:
-			 * 
-			 * update_meta(1, array(
-			 *     'phone' => '0123456789',
-			 *     'address', // <-- See this!
-			 *     'company' => 'Company Name',
-			 * ));
-			 *
-			 * Both "phone" and "company" will use their respective 
-			 * value while "address" and all other metadata using 
-			 * the same structure will use $value.
-			 */
-			if (is_int($key))
-			{
-				$key = $val;
-				$val = $value;
-			}
-
-			// Check if the metadata exists first.
-			$md = $this->get($guid, $key);
-
-			// Found by same value? Nothing to do.
-			if ($md && from_bool_or_serialize($md->value) === $val)
-			{
-				continue;
-			}
-
-			// Found by different value? Update it.
-			if ($md)
-			{
-				$this->update_by(
-					array(
-						'guid' => $guid,
-						'name' => $key,
-					),
-					array('value' => $val)
-				);
-			}
-			else
-			{
-				$this->create($guid, $key, $val);
-			}
+			$data['value'] = to_bool_or_serialize($data['value']);
 		}
 
-		return TRUE;
+		// Proceed to update.
+		$this->ci->db
+			->where('id', $id)
+			->set($data)
+			->update('metadata');
+		return ($this->ci->db->affected_rows() > 0);
 	}
 
 	// ------------------------------------------------------------------------
@@ -358,7 +304,10 @@ class Bkader_metadata extends CI_Driver
 		}
 
 		// Prepare the value and params.
-		(isset($data['value'])) && $data['value'] = to_bool_or_serialize($data['value']);
+		if (isset($data['value']))
+		{
+			$data['value'] = to_bool_or_serialize($data['value']);
+		}
 
 		// Prepare our query.
 		$this->ci->db->set($data);
@@ -394,43 +343,14 @@ class Bkader_metadata extends CI_Driver
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Delete a single or multiple metadata.
+	 * Delete a single metadata by its primary key.
 	 * @access 	public
+	 * @param 	mixed 	$id 	The primary key value.
 	 * @return 	boolean
-	 * 
-	 * @example:
-	 * To delete all metadata of an entity, just pass the ID.
-	 * To delete a specific metadata, pass its name as the second parameter.
-	 * To delete multiple one, pass their array as the second parameter or
-	 * you can pass successive names.
 	 */
-	public function delete()
+	public function delete($id)
 	{
-		$args = func_get_args();
-		if (empty($args))
-		{
-			return FALSE;
-		}
-
-		// $guid is always the first element.
-		$guid = array_shift($args);
-		if ( ! is_numeric($guid))
-		{
-			return FALSE;
-		}
-
-		// Prepare WHERE clause.
-		$where = array('guid' => $guid);
-
-		// Are there arguments left?
-		if ( ! empty($args))
-		{
-			// Get rid of deep nasty array.
-			(is_array($args[0])) && $args = $args[0];
-			$where['name'] = $args;
-		}
-
-		return $this->delete_by($where);
+		return $this->delete_by('id', $id);
 	}
 
 	// ------------------------------------------------------------------------
@@ -475,6 +395,207 @@ class Bkader_metadata extends CI_Driver
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Create multiple metadata for a given entity.
+	 * @access 	public
+	 * @param 	int 	$guid 	the entity's ID.
+	 * @param 	mixed 	$meta 	string or array of name => value.
+	 * @param 	mixed 	$value
+	 * @return 	bool
+	 */
+	public function add_meta($guid, $meta, $value = NULL)
+	{
+		// Turn things into an array.
+		(is_array($meta)) OR $meta = array($meta => $value);
+
+
+		// Prepare out array of metadata.
+		$data = array();
+
+		// Loop through elements and fill $data.
+		foreach ($meta as $key => $val)
+		{
+			/**
+			 * The reason we are doing this check is to allow
+			 * the user use the following structure:
+			 * @example:
+			 * 
+			 * update_meta(1, array(
+			 *     'phone' => '0123456789',
+			 *     'address', // <-- See this!
+			 *     'company' => 'Company Name',
+			 * ));
+			 *
+			 * Both "phone" and "company" will use their respective 
+			 * value while "address" and all other metadata using 
+			 * the same structure will use $value.
+			 */
+			if (is_int($key))
+			{
+				$key = $val;
+				$val = $value;
+			}
+
+			// We make sure it does not exists first.
+			if( ! $this->get_meta($guid, $key))
+			{
+				$data[] = array(
+					'guid'  => $guid,
+					'name'  => $key,
+					'value' => $val,
+				);
+			}
+		}
+
+		// Proceed only if $data is not empty.
+		return ( ! empty($data))
+			? $this->create($data)
+			: FALSE;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve a single or multiple metadata of the selected entity.
+	 * @access 	public
+	 * @param 	int 	$guid 	The entiti'y id.
+	 * @param 	string 	$name 	The metadata name
+	 * @param 	bool 	$single Whether to return the metadata value.
+	 * @return 	mixed
+	 */
+	public function get_meta($guid, $name = NULL, $single = FALSE)
+	{
+		// A single metadata to retrieve?
+		if ( ! empty($name))
+		{
+			// Multiple metadata?
+			if (is_array($name))
+			{
+				return $ths->get_many(array(
+					'guid' => $guid,
+					'name' => $name,
+				));
+			}
+
+			$meta = $this->get_by(array(
+				'guid' => $guid,
+				'name' => $name,
+			));
+
+			// Return the value or the whole object if found.
+			return ($meta && $single === TRUE) ? $meta->value : $meta;
+		}
+
+		// Multiple metadata.
+		return $this->get_many('guid', $guid);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Update a single or multiple metadata.
+	 * @access 	public
+	 * @param 	int 	$guid 	the entity's ID.
+	 * @param 	mixed 	$meta 	string or array of name => value.
+	 * @param 	mixed 	$value
+	 * @return 	bool
+	 */
+	public function update_meta($guid, $meta, $value = NULL)
+	{
+		// Turn things into an array.
+		(is_array($meta)) OR $meta = array($meta => $value);
+
+		// Loop through all, update if found, create if not.
+		foreach ($meta as $key => $val)
+		{
+			/**
+			 * The reason we are doing this check is to allow
+			 * the user use the following structure:
+			 * @example:
+			 * 
+			 * update_meta(1, array(
+			 *     'phone' => '0123456789',
+			 *     'address', // <-- See this!
+			 *     'company' => 'Company Name',
+			 * ));
+			 *
+			 * Both "phone" and "company" will use their respective 
+			 * value while "address" and all other metadata using 
+			 * the same structure will use $value.
+			 */
+			if (is_int($key))
+			{
+				$key = $val;
+				$val = $value;
+			}
+
+			// Check if the metadata exists first.
+			$md = $this->get_meta($guid, $key);
+
+			// Found by same value? Nothing to do.
+			if ($md && from_bool_or_serialize($md->value) === $val)
+			{
+				continue;
+			}
+
+			// Found by different value? Update it.
+			if ($md)
+			{
+				$this->update($md->id, array('value' => $val));
+			}
+			else
+			{
+				$this->add_meta($guid, $key, $val);
+			}
+		}
+
+		return TRUE;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Delete a single or multiple metadata.
+	 * @access 	public
+	 * @return 	boolean
+	 * 
+	 * @example:
+	 * To delete all metadata of an entity, just pass the ID.
+	 * To delete a specific metadata, pass its name as the second parameter.
+	 * To delete multiple one, pass their array as the second parameter or
+	 * you can pass successive names.
+	 */
+	public function delete_meta()
+	{
+		$args = func_get_args();
+		if (empty($args))
+		{
+			return FALSE;
+		}
+
+		// $guid is always the first element.
+		$guid = array_shift($args);
+		if ( ! is_numeric($guid))
+		{
+			return FALSE;
+		}
+
+		// Prepare WHERE clause.
+		$where = array('guid' => $guid);
+
+		// Are there arguments left?
+		if ( ! empty($args))
+		{
+			// Get rid of deep nasty array.
+			(is_array($args[0])) && $args = $args[0];
+			$where['name'] = $args;
+		}
+
+		return $this->delete_by($where);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
 	 * This method deletes all metadata that have to owners.
 	 * @access 	public
 	 * @return 	boolean
@@ -503,7 +624,7 @@ if ( ! function_exists('add_meta'))
 	 */
 	function add_meta($guid, $meta, $value = NULL)
 	{
-		return get_instance()->app->metadata->create($guid, $meta, $value);
+		return get_instance()->app->metadata->add_meta($guid, $meta, $value);
 	}
 }
 
@@ -520,7 +641,7 @@ if ( ! function_exists('get_meta'))
 	 */
 	function get_meta($guid, $name = NULL, $single = FALSE)
 	{
-		return get_instance()->app->metadata->get($guid, $name, $single);
+		return get_instance()->app->metadata->get_meta($guid, $name, $single);
 	}
 }
 

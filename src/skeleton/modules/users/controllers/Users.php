@@ -534,7 +534,7 @@ class Users extends KB_Controller
 			array(	'field' => 'cpassword',
 					'label' => 'lang:confirm_password',
 					'rules' => 'required|matches[npassword]'),
-		));		$this->prep_form();
+		));
 
 		// Before the form is processed.
 		if ($this->form_validation->run() == false)

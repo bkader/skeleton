@@ -94,14 +94,22 @@ class Admin_Controller extends User_Controller
 				->add('css', get_common_url('vendor/fira-sans/css/fira-sans.min'), 'fira-sans')
 				->add('css', get_common_url('css/font-awesome.min'), 'font-awesome')
 				->add('css', get_common_url('css/bootstrap.min'), 'bootstrap')
-				//->add('css', get_common_url('css/bootstrap-rtl.min'), 'bootstrap-rtl')
 				->add('css', get_common_url('css/bootstrap-theme.min'), 'bootstrap-theme')
 				->add('css', get_common_url('css/admin'), 'admin')
-				//->add('css', get_common_url('css/admin-rtl'), 'admin-rtl')
 				->add('js', get_common_url('js/bootstrap.min'), 'bootstrap')
 				->add('js', get_common_url('js/bootbox.min'), 'bootbox')
 				->add('js', get_common_url('js/admin'), 'admin');
 		}
+		
+		if ($this->lang->languages()[$this->session->language]['direction'] === 'rtl')
+		{
+			$this->theme
+				->add('css', get_common_url('css/bootstrap-rtl.min'), 'bootstrap-rtl')
+				->add('css', get_common_url('css/admin-rtl'), 'admin-rtl');
+		}
+
+		// Load admin helper.
+		$this->load->helper('admin');
 
 		// Prepare dashboard sidebar.
 		$this->theme->set('admin_menu', $this->_admin_menu(), true);

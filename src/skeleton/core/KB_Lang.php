@@ -72,6 +72,17 @@ class KB_Lang extends CI_Lang
 	 */
 	public $lang;
 
+	/**
+	 * Class constructor.
+	 * @return 	void
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+
+		$this->config =& load_class('Config', 'core');
+	}
+
 	// --------------------------------------------------------------------
 
 	/**
@@ -87,6 +98,8 @@ class KB_Lang extends CI_Lang
 	 */
 	public function load($langfile, $idiom = '', $return = false, $add_suffix = true, $alt_path = '')
 	{
+		// echo print_d(get_instance()->session->all_userdata());
+		// exit;
 		if (is_array($langfile))
 		{
 			foreach ($langfile as $value)
@@ -106,10 +119,18 @@ class KB_Lang extends CI_Lang
 
 		$langfile .= '.php';
 
+		// If the language is stored in session and is available, use it.
+		if (empty($idiom) 
+			&& isset($_SESSION['language']) 
+			&& in_array($_SESSION['language'], $this->config->item('languages')))
+		{
+			// Set the language and update config item.
+			$idiom = $_SESSION['language'];
+		}
+
 		if (empty($idiom) OR ! preg_match('/^[a-z_-]+$/i', $idiom))
 		{
-			$config =& get_config();
-			$idiom = empty($config['language']) ? $this->fallback : $config['language'];
+			$idiom = empty($this->config->item('language')) ? $this->fallback : $this->config->item('language');
 		}
 
 		if ($return === false && isset($this->is_loaded[$langfile]) && $this->is_loaded[$langfile] === $idiom)
@@ -162,7 +183,7 @@ class KB_Lang extends CI_Lang
 		$full_lang = isset($lang) ? $lang : array();
 
 		// Proceed only if the requested language id different of the fallback.
-		if ($this->fallback <> $idiom)
+		if ($idiom !== $this->fallback)
 		{
 			$lang = array();
 
@@ -294,14 +315,14 @@ class KB_Lang extends CI_Lang
 				return $this->lang['folder'];
 			}
 
-			$this->lang = $this->languages(config_item('language'));
+			$this->lang = $this->languages($this->config->item('language'));
 			return $this->lang['folder'];
 		}
 
 		// The language is already cached? Use it. Otherwise load it.
 		$return = (isset($this->lang)) 
 			? $this->lang 
-			: $this->languages(config_item('language'));
+			: $this->languages($this->config->item('language'));
 
 		// Not found ?
 		if ( ! $return)
@@ -312,13 +333,21 @@ class KB_Lang extends CI_Lang
 		// Get rid of nasty array.
 		(is_array($args[0])) && $args = $args[0];
 
+		// In case of a boolean, we return all language details.
 		if (is_bool($args[0]) && $args[0] === true)
 		{
 			return $return;
 		}
 
+		// In case of a single item and found, return it.
+		if (count($args) === 1 && isset($return[$args[0]]))
+		{
+			return $return[$args[0]];
+		}
+
 		$_return = array();
 
+		// Loop through language details and get only what's requested.
 		foreach ($args as $arg)
 		{
 			if (isset($return[$arg]))
@@ -327,6 +356,7 @@ class KB_Lang extends CI_Lang
 			}
 		}
 
+		// Return the result if any.
 		return ($_return) ? $_return : $return;
 	}
 

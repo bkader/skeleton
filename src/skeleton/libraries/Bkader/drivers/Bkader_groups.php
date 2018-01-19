@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
-class Bkader_groups extends CI_Driver
+class Bkader_groups extends CI_Driver implements CRUD_interface
 {
 	/**
 	 * Holds groups table fields.
@@ -137,10 +137,136 @@ class Bkader_groups extends CI_Driver
 		// If the are any metadata, create them.
 		if ( ! empty($meta))
 		{
-			$this->_parent->metadata->create($guid, $meta);
+			$this->_parent->metadata->add_meta($guid, $meta);
 		}
 
 		return $guid;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve a single group by ID or username.
+	 * @access 	public
+	 * @param 	mixed 	$id 	The group's ID or username.
+	 * @return 	object if found, else null.
+	 */
+	public function get($id)
+	{
+		// Getting by ID?
+		if (is_numeric($id))
+		{
+			return $this->get_by('entities.id', $id);
+		}
+
+		// Retrieve by username.
+		if (is_string($id))
+		{
+			return $this->get_by('entities.username', $id);
+		}
+
+		// Fall-back to get_by method.
+		return $this->get_by($id);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve a single group by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	object if found, else null.
+	 */
+	public function get_by($field, $match = null)
+	{
+		// The WHERE clause depends on $field and $match.
+		(is_array($field)) OR $field = array($field => $match);
+
+		foreach ($field as $key => $val)
+		{
+			if (is_int($key) && is_array($val))
+			{
+				$this->ci->db->where($val);
+			}
+			elseif (is_array($val))
+			{
+				$this->ci->db->where_in($key, $val);
+			}
+			else
+			{
+				$this->ci->db->where($key, $val);
+			}
+		}
+
+		// Proceed to join and get.
+		return $this->ci->db
+			->where('entities.type', 'group')
+			->join('groups', 'groups.guid = entities.id')
+			->get('entities')
+			->row();
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve multiple groups by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	array of objects if found, else null.
+	 */
+	public function get_many($field = null, $match = null, $limit = 0, $offset = 0)
+	{
+		// Prepare the WHERE clause.
+		if ( ! empty($field))
+		{
+			(is_array($field)) OR $field = array($field => $match);
+			foreach ($field as $key => $val)
+			{
+				if (is_int($key) && is_array($val))
+				{
+					$this->ci->db->where($val);
+				}
+				elseif (is_array($val))
+				{
+					$this->ci->db->where_in($key, $val);
+				}
+				else
+				{
+					$this->ci->db->where($key, $val);
+				}
+			}
+		}
+
+		// Is limit provided?
+		if ($limit > 0)
+		{
+			$this->ci->db->limit($limit, $offset);
+		}
+
+		// Proceed to join and get.
+		return $this->ci->db
+			->where('entities.type', 'group')
+			->join('groups', 'groups.guid = entities.id')
+			->get('entities')
+			->result();
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve all users with optional limit and offset.
+	 * @access 	public
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	array of objects.
+	 */
+	public function get_all($limit = 0, $offset = 0)
+	{
+		return $this->get_many(null, null, $limit, $offset);
 	}
 
 	// ------------------------------------------------------------------------
@@ -178,10 +304,59 @@ class Bkader_groups extends CI_Driver
 		// If there are any metadata to update.
 		if ( ! empty($meta))
 		{
-			$this->_parent->metadata->update($id, $meta);
+			$this->_parent->metadata->update_meta($id, $meta);
 		}
 
 		return true;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Update all or multiple groups by arbitrary WHERE clause.
+	 * @access 	public
+	 * @return 	boolean
+	 */
+	public function update_by()
+	{
+		// Collect arguments first and make sure there are any.
+		$args = func_get_args();
+		if (empty($args))
+		{
+			return false;
+		}
+
+		// Data to update is always the last element.
+		$data = array_pop($args);
+		if (empty($data))
+		{
+			return false;
+		}
+
+		// Get groups
+		if ( ! empty($args))
+		{
+			(is_array($args[0])) && $args = $args[0];
+			$groups = $this->get_many($args);
+		}
+		else
+		{
+			$groups = $this->get_all();
+		}
+
+		// If there are any groups, proceed to update.
+		if ($groups)
+		{
+			foreach ($groups as $group)
+			{
+				$this->update($group->id, $data);
+			}
+
+			return true;
+		}
+
+		// Nothing happened, return false.
+		return false;
 	}
 
 	// ------------------------------------------------------------------------
@@ -194,16 +369,7 @@ class Bkader_groups extends CI_Driver
 	 */
 	public function delete($id)
 	{
-		// Delete by ID.
-		if (is_numeric($id))
-		{
-			return $this->_parent->entities->delete($id);
-		}
-
-		// Delete by username.
-		$group = $this->get_by('entities.username', $id);
-
-		return ($group) ? $this->ci->_parent->entities->delete($group->id) : false;
+		return $this->_parent->entities->delete($id);
 	}
 
 	// ------------------------------------------------------------------------
@@ -245,16 +411,7 @@ class Bkader_groups extends CI_Driver
 	 */
 	public function remove($id)
 	{
-		// Completely remove by ID.
-		if (is_numeric($id))
-		{
-			return $this->_parent->entities->remove($id);
-		}
-
-		// Completely remove by username.
-		$group = $this->get_by('entities.username', $id);
-
-		return ($group) ? $this->ci->_parent->entities->remove($group->id) : false;
+		return $this->_parent->entities->remove($id);
 	}
 
 	// ------------------------------------------------------------------------
@@ -296,11 +453,7 @@ class Bkader_groups extends CI_Driver
 	 */
 	public function restore($id)
 	{
-		// Restore only entities of type "group".
-		return $this->_parent->entities->restore_by(array(
-			'id'   => $id,
-			'type' => 'group',
-		));
+		return $this->_parent->entities->restore($id);
 	}
 
 	// ------------------------------------------------------------------------
@@ -320,11 +473,11 @@ class Bkader_groups extends CI_Driver
 		if ($groups)
 		{
 			$ids = array();
-			foreach ($groups as $user)
+			foreach ($groups as $group)
 			{
-				if ($user->deleted > 0)
+				if ($group->deleted > 0)
 				{
-					$ids[] = $user->id;
+					$ids[] = $group->id;
 				}
 			}
 
@@ -348,126 +501,33 @@ class Bkader_groups extends CI_Driver
 	 */
 	public function count($field = null, $match = null)
 	{
-		$this->ci->db->where('entities.type', 'group');
-
+		// Prepare where clause.
 		if ( ! empty($field))
 		{
-			if (is_array($field))
+			(is_array($field)) OR $field = array($field => $match);
+			foreach ($field as $key => $val)
 			{
-				$this->ci->db->where($field);
-			}
-			elseif (is_array($match))
-			{
-				$this->ci->db->where($field, $match);
-			}
-			else
-			{
-				$this->ci->db->where($field, $match);
+				if (is_int($key) && is_array($val))
+				{
+					$this->ci->db->where($val);
+				}
+				elseif (is_array($val))
+				{
+					$this->ci->db->where_in($key, $val);
+				}
+				else
+				{
+					$this->ci->db->where($key, $val);
+				}
 			}
 		}
 
 		$rows = $this->ci->db
+			->where('entities.type', 'group')
 			->join('groups', 'groups.guid = entities.id')
 			->get('entities');
 
 		return $rows->num_rows();
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Retrieve a single group by ID or username.
-	 * @access 	public
-	 * @param 	mixed 	$id 	The group's ID or username.
-	 * @return 	object if found, else null.
-	 */
-	public function get($id)
-	{
-		// Getting by ID?
-		if (is_numeric($id))
-		{
-			return $this->get_by('entities.id', $id);
-		}
-
-		// Retrieve by username.
-		if (is_string($id))
-		{
-			return $this->get_by('entities.username', $id);
-		}
-
-		// Fall-back to get_by method.
-		return $this->get_by($id);
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Retrieve a single group by arbitrary WHERE clause.
-	 * @access 	public
-	 * @param 	mixed 	$field
-	 * @param 	mixed 	$match
-	 * @return 	object if found, else null.
-	 */
-	public function get_by($field, $match = null)
-	{
-		// Try to get the group and make sure only one row it found.
-		$group = $this->get_many($field, $match);
-		return ($group && count($group) === 1) ? $group[0] : null;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Retrieve multiple groups by arbitrary WHERE clause.
-	 * @access 	public
-	 * @param 	mixed 	$field
-	 * @param 	mixed 	$match
-	 * @param 	int 	$limit
-	 * @param 	int 	$offset
-	 * @return 	array of objects if found, else null.
-	 */
-	public function get_many($field = null, $match = null, $limit = 0, $offset = 0)
-	{
-		// Prepare entities type.
-		$this->ci->db->where('entities.type', 'group');
-
-		// There some arguments?
-		if ( ! empty($field))
-		{
-			if (is_array($field))
-			{
-				$this->ci->db->where($field);
-			}
-			elseif (is_array($match))
-			{
-				$this->ci->db->where_in($field, $match);
-			}
-			else
-			{
-				$this->ci->db->where($field, $match);
-			}
-		}
-
-		// Proceed to join and get.
-		return $this->ci->db
-			->join('groups', 'groups.guid = entities.id')
-			->limit($limit, $offset)
-			->get('entities')
-			->result();
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Retrieve all users with optional limit and offset.
-	 * @access 	public
-	 * @param 	int 	$limit
-	 * @param 	int 	$offset
-	 * @return 	array of objects.
-	 */
-	public function get_all($limit = 0, $offset = 0)
-	{
-		return $this->get_many(null, null, $limit, $offset);
 	}
 
 	// ------------------------------------------------------------------------

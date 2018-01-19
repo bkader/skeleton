@@ -72,6 +72,10 @@ $lang['meta_title']       = 'Meta Title';
 $lang['meta_description'] = 'Meta Description';
 $lang['meta_keywords']    = 'Meta Keywords';
 
+// Users.
+$lang['user'] = 'User';
+$lang['users'] = 'Users';
+
 // Themes.
 $lang['theme'] = 'Theme';
 $lang['themes'] = 'Themes';
@@ -83,3 +87,7 @@ $lang['menus'] = 'Menus';
 // Menus.
 $lang['plugin'] = 'Plugin';
 $lang['plugins'] = 'Plugins';
+
+// Languages.
+$lang['language'] = 'Language';
+$lang['languages'] = 'Languages';

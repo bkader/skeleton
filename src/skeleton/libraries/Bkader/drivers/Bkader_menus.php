@@ -394,20 +394,23 @@ class Bkader_menus extends CI_Driver
 		// Multiple locations and menus?
 		if (is_array($location))
 		{
-			$location = array_unique($location);
-			foreach ($location as $key => $val)
+			// $location = array_unique($location);
+			foreach ($location as $_location => $_menu_id)
 			{
-				$this->set_menu_location($key, $val);
+				$this->set_menu_location($_location, $_menu_id);
 			}
 
 			return true;
 		}
 
+		// TODO:
+		// This was removed because it was causing menus 
+		// not to be removed.
 		// Make sure the menu exists.
-		if ( ! $this->get_menu($menu_id))
-		{
-			return false;
-		}
+		// if ( ! $this->get_menu($menu_id))
+		// {
+		// 	return false;
+		// }
 
 		// Make sure the location exists.
 		$locations = $this->_locations();
@@ -428,7 +431,7 @@ class Bkader_menus extends CI_Driver
 			);
 		}
 
-		return $this->_parent->metadata->update($menu_id, 'menu_location', $location);
+		return $this->_parent->metadata->update_meta($menu_id, 'menu_location', $location);
 	}
 
 	// ------------------------------------------------------------------------
@@ -445,7 +448,7 @@ class Bkader_menus extends CI_Driver
 	public function add_menu($name, $description = null)
 	{
 		// Let's prepare $data to be inserted.
-		// $data['subtype'] = 'menu';
+		$data['subtype'] = 'menu';
 
 		// Let's generate the slug.
 		$slug = $maybe_slug = url_title($name, '-', true);
@@ -602,7 +605,7 @@ class Bkader_menus extends CI_Driver
 				$locations = $this->get_locations();
 
 
-				// $menu->location = $this->_parent->metadata->get($menu->id, 'menu_location', true);
+				// $menu->location = $this->_parent->metadata->get_meta($menu->id, 'menu_location', true);
 				$menu->location      = $this->_get_menu_location($menu->id);
 				$menu->location_name = null;
 
@@ -631,7 +634,7 @@ class Bkader_menus extends CI_Driver
 	 */
 	private function _get_menu_location($menu_id = 0)
 	{
-		return $this->_parent->metadata->get($menu_id, 'menu_location', true);
+		return $this->_parent->metadata->get_meta($menu_id, 'menu_location', true);
 	}
 
 	// ------------------------------------------------------------------------
@@ -663,7 +666,7 @@ class Bkader_menus extends CI_Driver
 			// Loop through menus and add location's name and slug.
 			foreach ($menus as $menu)
 			{
-				$menu->location = $this->_parent->metadata->get($menu->id, 'menu_location', true);
+				$menu->location = $this->_parent->metadata->get_meta($menu->id, 'menu_location', true);
 				$menu->location_name = null;
 				if ($menu->location && isset($locations[$menu->location]))
 				{
@@ -718,7 +721,7 @@ class Bkader_menus extends CI_Driver
 		// If the item was created, add attributes.
 		if ($item_id > 0)
 		{
-			$this->_parent->metadata->create($item_id, array(
+			$this->_parent->metadata->add_meta($item_id, array(
 				'attributes' => $attrs,
 				'order'      => count($this->get_menu_items($menu_id)),
 			));
@@ -832,8 +835,8 @@ class Bkader_menus extends CI_Driver
 			// Found? Get attributes and order.
 			if ($item)
 			{
-				$item->order      = abs($this->_parent->metadata->get($id, 'order', true));
-				$item->attributes = $this->_parent->metadata->get($id, 'attributes', true);
+				$item->order      = abs($this->_parent->metadata->get_meta($id, 'order', true));
+				$item->attributes = $this->_parent->metadata->get_meta($id, 'attributes', true);
 
 				// Cache it to reduce DB access.
 				$this->_items[$id] = $item;
@@ -891,8 +894,8 @@ class Bkader_menus extends CI_Driver
 		{
 			foreach ($db_items as &$item)
 			{
-				$item->order      = abs($this->_parent->metadata->get($item->id, 'order', true));
-				$item->attributes = $this->_parent->metadata->get($item->id, 'attributes', true);
+				$item->order      = abs($this->_parent->metadata->get_meta($item->id, 'order', true));
+				$item->attributes = $this->_parent->metadata->get_meta($item->id, 'attributes', true);
 
 				// Cache items to reduce DB access.
 				$this->_items[$item->id] = $item;
@@ -974,8 +977,8 @@ class Bkader_menus extends CI_Driver
 		{
 			foreach ($db_items as &$item)
 			{
-				$item->order      = abs($this->_parent->metadata->get($item->id, 'order', true));
-				$item->attributes = $this->_parent->metadata->get($item->id, 'attributes', true);
+				$item->order      = abs($this->_parent->metadata->get_meta($item->id, 'order', true));
+				$item->attributes = $this->_parent->metadata->get_meta($item->id, 'attributes', true);
 
 				// Cache items to reduce DB access.
 				$this->_items[$item->id] = $item;
@@ -1025,7 +1028,7 @@ class Bkader_menus extends CI_Driver
 			 * We try to update menu item' order! If it fails, we
 			 * return FALSE right away.
 			 */
-			if ( ! $this->_parent->metadata->update($item_id, 'order', $i))
+			if ( ! $this->_parent->metadata->update_meta($item_id, 'order', $i))
 			{
 				return false;
 			}

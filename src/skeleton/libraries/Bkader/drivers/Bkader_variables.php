@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
-class Bkader_variables extends CI_Driver
+class Bkader_variables extends CI_Driver implements CRUD_interface
 {
 	/**
 	 * Initialize class preferences.
@@ -66,45 +66,50 @@ class Bkader_variables extends CI_Driver
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Create a single variable.
+	 * Create a new variable
 	 * @access 	public
-	 * @param 	int 	$guid 		The entity's ID.
-	 * @param 	string 	$name 		The variable's name.
-	 * @param 	string 	$value 		The variable's value.
-	 * @param 	string 	$params 	Variable's params.
-	 * @return 	boolean
+	 * @param 	array 	$data 	Array of data to insert.
+	 * @return 	the new row ID if found, else false.
 	 */
-	public function create($guid, $name, $value = null, $params = null)
+	public function create(array $data = array())
 	{
-		// We first make sure the entity exists!
-		if ( ! $this->_parent->entities->get($guid))
+		// Make sure
+		if (empty($data))
 		{
 			return false;
 		}
 
-		// Let's check if the variable exists.
-		$found = $this->get_by(array(
-			'guid' => $guid,
-			'name' => $name,
+		// Make sure both guid and name are set.
+		if ( ! isset($data['guid']) OR ! isset($data['name']))
+		{
+			die('here');
+			return false;
+		}
+
+		// See if the variables exists already.
+		$var = $this->get_by(array(
+			'guid' => $data['guid'],
+			'name' => $data['name'],
 		));
 
-		// Found? Nothing to do.
-		if ($found)
+		// Found? Cannot create it.
+		if ($var)
 		{
 			return false;
 		}
 
-		// Attempt to insert the variable.
+		// Make sure params are set.
+		(isset($data['params'])) OR $data['params'] = null;
+
 		$this->ci->db->insert('variables', array(
-			'guid'       => $guid,
-			'name'       => strtolower($name),
-			'value'      => to_bool_or_serialize($value),
-			'params'     => to_bool_or_serialize($params),
+			'guid'       => $data['guid'],
+			'name'       => strtolower($data['name']),
+			'value'      => to_bool_or_serialize($data['value']),
+			'params'     => to_bool_or_serialize($data['params']),
 			'created_at' => time(),
 		));
 
-		// Return TRUE if the variable was created.
-		return ($this->ci->db->affected_rows() > 0);
+		return $this->ci->db->insert_id();
 	}
 
 	// ------------------------------------------------------------------------
@@ -149,12 +154,27 @@ class Bkader_variables extends CI_Driver
 			{
 				$val = to_bool_or_serialize($val);
 			}
+
+			$this->ci->db->where($key, $val);
 		}
 
-		$var = $this->ci->db
-			->where($field)
-			->get('variables')
-			->row();
+		foreach ($field as $key => $val)
+		{
+			if (is_int($key) && is_array($val))
+			{
+				$this->ci->db->where($val);
+			}
+			elseif (is_array($val))
+			{
+				$this->ci->db->where_in($key, $val);
+			}
+			else
+			{
+				$this->ci->db->where($key, $val);
+			}
+		}
+
+		$var = $this->ci->db->get('variables')->row();
 
 		if ($var)
 		{
@@ -181,27 +201,37 @@ class Bkader_variables extends CI_Driver
 	 * @access 	public
 	 * @param 	mixed 	$field 	Null, string or associative array.
 	 * @param 	mixed 	$match 	It can be anything.
+	 * @param 	int 	$limit 	Limit to use for getting records.
+	 * @param 	int 	$offset Database offset.
 	 * @return 	array of objects if found, else null.
 	 */
-	public function get_many($field = null, $match = null)
+	public function get_many($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		// In case $field is an array, we use it as WHERE clause.
-		if (is_array($field))
+		// Prepare where clause.
+		if ( ! empty($field))
 		{
-			$this->ci->db->where($field);
+			(is_array($field)) OR $field = array($field => $match);
+			foreach ($field as $key => $val)
+			{
+				if (is_int($key) && is_array($val))
+				{
+					$this->ci->db->where($val);
+				}
+				elseif (is_array($val))
+				{
+					$this->ci->db->where_in($key, $val);
+				}
+				else
+				{
+					$this->ci->db->where($key, $val);
+				}
+			}
 		}
-		/**
-		 * In case $match is an array, we retrieve all variables
-		 * where $field is in $match.
-		 */
-		elseif (is_array($match))
+
+		// Limited get?
+		if ($limit > 0)
 		{
-			$this->ci->db->where_in($field, $match);
-		}
-		// Otherwise, use it as-is.
-		elseif ( ! empty($field))
-		{
-			$this->ci->db->where($field, $match);
+			$this->ci->db->limit($limit, $offset);
 		}
 
 		// Attempts to get variables from database.
@@ -234,19 +264,29 @@ class Bkader_variables extends CI_Driver
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Update a single variable by its ID.
+	 * Retrieve all variables.
 	 * @access 	public
-	 * @param 	int 	$id 	The variable's ID.
-	 * @param 	mixed 	$value 	The variable's new value or array.
-	 * @param 	mixed 	$params	Variable's new value or array.
+	 * @param 	int 	$limit 	Limit to use for getting records.
+	 * @param 	int 	$offset Database offset.
+	 * @return 	array o objects if found, else null.
+	 */
+	public function get_all($limit = 0, $offset = 0)
+	{
+		return $this->get_many(null, null, $limit, $offset);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Update a single variable by its primary key.
+	 * @access 	public
+	 * @param 	mixed 	$id 	The variable's ID.
+	 * @param 	array 	$data 	Array of data to update.
 	 * @return 	boolean
 	 */
-	public function update($id, $value = null, $params = null)
+	public function update($id, array $data = array())
 	{
-		return $this->update_by(
-			array('id' => $id),
-			array('value' => $value, 'params' => $params)
-		);
+		return $this->update_by(array('id' => $id), $data);
 	}
 
 	// ------------------------------------------------------------------------
@@ -301,9 +341,21 @@ class Bkader_variables extends CI_Driver
 		{
 			// Get rid of nasty deep array.
 			(is_array($args[0])) && $args = $args[0];
-
-			// Add the WHERE clause.
-			$this->ci->db->where($args);
+			foreach ($args as $key => $val)
+			{
+				if (is_int($key) && is_array($val))
+				{
+					$this->ci->db->where($val);
+				}
+				elseif (is_array($val))
+				{
+					$this->ci->db->where_in($key, $val);
+				}
+				else
+				{
+					$this->ci->db->where($key, $val);
+				}
+			}
 		}
 
 		// Proceed to update an return TRUE if all went good.
@@ -333,24 +385,70 @@ class Bkader_variables extends CI_Driver
 	 * @param 	mixed 	$match 	The value of comparison.
 	 * @return 	boolean
 	 */
-	public function delete_by($field, $match = null)
+	public function delete_by($field = null, $match = null)
 	{
-		// We prepare our WHERE clause.
-		if (is_array($field))
+		// prepare where clause.
+		if ( ! empty($field))
 		{
-			$this->ci->db->where($field);
-		}
-		elseif (is_array($match))
-		{
-			$this->ci->db->where_in($field, $match);
-		}
-		else
-		{
-			$this->ci->db->where($field, $match);
+			(is_array($field)) OR $field = array($field => $match);
+			foreach ($field as $key => $val)
+			{
+				if (is_int($key) && is_array($val))
+				{
+					$this->ci->db->where($val);
+				}
+				elseif (is_array($val))
+				{
+					$this->ci->db->where_in($key, $val);
+				}
+				else
+				{
+					$this->ci->db->where($key, $val);
+				}
+			}
 		}
 
 		// Proceed to deletion.
 		$this->ci->db->delete('variables');
+		return ($this->ci->db->affected_rows() > 0);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Create a single variable.
+	 * @access 	public
+	 * @param 	int 	$guid 		The entity's ID.
+	 * @param 	string 	$name 		The variable's name.
+	 * @param 	string 	$value 		The variable's value.
+	 * @param 	string 	$params 	Variable's params.
+	 * @return 	boolean
+	 */
+	public function add_var($guid, $name, $value = null, $params = null)
+	{
+		// Let's check if the variable exists.
+		$found = $this->get_by(array(
+			'guid'   => $guid,
+			'name'   => $name,
+			'params' => $params,
+		));
+
+		// Found? Nothing to do.
+		if ($found)
+		{
+			return false;
+		}
+
+		// Attempt to insert the variable.
+		$this->ci->db->insert('variables', array(
+			'guid'       => $guid,
+			'name'       => strtolower($name),
+			'value'      => to_bool_or_serialize($value),
+			'params'     => to_bool_or_serialize($params),
+			'created_at' => time(),
+		));
+
+		// Return TRUE if the variable was created.
 		return ($this->ci->db->affected_rows() > 0);
 	}
 
@@ -365,7 +463,7 @@ class Bkader_variables extends CI_Driver
 	 * @param 	mixed 	$params	Variable's params.
 	 * @return 	true if the variable is created, else false.
 	 */
-	public function set($guid, $name, $value = null, $params = null)
+	public function set_var($guid, $name, $value = null, $params = null)
 	{
 		$var = $this->get_by(array(
 			'guid' => $guid,
@@ -379,9 +477,20 @@ class Bkader_variables extends CI_Driver
 		}
 
 		// Exists? update it.
-		return ($var)
-			? $this->update($var->id, $value, $params)
-			: $this->create($guid, $name, $value, $params);
+		if ($var)
+		{
+			return $this->update($var->id, array(
+				'value'  => $value,
+				'params' => $params,
+			));
+		}
+
+		return $this->create(array(
+			'guid'   => $guid,
+			'name'   => $name,
+			'value'  => $value,
+			'params' => $params,
+		));
 	}
 
 	// ------------------------------------------------------------------------
@@ -417,7 +526,7 @@ if ( ! function_exists('add_var'))
 	 */
 	function add_var($guid, $name, $value = null, $params = null)
 	{
-		return get_instance()->app->variables->create($guid, $name, $value, $params);
+		return get_instance()->app->variables->add_var($guid, $name, $value, $params);
 	}
 }
 
@@ -427,14 +536,13 @@ if ( ! function_exists('update_var'))
 {
 	/**
 	 * Update a single variable by it's ID.
-	 * @param 	int 	$id 	The variable's ID.
-	 * @param 	mixed 	$value 	The variable's value or associative array.
-	 * @param 	mixed 	$params Variable's params (ignored if $value is an array)
+	 * @param 	mixed 	$id 	The variable's ID.
+	 * @param 	array 	$data 	Array of data to update.
 	 * @return 	boolean
 	 */
-	function update_var($id, $value = null, $params = null)
+	function update_var($id, array $data = array())
 	{
-		return get_instance()->app->variables->update($id, $value, $params);
+		return get_instance()->app->variables->update($id, $data);
 	}
 }
 
@@ -471,7 +579,7 @@ if ( ! function_exists('set_var'))
 	 */
 	function set_var($guid, $name, $value = null, $params = null)
 	{
-		return get_instance()->app->variables->set($guid, $name, $value, $params);
+		return get_instance()->app->variables->set_var($guid, $name, $value, $params);
 	}
 }
 
@@ -511,7 +619,7 @@ if ( ! function_exists('delete_var_by'))
 if ( ! function_exists('delete_vars'))
 {
 	// This is an alias of the function above it.
-	function delete_vars($field, $match = null)
+	function delete_vars($field = null, $match = null)
 	{
 		return get_instance()->app->variables->delete_by($field, $match);
 	}

@@ -41,10 +41,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * Menus Module - Admin Language (English)
  *
  * @package 	CodeIgniter
- * @subpackage 	Modules
- * @category 	Language
- * @author 	Kader Bouyakoub <bkader@mail.com>
- * @link 	https://github.com/bkader
+ * @subpackage 	Skeleton
+ * @category 	Modules\Language
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		Version 1.0.0
+ * @version 	1.0.0
  */
 
 // Manage menus.
@@ -88,7 +91,7 @@ $lang['menu_structure_success'] = 'Menu items order successfully updated.';
 
 // Add menu.
 $lang['add_item']         = 'Add Item';
-$lang['add_item_success'] = 'Item item successfully created.';
+$lang['add_item_success'] = 'Menu item successfully created.';
 $lang['add_item_error']   = 'Unable to create menu item.';
 
 // Edit item.

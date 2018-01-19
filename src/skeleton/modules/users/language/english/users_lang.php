@@ -38,13 +38,16 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Users Module - Users Language File (English)
+ * Users Module - Users Language (English)
  *
  * @package 	CodeIgniter
- * @subpackage 	Modules
- * @category 	Languages
- * @author 	Kader Bouyakoub <bkader@mail.com>
- * @link 	https://github.com/bkader
+ * @subpackage 	Skeleton
+ * @category 	Modules\Language
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		Version 1.0.0
+ * @version 	1.0.0
  */
 
 // ------------------------------------------------------------------------
@@ -125,7 +128,7 @@ $lang['remember_me']      = 'Remember me';
 $lang['us_wrong_credentials'] = 'Invalid username/email address and/or password.';
 $lang['us_account_disabled']  = 'You account is not yet active. Use the link that was sent to you or %s to receive a new one.';
 $lang['us_account_banned']    = 'This user is banned from the site.';
-$lang['us_account_deleted']   = 'Your account has been deleted by not yet removed from database. %s if you wish to restore it.';
+$lang['us_account_deleted']   = 'Your account has been deleted but not yet removed from database. %s if you wish to restore it.';
 
 // ------------------------------------------------------------------------
 // Lost password page.
@@ -158,61 +161,3 @@ $lang['us_restore_notice']  = 'Enter your username/email address and password to
 $lang['us_restore_deleted'] = 'Only deleted accounts can be restored.';
 $lang['us_restore_error']   = 'Unable to restore account.';
 $lang['us_restore_success'] = 'Account successfully restored. Welcome back!';
-
-// ------------------------------------------------------------------------
-// Admin Panel
-// ------------------------------------------------------------------------
-$lang['users'] = 'Users';
-$lang['us_manage_users'] = 'Manage Users';
-
-$lang['profile']      = 'Profile';
-$lang['view_profile'] = 'View Profile';
-$lang['edit_profile'] = 'Edit Profile';
-
-$lang['delete_user'] = 'Delete User';
-$lang['view_user']   = 'View User';
-
-$lang['role']  = 'Role';
-$lang['roles'] = 'Roles';
-
-$lang['regular']       = 'Regular';
-$lang['premium']       = 'Premium';
-$lang['author']        = 'Author';
-$lang['editor']        = 'Editor';
-$lang['admin']         = 'Admin';
-$lang['administrator'] = 'Administrator';
-
-$lang['active']   = 'Active';
-$lang['inactive'] = 'Inactive';
-
-// ------------------------------------------------------------------------
-
-// Add user.
-$lang['add_user']             = 'Add User';
-$lang['us_admin_add_success'] = 'User successfully created.';
-$lang['us_admin_add_error']   = 'Unable to create user.';
-
-// ------------------------------------------------------------------------
-
-// Edit user.
-$lang['edit_user']             = 'Edit User';
-$lang['us_admin_edit_success'] = 'Account successfully updated.';
-$lang['us_admin_edit_error']   = 'Unable to update account.';
-
-// ------------------------------------------------------------------------
-
-// Activate user.
-$lang['us_admin_activate_success'] = 'User successfully activated.';
-$lang['us_admin_activate_error']   = 'Unable to activate user.';
-
-// ------------------------------------------------------------------------
-
-// Deactivate user.
-$lang['us_admin_deactivate_success'] = 'User successfully deactivated.';
-$lang['us_admin_deactivate_error']   = 'Unable to deactivate user.';
-
-// ------------------------------------------------------------------------
-
-// Delete user.
-$lang['us_admin_delete_success'] = 'User successfully deleted.';
-$lang['us_admin_delete_error']   = 'Unable to delete user.';

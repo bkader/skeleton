@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
-class Bkader_relations extends CI_Driver
+class Bkader_relations extends CI_Driver implements CRUD_interface
 {
 	/**
 	 * Initialize class preferences.
@@ -63,50 +63,307 @@ class Bkader_relations extends CI_Driver
 		log_message('info', 'Bkader_relations Class Initialized');
 	}
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * Generates the SELECT portion of the query
+     */
+    public function select($select = '*', $escape = null)
+    {
+    	$this->ci->db->select($select, $escape);
+    	return $this;
+    }
+
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Magic __call method to use relations model methods too.
+	 * Return an array of groups table fields.
 	 * @access 	public
-	 * @param 	string 	$method 	the method's name.
-	 * @param 	array 	$params 	arguments to pass to method.
-	 * @return 	mixed 	depends on the called method.
+	 * @param 	none
+	 * @return 	array
 	 */
-	public function __call($method, $params = array())
+	public function fields()
 	{
-		if (method_exists($this->ci->bkader_relations_m, $method))
+		if (isset($this->fields))
 		{
-			return call_user_func_array(
-				array($this->ci->bkader_relations_m, $method),
-				$params
-			);
+			return $this->fields;
 		}
 
-		throw new BadMethodCallException("No such method ".get_called_class()."::{$method}().");
+		$this->fields = $this->ci->db->list_fields('groups');
+		return $this->fields;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Quick create relation.
+	 * Create a single or multiple relations
 	 * @access 	public
-	 * @param 	int 	$guid_from
-	 * @param 	int 	$guid_to
-	 * @param 	string 	$type 	the relation's type.
-	 * @return 	int 	the relation id if created, else false.
+	 * @param 	array 	$data 	Array of data to insert.
+	 * @return 	the new row ID if found, else false.
 	 */
-	public function create($guid_from, $guid_to, $type)
+	public function create(array $data = array())
 	{
-		if (empty($guid_from) OR empty($guid_to) OR empty($type))
+		// Make sure we have data.
+		if (empt($data))
 		{
 			return false;
 		}
 
-		return $this->ci->bkader_relations_m->insert(array(
-			'guid_from' => $guid_from,
-			'guid_to'   => $guid_to,
-			'relation'  => strval($type),
+		// Multiple?
+		if (isset($data[0]) && is_array($data[0]))
+		{
+			$ids = array();
+			foreach ($data as $_data)
+			{
+				$ids[] = $this->create($_data);
+			}
+
+			return $ids;
+		}
+
+		// Check the integrity of $data.
+		if (empt($data) OR ( ! isset($data['relation']) OR empty($data['relation'])))
+		{
+			return false;
+		}
+
+		// Make sure the relation does not already exist.
+		$found = $this->get_by(array(
+			'guid_from' => $data['guid_from'],
+			'relation'  => $data['relation'],
+			'guid_to'   => $data['guid_to'],
 		));
+		if ($found)
+		{
+			return false;
+		}
+
+		// Add the date of creation.
+		(isset($data['created_at'])) OR $data['created_at'] = time();
+
+		$this->ci->db->insert('relations', $dat);
+		return $this->ci->db->insert_id();
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve a single relation by its ID.
+	 * @access 	public
+	 * @param 	mixed 	$id 	The relation's ID.
+	 * @return 	object if found, else null
+	 */
+	public function get($id)
+	{
+		return $this->get_by('id', $id);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve a single relation by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field 	Column name or associative array.
+	 * @param 	mixed 	$match 	Comparison value.
+	 * @return 	object if found, else null.
+	 */
+	public function get_by($field, $match = null)
+	{
+		(is_array($field)) OR $field = array($field => $match);
+		foreach ($field as $key => $val)
+		{
+			if (is_int($key) && is_array($val))
+			{
+				$this->ci->db->where($val);
+			}
+			elseif (is_array($val))
+			{
+				$this->ci->db->where_in($key, $val);
+			}
+			else
+			{
+				$this->ci->db->where($key, $val);
+			}
+		}
+
+		return $this->ci->db
+			->order_by('id', 'DESC')
+			->limit(1)
+			->get('relations')
+			->row();
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve multiple relations by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field 	Column name or associative array.
+	 * @param 	mixed 	$match 	Comparison value.
+	 * @param 	int 	$limit 	Limit to use for getting records.
+	 * @param 	int 	$offset Database offset.
+	 * @return 	array o objects if found, else null.
+	 */
+	public function get_many($field = null, $match = null, $limit = 0, $offset = 0)
+	{
+		// Prepare the WHERE clause.
+		if ( ! empty($field))
+		{
+			(is_array($field)) OR $field = array($field => $match);
+			foreach ($field as $key => $val)
+			{
+				if (is_int($key) && is_array($val))
+				{
+					$this->ci->db->where($val);
+				}
+				elseif (is_array($val))
+				{
+					$this->ci->db->where_in($key, $val);
+				}
+				else
+				{
+					$this->ci->db->where($key, $val);
+				}
+			}
+		}
+
+		// Is limit provided?
+		if ($limit > 0)
+		{
+			$this->ci->db->limit($limit, $offset);
+		}
+
+		// Proceed to join and get.
+		return $this->ci->db->get('relations')->result();
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve all relations.
+	 * @access 	public
+	 * @param 	int 	$limit 	Limit to use for getting records.
+	 * @param 	int 	$offset Database offset.
+	 * @return 	array o objects if found, else null.
+	 */
+	public function get_all($limit = 0, $offset = 0)
+	{
+		return $this->get_many(null, null, $limit, $offset);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Update a single relation by its primary key.
+	 * @access 	public
+	 * @param 	mixed 	$id 	The primary key value.
+	 * @param 	array 	$data 	Array of data to update.
+	 * @return 	boolean
+	 */
+	public function update($id, array $data = array())
+	{
+		return $this->update_by(array('id' => $id), $data);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Update a single, all or multiple relations by arbitrary WHERE clause.
+	 * @access 	public
+	 * @return 	boolean
+	 */
+	public function update_by()
+	{
+		// Collect arguments first and make sure there are any.
+		$args = func_get_args();
+		if (empty($args))
+		{
+			return false;
+		}
+
+		// Data to update is always the last element.
+		$data = array_pop($args);
+		if (empty($data))
+		{
+			return false;
+		}
+
+		// Get groups
+		if ( ! empty($args))
+		{
+			(is_array($args[0])) && $args = $args[0];
+			foreach ($args as $key => $val)
+			{
+				if (is_int($key) && is_array($val))
+				{
+					$this->ci->db->where($val);
+				}
+				elseif (is_array($val))
+				{
+					$this->ci->db->where_in($key, $val);
+				}
+				else
+				{
+					$this->ci->db->where($key, $val);
+				}
+			}
+		}
+
+		// Proceed to update.
+		$this->ci->db->update('relations');
+		return ($this->ci->db->affected_rows() > 0);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Delete a single relation by its primary key.
+	 * @access 	public
+	 * @param 	mixed 	$id 	The primary key value.
+	 * @return 	boolean
+	 */
+	public function delete($id)
+	{
+		return $this->delete_by('id', $id);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Delete a single, all or multiple relations by arbitrary WHER clause.
+	 * @access 	public
+	 * @param 	mixed 	$field 	Column name or associative array.
+	 * @param 	mixed 	$match 	Comparison value.
+	 * @return 	boolean
+	 */
+	public function delete_by($field = null, $match = null)
+	{
+		// Prepare our WHERE clause.
+		if ( ! empty($field))
+		{
+			// Turn things into an array first.
+			(is_array($field)) OR $field = array($field => $match);
+
+			foreach ($field as $key => $val)
+			{
+				if (is_int($key) && is_array($val))
+				{
+					$this->ci->db->where($val);
+				}
+				elseif (is_array($val))
+				{
+					$this->ci->db->where_in($key, $val);
+				}
+				else
+				{
+					$this->ci->db->where($key, $val);
+				}
+			}
+		}
+
+		// Proceed to deletion.
+		$this->ci->db->delete('relations');
+		return ($this->ci->db->affected_rows() > 0);
 	}
 
 }

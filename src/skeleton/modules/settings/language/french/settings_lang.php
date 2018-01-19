@@ -38,13 +38,16 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Settings Module - Language File (French)
+ * Settings Module - Settings Language (French)
  *
  * @package 	CodeIgniter
- * @subpackage 	Modules
- * @category 	Language
- * @author 	Kader Bouyakoub <bkader@mail.com>
- * @link 	https://github.com/bkader
+ * @subpackage 	Skeleton
+ * @category 	Modules\Language
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		Version 1.0.0
+ * @version 	1.0.0
  */
 
 // Update profile page.

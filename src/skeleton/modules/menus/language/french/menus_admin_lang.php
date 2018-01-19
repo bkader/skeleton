@@ -41,10 +41,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * Menus Module - Admin Language (French)
  *
  * @package 	CodeIgniter
- * @subpackage 	Modules
- * @category 	Language
- * @author 	Kader Bouyakoub <bkader@mail.com>
- * @link 	https://github.com/bkader
+ * @subpackage 	Skeleton
+ * @category 	Modules\Language
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		Version 1.0.0
+ * @version 	1.0.0
  */
 
 // Manage menus.
@@ -137,7 +140,7 @@ $lang['theme_locations']      = 'emplacements du thème';
 $lang['assign_menu']          = 'Menu assigné';
 $lang['theme_locations_tip']  = 'Votre thème peut utiliser %s menus. Sélectionnez les menu qui devront apparaître dans chaque emplacement.';
 $lang['theme_locations_none'] = 'Votre thème ne supporte pas les menus.';
-$lang['select_menu']          = '&#151; Sélectionnez un menu &#151;';
+$lang['select_menu']          = '&#151; Choisir un menu &#151;';
 
 $lang['menu_location_success'] = 'Les emplacements des menus ont été mis à jour avec succès.';
 $lang['menu_location_error']   = 'Impossible de mettre à jour les emplacements des menus.';

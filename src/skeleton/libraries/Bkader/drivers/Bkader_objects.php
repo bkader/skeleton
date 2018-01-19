@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
-class Bkader_objects extends CI_Driver
+class Bkader_objects extends CI_Driver implements CRUD_interface
 {
 	/**
 	 * Holds objects table fields.
@@ -69,7 +69,7 @@ class Bkader_objects extends CI_Driver
 		log_message('info', 'Bkader_objects Class Initialized');
 	}
 
-	// ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     /**
      * Generates the SELECT portion of the query
@@ -134,10 +134,10 @@ class Bkader_objects extends CI_Driver
 		// Insert the object.
 		$this->ci->db->insert('objects', $object);
 
-		// Some metadata?
+		// If the are any metadata, create them.
 		if ( ! empty($meta))
 		{
-			$this->_parent->metadata->create($guid, $meta);
+			$this->_parent->metadata->add_meta($guid, $meta);
 		}
 
 		return $guid;
@@ -180,9 +180,31 @@ class Bkader_objects extends CI_Driver
 	 */
 	public function get_by($field, $match = null)
 	{
-		// Try to get the object and make sure only one row it found.
-		$object = $this->get_many($field, $match);
-		return ($object && count($object) === 1) ? $object[0] : null;
+		// The WHERE clause depends on $field and $match.
+		(is_array($field)) OR $field = array($field => $match);
+
+		foreach ($field as $key => $val)
+		{
+			if (is_int($key) && is_array($val))
+			{
+				$this->ci->db->where($val);
+			}
+			elseif (is_array($val))
+			{
+				$this->ci->db->where_in($key, $val);
+			}
+			else
+			{
+				$this->ci->db->where($key, $val);
+			}
+		}
+
+		// Proceed to join and get.
+		return $this->ci->db
+			->where('entities.type', 'object')
+			->join('objects', 'objects.guid = entities.id')
+			->get('entities')
+			->row();
 	}
 
 	// ------------------------------------------------------------------------
@@ -198,14 +220,10 @@ class Bkader_objects extends CI_Driver
 	 */
 	public function get_many($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		// Prepare entities type.
-		$this->ci->db->where('entities.type', 'object');
-
-		// There some arguments?
+		// Prepare the WHERE clause.
 		if ( ! empty($field))
 		{
 			(is_array($field)) OR $field = array($field => $match);
-
 			foreach ($field as $key => $val)
 			{
 				if (is_int($key) && is_array($val))
@@ -223,7 +241,7 @@ class Bkader_objects extends CI_Driver
 			}
 		}
 
-		// Is there a limit?
+		// Is limit provided?
 		if ($limit > 0)
 		{
 			$this->ci->db->limit($limit, $offset);
@@ -231,6 +249,7 @@ class Bkader_objects extends CI_Driver
 
 		// Proceed to join and get.
 		return $this->ci->db
+			->where('entities.type', 'object')
 			->join('objects', 'objects.guid = entities.id')
 			->get('entities')
 			->result();
@@ -267,7 +286,6 @@ class Bkader_objects extends CI_Driver
 			return false;
 		}
 
-
 		// Split data.
 		list($entity, $object, $meta) = $this->_split_data($data);
 
@@ -277,18 +295,68 @@ class Bkader_objects extends CI_Driver
 			return false;
 		}
 
-		if ( ! empty($object))
+		// Update objects table.
+		if ( ! empty($object) && ! $this->ci->bkader_objects_m->update($id, $object))
 		{
-			$this->ci->db->update('objects', $object, array('guid' => $id));
+			return false;
 		}
 
-		// Some metadata?
+		// If there are any metadata to update.
 		if ( ! empty($meta))
 		{
-			$this->_parent->metadata->update($id, $meta);
+			$this->_parent->metadata->update_meta($id, $meta);
 		}
 
 		return true;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Update all or multiple objects by arbitrary WHERE clause.
+	 * @access 	public
+	 * @return 	boolean
+	 */
+	public function update_by()
+	{
+		// Collect arguments first and make sure there are any.
+		$args = func_get_args();
+		if (empty($args))
+		{
+			return false;
+		}
+
+		// Data to update is always the last element.
+		$data = array_pop($args);
+		if (empty($data))
+		{
+			return false;
+		}
+
+		// Get objects
+		if ( ! empty($args))
+		{
+			(is_array($args[0])) && $args = $args[0];
+			$objects = $this->get_many($args);
+		}
+		else
+		{
+			$objects = $this->get_all();
+		}
+
+		// If there are any objects, proceed to update.
+		if ($objects)
+		{
+			foreach ($objects as $object)
+			{
+				$this->update($object->id, $data);
+			}
+
+			return true;
+		}
+
+		// Nothing happened, return false.
+		return false;
 	}
 
 	// ------------------------------------------------------------------------
@@ -301,9 +369,7 @@ class Bkader_objects extends CI_Driver
 	 */
 	public function delete($id)
 	{
-		return (is_numeric($id))
-			? $this->_parent->entities->delete_by('id', $id)
-			: $this->_parent->entities->delete_by('username', $id);
+		return $this->_parent->entities->delete($id);
 	}
 
 	// ------------------------------------------------------------------------
@@ -345,9 +411,7 @@ class Bkader_objects extends CI_Driver
 	 */
 	public function remove($id)
 	{
-		return (is_numeric($id))
-			? $this->_parent->entities->remove_by('id', $id)
-			: $this->_parent->entities->remove_by('username', $id);
+		return $this->_parent->entities->remove($id);
 	}
 
 	// ------------------------------------------------------------------------
@@ -389,11 +453,7 @@ class Bkader_objects extends CI_Driver
 	 */
 	public function restore($id)
 	{
-		// Restore only entities of type "object".
-		return $this->_parent->entities->restore_by(array(
-			'id'   => $id,
-			'type' => 'object',
-		));
+		return $this->_parent->entities->restore($id);
 	}
 
 	// ------------------------------------------------------------------------
@@ -413,11 +473,11 @@ class Bkader_objects extends CI_Driver
 		if ($objects)
 		{
 			$ids = array();
-			foreach ($objects as $user)
+			foreach ($objects as $object)
 			{
-				if ($user->deleted > 0)
+				if ($object->deleted > 0)
 				{
-					$ids[] = $user->id;
+					$ids[] = $object->id;
 				}
 			}
 
@@ -441,25 +501,29 @@ class Bkader_objects extends CI_Driver
 	 */
 	public function count($field = null, $match = null)
 	{
-		$this->ci->db->where('entities.type', 'object');
-
+		// Prepare where clause.
 		if ( ! empty($field))
 		{
-			if (is_array($field))
+			(is_array($field)) OR $field = array($field => $match);
+			foreach ($field as $key => $val)
 			{
-				$this->ci->db->where($field);
-			}
-			elseif (is_array($match))
-			{
-				$this->ci->db->where($field, $match);
-			}
-			else
-			{
-				$this->ci->db->where($field, $match);
+				if (is_int($key) && is_array($val))
+				{
+					$this->ci->db->where($val);
+				}
+				elseif (is_array($val))
+				{
+					$this->ci->db->where_in($key, $val);
+				}
+				else
+				{
+					$this->ci->db->where($key, $val);
+				}
 			}
 		}
 
 		$rows = $this->ci->db
+			->where('entities.type', 'object')
 			->join('objects', 'objects.guid = entities.id')
 			->get('entities');
 
@@ -490,11 +554,12 @@ class Bkader_objects extends CI_Driver
 			{
 				$_data[0][$key] = $val;
 			}
-			// Objects table.
+			// Groups table.
 			elseif (in_array($key, $this->fields()))
 			{
 				$_data[1][$key] = $val;
 			}
+			// The rest are metadata.
 			else
 			{
 				$_data[2][$key] = $val;

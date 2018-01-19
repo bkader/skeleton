@@ -70,8 +70,8 @@ class Auth
 		 * The following files are used everywhere on the
 		 * application, so we load them now.
 		 */
-		$this->ci->load->library('users/users_lib', array('app' => $this->app), 'users');
-		$this->ci->load->language('users/bkader_users');
+		$this->ci->load->library('users/users_lib', null, 'users');
+		$this->ci->load->language('users/users');
 
 		// Attempt to authenticate the current user.
 		$this->_authenticate();
@@ -132,7 +132,7 @@ class Auth
 		}
 
 		// If the session is not set, we set it.
-		$this->_set_session($user->id, true, $token);
+		$this->_set_session($user->id, true, $token, $user->language);
 	}
 
 	// ------------------------------------------------------------------------
@@ -253,6 +253,7 @@ class Auth
 			'entities.id',
 			'entities.subtype',
 			'entities.username',
+			'entities.language',
 			'entities.enabled',
 			'entities.deleted',
 			'users.email',
@@ -340,7 +341,7 @@ class Auth
 		$this->ci->users->delete_password_codes($user->id);
 
 		// Setup the session.
-		return $this->_set_session($user->id, $remember);
+		return $this->_set_session($user->id, $remember, null, $user->language);
 	}
 
 	// ------------------------------------------------------------------------
@@ -358,7 +359,7 @@ class Auth
 			return false;
 		}
 
-		return $this->_set_session($user->id, true);
+		return $this->_set_session($user->id, true, null, $user->language);
 	}
 
 	// ------------------------------------------------------------------------
@@ -405,9 +406,10 @@ class Auth
 	 * @param 	int 	$user_id 	the user's ID.
 	 * @param 	bool 	$remember 	whether to remember the user.
 	 * @param 	string 	$token 		the user's online token.
+	 * @param 	string 	$language 	the user's language.
 	 * @return 	bool
 	 */
-	private function _set_session($user_id, $remember = false, $token = null)
+	private function _set_session($user_id, $remember = false, $token = null, $language = null)
 	{
 		// Make sure all neded data are present.
 		if (empty($user_id))
@@ -427,6 +429,13 @@ class Auth
 			'user_id'  => $user_id,
 			'token'    => $token,
 		);
+
+		// Add user language only if available.
+		if ( ! empty($language) 
+			&& in_array($language, $this->ci->config->item('languages')))
+		{
+			$sess_data['language'] = $language;
+		}
 
 		// Now we set session data.
 		$this->ci->session->set_userdata($sess_data);
