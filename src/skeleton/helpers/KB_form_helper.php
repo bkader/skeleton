@@ -128,6 +128,24 @@ if ( ! function_exists('print_input'))
 
 // ------------------------------------------------------------------------
 
+if ( ! function_exists('validation_errors_list'))
+{
+	/**
+	 * Return form validation errors in custom HTML list.
+	 * Default: unordered list.
+	 * @access 	public
+	 * @return 	string 	if found, else empty string.
+	 */
+	function validation_errors_list()
+	{
+		return (FALSE === ($OBJ =& _get_validation_object()))
+			? ''
+			: $OBJ->validation_errors_list();
+	}
+}
+
+// ------------------------------------------------------------------------
+
 if ( ! function_exists('_translate'))
 {
 	/**

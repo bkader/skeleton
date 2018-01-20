@@ -38,13 +38,18 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Extending CodeIgniter Form validation library
+ * KB_Form_validation Class
+ *
+ * Extends CodeIgniter validation class to add/edit some methods.
  *
  * @package 	CodeIgniter
- * @subpackage 	Libraries
+ * @subpackage 	Skeleton
  * @category 	Libraries
- * @author 	Kader Bouyakoub <bkader@mail.com>
- * @link 	https://github.com/bkader
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		Version 1.0.0
+ * @version 	1.0.0
  */
 class KB_Form_validation extends CI_Form_validation
 {
@@ -52,19 +57,79 @@ class KB_Form_validation extends CI_Form_validation
 	 * Class constructor.
 	 * @return 	void
 	 */
-	public function __construct()
+	public function __construct($config = array())
 	{
-		parent::__construct();
+		$this->ci =& get_instance();
+
+		/**
+		 * Here we merge super-global $_FILES to $_POST to allow for
+		 * better file validation or Form_validation library.
+		 * @see 	https://goo.gl/NpsmMJ (Bonfire)
+		 */
+		( ! empty($_FILES) && is_array($_FILES)) && $_POST = array_merge($_POST, $_FILES);
+
 		log_message('info', 'KB_Form_validation Class Initialized');
+
+		// Call parent's constructor.
+		parent::__construct($config);
 	}
 
 	// ------------------------------------------------------------------------
 
-	// public function run($group = '')
-	// {
-	// 	$this->CI->lang->load('form_validation', null, false, true, KBCORE);
-	// 	return parent::run($group);
-	// }
+	/**
+	 * Checks if the field has an error associated with it.
+	 * @access 	public
+	 * @param 	string 	$field 	The field to check.
+	 * @return 	boolean
+	 */
+	public function has_error($field = null)
+	{
+		// We return TRUE only if the field is provided and has an error.
+		return ( ! empty($field) && ! empty($this->_field_data[$field]['error']));
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Run the form validation.
+	 * @access 	public
+	 * @param 	string 	$module
+	 * @param 	string 	$group
+	 * @return 	boolean
+	 */
+	public function run($module = '', $group = '')
+	{
+		(is_object($module)) && $this->ci =& $module;
+		return parent::run($group);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Return form validation errors in custom HTML list.
+	 * Default: unordered list.
+	 * @access 	public
+	 * @return 	string 	if found, else empty string.
+	 */
+	public function validation_errors_list()
+	{
+		$errors = parent::error_string('<li>', '</li>');
+		return (empty($errors)) ? '' : '<ul>'.PHP_EOL.$errors.'</ul>';
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Allow alpha-numeric characters with periods, underscores, 
+	 * spaces and dashes.
+	 * @access 	public
+	 * @param 	string 	$str 	The string to check.
+	 * @return 	boolean
+	 */
+	public function alpha_extra($str)
+	{
+		return (preg_match("/^([\.\s-a-z0-9_-])+$/i", $str));
+	}
 
 	// ------------------------------------------------------------------------
 
@@ -84,7 +149,6 @@ class KB_Form_validation extends CI_Form_validation
 
 	/**
 	 * Make sure the selected email address is unique.
-	 *
 	 * @access 	public
 	 * @param 	string 	$str 	the email address to check.
 	 * @return 	boolean
@@ -98,64 +162,173 @@ class KB_Form_validation extends CI_Form_validation
 
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Make sure the user exists using ID, username or email address.
+	 * @access 	public
+	 * @param 	string 	$str
+	 * @return 	boolean
+	 */
 	public function user_exists($str)
-	{}
+	{
+		return ($this->ci->kbcore->users->get($str) !== null);
+	}
 
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Check user's credentials on login page.
+	 * @access 	public
+	 * @param 	string 	$password
+	 * @param 	string 	$login 	The login field (username or email)
+	 * @return 	boolean
+	 */
 	public function check_credentials($password, $login)
-	{}
+	{
+		$user = $this->ci->kbcore->users->get($this->ci->input->post($login, true));
+		return ($user && password_verify($password, $user->password));
+	}
 
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Checks user's current password.
+	 * @access 	public
+	 * @param 	string 	$str 	The current password.
+	 * @return 	boolean
+	 */
 	public function current_password($str)
-	{}
+	{
+		/**
+		 * 1. The user is logged in.
+		 * 2. The password is correct.
+		 */
+		return ($this->ci->auth->online() 
+			&& (password_verify($str, $this->ci->auth->user()->password)));
+	}
 
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Edit original min_length to use items from config
+	 * @access 	public
+	 * @param 	string 	$str 	The string to check
+	 * @param 	mixed 	$val 	Integer or string from config.
+	 * @return 	boolean
+	 */
 	public function min_length($str, $val)
 	{
+		$val = (is_numeric($val)) ? $val : $this->ci->config->item($val);
 		return parent::min_length($str, $val);
 	}
 
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Edit original max_length to use items from config
+	 * @access 	public
+	 * @param 	string 	$str 	The string to check
+	 * @param 	mixed 	$val 	Integer or string from config.
+	 * @return 	boolean
+	 */
 	public function max_length($str, $val)
 	{
+		$val = (is_numeric($val)) ? $val : $this->ci->config->item($val);
 		return parent::max_length($str, $val);
 	}
 
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Edit original exact_length to use items from config
+	 * @access 	public
+	 * @param 	string 	$str 	The string to check
+	 * @param 	mixed 	$val 	Integer or string from config.
+	 * @return 	boolean
+	 */
 	public function exact_length($str, $val)
 	{
+		$val = (is_numeric($val)) ? $val : $this->ci->config->item($val);
 		return parent::exact_length($str, $val);
 	}
 
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Edit original greater_than to use items from config
+	 * @access 	public
+	 * @param 	string 	$str 	The string to check
+	 * @param 	mixed 	$val 	Integer or string from config.
+	 * @return 	boolean
+	 */
 	public function greater_than($str, $min)
 	{
+		$val = (is_numeric($val)) ? $val : $this->ci->config->item($val);
 		return parent::greater_than($str, $min);
 	}
 
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Edit original greater_than_equal_to to use items from config
+	 * @access 	public
+	 * @param 	string 	$str 	The string to check
+	 * @param 	mixed 	$val 	Integer or string from config.
+	 * @return 	boolean
+	 */
 	public function greater_than_equal_to($str, $min)
 	{
+		$val = (is_numeric($val)) ? $val : $this->ci->config->item($val);
 		return parent::greater_than_equal_to($str, $min);
 	}
 
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Edit original less_than to use items from config
+	 * @access 	public
+	 * @param 	string 	$str 	The string to check
+	 * @param 	mixed 	$val 	Integer or string from config.
+	 * @return 	boolean
+	 */
 	public function less_than($str, $max)
 	{
+		$val = (is_numeric($val)) ? $val : $this->ci->config->item($val);
 		return parent::less_than($str, $max);
 	}
 
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Edit original less_than_equal_to to use items from config
+	 * @access 	public
+	 * @param 	string 	$str 	The string to check
+	 * @param 	mixed 	$val 	Integer or string from config.
+	 * @return 	boolean
+	 */
 	public function less_than_equal_to($str, $max)
 	{
+		$val = (is_numeric($val)) ? $val : $this->ci->config->item($val);
 		return parent::less_than_equal_to($str, $max);
+	}
+
+	// ------------------------------------------------------------------------
+
+
+	/**
+	 * Build an error message using the field and param with the possibility
+	 * to have $param stored in config.
+	 * @param	string	The error message line
+	 * @param	string	A field's human name
+	 * @param	mixed	A rule's optional parameter
+	 * @return	string
+	 */
+	protected function _build_error_msg($line, $field = '', $param = '')
+	{
+		// Look for $param in config.
+		(is_string($param) && $nparam = config_item($param)) && $param = $nparam;
+
+		// Let the parent do the rest.
+		return parent::_build_error_msg($line, $field, $param);
 	}
 
 }
