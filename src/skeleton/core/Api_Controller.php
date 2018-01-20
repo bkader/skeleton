@@ -37,6 +37,8 @@
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+require_once(KBPATH.'libraries/REST_Controller.php');
+
 /**
  * Api_Controller Class
  *
@@ -51,20 +53,4 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
-class Api_Controller extends REST_Controller
-{
-	/**
-	 * Instance of Slim object.
-	 * @var object
-	 */
-	protected $response = null;
-
-	/**
-	 * Class constructor
-	 * @return 	void
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-	}
-}
+class Api_Controller extends REST_Controller {}

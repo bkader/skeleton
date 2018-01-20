@@ -60,7 +60,7 @@ class Admin extends Admin_Controller
 	 */
 	public function index()
 	{
-		$data['count_users'] = $this->app->users->count();
+		$data['count_users'] = $this->kbcore->users->count();
 		$this->theme
 			->set_title(lang('admin_panel'))
 			->render($data);

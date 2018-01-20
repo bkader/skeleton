@@ -63,7 +63,9 @@ class Users extends KB_Controller
 		parent::__construct();
 
 		// Make sure the user is not logged in.
-		if ($this->auth->online() && $this->router->fetch_method() !== 'logout')
+		$method = $this->router->fetch_method();
+		if ($this->auth->online() 
+			&& ! in_array($method, array('logout', 'change_email')))
 		{
 			set_alert(lang('error_logged_in'), 'error');
 			redirect('');
@@ -105,10 +107,10 @@ class Users extends KB_Controller
 					'rules' => 'required|max_length[32]'),
 			array(	'field' => 'email',
 					'label' => 'lang:email',
-					'rules' => 'trim|required|valid_email|is_unique[users.email]|is_unique[variables.params]|is_unique[metadata.value]'),
+					'rules' => 'trim|required|valid_email|unique_email'),
 			array(	'field' => 'username',
 					'label' => 'lang:username',
-					'rules' => 'trim|required|min_length[5]|max_length[32]|is_unique[entities.username]'),
+					'rules' => 'trim|required|min_length[5]|max_length[32]|unique_username'),
 			array(	'field' => 'password',
 					'label' => 'lang:password',
 					'rules' => 'required|min_length[8]|max_length[20]'),
@@ -352,13 +354,6 @@ class Users extends KB_Controller
 		// Prepare empty validation rules.
 		$rules = array();
 
-		// Add password.
-		$rules[] = array(
-			'field' => 'password',
-			'label' => 'lang:password',
-			'rules' => 'required'
-		);
-
 		// What type of login to use?
 		switch (get_option('login_type', 'both'))
 		{
@@ -367,7 +362,7 @@ class Users extends KB_Controller
 				$rules[] = array(
 					'field' => 'username',
 					'label' => 'lang:username',
-					'rules' => 'trim|required|min_length[5]|max_length[32]'
+					'rules' => 'trim|required|min_length[5]|max_length[32]|user_exists'
 				);
 				break;
 
@@ -376,7 +371,7 @@ class Users extends KB_Controller
 				$rules[] = array(
 					'field' => 'email',
 					'label' => 'lang:email_address',
-					'rules' => 'trim|required|valid_email'
+					'rules' => 'trim|required|valid_email|user_exists'
 				);
 				break;
 
@@ -390,6 +385,14 @@ class Users extends KB_Controller
 				);
 				break;
 		}
+
+		// Add password.
+		$rules[] = array(
+			'field' => 'password',
+			'label' => 'lang:password',
+			'rules' => "required|check_credentials[{$login}]"
+		);
+
 		// Prepare form validation and pass rules.
 		$this->prep_form($rules);
 

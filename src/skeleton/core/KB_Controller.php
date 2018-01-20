@@ -83,7 +83,7 @@ class KB_Controller extends CI_Controller
 		parent::__construct();
 
 		// Load application main library.
-		$this->load->driver('bkader', null, 'app');
+		$this->load->driver('kbcore');
 
 		// Load authentication library.
 		$this->c_user = $this->auth->user();
@@ -101,7 +101,7 @@ class KB_Controller extends CI_Controller
 		$this->redirect = $this->session->flashdata('redirect');
 
 		// Add all necessary meta tags.
-		$this->app->set_meta();
+		$this->kbcore->set_meta();
 
 		log_message('info', 'KB_Controller Class Initialized');
 	}
@@ -229,7 +229,7 @@ class KB_Controller extends CI_Controller
 		$cap = create_captcha($this->config->item('captcha'));
 
 		// Insert catpcha details into database if not found.
-		$var = $this->app->variables->get_by(array(
+		$var = $this->kbcore->variables->get_by(array(
 			'guid'   => $guid,
 			'name'   => 'captcha',
 			'params' => $this->input->ip_address(),
@@ -238,7 +238,7 @@ class KB_Controller extends CI_Controller
 		// If not found, create it.
 		if ( ! $var)
 		{
-			$this->app->variables->add_var(
+			$this->kbcore->variables->add_var(
 				$guid,
 				'captcha',
 				$cap['word'],
@@ -248,7 +248,7 @@ class KB_Controller extends CI_Controller
 		// Found? Update it.
 		else
 		{
-			$this->app->variables->update($var->id, array(
+			$this->kbcore->variables->update($var->id, array(
 				'value'      => $cap['word'],
 				'created_at' => time(),
 				'params'     => $this->input->ip_address(),
@@ -349,13 +349,13 @@ class KB_Controller extends CI_Controller
 		}
 
 		// First, we delete old captcha
-		$this->app->variables->delete_by(array(
+		$this->kbcore->variables->delete_by(array(
 			'name'         => 'captcha',
 			'created_at <' => time() - (MINUTE_IN_SECONDS * 5),
 		));
 
 		// Check if the captcha exists or not.
-		$var = $this->app->variables->get_by(array(
+		$var = $this->kbcore->variables->get_by(array(
 			'name'          => 'captcha',
 			'BINARY(value)' => $str,
 			'params'        => $this->input->ip_address(),

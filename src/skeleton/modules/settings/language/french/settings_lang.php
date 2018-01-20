@@ -64,9 +64,15 @@ $lang['set_avatar_title'] = 'Mettre à jour Avatar';
 // ------------------------------------------------------------------------
 
 // Change password page.
-$lang['set_password_title'] = 'Changer le mot de passe';
+$lang['set_password_title']   = 'Changer le mot de passe';
+$lang['set_password_success'] = 'Mot de passe changé avec succès.';
+$lang['set_password_error']   = 'Impossible de changer le mot de passe.';
 
 // ------------------------------------------------------------------------
 
 // Change email page.
-$lang['set_email_title'] = 'Changer l\'e-mail';
+$lang['set_email_title']       = 'Changer l\'adresse e-mail';
+$lang['set_email_info']        = 'Un lien pour changer votre adresse email a été envoyé à votre nouvelle adresse.';
+$lang['set_email_success']     = 'L\'adresse e-mail a été changé avec succès.';
+$lang['set_email_error']       = 'Impossible de changer l\'adresse e-mail.';
+$lang['set_email_invalid_key'] = 'Ce lien de changement d\'adresse e-mail n\'est plus valide.';

@@ -5,10 +5,17 @@ body {
 }
 
 body {
-	font: 400 14px/15px "Open Sans", sans-serif;
+	font: 400 13px/15px "Open Sans", sans-serif;
 	height: 100%;
 	background-color: #eee;
 	padding-top: 72px
+}
+
+.form-control,
+input,
+textarea {
+	font-family: "Open Sans", sans-serif;
+	font-size: 13px;
 }
 
 .btn {font-size: 1em}

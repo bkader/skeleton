@@ -51,22 +51,28 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 
 // Update profile page.
-$lang['set_profile_title']   = 'Update Profile';
-$lang['set_profile_heading'] = 'Update Profile';
-$lang['set_profile_success'] = 'Profile successfully updated.';
-$lang['set_profile_error']   = 'Unable to update profile.';
+$lang['set_profile_title']   = 'تحديث الملف الشخصي';
+$lang['set_profile_heading'] = 'تحديث الملف الشخصي';
+$lang['set_profile_success'] = 'تم تحديث الملف الشخصي بنجاح.';
+$lang['set_profile_error']   = 'تعذر تحديث الملف الشخصي.';
 
 // ------------------------------------------------------------------------
 
 // Update avatar page.
-$lang['set_avatar_title'] = 'Update Avatar';
+$lang['set_avatar_title'] = 'تحديث الصورة';
 
 // ------------------------------------------------------------------------
 
 // Change password page.
-$lang['set_password_title'] = 'Change Password';
+$lang['set_password_title']   = 'تغيير كلمة السر';
+$lang['set_password_success'] = 'تم تغير كلمة السر بنجاح.';
+$lang['set_password_error']   = 'تعذر تغير كلمة السر.';
 
 // ------------------------------------------------------------------------
 
 // Change email page.
-$lang['set_email_title'] = 'Change Email';
+$lang['set_email_title']       = 'تغيير البريد الإلكتروني';
+$lang['set_email_info']        = 'تم إرسال رابط لتغيير عنوان بريدك الإلكتروني إلى عنوانك الجديد.';
+$lang['set_email_success']     = 'تم تغيير عنوان البريد الإلكتروني بنجاح.';
+$lang['set_email_error']       = 'تعذر تغيير عنوان البريد الإلكتروني.';
+$lang['set_email_invalid_key'] = 'رابط تغير البريد الإلكتروني لم يعد صالحا';

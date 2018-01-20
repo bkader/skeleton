@@ -62,10 +62,8 @@ class Settings extends User_Controller
 	{
 		parent::__construct();
 
-		// Make sure to load settings language file.
-		$this->load->language('settings/settings');
 		// Make sure to load settings_lib.
-		$this->load->library('settings/settings_lib', array(), 'settings');
+		$this->load->library('settings/settings_lib', null, 'settings');
 	}
 
 	// ------------------------------------------------------------------------
@@ -104,7 +102,7 @@ class Settings extends User_Controller
 		$user = clone $this->c_user;
 
 		// Get user's metadata.
-		if ( ! empty($meta = $this->app->metadata->get_many('guid', $user->id)))
+		if ( ! empty($meta = $this->kbcore->metadata->get_many('guid', $user->id)))
 		{
 			foreach ($meta as $single)
 			{
@@ -176,7 +174,59 @@ class Settings extends User_Controller
 	 */
 	public function password()
 	{
-		//TODO: develop this method.
+		// Prepare form validation.
+		$this->prep_form(array(
+			// New password field.
+			array(	'field' => 'npassword',
+					'label' => 'lang:new_password',
+					'rules' => 'required|min_length[8]|max_length[20]'),
+			// Confirm password field.
+			array(	'field' => 'cpassword',
+					'label' => 'lang:confirm_password',
+					'rules' => 'required|min_length[8]|max_length[20]|matches[npassword]'),
+			// Current password field.
+			array(	'field' => 'opassword',
+					'label' => 'lang:current_password',
+					'rules' => 'required|current_password'),
+		));
+
+		// Before the form is processed.
+		if ($this->form_validation->run() == false)
+		{
+			// Prepare form fields.
+			$data['npassword'] = array_merge(
+				$this->config->item('npassword', 'inputs'),
+				array('value' => set_value('npassword'))
+			);
+			$data['cpassword'] = array_merge(
+				$this->config->item('cpassword', 'inputs'),
+				array('value' => set_value('cpassword'))
+			);
+			$data['opassword'] = array_merge(
+				$this->config->item('opassword', 'inputs'),
+				array('value' => set_value('opassword'))
+			);
+
+			// Add CSRF protected.
+			$data['hidden'] = $this->create_csrf();
+
+			// Set page title and render view.
+			$this->theme
+				->set_title(lang('set_password_title'))
+				->render($data);
+		}
+		else
+		{
+			// Proceed to update.
+			$this->settings->change_password(
+				$this->auth->user_id(),
+				$this->input->post('npassword', true)
+			);
+
+			// Redirect back to same page.
+			redirect('settings/password', 'refresh');
+			exit;
+		}
 	}
 
 	// ------------------------------------------------------------------------
@@ -188,7 +238,54 @@ class Settings extends User_Controller
 	 */
 	public function email()
 	{
-		//TODO: develop this method.
+		// Simple clean of old email requests.
+		$this->settings->purge_email_codes();
+
+		// Prepare form validation.
+		$this->prep_form(array(
+			// New email field.
+			array(	'field' => 'nemail',
+					'label' => 'lang:new_email_address',
+					'rules' => 'trim|required|valid_email|unique_email'),
+			// Current password field.
+			array(	'field' => 'opassword',
+					'label' => 'lang:current_password',
+					'rules' => 'required|current_password'),
+		));
+
+		// Before the form is processed.
+		if ($this->form_validation->run() == false)
+		{
+			// Prepare form fields.
+			$data['nemail'] = array_merge(
+				$this->config->item('nemail', 'inputs'),
+				array('value' => set_value('nemail'))
+			);
+			$data['opassword'] = array_merge(
+				$this->config->item('opassword', 'inputs'),
+				array('value' => set_value('opassword'))
+			);
+
+			// Add CSRF protected.
+			$data['hidden'] = $this->create_csrf();
+
+			// Set page title and render view.
+			$this->theme
+				->set_title(lang('set_email_title'))
+				->render($data);
+		}
+		else
+		{
+			// Prepare email change.
+			$this->settings->prep_change_email(
+				$this->auth->user_id(),
+				$this->input->post('nemail', true)
+			);
+
+			// Redirect back to same page.
+			redirect('settings/email', 'refresh');
+			exit;
+		}
 	}
 
 	// ------------------------------------------------------------------------

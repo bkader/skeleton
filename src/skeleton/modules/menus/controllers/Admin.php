@@ -75,7 +75,7 @@ class Admin extends Admin_Controller
 	public function index()
 	{
 		// Get all menus from database.
-		$data['menus'] = $this->app->menus->get_menus();
+		$data['menus'] = $this->kbcore->menus->get_menus();
 
 		// Set page title and render view.
 		$this->theme
@@ -144,7 +144,7 @@ class Admin extends Admin_Controller
 			// }
 
 			// Proceed
-			$status = $this->app->menus->add_menu(
+			$status = $this->kbcore->menus->add_menu(
 				$this->input->post('name', true),
 				$this->input->post('description', true)
 			);
@@ -205,7 +205,7 @@ class Admin extends Admin_Controller
 	public function _edit_menu($id = 0)
 	{
 		// Get the menu from database.
-		$data['menu'] = $this->app->menus->get_menu($id);
+		$data['menu'] = $this->kbcore->menus->get_menu($id);
 		// Make sure the menu exists.
 		if ( ! $data['menu'])
 		{
@@ -276,7 +276,7 @@ class Admin extends Admin_Controller
 			}
 
 			// Proceed
-			$status = $this->app->menus->update_menu(
+			$status = $this->kbcore->menus->update_menu(
 				$id,
 				$this->input->post('name', true),
 				$this->input->post('slug', true),
@@ -329,7 +329,7 @@ class Admin extends Admin_Controller
 		}
 
 		// Process status.
-		$status = $this->app->menus->{"delete_{$target}"}($id);
+		$status = $this->kbcore->menus->{"delete_{$target}"}($id);
 
 		if ($status === true)
 		{
@@ -354,12 +354,12 @@ class Admin extends Admin_Controller
 	 */
 	public function items($id = 0)
 	{
-		// $ord = $this->app->menus->items_order($id, array(20, 22, 23, 21));
+		// $ord = $this->kbcore->menus->items_order($id, array(20, 22, 23, 21));
 		// echo print_d($ord);
 		// exit;
 
 		// Get the menu from database and make sure it exists.
-		$data['menu'] = $this->app->menus->get_menu($id);
+		$data['menu'] = $this->kbcore->menus->get_menu($id);
 		if ( ! $data['menu'])
 		{
 			set_alert(lang('edit_menu_no_menu'), 'error');
@@ -368,7 +368,7 @@ class Admin extends Admin_Controller
 		}
 
 		// Get all menu items.
-		$data['items'] = $this->app->menus->get_menu_items($id);
+		$data['items'] = $this->kbcore->menus->get_menu_items($id);
 
 		// Load jquery UI and prepare sortable list IF there are items.
 		if ($data['items'])
@@ -437,7 +437,7 @@ class Admin extends Admin_Controller
 			}
 
 			// Proceed.
-			$status = $this->app->menus->add_item(
+			$status = $this->kbcore->menus->add_item(
 				$id,
 				$this->input->post('name', true),
 				$this->input->post('href', true),
@@ -471,7 +471,7 @@ class Admin extends Admin_Controller
 	public function _edit_item($id = 0)
 	{
 		// Get the menu from database.
-		$data['item'] = $this->app->menus->get_item($id);
+		$data['item'] = $this->kbcore->menus->get_item($id);
 		// Make sure the menu exists.
 		if ( ! $data['item'])
 		{
@@ -543,7 +543,7 @@ class Admin extends Admin_Controller
 			}
 
 			// Proceed.
-			$status = $this->app->menus->update_item(
+			$status = $this->kbcore->menus->update_item(
 				$id,
 				$this->input->post('name', true),
 				$this->input->post('href', true),
@@ -588,14 +588,14 @@ class Admin extends Admin_Controller
 		$status['status'] = false;
 
 		// Make sure the menu exists.
-		if ( ! $this->app->menus->get_menu($id))
+		if ( ! $this->kbcore->menus->get_menu($id))
 		{
 			echo json_encode($status);
 			die();
 		}
 
 		// Attempt to update order.
-		if ($this->app->menus->items_order($id, $this->input->post(null, true)))
+		if ($this->kbcore->menus->items_order($id, $this->input->post(null, true)))
 		{
 			$status['status'] = true;
 		}
@@ -616,8 +616,8 @@ class Admin extends Admin_Controller
 	public function locations()
 	{
 		// Get all locations and menus.
-		$data['locations'] = $this->app->menus->get_locations();
-		$data['menus']     = $this->app->menus->get_menus();
+		$data['locations'] = $this->kbcore->menus->get_locations();
+		$data['menus']     = $this->kbcore->menus->get_menus();
 
 		// Prepare form validation and rules.
 		$this->prep_form(array(array(
@@ -645,7 +645,7 @@ class Admin extends Admin_Controller
 			$data = $this->input->post('menu_location', true);
 
 			// Try to update menus locations.
-			$status = $this->app->menus->set_menu_location($data);
+			$status = $this->kbcore->menus->set_menu_location($data);
 
 			// Set alert message depending on the status.
 			if ($status === true)

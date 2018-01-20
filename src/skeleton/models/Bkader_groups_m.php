@@ -38,7 +38,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Bkader_groups_m Class
+ * Kbcore_groups_m Class
  *
  * This model handles operations done on groups table.
  *
@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
-class Bkader_groups_m extends KB_Model
+class Kbcore_groups_m extends KB_Model
 {
 	/**
 	 * Class constuctor

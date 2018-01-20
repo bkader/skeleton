@@ -79,7 +79,7 @@ class Admin extends Admin_Controller
 
 		// Pagination configuration.
 		$config['base_url']   = $config['first_link'] = admin_url('users');
-		$config['total_rows'] = $this->app->users->count();
+		$config['total_rows'] = $this->kbcore->users->count();
 		$config['per_page']   = $this->config->item('per_page');
 
 		// Initialize pagination.
@@ -97,7 +97,7 @@ class Admin extends Admin_Controller
 		$limit = $config['per_page'];
 
 		// Get all users.
-		$data['users'] = $this->app->users->get_all($limit, $offset);
+		$data['users'] = $this->kbcore->users->get_all($limit, $offset);
 		$this->theme
 			->set_title(lang('us_manage_users'))
 			->render($data);
@@ -214,7 +214,7 @@ class Admin extends Admin_Controller
 	public function edit($id = 0)
 	{
 		// Get the user from database.
-		$data['user'] = $this->app->users->get($id);
+		$data['user'] = $this->kbcore->users->get($id);
 		if ( ! $data['user'])
 		{
 			set_alert(lang('error_account_missing'), 'error');
@@ -346,7 +346,7 @@ class Admin extends Admin_Controller
 				unset($user_data['subtype']);
 			}
 
-			$status = $this->app->users->update($id, $user_data);
+			$status = $this->kbcore->users->update($id, $user_data);
 
 			if ($status == true)
 			{
@@ -389,7 +389,7 @@ class Admin extends Admin_Controller
 		}
 
 		// Make sure the user exists and is deactivated.
-		$user = $this->app->users->get($id);
+		$user = $this->kbcore->users->get($id);
 		if ( ! $user OR $user->enabled <> 0)
 		{
 			set_alert(lang('us_admin_activate_error'), 'error');
@@ -398,7 +398,7 @@ class Admin extends Admin_Controller
 		}
 
 		// Enabled the users.
-		$status = $this->app->entities->update($id, array('enabled' => 1));
+		$status = $this->kbcore->entities->update($id, array('enabled' => 1));
 
 		if ($status === true)
 		{
@@ -440,7 +440,7 @@ class Admin extends Admin_Controller
 		}
 
 		// Make sure the user exists and is deactivated.
-		$user = $this->app->users->get($id);
+		$user = $this->kbcore->users->get($id);
 		if ( ! $user OR $user->enabled <> 1)
 		{
 			set_alert(lang('us_admin_deactivate_error'), 'error');
@@ -449,7 +449,7 @@ class Admin extends Admin_Controller
 		}
 
 		// Enabled the users.
-		$status = $this->app->entities->update($id, array('enabled' => 0));
+		$status = $this->kbcore->entities->update($id, array('enabled' => 0));
 
 		if ($status === true)
 		{
@@ -492,7 +492,7 @@ class Admin extends Admin_Controller
 		}
 
 		// Could not be deleted?
-		if ( ! $this->app->users->remove($id))
+		if ( ! $this->kbcore->users->remove($id))
 		{
 			set_alert(lang('us_admin_delete_error'), 'error');
 		}

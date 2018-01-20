@@ -95,7 +95,7 @@ class Slug
 	 */
 	public function __construct($config = array())
 	{
-		$this->set_config($config);
+		$this->initialize($config);
 		log_message('info', 'Slug Class Initialized');
 	}
 
@@ -109,7 +109,7 @@ class Slug
 	 * @param   array
 	 * @return  void
 	 */
-	public function set_config($config = array())
+	public function initialize($config = array())
 	{
 		if ( ! empty($config))
 		{

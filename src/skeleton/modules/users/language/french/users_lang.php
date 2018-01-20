@@ -63,6 +63,10 @@ $lang['send_link']       = 'Envoyer le lien';
 $lang['resend_link']     = 'Renvoyer le lien';
 $lang['restore_account'] = 'Récupérer le compte';
 
+$lang['profile']      = 'Profil';
+$lang['view_profile'] = 'Voir le profil';
+$lang['edit_profile'] = 'Modifier le profil';
+
 // ------------------------------------------------------------------------
 // General Inputs and Label.
 // ------------------------------------------------------------------------

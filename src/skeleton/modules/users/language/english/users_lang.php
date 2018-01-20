@@ -63,6 +63,10 @@ $lang['send_link']       = 'Send link';
 $lang['resend_link']     = 'Resend link';
 $lang['restore_account'] = 'Restore account';
 
+$lang['profile']      = 'Profile';
+$lang['view_profile'] = 'View Profile';
+$lang['edit_profile'] = 'Edit Profile';
+
 // ------------------------------------------------------------------------
 // General Inputs and Label.
 // ------------------------------------------------------------------------

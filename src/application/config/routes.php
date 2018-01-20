@@ -53,6 +53,13 @@ $route['default_controller'] = 'welcome';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
+// Some routing patterns.
+Route::pattern(array(
+	'id'     => '[0-9]+',
+	'key'    => '[a-zA-Z0-9]+',
+	'method' => '[a-zA-Z0-9\-_]+',
+));
+
 // ------------------------------------------------------------------------
 // PUT YOUR ROUTE RULES BELOW.
 // ------------------------------------------------------------------------
@@ -63,30 +70,40 @@ $route['translate_uri_dashes'] = FALSE;
 
 /**
  * The application has a built-in administration panel. Each module can 
- * have an "Admin.php" controller which will be used as its admin area.
- * Note that this controller MUST extend our Admin_Controller unless you 
- * have added your own admin handler.
- * 
- * Modules admin area URI will be like so: admin/module/..
- */
-Route::context('admin', array('home' => 'admin/index'));
-
-/**
- * If you want to let modules accepts AJAX controllers, uncomment the 
- * line below and simply create an "Ajax.php" controller which will 
- * handle all of your AJAX requests.
+ * have context controllers.
  *
- * Modules ajax controller will be accessible like so: ajax/module/..
- */
-Route::context('ajax', array('home' => 'ajax/index'));
-
-/**
- * Just like admin and ajax, each module may have an "Api.php" 
- * controller that you can use as REST handles for the module.
+ * @example 	Admin Controllers.
+ * Each module can have a controller named "Admin.php". It will be then 
+ * have an administration section and will be automatically added to
+ * dashboard's menu. admin controller must extends "Admin_Controller" class.
+ * To access admin section of a module, simply go to:
+ * <site_url>/admin/<module>. i.e: <site_url>/admin/users.
+ * You can user the provided URL helper: admin_url('<module>').
  *
- * Modules API controllers will be accessible like so: api/module/..
+ * @example 	Ajax Controller.
+ * Each module has the possibility to handle AJAX requests by creating an.
+ * "Ajax.php" controller that should extend our "Ajax_Controller" class.
+ *
+ * @example 	Process Controllers.
+ * Sometimes, we want to create temporary keys they you will use in order 
+ * to execute certain operation. i.e: When an account is created, an 
+ * activation code is temporary created and stored in variables table. 
+ * In order to activate the account, the user must go to:
+ * <site_url>/process/users/activate/<code>.
+ * Another example is when changing the email address. The code and email 
+ * are store in database and in order to proceed, the user must go to:
+ * <site_url>/process/settings/email/<code>
+ *
+ * NOTE:
+ * You can create as any site areas as you want. Simply add the context 
+ * you want to the routing below. Let's say I want to add an "Api" 
+ * controller, all I need to do is adding to like so:
+ * (admin|ajax|process) => (admin|ajax|process|api).
  */
-Route::context('api', array('home' => 'api/index'));
+Route::context('(admin|ajax|process)', '$1', array(
+	'home'   => '$1/index',
+	'offset' => 1
+));
 
 /**
  * Because we are using Static Routing like Laravel's,
@@ -94,6 +111,3 @@ Route::context('api', array('home' => 'api/index'));
  * bottom of this file.
  */
 $route = Route::map($route);
-
-// echo print_d($route);
-// exit;

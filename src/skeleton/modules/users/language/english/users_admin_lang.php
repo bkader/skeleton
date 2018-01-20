@@ -53,10 +53,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $lang['users'] = 'Users';
 $lang['us_manage_users'] = 'Manage Users';
 
-$lang['profile']      = 'Profile';
-$lang['view_profile'] = 'View Profile';
-$lang['edit_profile'] = 'Edit Profile';
-
 $lang['delete_user'] = 'Delete User';
 $lang['view_user']   = 'View User';
 

@@ -141,7 +141,7 @@ class Admin extends Admin_Controller
 		$db_langs[] = $folder;
 		asort($db_langs);
 
-		if ($this->app->options->set_item('languages', $db_langs))
+		if ($this->kbcore->options->set_item('languages', $db_langs))
 		{
 			set_alert(lang('language_enable_success'), 'success');
 		}
@@ -196,7 +196,7 @@ class Admin extends Admin_Controller
 		}
 		asort($db_langs);
 
-		if ($this->app->options->set_item('languages', $db_langs))
+		if ($this->kbcore->options->set_item('languages', $db_langs))
 		{
 			/**
 			 * If the language folder is the default selected 
@@ -204,7 +204,7 @@ class Admin extends Admin_Controller
 			 */
 			if ($folder === $this->config->item('language'))
 			{
-				$this->app->options->set_item('language', 'english');
+				$this->kbcore->options->set_item('language', 'english');
 			}
 			set_alert(lang('language_disable_success'), 'success');
 		}
@@ -247,10 +247,10 @@ class Admin extends Admin_Controller
 		{
 			$db_langs[] = $folder;
 			asort($db_langs);
-			$this->app->options->set_item('languages', $db_langs);
+			$this->kbcore->options->set_item('languages', $db_langs);
 		}
 
-		if ($this->app->options->set_item('language', $folder))
+		if ($this->kbcore->options->set_item('language', $folder))
 		{
 			set_alert(lang('language_default_success'), 'success');
 		}

@@ -38,7 +38,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Bkader_entities_m Class
+ * Kbcore_entities_m Class
  *
  * This model handles operations done on entities table.
  *
@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
-class Bkader_entities_m extends KB_Model
+class Kbcore_entities_m extends KB_Model
 {
 	/**
 	 * Class constructor

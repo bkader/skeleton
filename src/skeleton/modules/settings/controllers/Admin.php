@@ -112,7 +112,7 @@ class Admin extends Admin_Controller
 
 			foreach ($settings as $key => $val)
 			{
-				if ( ! $this->app->options->set_item($key, $val))
+				if ( ! $this->kbcore->options->set_item($key, $val))
 				{
 					set_alert(lang('set_update_error'), 'error');
 					redirect('admin/settings', 'refresh');
@@ -172,7 +172,7 @@ class Admin extends Admin_Controller
 
 			foreach ($settings as $key => $val)
 			{
-				if ( ! $this->app->options->set_item($key, $val))
+				if ( ! $this->kbcore->options->set_item($key, $val))
 				{
 					set_alert(lang('set_update_error'), 'error');
 					redirect('admin/settings/users', 'refresh');
@@ -275,7 +275,7 @@ class Admin extends Admin_Controller
 
 			foreach ($settings as $key => $val)
 			{
-				if ( ! $this->app->options->set_item($key, $val))
+				if ( ! $this->kbcore->options->set_item($key, $val))
 				{
 					set_alert(lang('set_update_error'), 'error');
 					redirect('admin/settings/email', 'refresh');
@@ -328,7 +328,7 @@ class Admin extends Admin_Controller
 
 			foreach ($settings as $key => $val)
 			{
-				if ( ! $this->app->options->set_item($key, $val))
+				if ( ! $this->kbcore->options->set_item($key, $val))
 				{
 					set_alert(lang('set_update_error'), 'error');
 					redirect('admin/settings/uploads', 'refresh');
@@ -399,7 +399,7 @@ class Admin extends Admin_Controller
 
 			foreach ($settings as $key => $val)
 			{
-				if ( ! $this->app->options->set_item($key, $val))
+				if ( ! $this->kbcore->options->set_item($key, $val))
 				{
 					set_alert(lang('set_update_error'), 'error');
 					redirect('admin/settings/captcha', 'refresh');
@@ -423,7 +423,7 @@ class Admin extends Admin_Controller
 	 */
 	private function _prep_settings($tab = 'general')
 	{
-		$settings = $this->app->options->get_by_tab($tab);
+		$settings = $this->kbcore->options->get_by_tab($tab);
 
 		// Prepare empty form validation rules.
 		$rules = array();

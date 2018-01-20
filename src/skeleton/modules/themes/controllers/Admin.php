@@ -84,7 +84,7 @@ class Admin extends Admin_Controller
 		elseif (empty($themes))
 		{
 			$themes = $this->theme->get_themes();
-			$this->app->options->insert(array(
+			$this->kbcore->options->insert(array(
 				'name'  => 'themes',
 				'value' => $themes,
 				'tab'   => 'theme',

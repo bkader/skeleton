@@ -38,7 +38,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Bkader_activities_m Class
+ * Kbcore_activities_m Class
  *
  * This model handles operations done on activities table.
  *
@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
-class Bkader_activities_m extends KB_Model
+class Kbcore_activities_m extends KB_Model
 {
 	/**
 	 * Class constructor

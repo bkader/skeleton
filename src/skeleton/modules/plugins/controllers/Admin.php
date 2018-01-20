@@ -71,7 +71,7 @@ class Admin extends Admin_Controller
 	public function index()
 	{
 		// Get all plugins.
-		$data['plugins'] = $this->app->plugins->get_plugins();
+		$data['plugins'] = $this->kbcore->plugins->get_plugins();
 
 		// Add action buttons.
 		if ($data['plugins'])
@@ -111,7 +111,7 @@ class Admin extends Admin_Controller
 	 */
 	public function settings($plugin = null)
 	{
-		$data['plugin'] = $this->app->plugins->get_plugin($plugin);
+		$data['plugin'] = $this->kbcore->plugins->get_plugin($plugin);
 
 		/**
 		 * We must check two things:
@@ -162,7 +162,7 @@ class Admin extends Admin_Controller
 		}
 
 		// Was the plugin activated?
-		elseif ($this->app->plugins->activate($plugin))
+		elseif ($this->kbcore->plugins->activate($plugin))
 		{
 			set_alert(lang('plugins_activate_success'), 'success');
 		}
@@ -195,7 +195,7 @@ class Admin extends Admin_Controller
 		}
 
 		// Was the plugin deactivated?
-		elseif ($this->app->plugins->deactivate($plugin))
+		elseif ($this->kbcore->plugins->deactivate($plugin))
 		{
 			set_alert(lang('plugins_deactivate_success'), 'success');
 		}
@@ -228,7 +228,7 @@ class Admin extends Admin_Controller
 		}
 
 		// Was the plugin deactivated?
-		elseif ($this->app->plugins->delete($plugin))
+		elseif ($this->kbcore->plugins->delete($plugin))
 		{
 			set_alert(lang('plugins_delete_success'), 'success');
 		}

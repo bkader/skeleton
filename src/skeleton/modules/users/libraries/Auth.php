@@ -60,11 +60,8 @@ class Auth
 	 */
 	public function __construct($config = array())
 	{
-		// We must clone the $app library.
-		$this->app =& $config['app'];
-
-		// Prepare instance of CI object.
-		$this->ci =& $this->app->ci;
+		$this->kbcore =& $config['kbcore'];
+		$this->ci =& $this->kbcore->ci;
 
 		/**
 		 * The following files are used everywhere on the
@@ -95,7 +92,7 @@ class Auth
 		}
 
 		// Let's get the variable from database.
-		$var = $this->app->variables->get_by(array(
+		$var = $this->kbcore->variables->get_by(array(
 			'guid'          => $user_id,
 			'name'          => 'online_token',
 			'BINARY(value)' => $token,
@@ -107,7 +104,7 @@ class Auth
 		}
 
 		// Let's get the user from database.
-		$user = $this->app->users->get($user_id);
+		$user = $this->kbcore->users->get($user_id);
 		if ( ! $user)
 		{
 			return;
@@ -168,7 +165,7 @@ class Auth
 		if (get_option('allow_multi_session', true) === false)
 		{
 			// Get the variable from database.
-			$var = $this->app->variables->get_by(array(
+			$var = $this->kbcore->variables->get_by(array(
 				'guid'  => $this->ci->session->user_id,
 				'name'  => 'online_token',
 				'value' => $this->ci->session->token,
@@ -180,7 +177,7 @@ class Auth
 		}
 
 		// Get the user from database.
-		$user = $this->app->users->get($this->ci->session->user_id);
+		$user = $this->kbcore->users->get($this->ci->session->user_id);
 		if ( ! $user)
 		{
 			return false;
@@ -227,6 +224,19 @@ class Auth
 	}
 
 	// ------------------------------------------------------------------------
+
+	/**
+	 * Return the current user's ID.
+	 * @access 	public
+	 * @param 	none
+	 * @return 	int
+	 */
+	public function user_id()
+	{
+		return ($this->online()) ? $this->user()->id : null;
+	}
+
+	// ------------------------------------------------------------------------
 	// Authentication methods.
 	// ------------------------------------------------------------------------
 
@@ -265,7 +275,7 @@ class Auth
 		{
 			// Get the user by username.
 			case 'username':
-				$user = $this->app->users
+				$user = $this->kbcore->users
 					->select($selects)
 					->get_by('entities.username', $identity);
 				if ( ! $user)
@@ -277,7 +287,7 @@ class Auth
 
 			// Get user by email address.
 			case 'email':
-				$user = $this->app->users
+				$user = $this->kbcore->users
 					->select($selects)
 					->get_by('users.email', $identity);
 				if ( ! $user)
@@ -290,7 +300,7 @@ class Auth
 			// Get user by username or email address.
 			case 'both':
 			default:
-				$user = $this->app->users
+				$user = $this->kbcore->users
 					->select($selects)
 					->get($identity);
 
@@ -390,7 +400,7 @@ class Auth
 		$this->ci->users->delete_online_tokens($user_id);
 
 		// Put the user offline.
-		$this->app->users->update($user_id, array('online' => 0));
+		$this->kbcore->users->update($user_id, array('online' => 0));
 
 		// Destroy the session.
 		$this->ci->session->sess_destroy();
@@ -441,16 +451,23 @@ class Auth
 		$this->ci->session->set_userdata($sess_data);
 
 		// Now we create/update the variable.
-		$this->app->variables->set($user_id, 'online_token', $token);
+		$this->kbcore->variables->set_var(
+			$user_id,
+			'online_token',
+			$token,
+			$this->ci->input->ip_address()
+		);
 
 		// Put the user online.
-		$this->app->users->update($user_id, array('online' => 1));
+		$this->kbcore->users->update($user_id, array('online' => 1));
 
 		// Log the activity.
-		$this->app->activities->log_activity($user_id, 'logged in');
+		$this->kbcore->activities->log_activity($user_id, 'logged in');
 
 		// The return depends on $remember.
-		return ($remember === true) ? $this->_set_cookie($user_id, $token) : true;
+		return ($remember === true) 
+			? $this->_set_cookie($user_id, $token)
+			: true;
 	}
 
 	// ------------------------------------------------------------------------
