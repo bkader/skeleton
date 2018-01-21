@@ -162,7 +162,7 @@ class Kbcore_plugins extends CI_Driver
 		}
 
 		//
-		$manifest = json_decode(file_get_contents($manifest), true);
+		$manifest = json_decode(trim(file_get_contents($manifest)), true);
 		if (empty($manifest) OR ! is_array($manifest))
 		{
 			return false;
@@ -305,11 +305,11 @@ class Kbcore_plugins extends CI_Driver
 
 	/**
 	 * List all plugins found inside plugins folder.
-	 * @access 	private
+	 * @access 	public
 	 * @param 	bool 	$details 	whether to retrieve details or not.
 	 * @return 	array
 	 */
-	private function _fetch_plugins_dir($details = true)
+	public function _fetch_plugins_dir($details = true)
 	{
 		// Prepare empty array of plugins.
 		$plugins = array();

@@ -1,10 +1,27 @@
-<h1 class="page-header"><?= __('dashboard') ?></h1>
+<h1 class="page-header"><?php _e('dashboard') ?></h1>
 <div class="row">
 	<div class="col-xs-6 col-sm-6 col-md-3">
 		<div class="panel status panel-success text-center">
-			<div class="panel-heading"><h1 class="panel-title"><?= $count_users ?></h1></div>
-			<a class="btn btn-link btn-block" href="<?= admin_url('users') ?>"><strong><?= __('users') ?></strong></a>
-
+			<div class="panel-heading"><h1 class="panel-title"><?php echo $count_users ?></h1></div>
+			<a class="btn btn-link btn-block" href="<?php echo admin_url('users') ?>"><strong><?php _e('users') ?></strong></a>
+		</div>
+	</div>
+	<div class="col-xs-6 col-sm-6 col-md-3">
+		<div class="panel status panel-warning text-center">
+			<div class="panel-heading"><h1 class="panel-title"><?php echo $count_themes ?></h1></div>
+			<a class="btn btn-link btn-block" href="<?php echo admin_url('themes') ?>"><strong><?php _e('themes') ?></strong></a>
+		</div>
+	</div>
+	<div class="col-xs-6 col-sm-6 col-md-3">
+		<div class="panel status panel-danger text-center">
+			<div class="panel-heading"><h1 class="panel-title"><?php echo $count_plugins ?></h1></div>
+			<a class="btn btn-link btn-block" href="<?php echo admin_url('plugins') ?>"><strong><?php _e('plugins') ?></strong></a>
+		</div>
+	</div>
+	<div class="col-xs-6 col-sm-6 col-md-3">
+		<div class="panel status panel-info text-center">
+			<div class="panel-heading"><h1 class="panel-title"><?php echo $count_languages ?></h1></div>
+			<a class="btn btn-link btn-block" href="<?php echo admin_url('languages') ?>"><strong><?php _e('languages') ?></strong></a>
 		</div>
 	</div>
 </div>

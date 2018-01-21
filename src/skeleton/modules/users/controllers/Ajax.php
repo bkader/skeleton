@@ -3,12 +3,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Ajax extends Ajax_Controller
 {
-	public function index() {}
+	public function index() 
+	{
+		// $this->response['message'] = 'Fuck';
+		// $this->response['header'] = 500;
+	}
 
 	public function test()
 	{
-		$this->response['status']  = true;
-		$this->response['message'] = 'Fuck';
 	}
 
 	// ------------------------------------------------------------------------
@@ -132,6 +134,13 @@ EOT;
 		{
 			$this->response['message'] = lang('us_admin_deactivate_error');
 		}
+	}
+
+	// ------------------------------------------------------------------------
+
+	public function delete($id)
+	{
+		$this->response['message'] = $id;
 	}
 
 }

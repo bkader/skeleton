@@ -651,7 +651,7 @@ EOT;
 		
 		// Get the manifest.json file content na json_decode it.
 		$manifest = file_get_contents($theme_info);
-		$manifest = json_decode($manifest, true);
+		$manifest = json_decode(trim($manifest), true);
 		
 		// If it's no a valid array.
 		if ( ! is_array($manifest))

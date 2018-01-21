@@ -138,7 +138,7 @@ class Admin extends Admin_Controller
 		}
 
 		// Load the settings file now.
-		$data['settings_form'] = apply_filters('plugin_settings_'.$plugin, '');
+		$data['settings'] = apply_filters('plugin_settings_'.$plugin, '');
 		$data['hidden'] = $this->create_csrf();
 		$this->theme
 			->set_title(lang('plugin_settings'))

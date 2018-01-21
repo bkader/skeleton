@@ -38,43 +38,63 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Admin Controllers
+ * Extra Profile Fields
  *
- * The is the dashboard main page.
+ * This plugin adds extra fields to users profiles.
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @category 	Controllers
+ * @category 	Plugins
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
-class Admin extends Admin_Controller
+
+// Action to do after plugin's activation.
+add_action('plugin_activate_extra-profile-fields', function() {
+	return true;
+});
+
+// Action to do after plugin's deactivation.
+add_action('plugin_deactivate_extra-profile-fields', function() {
+	return true;
+});
+
+/**
+ * SEO plugin dummy class.
+ */
+class KB_extra_profile_fields
 {
 	/**
-	 * Main admin panel page.
-	 * @access 	public
-	 * @return 	void
+	 * Initializing plugin's action.
 	 */
-	public function index()
+	public static function init()
 	{
-		// Count all users.
-		$data['count_users'] = $this->kbcore->users->count();
+		add_filter('users_fields', function($fields) {
 
-
-		// Count all themes.
-		$data['count_themes'] = count($this->theme->get_themes());
-
-		// Count all plugins.
-		$data['count_plugins'] = count($this->kbcore->plugins->get_plugins());
-
-		// Count all languages.
-		$data['count_languages'] = count($this->config->item('languages'));
-
-		$this->theme
-			->set_title(lang('admin_panel'))
-			->render($data);
+			/**
+			 * Here we are adding in order:
+			 * 1. Company name.
+			 * 2. Phone number.
+			 * 3. Facebook profile URL.
+			 */
+			array_push(
+				$fields,
+				'company',
+				'horuk',
+				'phone',
+				array(	// Facebook.
+					'name' => 'facebook',
+					'id' => 'facebook',
+					'placeholder' => 'Facebook',
+					'value' => set_value('facebook')
+				)
+			);
+			return $fields;
+		});
 	}
 }
+// Action to do if the plugin is used.
+add_action('plugin_install_extra-profile-fields', 'KB_extra_profile_fields::init', 0);

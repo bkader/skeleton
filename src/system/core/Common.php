@@ -302,9 +302,10 @@ if ( ! function_exists('config_item'))
 	 * Returns the specified config item
 	 *
 	 * @param	string
+	 * @param	string 	$index
 	 * @return	mixed
 	 */
-	function config_item($item)
+	function config_item($item, $index = '')
 	{
 		static $_config;
 
@@ -314,7 +315,15 @@ if ( ! function_exists('config_item'))
 			$_config[0] =& get_config();
 		}
 
-		return isset($_config[0][$item]) ? $_config[0][$item] : NULL;
+		if ($index == '')
+		{
+			return isset($_config[0][$item]) ? $_config[0][$item] : NULL;
+		}
+		else
+		{
+			return isset($_config[0][$index][$item]) ? $_config[0][$index][$item] : NULL;
+		}
+
 	}
 }
 

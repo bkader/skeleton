@@ -173,7 +173,6 @@ class Admin_Controller extends User_Controller
 		$this->styles = array(
 			'font-awesome',
 			'bootstrap',
-			'bootstrap-theme',
 			'toastr',
 			'admin',
 		);

@@ -55,12 +55,51 @@ defined('DOING_AJAX') OR define('DOING_AJAX', true);
 class Ajax_Controller extends KB_Controller
 {
 	/**
+	 * Some needed header codes.
+	 * @var integer
+	 */
+	const HTTP_OK = 200;
+	const HTTP_CREATED = 201;
+	const HTTP_NO_CONTENT = 204;
+	const HTTP_NOT_MODIFIED = 304;
+	const HTTP_BAD_REQUEST = 400;
+	const HTTP_UNAUTHORIZED = 401;
+	const HTTP_FORBIDDEN = 403;
+	const HTTP_NOT_FOUND = 404;
+	const HTTP_METHOD_NOT_ALLOWED = 405;
+	const HTTP_NOT_ACCEPTABLE = 406;
+	const HTTP_CONFLICT = 409;
+	const HTTP_INTERNAL_SERVER_ERROR = 500;
+	const HTTP_NOT_IMPLEMENTED = 501;
+
+	/**
+	 * HTTP status codes and their respective description.
+	 * @var array
+	 */
+	protected $http_status_codes = array(
+		self::HTTP_OK                    => 'OK',
+		self::HTTP_CREATED               => 'CREATED',
+		self::HTTP_NO_CONTENT            => 'NO CONTENT',
+		self::HTTP_NOT_MODIFIED          => 'NOT MODIFIED',
+		self::HTTP_BAD_REQUEST           => 'BAD REQUEST',
+		self::HTTP_UNAUTHORIZED          => 'UNAUTHORIZED',
+		self::HTTP_FORBIDDEN             => 'FORBIDDEN',
+		self::HTTP_NOT_FOUND             => 'NOT FOUND',
+		self::HTTP_METHOD_NOT_ALLOWED    => 'METHOD NOT ALLOWED',
+		self::HTTP_NOT_ACCEPTABLE        => 'NOT ACCEPTABLE',
+		self::HTTP_CONFLICT              => 'CONFLICT',
+		self::HTTP_INTERNAL_SERVER_ERROR => 'INTERNAL SERVER ERROR',
+		self::HTTP_NOT_IMPLEMENTED       => 'NOT IMPLEMENTED'
+	);
+
+	/**
 	 * Default response.
 	 * @var array
 	 */
 	protected $response = array(
+		'header'  => 404,
 		'status'  => false,
-		'message' => 'BAD REQUEST!',
+		'message' => null,
 		'action'  => null,
 	);
 
@@ -77,9 +116,6 @@ class Ajax_Controller extends KB_Controller
 		{
 			show_404();
 		}
-
-		// Change header.
-		$this->output->set_content_type('json');
 	}
 
 	// ------------------------------------------------------------------------
@@ -98,7 +134,10 @@ class Ajax_Controller extends KB_Controller
 			call_user_func_array(array($this, $method), $params);
 		}
 
-		echo json_encode($this->response);
+		return $this->output
+			->set_content_type('json')
+			->set_status_header($this->response['header'])
+			->set_output(json_encode($this->response));
 		die();
 	}
 

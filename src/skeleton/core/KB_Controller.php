@@ -185,7 +185,7 @@ class KB_Controller extends CI_Controller
 		$csrf_key = $this->input->post($this->session->flashdata('csrf_key'));
 
 		// It returns true only of the key is set and the value is valid.
-		return ($csrf_key && $csrf_key == $this->session->flashdata('csrf_value'));
+		return ($csrf_key && $csrf_key === $this->session->flashdata('csrf_value'));
 	}
 
 	// ------------------------------------------------------------------------

@@ -370,7 +370,7 @@ class KB_Router extends CI_Router
 
 		// Get the content of the file and make sure it's well formatted.
 		$manifest = file_get_contents($module_path.'manifest.json');
-		$manifest = json_decode($manifest, true);
+		$manifest = json_decode(trim($manifest), true);
 		if ( ! is_array($manifest))
 		{
 			return false;

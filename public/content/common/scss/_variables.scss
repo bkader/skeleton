@@ -1,0 +1,46 @@
+$break-xsmall: 480px;
+$break-small: 768px;
+$break-medium: 992px;
+$break-large: 1200px;
+
+$default-bg-color: #f4f4f4;
+$primary-bg-color: #3c8dbc;
+$success-bg-color: #00a65a;
+$info-bg-color: #00c0ef;
+$danger-bg-color: #dd4b39;
+$warning-bg-color: #f39c12;
+
+$aqua-bg-color: $info-bg-color;
+$blue-bg-color: $primary-bg-color;
+$fuchsia-bg-color: #f012be;
+$green-bg-color: $success-bg-color;
+$lime-bg-color: #01ff70;
+$maroon-bg-color: #d81b60;
+$navy-bg-color: #001f3f;
+$olive-bg-color: #3d9970;
+$orange-bg-color: #ff851b;
+$purple-bg-color: #605ca8;
+$red-bg-color: $danger-bg-color;
+$teal-bg-color: #39cccc;
+$yellow-bg-color: $warning-bg-color;
+
+$colors-list: (
+    'default': $default-bg-color,
+    'primary': $primary-bg-color,
+    'success': $success-bg-color,
+    'info': $info-bg-color,
+    'danger': $danger-bg-color,
+    'warning': $warning-bg-color,
+    'navy': $navy-bg-color,
+    'teal': $teal-bg-color,
+    'olive': $olive-bg-color,
+    'lime': $lime-bg-color,
+    'orange': $orange-bg-color,
+    'fuchsia': $fuchsia-bg-color,
+    'maroon': $maroon-bg-color,
+    'red': $red-bg-color,
+    'yellow': $yellow-bg-color,
+    'aqua': $aqua-bg-color,
+    'green': $green-bg-color,
+    'purple': $purple-bg-color,
+);

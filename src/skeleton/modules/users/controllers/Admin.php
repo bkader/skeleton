@@ -183,15 +183,15 @@ class Admin extends Admin_Controller
 		else
 		{
 			// // Passed CSRF?
-			// if ( ! $this->check_csrf())
-			// {
-			// 	// Store form values in session
-			// 	$this->session->set_flashdata('form', $this->input->post(null, true));
+			if ( ! $this->check_csrf())
+			{
+				// Store form values in session
+				$this->session->set_flashdata('form', $this->input->post(null, true));
 
-			// 	set_alert(lang('error_csrf'), 'error');
-			// 	redirect('admin/users/add', 'refresh');
-			// 	exit;
-			// }
+				set_alert(lang('error_csrf'), 'error');
+				redirect('admin/users/add', 'refresh');
+				exit;
+			}
 
 			$user_data            = $this->input->post(array('first_name', 'last_name', 'email', 'username', 'password'), true);
 			$user_data['enabled'] = ($this->input->post('enabled') == '1') ? 1 : 0;
@@ -272,32 +272,74 @@ class Admin extends Admin_Controller
 		// Prepare form validation and rules.
 		$this->prep_form($rules);
 
+		/**
+		 * The reason behind lines you see below is to allow plugins or
+		 * themes to add extra fields to users profiles.
+		 * As you can see, $_defaults are the fields that will always be
+		 * present no matter what.
+		 * Right after, we are using $defaults and send it to plugins 
+		 * system so that plugins and themes can alter it.
+		 * The final result is merged than automatically generated.
+		 */
+
+		// Default user fields.
+		$_defaults = array('first_name', 'last_name', 'email', 'username');
+
+		// Allow plugins to add extra fields.
+		$defaults = apply_filters('users_fields', array());
+		$defaults = array_merge($_defaults, $defaults);
+
+		// Let's now generate our form fields.
+		foreach ($defaults as $field)
+		{
+			/**
+			 * We first start by getting the name of the input.
+			 * NOTE: If you pass arrays as new fields make sure to 
+			 * ALWAYS add input names.
+			 */
+			$name = (is_array($field)) ? $field['name'] : $field;
+
+			/**
+			 * Now we store the default value of the field.
+			 * If the fields is the $_defaults array, it means it comes
+			 * from "users" table. Otherwise, it's a metadata.
+			 */
+			$value = (in_array($name, $_defaults))
+				? $data['user']->{$name}
+				: $this->kbcore->metadata->get_meta($data['user']->id, $name, true);
+
+			// In case of an array, use it as-is.
+			if (is_array($field))
+			{
+				$inputs[$name] = array_merge($field, array('value' => set_value($name, $value)));
+			}
+			/**
+			 * In case a string is passed, we make sure it exists first, 
+			 * if it does, we add it. Otherwise, we set error.
+			 */
+			elseif ($item = $this->config->item($name, 'inputs'))
+			{
+				$inputs[$name] = array_merge($item, array('value' => set_value($name, $value)));
+			}
+		}
+
+		/**
+		 * Fields below are default fields as well, so we don't give 
+		 * plugins or themes the right to alter them.
+		 */
+		$inputs['password']  = $this->config->item('password', 'inputs');
+		$inputs['cpassword'] = $this->config->item('cpassword', 'inputs');
+		$inputs['gender']    = array_merge(
+			$this->config->item('gender', 'inputs'),
+			array('selected' => $data['user']->gender)
+		);
+
+		// Let's now add our generated inputs to view.
+		$data['inputs'] = $inputs;
+
 		// Before form processing
 		if ($this->form_validation->run() == false)
 		{
-			// Prepare form fields.
-			$data['first_name'] = array_merge(
-				$this->config->item('first_name', 'inputs'),
-				array('value' => set_value('first_name', $data['user']->first_name))
-			);
-			$data['last_name'] = array_merge(
-				$this->config->item('last_name', 'inputs'),
-				array('value' => set_value('last_name', $data['user']->last_name))
-			);
-			$data['email'] = array_merge(
-				$this->config->item('email', 'inputs'),
-				array('value' => set_value('email', $data['user']->email))
-			);
-			$data['username'] = array_merge(
-				$this->config->item('username', 'inputs'),
-				array('value' => set_value('username', $data['user']->username))
-			);
-			$data['password']  = $this->config->item('password', 'inputs');
-			$data['cpassword'] = $this->config->item('cpassword', 'inputs');
-			$data['gender']    = array_merge(
-				$this->config->item('gender', 'inputs'),
-				array('selected' => $data['user']->gender)
-			);
 
 			// Extra security layer.
 			$data['hidden'] = $this->create_csrf();
@@ -311,48 +353,63 @@ class Admin extends Admin_Controller
 		else
 		{
 			// Passed CSRF?
-			// if ( ! $this->check_csrf())
-			// {
-			// 	set_alert(lang('error_csrf'), 'error');
-			// 	redirect($this->agent->referrer(), 'refresh');
-			// 	exit;
-			// }
+			if ( ! $this->check_csrf())
+			{
+				set_alert(lang('error_csrf'), 'error');
+				redirect('admin/users/edit/'.$id, 'refresh');
+				exit;
+			}
 
-			$user_data = $this->input->post(array('first_name', 'last_name', 'email', 'username', 'password', 'gender'), true);
+			/**
+			 * Here we make sure to remove the confirm password field.
+			 * Otherwise it will be used as a metadata
+			 */
+			unset($inputs['cpassword']);
+
+			// Collect all user details.
+			$user_data = $this->input->post(array_keys($inputs), true);
+
+			// Format "enabled" and user's "subtype".
 			$user_data['enabled'] = ($this->input->post('enabled') == '1') ? 1 : 0;
 			$user_data['subtype']   = ($this->input->post('admin') == '1') ? 'administrator' : 'regular';
 
-			// Remove username if it's the same.
+			/**
+			 * After form submit. We make sure to remove fields that have 
+			 * not been changed: Username, Email address and user's subtype.
+			 */
 			if ($user_data['username'] == $data['user']->username)
 			{
 				unset($user_data['username']);
 			}
-
-			// Remove email address if it's the same.
 			if ($user_data['email'] == $data['user']->email)
 			{
 				unset($user_data['email']);
 			}
-
-			// Remove password if empty!
-			if (empty($user_data['password']))
-			{
-				unset($user_data['password']);
-			}
-
-			// Remove user type if the same.
 			if ($user_data['subtype'] == $data['user']->subtype)
 			{
 				unset($user_data['subtype']);
 			}
 
+			/**
+			 * For the password, we make sure to remove it if it's empty
+			 * of if it's the same as the old one.
+			 */
+			if (empty($user_data['password']) 
+				OR password_verify($user_data['password'], $data['user']->password))
+			{
+				unset($user_data['password']);
+			}
+
+			// Attempt to update user's details.
 			$status = $this->kbcore->users->update($id, $user_data);
 
+			// Successful?
 			if ($status == true)
 			{
 				set_alert(lang('us_admin_edit_success'), 'success');
 				redirect('admin/users', 'refresh');
 			}
+			// Something went wrong?
 			else
 			{
 				set_alert(lang('us_admin_edit_error'), 'error');
