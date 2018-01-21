@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 
 $lang['manage_languages']     = 'إدارة اللغات';
-$lang['manage_languages_tip'] = 'تمكين وتعطيل وتعيين اللغة الافتراضية للموقع. اللغات المتاحة متاحة لزوار الموقع.';
+$lang['manage_languages_tip'] = 'تمكين وتعطيل وتعيين اللغة الافتراضية للموقع. اللغات الممكنة متاحة لزوار الموقع.';
 
 $lang['folder']       = 'المجلد';
 $lang['abbreviation'] = 'الاختصار';

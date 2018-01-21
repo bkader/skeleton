@@ -88,6 +88,7 @@ $lang['menu_items']             = 'Éléments du menu';
 $lang['menu_structure']         = 'Structure du menu';
 $lang['menu_structure_tip']     = 'Glissez chanque élément dans l\'ordre que vous préférez.';
 $lang['menu_structure_success'] = 'Éléments du menu ont été mis à jour avec succès.';
+$lang['menu_structure_error']   = 'Impossible de mettre à jour les éléments du menu.';
 
 // Add menu.
 $lang['add_item']         = 'Ajouter un élément';

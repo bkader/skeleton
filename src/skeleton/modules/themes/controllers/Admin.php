@@ -105,8 +105,8 @@ class Admin extends Admin_Controller
 
 		$this->theme
 			->set_title(lang('theme_settings'))
-			->add('css', get_common_url('css/zoom'))
-			->add('js', get_common_url('js/zoom'))
+			->add('css', get_common_url('css/zoom.min.css'))
+			->add('js', get_common_url('js/zoom.min.js'))
 			->render($data);
 	}
 

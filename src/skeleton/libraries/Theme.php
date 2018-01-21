@@ -209,6 +209,12 @@ EOT;
 	 * @var bool
 	 */
 	private $_theme_lang_loaded = false;
+
+	/**
+	 * Holds the currently used language details.
+	 * @var array
+	 */
+	private $_language;
 	
 	/**
 	 * Holds an object of the current theme's details.
@@ -391,7 +397,17 @@ EOT;
 	 * they can be overriden later.
 	 * @var array
 	 */
-	private $_defaults = array('theme' => 'default', 'title_sep' => '&#150;', 'compress' => false, 'cache_lifetime' => 0, 'cdn_enabled' => false, 'cdn_server' => null, 'site_name' => 'CI-Theme', 'site_description' => 'Simply makes your CI-based applications themable. Easy and fun to use.', 'site_keywords' => 'codeigniter, themes, libraries, bkader, bouyakoub');
+	private $_defaults = array(
+		'theme' => 'default',
+		'title_sep' => '&#150;',
+		'compress' => false,
+		'cache_lifetime' => 0,
+		'cdn_enabled' => false,
+		'cdn_server' => null,
+		'site_name' => 'CI-Theme',
+		'site_description' => 'Simply makes your CI-based applications themable. Easy and fun to use.',
+		'site_keywords' => 'codeigniter, themes, libraries, bkader, bouyakoub'
+	);
 	
 	/**
 	 * Constructor
@@ -444,11 +460,11 @@ EOT;
 			// and after title separator.
 			if ($key == 'title_sep')
 			{
-				$this->_title_sep = ' ' . trim($val) . ' ';
+				$this->_title_sep = ' '.trim($val).' ';
 			}
 			else
 			{
-				$this->{'_' . $key} = $val;
+				$this->{'_'.$key} = $val;
 			}
 		}
 		
@@ -458,7 +474,7 @@ EOT;
 		$this->method     = $this->ci->router->fetch_method();
 		
 		// We store the real path to theme's folder.
-		$this->_theme_path = realpath(FCPATH . "{$this->_themes_folder}/{$this->_theme}");
+		$this->_theme_path = realpath(FCPATH."{$this->_themes_folder}/{$this->_theme}");
 		($this->_theme_path) && $this->_theme_path .= DS;
 		
 		// If the path to the theme was not found!
@@ -493,12 +509,12 @@ EOT;
 		// Handle language.
 		$this->_i18n();
 		
-		if ( ! is_file($this->_theme_path . 'functions.php'))
+		if ( ! is_file($this->_theme_path.'functions.php'))
 		{
 			show_error("Unable to locate the theme's 'functions.php' file.");
 		}
 		
-		include_once $this->_theme_path . 'functions.php';
+		include_once $this->_theme_path.'functions.php';
 		
 		/**
 		 * Here we are some default variables that you can
@@ -604,7 +620,7 @@ EOT;
 			foreach ($folders as $key => $folder)
 			{
 				// A theme is valid ONLY if it has the 'theme_infp.php' file.
-				if (false !== realpath(FCPATH . "{$this->_themes_folder}/{$folder}/manifest.json"))
+				if (false !== realpath(FCPATH."{$this->_themes_folder}/{$folder}/manifest.json"))
 				{
 					$folders[$folder] = $this->_get_theme_details($folder);
 				}
@@ -625,7 +641,7 @@ EOT;
 	private function _get_theme_details($folder)
 	{
 		// Prepare the path to the manifest.json file.
-		$theme_info = FCPATH . "{$this->_themes_folder}/{$folder}/manifest.json";
+		$theme_info = FCPATH."{$this->_themes_folder}/{$folder}/manifest.json";
 		
 		// Make sure the file exists.
 		if ( ! is_file($theme_info))
@@ -762,10 +778,10 @@ EOT;
 	{
 		if ($uri == '')
 		{
-			return realpath(FCPATH . "{$this->_themes_folder}/{$uri}") . DS;
+			return realpath(FCPATH."{$this->_themes_folder}/{$uri}").DS;
 		}
 		
-		return realpath(FCPATH . "{$this->_themes_folder}/{$uri}");
+		return realpath(FCPATH."{$this->_themes_folder}/{$uri}");
 	}
 	
 	/**
@@ -860,7 +876,7 @@ EOT;
 	 */
 	public function upload_path($uri = '')
 	{
-		return realpath(FCPATH . "{$this->_uploads_folder}/{$uri}");
+		return realpath(FCPATH."{$this->_uploads_folder}/{$uri}");
 	}
 	
 	/**
@@ -887,7 +903,7 @@ EOT;
 	 */
 	public function common_path($uri = '')
 	{
-		return realpath(FCPATH . "{$this->_common_folder}/{$uri}");
+		return realpath(FCPATH."{$this->_common_folder}/{$uri}");
 	}
 	
 	// --------------------------------------------------------------------
@@ -1047,7 +1063,7 @@ EOT;
 		$this->_title = implode($this->_title_sep, array_unique($this->_title, SORT_STRING));
 		
 		// Return the title.
-		return $before . $this->_title . $after;
+		return $before.$this->_title.$after;
 	}
 	
 	/**
@@ -1103,10 +1119,10 @@ EOT;
 			return $this;
 		}
 		
-		$this->_metadata[$type . '::' . $name] = array(
+		$this->_metadata[$type.'::'.$name] = array(
 			'content' => $content
 		);
-		(empty($attrs)) OR $this->_metadata[$type . '::' . $name]['attrs'] = $attrs;
+		(empty($attrs)) OR $this->_metadata[$type.'::'.$name]['attrs'] = $attrs;
 		
 		return $this;
 	}
@@ -1162,7 +1178,7 @@ EOT;
 			list($type, $name) = explode('::', $key);
 			$content = isset($val['content']) ? $val['content'] : null;
 			$attrs   = isset($val['attrs']) ? $val['attrs'] : null;
-			$output .= meta_tag($name, $content, $type, $attrs) . ($i === $j ? '' : "\n\t");
+			$output .= meta_tag($name, $content, $type, $attrs).($i === $j ? '' : "\n\t");
 			
 			$i++;
 		}
@@ -1200,11 +1216,11 @@ EOT;
 		{
 			// We remplace all dots by dashes.
 			$handle = preg_replace('/\./', '-', basename($file));
-			$handle = preg_replace("/-{$type}$/", '', $handle) . "-{$type}";
+			$handle = preg_replace("/-{$type}$/", '', $handle)."-{$type}";
 		}
 		else
 		{
-			$handle           = preg_replace("/-{$type}$/", '', $handle) . "-{$type}";
+			$handle           = preg_replace("/-{$type}$/", '', $handle)."-{$type}";
 			$attributes['id'] = $handle;
 		}
 		
@@ -1278,7 +1294,7 @@ EOT;
 		}
 		
 		// Let's make $handle nicer :)/
-		$handle = preg_replace("/-{$type}$/", '', $handle) . "-{$type}";
+		$handle = preg_replace("/-{$type}$/", '', $handle)."-{$type}";
 		
 		if ($type == 'css')
 		{
@@ -1324,11 +1340,11 @@ EOT;
 		{
 			// We remplace all dots by dashes.
 			$handle = preg_replace('/\./', '-', basename($file));
-			$handle = preg_replace("/-{$type}$/", '', $handle) . "-{$type}";
+			$handle = preg_replace("/-{$type}$/", '', $handle)."-{$type}";
 		}
 		else
 		{
-			$handle           = preg_replace("/-{$type}$/", '', $handle) . "-{$type}";
+			$handle           = preg_replace("/-{$type}$/", '', $handle)."-{$type}";
 			$attributes['id'] = $handle;
 		}
 		
@@ -1385,7 +1401,7 @@ EOT;
 	 */
 	public function add_inline($type = 'css', $content = '', $handle = null)
 	{
-		$handle = preg_replace("/-{$type}$/", '', $handle) . "-{$type}";
+		$handle = preg_replace("/-{$type}$/", '', $handle)."-{$type}";
 		
 		// In case of inline styles.
 		if ('css' == $type)
@@ -1455,13 +1471,13 @@ EOT;
 		{
 			if (isset($this->_inline_styles[$handle]))
 			{
-				$output .= $this->_inline_styles[$handle] . "\n\t";
+				$output .= $this->_inline_styles[$handle]."\n\t";
 				unset($this->_inline_styles[$handle]);
 			}
 			
 			if (false !== $file)
 			{
-				$output .= '<link' . _stringify_attributes($file) . ' />' . ($i === $j ? '' : "\n\t");
+				$output .= '<link'._stringify_attributes($file).' />'.($i === $j ? '' : "\n\t");
 			}
 			$i++;
 		}
@@ -1499,13 +1515,13 @@ EOT;
 		$scripts = '';
 		
 		// Any before scripts filters?
-		$scripts = apply_filters('before_scripts', $scripts) . "\t";
+		$scripts = apply_filters('before_scripts', $scripts)."\t";
 		
 		// Render all enqueued ones.
 		$scripts .= $this->_render_scripts();
 		
 		// Any after scripts filters?
-		$scripts = apply_filters('after_scripts', $scripts) . "\t";
+		$scripts = apply_filters('after_scripts', $scripts)."\t";
 		
 		return $scripts;
 	}
@@ -1531,13 +1547,13 @@ EOT;
 			{
 				if (isset($this->_inline_scripts[$handle]))
 				{
-					$output .= $this->_inline_scripts[$handle] . "\n\t";
+					$output .= $this->_inline_scripts[$handle]."\n\t";
 					unset($this->_inline_scripts[$handle]);
 				}
 				
 				if (false !== $file)
 				{
-					$output .= '<script' . _stringify_attributes($file) . '></script>' . ($i === $j ? '' : "\n\t");
+					$output .= '<script'._stringify_attributes($file).'></script>'.($i === $j ? '' : "\n\t");
 				}
 				
 				$i++;
@@ -1569,7 +1585,7 @@ EOT;
 		$output = "";
 		if ($site_id !== 'UA-XXXXX-Y' && $site_id !== null)
 		{
-			$output = str_replace('{site_id}', $site_id, $this->_template_google_analytics) . "\n";
+			$output = str_replace('{site_id}', $site_id, $this->_template_google_analytics)."\n";
 		}
 		return $output;
 	}
@@ -1656,7 +1672,7 @@ EOT;
 		 * header template provided by the theme
 		 */
 		($file === null) && $file = 'header';
-		$header_file = $this->theme_path(preg_replace('/.php$/', '', $file) . '.php');
+		$header_file = $this->theme_path(preg_replace('/.php$/', '', $file).'.php');
 		
 		if (file_exists($header_file))
 		{
@@ -1700,7 +1716,7 @@ EOT;
 			
 			foreach ($replace as $key => $val)
 			{
-				$output = str_replace('{' . $key . '}', $val, $output);
+				$output = str_replace('{'.$key.'}', $val, $output);
 			}
 		}
 		
@@ -1726,30 +1742,38 @@ EOT;
 		 * $handle is the same.
 		 */
 		
-		// Add modernizr if not targetted for remove.
-		if (isset($this->_removed_scripts) 
-			&& ! in_array('modernizr-js', $this->_removed_scripts))
+		/**
+		 * On the admin area of the site, modernizr and jquery are loaded
+		 * in a single line using "Load" controller. In other place, we 
+		 * check if they were not targeted to be removed and add them if so.
+		 */
+		if ($this->controller !== 'admin')
 		{
-			$modernizr_url = (true === $this->cdn_enabled(false)) 
-				? 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js' 
-				: $this->common_url('js/modernizr-2.8.3.min.js');
+			// Add modernizr if not targetted for remove.
+			if (isset($this->_removed_scripts) 
+				&& ! in_array('modernizr-js', $this->_removed_scripts))
+			{
+				$modernizr_url = (true === $this->cdn_enabled(false)) 
+					? 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js' 
+					: $this->common_url('js/modernizr-2.8.3.min.js');
+				
+				$this->add('js', $modernizr_url, 'modernizr', null, true);
+				
+				unset($modernizr_url);
+			}
 			
-			$this->add('js', $modernizr_url, 'modernizr', null, true);
-			
-			unset($modernizr_url);
-		}
-		
-		// Add jQuery if not targetted for remove.
-		if (is_array($this->_removed_scripts) 
-			&& ! in_array('jquery-js', $this->_removed_scripts))
-		{
-			$jquery_url = (true === $this->cdn_enabled(false)) 
-				? 'https://code.jquery.com/jquery-3.2.1.min.js' 
-				: $this->common_url('js/jquery-3.2.1.min.js');
-			
-			$this->add('js', $jquery_url, 'jquery', null, true);
-			
-			unset($jquery_url);
+			// Add jQuery if not targetted for remove.
+			if (is_array($this->_removed_scripts) 
+				&& ! in_array('jquery-js', $this->_removed_scripts))
+			{
+				$jquery_url = (true === $this->cdn_enabled(false)) 
+					? 'https://code.jquery.com/jquery-3.2.1.min.js' 
+					: $this->common_url('js/jquery-3.2.1.min.js');
+				
+				$this->add('js', $jquery_url, 'jquery', null, true);
+				
+				unset($jquery_url);
+			}
 		}
 		
 		/**
@@ -1758,7 +1782,7 @@ EOT;
 		 * footer template provided by the class.
 		 */
 		($file === null) && $file = 'footer';
-		$footer_file = $this->theme_path(preg_replace('/.php$/', '', $file) . '.php');
+		$footer_file = $this->theme_path(preg_replace('/.php$/', '', $file).'.php');
 		
 		if (file_exists($footer_file))
 		{
@@ -1816,7 +1840,7 @@ EOT;
 		// If there are any classes, we build the attribute.
 		if ( ! empty($this->_html_classes))
 		{
-			return ' class="' . implode(' ', $this->_html_classes) . '"';
+			return ' class="'.implode(' ', $this->_html_classes).'"';
 		}
 		
 		return null;
@@ -1852,7 +1876,7 @@ EOT;
 		// If there are any attributes, we return them.
 		if ( ! empty($attrs))
 		{
-			return ' lang="' . implode(' ', $attrs) . '"';
+			return ' lang="'.implode(' ', $attrs).'"';
 		}
 		
 		return null;
@@ -1886,7 +1910,7 @@ EOT;
 		// If there are any classes, we build the attribute.
 		if ( ! empty($this->_body_classes))
 		{
-			return ' class="' . implode(' ', $this->_body_classes) . '"';
+			return ' class="'.implode(' ', $this->_body_classes).'"';
 		}
 		
 		return null;
@@ -1925,7 +1949,7 @@ EOT;
 		
 		if ( ! empty($this->_charsets))
 		{
-			return '<meta charset="' . implode(' ', $this->_charsets) . '">';
+			return '<meta charset="'.implode(' ', $this->_charsets).'">';
 		}
 		
 		return null;
@@ -1982,7 +2006,7 @@ EOT;
 		($path) && $this->_check_htaccess($path);
 		
 		// Make sure the english version exists!
-		$english_file = $path . DS . 'english.php';
+		$english_file = $path.DS.'english.php';
 		if ( ! is_file($english_file))
 		{
 			return;
@@ -2001,7 +2025,7 @@ EOT;
 		// Now we load the current language file.
 		if ($site_lang <> 'english')
 		{
-			$lang_file = $path . DS . $site_lang . '.php';
+			$lang_file = $path.DS.$site_lang.'.php';
 			
 			// Load the file only if it exists.
 			if (is_file($lang_file))
@@ -2044,6 +2068,28 @@ EOT;
 	public function theme_domain()
 	{
 		return $this->_theme_language_index;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Return the currently used language details.
+	 * @access 	public
+	 * @param 	string 	$key 	The key to return.
+	 * @return 	mixed 	Array if no key provided/found or string.
+	 */
+	public function language($key = null)
+	{
+		// Get the folder of the language first.
+		$folder = ($this->ci->session->language)
+			? $this->ci->session->language
+			: $this->ci->config->item('language');
+
+		// Get language details.
+		$return = $this->ci->lang->languages($folder);
+
+		// Return a single key or the whole array?
+		return ($key && isset($return[$key])) ? $return[$key] : $return;
 	}
 	
 	// --------------------------------------------------------------------
@@ -2219,11 +2265,11 @@ EOT;
 			}
 			
 			// We call the method only if it exists.
-			elseif (method_exists($this, '_set_' . $key))
+			elseif (method_exists($this, '_set_'.$key))
 			{
 				call_user_func_array(array(
 					$this,
-					'_set_' . $key
+					'_set_'.$key
 				), (array) $val);
 			}
 			
@@ -2336,13 +2382,13 @@ EOT;
 	private function _load_file($file, $data = array(), $type = 'view')
 	{
 		// Remove extension and prepare empty output.
-		$file   = preg_replace('/.php$/', '', $file) . '.php';
+		$file   = preg_replace('/.php$/', '', $file).'.php';
 		$output = '';
 		
 		$alt_file  = null; // Alternative file.
 		$fallback  = null; // Fallback template.
 		$full_path = $this->_theme_path; // Full path to theme's folder.
-		$alt_path  = KBPATH . 'views/'; // Full path to default CodeIgniter views folder.
+		$alt_path  = KBPATH.'views/'; // Full path to default CodeIgniter views folder.
 		
 		switch ($type)
 		{
@@ -2569,7 +2615,7 @@ EOT;
 		$this->ci->output->set_header('Expires: Sat, 01 Jan 2000 00:00:01 GMT');
 		$this->ci->output->set_header('Cache-Control: no-store, no-cache, must-revalidate');
 		$this->ci->output->set_header('Cache-Control: post-check=0, pre-check=0, max-age=0');
-		$this->ci->output->set_header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+		$this->ci->output->set_header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
 		$this->ci->output->set_header('Pragma: no-cache');
 		
 		// Let CI do the caching instead of the browser
@@ -2581,19 +2627,19 @@ EOT;
 		// If the header file was not called, make sure to call it.
 		if ($this->_header_called === false)
 		{
-			$output = $this->get_header() . $output;
+			$output = $this->get_header().$output;
 		}
 		
 		// If the footer file was not called, make sure to call it.
 		if ($this->_footer_called === false)
 		{
-			$output = $output . PHP_EOL . $this->get_footer();
+			$output = $output.PHP_EOL.$this->get_footer();
 		}
 		
 		// Should we compress the output?
 		if ($this->_compress === true)
 		{
-			$output = $this->_compress_output($output);
+			$output = $this->compress_output($output);
 		}
 		
 		return $output;
@@ -2654,7 +2700,7 @@ EOT;
 		 */
 		$found_ext = pathinfo($file, PATHINFO_EXTENSION);
 		
-		($found_ext == $ext) OR $file = $file . '.' . $ext;
+		($found_ext == $ext) OR $file = $file.'.'.$ext;
 		
 		return $file;
 	}
@@ -2681,7 +2727,7 @@ EOT;
 		if ($path == $this->_theme_path 
 			OR false === realpath($path) 
 			OR !is_writable($path) 
-			OR is_file($path . DS . '.htaccess'))
+			OR is_file($path.DS.'.htaccess'))
 		{
 			return;
 		}
@@ -2694,7 +2740,7 @@ EOT;
 	Deny from all
 </IfModule>
 EOT;
-		$_htaccess_file    = fopen($path . DS . '.htaccess', 'w');
+		$_htaccess_file    = fopen($path.DS.'.htaccess', 'w');
 		fwrite($_htaccess_file, $_htaccess_content);
 		fclose($_htaccess_file);
 	}
@@ -2792,7 +2838,7 @@ EOT;
 	 * @param 	string 	$output 	the html output to compress
 	 * @return 	string 	the minified version of $output
 	 */
-	private function _compress_output($output)
+	public function compress_output($output)
 	{
 		// Make sure $output is always a string
 		is_string($output) or $output = (string) $output;
@@ -2816,7 +2862,7 @@ EOT;
 			'<',
 			'\\1',
 			'',
-			"//&lt;![CDATA[\n" . '\1' . "\n//]]>"
+			"//&lt;![CDATA[\n".'\1'."\n//]]>"
 		), $output);
 		
 		return $output;
@@ -3342,10 +3388,10 @@ if ( ! function_exists('img_alt'))
 		}
 		
 		$params['height']     = (empty($params['height'])) ? $params['width'] : $params['height'];
-		$params['text']       = (empty($params['text'])) ? $params['width'] . ' x ' . $params['height'] : $params['text'];
+		$params['text']       = (empty($params['text'])) ? $params['width'].' x '.$params['height'] : $params['text'];
 		$params['background'] = (empty($params['background'])) ? 'CCCCCC' : $params['height'];
 		$params['foreground'] = (empty($params['foreground'])) ? '969696' : $params['foreground'];
-		return '<img src="http://placehold.it/' . $params['width'] . 'x' . $params['height'] . '/' . $params['background'] . '/' . $params['foreground'] . '&text=' . $params['text'] . '" alt="Placeholder">';
+		return '<img src="http://placehold.it/'.$params['width'].'x'.$params['height'].'/'.$params['background'].'/'.$params['foreground'].'&text='.$params['text'].'" alt="Placeholder">';
 	}
 }
 
@@ -3516,7 +3562,7 @@ if ( ! function_exists('meta_tag')): /**
 				break;
 		}
 		
-		$attributes = (is_array($attrs)) ? _stringify_attributes(array_merge($attributes, $attrs)) : _stringify_attributes($attributes) . ' ' . $attrs;
+		$attributes = (is_array($attrs)) ? _stringify_attributes(array_merge($attributes, $attrs)) : _stringify_attributes($attributes).' '.$attrs;
 		
 		return "<{$tag}{$attributes}/>";
 	}
@@ -3581,18 +3627,18 @@ if ( ! function_exists('css'))
 			
 			$file = ($common === true) ? get_common_url($file) : get_theme_url($file);
 			
-			$file               = preg_replace('/.css$/', '', $file) . '.css';
+			$file               = preg_replace('/.css$/', '', $file).'.css';
 			$attributes['href'] = $file;
 			
 			// Are there any other attributes to use?
 			if (is_array($attrs))
 			{
 				$attributes = array_replace_recursive($attributes, $attrs);
-				return '<link' . _stringify_attributes($attributes) . '/>' . "\n";
+				return '<link'._stringify_attributes($attributes).'/>'."\n";
 			}
 			
-			$attributes = _stringify_attributes($attributes) . " {$attrs}";
-			return '<link' . $attributes . ' />' . "\n\t";
+			$attributes = _stringify_attributes($attributes)." {$attrs}";
+			return '<link'.$attributes.' />'."\n\t";
 		}
 		
 		return null;
@@ -3703,18 +3749,18 @@ if ( ! function_exists('js'))
 			
 			$file = ($common === true) ? get_common_url($file) : get_theme_url($file);
 			
-			$file              = preg_replace('/.js$/', '', $file) . '.js';
+			$file              = preg_replace('/.js$/', '', $file).'.js';
 			$attributes['src'] = $file;
 			
 			// Are there any other attributes to use?
 			if (is_array($attrs))
 			{
 				$attributes = array_replace_recursive($attributes, $attrs);
-				return '<link' . _stringify_attributes($attributes) . '/>' . "\n";
+				return '<link'._stringify_attributes($attributes).'/>'."\n";
 			}
 			
-			$attributes = _stringify_attributes($attributes) . " {$attrs}";
-			return '<script' . $attributes . '></script>' . "\n";
+			$attributes = _stringify_attributes($attributes)." {$attrs}";
+			return '<script'.$attributes.'></script>'."\n";
 		}
 		
 		return null;
@@ -3918,6 +3964,23 @@ if ( ! function_exists('theme_get_var'))
 	function theme_get_var($name, $index = null)
 	{
 		return get_instance()->theme->get($name, $index);
+	}
+}
+
+/*==========================================
+=            LANGUAGE FUNCTIONS            =
+==========================================*/
+
+if ( ! function_exists('langinfo'))
+{
+	/**
+	 * Return details about the current language.
+	 * @param 	string
+	 * @return 	mixed 	Array of language details or selected key.
+	 */
+	function langinfo($key = null)
+	{
+		return get_instance()->theme->language($key);
 	}
 }
 

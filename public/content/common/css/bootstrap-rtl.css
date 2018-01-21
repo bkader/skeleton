@@ -860,7 +860,7 @@ th {
 @media (min-width: 768px) {
   .navbar-right .dropdown-menu {
     right: auto;
-    left: auto;
+    left: 0;
  }
   .navbar-right .dropdown-menu-left {
     right: auto;
@@ -1249,7 +1249,7 @@ th {
 }
 .alert-dismissable,
 .alert-dismissible {
-  padding-right: initial;
+  padding-right: 15px;
   padding-left: 35px;
 }
 .alert-dismissable .close,

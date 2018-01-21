@@ -76,8 +76,8 @@ class Kbcore extends CI_Driver_Library
 			'groups',
 			'menus',
 			'metadata',
-			'objects',
 			'options',
+			'objects',
 			'plugins',
 			'relations',
 			'users',
@@ -116,27 +116,7 @@ class Kbcore extends CI_Driver_Library
 		$this->ci->load->library('theme');
 
 		// Make current language available to themes.
-		$languages = $this->ci->lang->languages();
-		$this->ci->theme->set(
-			'current_language',
-			$languages[$this->ci->session->language],
-			true
-		);
-
-		// Make language selection available to themes.
-		$langs = array();
-		if (count($this->ci->config->item('languages')) > 0)
-		{
-			foreach ($languages as $folder => $details)
-			{
-				if (in_array($folder, $this->ci->config->item('languages')) 
-					&& $folder !== $this->ci->session->language)
-				{
-					$langs[$folder] = $details;
-				}
-			}
-		}
-		$this->ci->theme->set('site_languages', $langs, true);
+		$this->_languages_list();
 
 		// Load main language file.
 		$this->ci->load->language('bkader_main');
@@ -387,6 +367,46 @@ class Kbcore extends CI_Driver_Library
 
 		// Now we setup the session data.
 		$this->ci->session->set_userdata('language', $default);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Pass available site languages to theme views in order to use them 
+	 * for language switch.
+	 * @access 	private
+	 * @param 	void
+	 * @return 	void
+	 */
+	private function _languages_list()
+	{
+		// Get the list of all languages details first.
+		$languages = $this->ci->lang->languages();
+
+		// Make sure current language available to views.
+		$this->ci->theme->set(
+			'current_language',
+			$languages[$this->ci->session->language],
+			true
+		);
+
+		// Site languages stored in configuration.
+		$config_languages = $this->ci->config->item('languages');
+
+		// Add our available languages to views.
+		$langs = array();
+
+		if (count($config_languages) > 0)
+		{
+			foreach ($languages as $folder => $details)
+			{
+				if (in_array($folder, $config_languages) && $folder !== $this->ci->session->language)
+				{
+					$langs[$folder] = $details;
+				}
+			}
+		}
+		$this->ci->theme->set('site_languages', $langs, true);
 	}
 
 }

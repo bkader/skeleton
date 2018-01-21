@@ -25,9 +25,9 @@
 				<li class="user-menu dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?php echo $c_user->first_name; ?> <?php echo user_avatar(24, $c_user->id, 'class="img-circle"'); ?></a>
 					<ul class="dropdown-menu">
-						<li><a href="<?php echo admin_url('users/edit/'.$c_user->id); ?>"><i class="fa fa-edit"></i><?php _e('edit_profile'); ?></a></li>
+						<li><a href="<?php echo admin_url('users/edit/'.$c_user->id); ?>"><?php _e('edit_profile'); ?></a></li>
 						<li class="divider"></li>
-						<li><a href="<?php echo site_url('logout'); ?>"><i class="fa fa-sign-out"></i><?php _e('logout'); ?></a></li>
+						<li><a href="<?php echo site_url('logout'); ?>"><?php _e('logout'); ?></a></li>
 					</ul>
 				</li>
 			</ul>
@@ -56,7 +56,7 @@
 			<?php the_content(); ?>
 			<div class="footer">
 				<hr>
-				<p class="text-center"><?php echo anchor('', get_option('site_name')) ?>. &copy; Copyright <?php echo date('Y') ?>. RT: <strong>{elapsed_time}</strong>. TT: <strong>{theme_time}</strong>.<br ><?php _e('created_by'); ?> <a href="https://github.com/bkader" target="_blank">Kader Bouyakoub</a></p>
+				<p class="text-center"><?php echo anchor('', get_option('site_name')) ?>. &copy; Copyright <?php echo date('Y') ?>.<?php if (ENVIRONMENT !== 'production'): ?> RT: <strong>{elapsed_time}</strong>. TT: <strong>{theme_time}</strong>.<?php endif; ?><br ><?php _e('created_by'); ?> <a href="https://github.com/bkader" target="_blank">Kader Bouyakoub</a></p>
 			</div>
 		</div>
 	</div><!--/.row-->

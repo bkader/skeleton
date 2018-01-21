@@ -136,25 +136,6 @@ if ( ! function_exists('trace_anchor'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('admin_url'))
-{
-	/**
-	 * Admin URL
-	 *
-	 * Returns the full URL to admin sections of the site.
-	 *
-	 * @param 	string 	$uri
-	 * @return 	string
-	 */
-	function admin_url($uri = '')
-	{
-		$uri = ($uri == '') ? 'admin' : 'admin/'.$uri;
-		return site_url($uri);
-	}
-}
-
-// ------------------------------------------------------------------------
-
 if ( ! function_exists('safe_url'))
 {
 	/**
@@ -193,25 +174,6 @@ if ( ! function_exists('safe_url'))
 	}
 }
 
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('safe_admin_url'))
-{
-	/**
-	 * Safe Admin URL
-	 *
-	 * Generates a secured URL with prepended admin URI
-	 *
-	 * @param 	string 	$uri
-	 * @return 	string
-	 */
-	function safe_admin_url($uri = '')
-	{
-		$uri = ($uri == '') ? 'admin' : 'admin/'.$uri;
-		return safe_url($uri);
-	}
-}
-
 // --------------------------------------------------------------------
 
 if ( ! function_exists('safe_anchor'))
@@ -239,6 +201,25 @@ if ( ! function_exists('safe_anchor'))
 
 // ------------------------------------------------------------------------
 
+if ( ! function_exists('admin_url'))
+{
+	/**
+	 * Admin URL
+	 *
+	 * Returns the full URL to admin sections of the site.
+	 *
+	 * @param 	string 	$uri
+	 * @return 	string
+	 */
+	function admin_url($uri = '')
+	{
+		$uri = ($uri == '') ? 'admin' : 'admin/'.$uri;
+		return site_url($uri);
+	}
+}
+
+// ------------------------------------------------------------------------
+
 if ( ! function_exists('admin_anchor'))
 {
 	/**
@@ -260,6 +241,25 @@ if ( ! function_exists('admin_anchor'))
 
 // ------------------------------------------------------------------------
 
+if ( ! function_exists('safe_admin_url'))
+{
+	/**
+	 * Safe Admin URL
+	 *
+	 * Generates a secured URL with prepended admin URI
+	 *
+	 * @param 	string 	$uri
+	 * @return 	string
+	 */
+	function safe_admin_url($uri = '')
+	{
+		$uri = ($uri == '') ? 'admin' : 'admin/'.$uri;
+		return safe_url($uri);
+	}
+}
+
+// ------------------------------------------------------------------------
+
 if ( ! function_exists('safe_admin_anchor'))
 {
 	/**
@@ -275,6 +275,86 @@ if ( ! function_exists('safe_admin_anchor'))
 	function safe_admin_anchor($uri = '', $title = '', $attrs = '')
 	{
 		$uri = ($uri == '') ? 'admin' : 'admin/'.$uri;
+		return safe_anchor($uri, $title, $attrs);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('ajax_url'))
+{
+	/**
+	 * AJAX URL
+	 *
+	 * Returns the full URL to ajax sections of the site.
+	 *
+	 * @param 	string 	$uri
+	 * @return 	string
+	 */
+	function ajax_url($uri = '')
+	{
+		$uri = ($uri == '') ? 'ajax' : 'ajax/'.$uri;
+		return site_url($uri);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('ajax_anchor'))
+{
+	/**
+	 * AJAX Anchor
+	 *
+	 * Creates and anchor that links to an ajax section.
+	 *
+	 * @param  string 	$uri 	the section to link to.
+	 * @param  string 	$title 	the string to display.
+	 * @param  string 	$attrs 	attribites to add to anchor.
+	 * @return string
+	 */
+	function ajax_anchor($uri = '', $title = '', $attrs = '')
+	{
+		$uri = ($uri == '') ? 'ajax' : 'ajax/'.$uri;
+		return anchor($uri, $title, $attrs);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('safe_ajax_url'))
+{
+	/**
+	 * Safe AJAX URL
+	 *
+	 * Generates a secured URL with prepended ajax URI
+	 *
+	 * @param 	string 	$uri
+	 * @return 	string
+	 */
+	function safe_ajax_url($uri = '')
+	{
+		$uri = ($uri == '') ? 'ajax' : 'ajax/'.$uri;
+		return safe_url($uri);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('safe_ajax_anchor'))
+{
+	/**
+	 * Safe AJAX Anchor
+	 *
+	 * Generates a secured ajax anchor.
+	 *
+	 * @param 	string 	$uri
+	 * @param 	string 	$title
+	 * @param 	string 	$attrs
+	 * @return 	string
+	 */
+	function safe_ajax_anchor($uri = '', $title = '', $attrs = '')
+	{
+		$uri = ($uri == '') ? 'ajax' : 'ajax/'.$uri;
 		return safe_anchor($uri, $title, $attrs);
 	}
 }

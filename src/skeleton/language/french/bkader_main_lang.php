@@ -94,6 +94,7 @@ $lang['more_details'] = 'Plus de détails';
 
 $lang['no']  = 'Non';
 $lang['yes'] = 'Oui';
+$lang['active'] = 'Actif';
 
 // ------------------------------------------------------------------------
 // Application buttons.

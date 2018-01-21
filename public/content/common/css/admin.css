@@ -1,14 +1,44 @@
+/**
+ * Fira Sans Font
+ */
+@font-face {
+	font-family: 'Fira Sans';
+	font-style: normal;
+	font-weight: normal;
+	src: url(../fonts/fira-sans-regular.woff2) format('woff2'),
+		url(../fonts/fira-sans-regular.woff) format('woff');
+}
+@font-face {
+	font-family: 'Fira Sans';
+	font-style: italic;
+	font-weight: normal;
+	src: url(../fonts/fira-sans-italic.woff2) format('woff2'),
+		url(../fonts/fira-sans-italic.woff) format('woff');
+}
+@font-face {
+	font-family: 'Fira Sans';
+	font-style: normal;
+	font-weight: bold;
+	src: url(../fonts/fira-sans-bold.woff2) format('woff2'),
+		url(../fonts/fira-sans-bold.woff) format('woff');
+}
+@font-face {
+	font-family: 'Fira Sans';
+	font-style: italic;
+	font-weight: bold;
+	src: url(../fonts/fira-sans-bold-italic.woff2) format('woff2'),
+		url(../fonts/fira-sans-bold-italic.woff) format('woff');
+}
+
+/**
+ * Oswald Font Face.
+ */
 @font-face {
 	font-family: 'Oswald';
-	font-style : normal;
-	font-weight: 400;
-	src        : url('../fonts/oswald-v16-latin-regular.eot');
-	src        : local('Oswald Regular'), local('Oswald-Regular'),
-				 url('../fonts/oswald-v16-latin-regular.eot?#iefix') format('embedded-opentype'),
-				 url('../fonts/oswald-v16-latin-regular.woff2') format('woff2'),
-				 url('../fonts/oswald-v16-latin-regular.woff') format('woff'),
-				 url('../fonts/oswald-v16-latin-regular.ttf') format('truetype'),
-				 url('../fonts/oswald-v16-latin-regular.svg#Oswald') format('svg');
+	font-style: normal;
+	font-weight: normal;
+	src: url(../fonts/oswald-regular.woff2) format('woff2'),
+		url(../fonts/oswald-regular.woff) format('woff');
 }
 
 html,

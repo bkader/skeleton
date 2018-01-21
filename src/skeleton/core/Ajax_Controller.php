@@ -55,6 +55,16 @@ defined('DOING_AJAX') OR define('DOING_AJAX', true);
 class Ajax_Controller extends KB_Controller
 {
 	/**
+	 * Default response.
+	 * @var array
+	 */
+	protected $response = array(
+		'status'  => false,
+		'message' => 'BAD REQUEST!',
+		'action'  => null,
+	);
+
+	/**
 	 * Class constructor
 	 * @return 	void
 	 */
@@ -62,14 +72,34 @@ class Ajax_Controller extends KB_Controller
 	{
 		parent::__construct();
 
-		/**
-		 * Here we make sure that the controller accepts only
-		 * AJAX requests and the parameter 'action' is set.
-		 */
-		if ( ! $this->input->is_ajax_request() OR empty($_REQUEST['action']))
+		// We make sure that the controller accepts only AJAX requests.
+		if ( ! $this->input->is_ajax_request())
 		{
 			show_404();
 		}
+
+		// Change header.
+		$this->output->set_content_type('json');
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Remapping all method so they always return the response.
+	 * @access 	public
+	 * @param 	string 	$method 	The called method.
+	 * @param 	array 	$params 	 Arguments to pass to method.
+	 * @return 	void
+	 */
+	public function _remap($method, $params = array())
+	{
+		if (method_exists($this, $method))
+		{
+			call_user_func_array(array($this, $method), $params);
+		}
+
+		echo json_encode($this->response);
+		die();
 	}
 
 }

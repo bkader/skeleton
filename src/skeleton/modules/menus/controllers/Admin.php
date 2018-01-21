@@ -378,7 +378,8 @@ class Admin extends Admin_Controller
 				'#save-menu',
 				'#sortable',
 				admin_url('menus/update_order/'.$id),
-				lang('menu_structure_success')
+				lang('menu_structure_success'),
+				lang('menu_structure_error')
 			);
 		}
 

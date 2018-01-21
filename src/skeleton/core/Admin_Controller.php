@@ -53,6 +53,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 class Admin_Controller extends User_Controller
 {
+	protected $styles = array();
+	protected $scripts = array();
+
 	/**
 	 * Class constructor
 	 * @return 	void
@@ -75,38 +78,7 @@ class Admin_Controller extends User_Controller
 		// Load language file.
 		$this->load->language('bkader_admin');
 
-		// Now we add dashboard needed CSS and JS files.
-		if (ENVIRONMENT === 'production')
-		{
-			$this->theme
-				->add('css', 'https://fonts.googleapis.com/css?family=Fira+Sans:400,400i,700,700i|Oswald')
-				->add('css', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css')
-				->add('css', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
-				->add('css', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css')
-				->add('css', get_common_url('css/admin.min'))
-				->add('js', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
-				->add('js', 'https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js')
-				->add('js', get_common_url('js/admin.min'));
-		}
-		else
-		{
-			$this->theme
-				->add('css', get_common_url('vendor/fira-sans/css/fira-sans.min'), 'fira-sans')
-				->add('css', get_common_url('css/font-awesome.min'), 'font-awesome')
-				->add('css', get_common_url('css/bootstrap.min'), 'bootstrap')
-				->add('css', get_common_url('css/bootstrap-theme.min'), 'bootstrap-theme')
-				->add('css', get_common_url('css/admin'), 'admin')
-				->add('js', get_common_url('js/bootstrap.min'), 'bootstrap')
-				->add('js', get_common_url('js/bootbox.min'), 'bootbox')
-				->add('js', get_common_url('js/admin'), 'admin');
-		}
-		
-		if ($this->lang->languages()[$this->session->language]['direction'] === 'rtl')
-		{
-			$this->theme
-				->add('css', get_common_url('css/bootstrap-rtl.min'), 'bootstrap-rtl')
-				->add('css', get_common_url('css/admin-rtl'), 'admin-rtl');
-		}
+		$this->_load_assets();
 
 		// Load admin helper.
 		$this->load->helper('admin');
@@ -177,9 +149,56 @@ class Admin_Controller extends User_Controller
 
 		// Add IE9 support.
 		add_filter('extra_head', function($output) {
-			add_ie9_support($output, (ENVIRONMENT === 'production'));
+			$config = array(
+				'siteURL'   => site_url(),
+				'baseURL'   => base_url(),
+				'adminURL'  => admin_url(),
+				'currenURL' => current_url(),
+				'ajaxURL'   => ajax_url(),
+				'lang'      => $this->lang->languages($this->session->language),
+			);
+			$output .= "\t<script>var config = ".json_encode($config).";</script>\n";
+			// add_ie9_support($output, (ENVIRONMENT === 'production'));
 			return $output;
 		});
+
+		$this->theme->remove('js', 'modernizr');
+		$this->theme->remove('js', 'jquery');
+	}
+
+	// ------------------------------------------------------------------------
+
+	protected function _load_assets()
+	{
+		$this->styles = array(
+			'font-awesome',
+			'bootstrap',
+			'bootstrap-theme',
+			'toastr',
+			'admin',
+		);
+
+		$this->scripts = array(
+			'modernizr-2.8.3',
+			'html5shiv-3.7.3',
+			'respond-1.4.2',
+			'jquery-3.2.1',
+			'bootstrap',
+			'bootbox',
+			'toastr',
+			'admin',
+		);
+
+		// Add Right-To-Left support.
+		if (langinfo('direction') === 'rtl')
+		{
+			array_push($this->styles, 'bootstrap-rtl', 'admin-rtl');
+		}
+
+		$this->theme
+			->no_extension()
+			->add('css', site_url('load/styles?c=1&load='.implode(',', $this->styles)), 'styles')
+			->add('js', site_url('load/scripts?c=1&load='.implode(',', $this->scripts)), 'scripts');
 	}
 
 	// ------------------------------------------------------------------------
@@ -191,9 +210,8 @@ class Admin_Controller extends User_Controller
 	 */
 	protected function load_jquery_ui()
 	{
-		$this->theme
-			->add('css', get_common_url('css/jquery-ui.min'), 'jquery-ui')
-			->add('js', get_common_url('js/jquery-ui.min'), 'jquery-ui');
+		$this->theme->add('css', get_common_url('css/jquery-ui.min.css'));
+		$this->theme->add('js', get_common_url('js/jquery-ui.min.js'));
 	}
 
 	// ------------------------------------------------------------------------
@@ -201,13 +219,14 @@ class Admin_Controller extends User_Controller
 	/**
 	 * Generates a JQuery content fot draggable items.
 	 * @access 	protected
-	 * @param 	string 	$button 	the button that handles saving.
-	 * @param 	string 	$target 	The element id or class to target.
-	 * @param 	string 	$url 		The URL used to send AJAX request.
-	 * @param 	string 	$message 	The message to be displayed after success.
+	 * @param 	string 	$button 			the button that handles saving.
+	 * @param 	string 	$target 			The element id or class to target.
+	 * @param 	string 	$url 				The URL used to send AJAX request.
+	 * @param 	string 	$success_message 	The message to be displayed after success.
+	 * @param 	string 	$error_message 		The message to be displayed after success.
 	 * @return 	void
 	 */
-	protected function add_sortable_list($button, $target, $url, $message = null)
+	protected function add_sortable_list($button, $target, $url, $success_message = null, $error_message = null)
 	{
 		// If these element are not provided, nothing to do.
 		if (empty($button) OR empty($target) OR empty($url))
@@ -216,14 +235,18 @@ class Admin_Controller extends User_Controller
 		}
 
 		// If the message is set, we add it.
-		if ( ! empty($message))
+		if ( ! empty($success_message))
 		{
-			$message = $this->theme->print_alert($message, 'success', true);
+			$success_message = $this->theme->print_alert($success_message, 'success', true);
+		}
+		if ( ! empty($error_message))
+		{
+			$error_message = $this->theme->print_alert($error_message, 'error', true);
 		}
 
 		// Prepare the script to output.
 		$script =<<<EOT
-	<script>
+\n\t<script>
 	var data = data || [];
 	\$('{$target}').sortable({
 		axis: 'y',
@@ -233,7 +256,6 @@ class Admin_Controller extends User_Controller
 	});
 	\$(document).on('click', '{$button}', function(e) {
 		e.preventDefault();
-		console.log(data);
 		if (data.length) {
 			\$.ajax({
 				data: data,
@@ -242,7 +264,12 @@ class Admin_Controller extends User_Controller
 				success: function(response) {
 					response = \$.parseJSON(response);
 					if (response.status == true) {
-						\$({$message}).appendTo('body');
+						\$({$success_message}).appendTo('body');
+						\$('.alert-dismissable').fadeTo(2000, 500).slideUp(500, function() {
+							\$(this).alert('close');
+						});
+					} else {
+						\$({$error_message}).appendTo('body');
 						\$('.alert-dismissable').fadeTo(2000, 500).slideUp(500, function() {
 							\$(this).alert('close');
 						});
@@ -255,7 +282,7 @@ class Admin_Controller extends User_Controller
 EOT;
 
 		// No we add it as an inline script.
-		$this->theme->add_inline('js', $script);
+		$this->theme->add_inline('js', $this->theme->compress_output($script));
 	}
 
 	// ------------------------------------------------------------------------

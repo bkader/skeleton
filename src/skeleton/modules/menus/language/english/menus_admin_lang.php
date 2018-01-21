@@ -88,6 +88,7 @@ $lang['menu_items']             = 'Menu Items';
 $lang['menu_structure']         = 'Menu Structure';
 $lang['menu_structure_tip']     = 'Drag each item into the order you prefer.';
 $lang['menu_structure_success'] = 'Menu items order successfully updated.';
+$lang['menu_structure_error']   = 'Unable to update menu items order.';
 
 // Add menu.
 $lang['add_item']         = 'Add Item';

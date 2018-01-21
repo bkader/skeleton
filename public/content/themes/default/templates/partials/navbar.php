@@ -24,12 +24,22 @@
 <?php if ($this->auth->online()): ?>
 
 			<ul class="nav navbar-nav navbar-right">
+			<?php if (isset($site_languages) && count($site_languages) >= 1): ?>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?php echo $current_language['name']; ?> <span class="caret"></span></a>
+					<ul class="dropdown-menu">
+					<?php foreach($site_languages as $folder => $lang): ?>
+						<li><a href="<?php echo site_url('language/switch/'.$folder); ?>"><?php echo $lang['name_en']; ?>&nbsp;<small class="text-muted pull-right"><?php echo $lang['name']; ?></small></a></li>
+					<?php endforeach; unset($folder, $lang); ?>
+					</ul>
+				</li>
+			<?php endif; ?>
 			<?php if ($this->auth->is_admin()): ?>
 				<li><?php echo admin_anchor('', lang('admin_panel')) ?></li>
 			<?php endif; ?>
 				<li class="dropdown">
 					<a href="<?php echo site_url($c_user->username) ?>" class="dropdown-toggle user-menu" data-toggle="dropdown"><?php echo $c_user->full_name ?></a>
-					<ul class="dropdown-menu">
+					<ul class="dropdown-menu pull-right">
 						<li><?php echo anchor($c_user->username, lang('profile')) ?></li>
 						<li><?php echo anchor('settings', lang('settings')) ?></li>
 						<li class="divider"></li>

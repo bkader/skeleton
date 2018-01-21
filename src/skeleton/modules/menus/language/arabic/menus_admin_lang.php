@@ -88,6 +88,7 @@ $lang['menu_items']             = 'عناصر القائمة';
 $lang['menu_structure']         = 'هيكل القائمة';
 $lang['menu_structure_tip']     = 'اسحب كل عنصر حسب الترتيب الذي تفضله.';
 $lang['menu_structure_success'] = 'تم تحديث عناصر القائمة بنجاح.';
+$lang['menu_structure_error']   = 'تعذر تحديث ترتيب عناصر القائمة.';
 
 // Add menu.
 $lang['add_item']         = 'اضافة عنصر';

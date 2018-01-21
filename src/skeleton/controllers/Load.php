@@ -215,6 +215,7 @@ class Load extends KB_Controller
 		// Prepare an empty output.
 		$output = '';
 		// Make sure it's a full URL.
+		$old_file = $file;
 		if (filter_var($file, FILTER_VALIDATE_URL) === FALSE)
 		{
 			$file = base_url($file);
@@ -232,6 +233,15 @@ class Load extends KB_Controller
 		else
 		{
 			$output .= file_get_contents($file);
+		}
+
+		if (filter_var($old_file, FILTER_VALIDATE_URL) === FALSE)
+		{
+			$output = str_replace(
+				"../",
+				str_replace(array('http:', 'https:'), '', base_url('content/common/')),
+				$output
+			);
 		}
 
 		return $output;

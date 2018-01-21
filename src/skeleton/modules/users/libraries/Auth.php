@@ -117,8 +117,6 @@ class Auth
 		if ($user->enabled < 1)
 		{
 			$this->logout($user_id);
-			redirect('', 'refresh');
-			exit;
 			return;
 		}
 
@@ -162,7 +160,7 @@ class Auth
 		 * stored tokens and make sure only a single user 
 		 * per session is allowed.
 		 */
-		if (get_option('allow_multi_session', true) === false)
+		if ($this->kbcore->options->item('allow_multi_session', true) === false)
 		{
 			// Get the variable from database.
 			$var = $this->kbcore->variables->get_by(array(
@@ -180,6 +178,13 @@ class Auth
 		$user = $this->kbcore->users->get($this->ci->session->user_id);
 		if ( ! $user)
 		{
+			return false;
+		}
+
+		// The user has been banned/deactivated meanwhile?
+		if ($user->enabled < 1)
+		{
+			$this->logout();
 			return false;
 		}
 
@@ -271,7 +276,7 @@ class Auth
 		);
 
 		// What type of login to use?
-		switch (get_option('login_type', 'both'))
+		switch ($this->kbcore->options->item('login_type', 'both'))
 		{
 			// Get the user by username.
 			case 'username':

@@ -24,8 +24,12 @@ add_action('after_theme_setup', function() {
 	add_style('opensans', get_common_url('vendor/open-sans/css/open-sans.min'));
 	add_style('fontawesome', get_common_url('css/font-awesome.min'));
 	add_style('bootstrap', 'assets/css/bootstrap.min');
-	// add_style(null, 'assets/css/bootstrap-theme.min');
 	add_style('style', 'assets/css/style');
+	if (langinfo('direction') === 'rtl') {
+		add_style('bootstrap-rtl', 'assets/css/bootstrap-rtl.min');
+		add_style('style-rtl', 'assets/css/style-rtl');
+	}
+	// add_style(null, 'assets/css/bootstrap-theme.min');
 	add_script("bootstrap", 'assets/js/bootstrap.min');
 	add_style('zoom', get_common_url('css/zoom.min'));
 	add_script('zoom', get_common_url('js/zoom.min'));
