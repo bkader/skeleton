@@ -1,5 +1,5 @@
 <h2 class="page-header"><?php _e('edit_user') ?>: <?php echo $user->username; ?> <?php echo admin_anchor('users', lang('us_manage_users'), 'class="btn btn-primary btn-sm pull-right"') ?></h2>
-<?php echo print_d($this->session->all_userdata()); ?>
+
 <div class="row">
 	<div class="col-md-4 col-md-offset-4">
 		<div class="panel panel-default">

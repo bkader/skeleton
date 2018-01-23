@@ -24,9 +24,3 @@ $config['language']	= 'english';
  * @see application/config/config.php:206
  */
 $config['log_threshold'] = 4;
-
-/**
- * Cookie related variables.
- * @see application/config/config.php:397
- */
-$config['cookie_domain'] = '.example.com';

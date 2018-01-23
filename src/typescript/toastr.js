@@ -1,0 +1,4 @@
+function sendAlert() { }
+{
+    alert('Hello');
+}

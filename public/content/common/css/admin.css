@@ -90,6 +90,14 @@ body {
   width: 225px;
 }
 
+.avatar-male {
+  background-image: url(../img/profile-m.jpg);
+}
+
+.avatar-female {
+  background-image: url(../img/profile-f.jpg);
+}
+
 img {
   height: auto;
   max-width: 100%;

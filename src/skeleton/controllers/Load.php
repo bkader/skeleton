@@ -62,6 +62,9 @@ class Load extends KB_Controller
 		parent::__construct();
 		ob_start('ob_gzhandler');
 		$this->output->set_header('Cache-Control: max-age=31536000, must-revalidate');
+
+		// Always delete cache.
+		$this->_delete_cache();
 	}
 
 	// ------------------------------------------------------------------------
@@ -103,21 +106,84 @@ class Load extends KB_Controller
 			$files = $this->_set_min($files);
 		}
 
-		// Prepare output.
-		$output = '';
+		// Prepare an empty output for later use.
+		$output = null;
 
-		foreach ($files as $file)
+		// IN PRODUCTION MODE ONLY.
+		if (ENVIRONMENT !== 'development')
 		{
-			$output .= $this->_load_file('content/common/css/'.$file.'.css');
+			// Let's first see if the file was cached or not.
+			$cache_file = md5(ENVIRONMENT.implode(',', $files));
+			$cache_file_path = APPPATH."cache/assets/{$cache_file}.css";
+
+			// Was the cached file found?
+			if (is_file($cache_file_path))
+			{
+				// Get the content of the file.
+				$content = file_get_contents($cache_file_path);
+
+				// Check if the file has expired or not.
+				// $expire = substr($content, 0, 10);
+				preg_match('/\d+/', $content, $expire);
+
+				/**
+				 * If the file is still alive, we make sure to remove 
+				 * unnecessary part of content and fill our output.
+				 */
+				if ((strlen($expire[0]) === 10 && (int) $expire[0] > time() - 86400) 
+					&& preg_match('/^(.*)|END-->/', $content, $match))
+				{
+					$output = trim(str_replace($expire[0].'|END-->', '', $content));
+				}
+				// Otherwise, delete the file!
+				else
+				{
+					// @unlink($cache_file_path);
+				}
+			}
 		}
 
-		if (empty($output))
+		// Still no output? Load files then.
+		if ($output === null)
 		{
-			die();
-		}
-		else
-		{
+			foreach ($files as $file)
+			{
+				$output .= $this->_load_file('content/common/css/'.$file.'.css');
+			}
+
+			// No output? Nothing to do.
+			if (empty($output))
+			{
+				die();
+			}
+
+			// We make sure to move all @imports to top.
+	        if (preg_match_all('/(;?)(@import (?<url>url\()?(?P<quotes>["\']?).+?(?P=quotes)(?(url)\)))/', $output, $matches)) 
+	        {
+	            // remove from output
+	            foreach ($matches[0] as $import)
+	            {
+	                $output = str_replace($import, '', $output);
+	            }
+
+	            // add to top
+	            $output = implode(';', $matches[2]).';'.trim($output, ';');
+	        }
+
+			// Prepare our final output.
 			$output  = "/*! This file is auto-generated */\n".$output;
+
+			// Prepare the file to be cached.
+			if (ENVIRONMENT !== 'development')
+			{
+				(isset($cache_file_path)) OR $cache_file_path = APPPATH."cache/assets/{$cache_file}.css";
+				$cached_output = (time() + 86400).'|END-->'.$output;
+
+				// Let's write the cache file.
+				$cache_file_path = fopen($cache_file_path, 'w');
+				fwrite($cache_file_path, $cached_output);
+				fclose($cache_file_path);
+			}
 		}
 
 		// Set header content type and output it.
@@ -154,22 +220,73 @@ class Load extends KB_Controller
 			$files = $this->_set_min($files);
 		}
 
-		// Prepare output.
-		$output = '';
+		// Prepare an empty output for later use.
+		$output = null;
 
-		foreach ($files as $file)
+		// IN PRODUCTION MODE ONLY.
+		if (ENVIRONMENT !== 'development')
 		{
-			$output .= $this->_load_file('content/common/js/'.$file.'.js');
+			// Let's first see if the file was cached or not.
+			$cache_file = md5(ENVIRONMENT.implode(',', $files));
+			$cache_file_path = APPPATH."cache/assets/{$cache_file}.js";
+
+			// Was the cached file found?
+			if (is_file($cache_file_path))
+			{
+				// Get the content of the file.
+				$content = file_get_contents($cache_file_path);
+
+				// Check if the file has expired or not.
+				// $expire = substr($content, 0, 10);
+				preg_match('/\d+/', $content, $expire);
+
+				/**
+				 * If the file is still alive, we make sure to remove 
+				 * unnecessary part of content and fill our output.
+				 */
+				if ((strlen($expire[0]) === 10 && (int) $expire[0] > time() - 86400) 
+					&& preg_match('/^(.*)|END-->/', $content, $match))
+				{
+					$output = trim(str_replace($expire[0].'|END-->', '', $content));
+				}
+				// Otherwise, delete the file!
+				else
+				{
+					// @unlink($cache_file_path);
+				}
+			}
 		}
 
-		if (empty($output))
+		// Still no output? Load files then.
+		if ($output === null)
 		{
-			die();
-		}
-		else
-		{
+			foreach ($files as $file)
+			{
+				$output .= $this->_load_file('content/common/js/'.$file.'.js');
+			}
+
+			// No output? Nothing to do.
+			if (empty($output))
+			{
+				die();
+			}
+
+			// Prepare our final output.
 			$output  = "/*! This file is auto-generated */\n".$output;
+
+			// Prepare the file to be cached.
+			if (ENVIRONMENT !== 'development')
+			{
+				(isset($cache_file_path)) OR $cache_file_path = APPPATH."cache/assets/{$cache_file}.js";
+				$cached_output = (time() + 86400).'|END-->'.$output;
+
+				// Let's write the cache file.
+				$cache_file_path = fopen($cache_file_path, 'w');
+				fwrite($cache_file_path, $cached_output);
+				fclose($cache_file_path);
+			}
 		}
+
 
 		// Set header content type and output it.
 		$this->output
@@ -212,15 +329,33 @@ class Load extends KB_Controller
 	 */
 	private function _load_file($file)
 	{
+		// Backup the file for later use.
+		$old_file = $file;
+
 		// Prepare an empty output.
 		$output = '';
+
 		// Make sure it's a full URL.
-		$old_file = $file;
 		if (filter_var($file, FILTER_VALIDATE_URL) === FALSE)
 		{
 			$file = base_url($file);
 		}
 
+		// Check if the file exits first.
+		$found = false;
+		$file_headers = get_headers($file);
+		if (stripos($file_headers[0], '200 OK'))
+		{
+			$found = true;
+		}
+
+		// Not found? Return nothing.
+		if ($found === false)
+		{
+			return "/* Missing file: {$old_file} */";
+		}
+
+		// Use cURL if enabled.
 		if (function_exists('curl_init'))
 		{
 			$curl = curl_init();
@@ -230,20 +365,84 @@ class Load extends KB_Controller
 			$output .= curl_exec($curl);
 			curl_close($curl);
 		}
+		// Otherwise, simply use file_get_contents.
 		else
 		{
 			$output .= file_get_contents($file);
 		}
 
-		if (filter_var($old_file, FILTER_VALIDATE_URL) === FALSE)
+		/**
+		 * Remember, we have backed up the file right?
+		 * The reason behind this it to set relative paths inside it.
+		 * For instance, if an image or a fond is used in the CSS file, 
+		 * you might see something like this: url('../').
+		 * Here we are simply replacing that relative path and use an
+		 * absolute path so image or font don't get broken.
+		 */
+		if (filter_var($old_file, FILTER_VALIDATE_URL) === FALSE 
+			&& pathinfo($file, PATHINFO_EXTENSION) === 'css'
+			&& preg_match_all('/url\((["\']?)(.+?)\\1\)/i', $output, $matches, PREG_SET_ORDER))
 		{
-			$output = str_replace(
-				"../",
-				str_replace(array('http:', 'https:'), '', base_url('content/common/')),
-				$output
-			);
+			$search  = array();
+			$replace = array();
+
+			$import_url = str_replace(array('http:', 'https:', basename($file)), '', $file);
+
+			foreach ($matches as $match)
+			{
+				$count = substr_count($match[2], '../');
+				$search[] = str_repeat('../', $count);
+				$temp_import_url = $import_url;
+				for ($i=1; $i <= $count; $i++) { 
+					$temp_import_url = str_replace(basename($temp_import_url), '', $temp_import_url);
+				}
+				$replace[] = rtrim($temp_import_url, '/').'/';
+			}
+
+			// Replace everything if the output.
+			$output = str_replace(array_unique($search), array_unique($replace), $output);
 		}
 
 		return $output;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * This method handles old cached assets deletion.
+	 * @access 	private
+	 * @return 	void
+	 */
+	private function _delete_cache()
+	{
+		// Prepare the path to to assets folder.
+		$path = APPPATH.'cache/assets/';
+
+		// Let's open the folder to read.
+		if ($handle = opendir($path))
+		{
+			// Loop through all files.
+			while(false !== ($file = readdir($handle)))
+			{
+				/**
+				 * Here we are simply ignoring files with .gitkeep extension.
+				 * Feel free to remove this check in production environment.
+				 */
+				if (pathinfo($file, PATHINFO_EXTENSION) !== 'gitkeep')
+				{
+					/**
+					 * If the file is older than 24 hours or we are 
+					 * on development environment, we delete file.
+					 */
+					if (ENVIRONMENT === 'development' 
+						OR filemtime($path.$file) < time() - 86400)
+					{
+						@unlink($path.$file);
+					}
+				}
+			}
+
+			closedir($handle);
+		}
 	}
 }

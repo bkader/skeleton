@@ -1,0 +1,13 @@
+{
+	"compilerOptions": {
+		"module": "system",
+		"noImplicitAny": true,
+		"removeComments": true,
+		"preserveConstEnums": true,
+		"outFile": "public/content/common/js/test.js",
+		"sourceMap": false
+	},
+	"include": [
+		"src/typescript/*"
+	]
+}

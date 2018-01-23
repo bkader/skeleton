@@ -86,7 +86,7 @@ $lang['last_name']         = 'Nom';
 $lang['full_name']         = 'Nom complet';
 
 $lang['gender']            = 'Sexe';
-$lang['male']              = 'Home';
+$lang['male']              = 'Homme';
 $lang['female']            = 'Femme';
 
 $lang['company']  = 'Entreprise';

@@ -311,7 +311,7 @@ $config['cache_path'] = '';
 |	             of query parameters.
 |
 */
-$config['cache_query_string'] = FALSE;
+$config['cache_query_string'] = TRUE;
 
 /*
 |--------------------------------------------------------------------------
@@ -403,14 +403,13 @@ include_once(APPPATH.'config/encryption_key.php');
 | except for 'cookie_prefix' and 'cookie_httponly', which are ignored here.
 |
 */
-$config['sess_driver'] = 'database';
+$config['sess_driver'] = 'files';
 $config['sess_cookie_name'] = 'c_sess';
-$config['sess_expiration'] = 14400;
-$config['sess_save_path'] = 'sessions';
+$config['sess_expiration'] = 7200;
+$config['sess_save_path'] = APPPATH.'cache/sessions/';
 $config['sess_match_ip'] = FALSE;
-$config['sess_time_to_update'] = 900;
+$config['sess_time_to_update'] = 300;
 $config['sess_regenerate_destroy'] = FALSE;
-$config['sess_namespace'] = '';
 
 /*
 |--------------------------------------------------------------------------

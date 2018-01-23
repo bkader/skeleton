@@ -132,6 +132,8 @@ $lang['error_logged_in']       = 'You are already logged in.';
 $lang['error_logged_out']      = 'You must be logged in to access this page.';
 $lang['error_account_missing'] = 'That user does not exist.';
 
+$lang['error_action_permission'] = 'You do not have permission to perform this action.';
+
 // Success Messages.
 
 // Info messages.

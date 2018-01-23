@@ -56,7 +56,7 @@
 			<?php the_content(); ?>
 			<div class="footer">
 				<hr>
-				<p class="text-center"><?php echo anchor('', get_option('site_name')) ?>. &copy; Copyright <?php echo date('Y') ?>.<?php if (ENVIRONMENT !== 'production'): ?> RT: <strong>{elapsed_time}</strong>. TT: <strong>{theme_time}</strong>.<?php endif; ?><br ><?php _e('created_by'); ?> <a href="https://github.com/bkader" target="_blank">Kader Bouyakoub</a></p>
+				<p class="text-center"><?php echo anchor('', get_option('site_name')) ?>. &copy; Copyright <?php echo date('Y') ?>.RT: <strong>{elapsed_time}</strong>. TT: <strong>{theme_time}</strong>.<br ><?php _e('created_by'); ?> <a href="https://github.com/bkader" target="_blank">Kader Bouyakoub</a></p>
 			</div>
 		</div>
 	</div><!--/.row-->

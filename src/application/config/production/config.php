@@ -5,7 +5,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * Base Site URL.
  * @see application/config/config.php:6
  */
-$config['base_url'] = 'http://demo.ianhub.com/skeleton/';
+$config['base_url'] = 'http://www.example.com/cibase/'; //http://demo.ianhub.com/skeleton/';
 
 /**
  * Index File
@@ -23,4 +23,4 @@ $config['language']	= 'english';
  * Error Logging Threshold
  * @see application/config/config.php:206
  */
-$config['log_threshold'] = 0;
+$config['log_threshold'] = 1;

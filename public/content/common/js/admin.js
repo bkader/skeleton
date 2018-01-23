@@ -7,6 +7,59 @@
 
     $(document).ready(function() {
 
+        // Some Toastr options.
+        toastr.options = {
+            "closeButton": true,
+            "positionClass": "toast-top-center",
+            "hideDuration": "300",
+            "timeOut": "3000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+
+        if (config.lang.direction === 'rtl') {
+            toastr.options.rtl = true;
+        }
+
+        /**
+         * (A)Synchronous anchors.
+         */
+        $(document).on("click", "a[rel=async]", function (e) {
+            /* Collect needed data first. */
+            var $a = $(this),
+                rel = $a.attr('rel'),
+                url = $a.attr('ajaxify');
+
+            /* No valid URL? Nothing to do. */
+            if (typeof url === "undefined") {
+                e.preventDefault();
+                return;
+            }
+
+            /* Send the AJAX GET request. */
+            $.ajax({
+                type: "POST",
+                data: {next: config.currenURL},
+                dataType: "json",
+                url: url,
+                success: function (response) {
+                    /* Did the user provide an action to eval? */
+                    (response.action) && eval(response.action);
+                    setTimeout((function () {
+                        if (response.status == true) {
+                            toastr.success(response.message);
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    }), 500);
+                }
+            });
+
+            return false;
+        });
+
         $(".alert-dismissable").fadeTo(2000, 500).slideUp(500, function() {
             $(this).alert("close");
         });

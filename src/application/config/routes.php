@@ -111,6 +111,3 @@ Route::context('(admin|ajax|process)', '$1', array(
  * bottom of this file.
  */
 $route = Route::map($route);
-
-// echo print_d($route);
-// exit;

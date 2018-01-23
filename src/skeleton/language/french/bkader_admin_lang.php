@@ -87,3 +87,7 @@ $lang['menus'] = 'Menus';
 // Menus.
 $lang['plugin'] = 'Extension';
 $lang['plugins'] = 'Extensions';
+
+// Languages.
+$lang['language'] = 'Langue';
+$lang['languages'] = 'Langues';
