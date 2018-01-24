@@ -579,7 +579,7 @@ function __autoload($class)
 		{
 			include_once(APPPATH.'core/'.$class.'.php');
 		}
-		else
+		elseif (is_file(KBPATH.'core/'.$class.'.php'))
 		{
 			include_once(KBPATH.'core/'.$class.'.php');
 		}

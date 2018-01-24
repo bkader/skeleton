@@ -92,13 +92,17 @@ if ( ! function_exists('the_title_settings'))
 	function the_title_settings($content)
 	{
 		$content .=<<<EOT
-	<h4 class="page-header">The Title Plugin Settings</h4>
-	<p>The content you see on this page is found within this plugins main file <strong>the-title.php</strong>. Look for a function called <strong>the_title_settings</strong></p>
+<div class="panel panel-default">
+	<div class="panel-body">
+		<h4 class="page-header">The Title Plugin Settings</h4>
+		<p>The content you see on this page is found within this plugins main file <strong>the-title.php</strong>. Look for a function called <strong>the_title_settings</strong></p>
 
-	<h4>How to create settings page for a plugin?</h4>
-	<p>Easy! Simply add a new filter with your plugin's folder name, like so:</p>
-	<pre><code>// Here I am using this plugin's folder name, "the-title".<br />add_filter('plugin_settings_<strong>the-title</strong>', function(\$content) {<br />&nbsp;&nbsp;&nbsp;&nbsp;\$content .= '&lt;h1&gt;Hell There&lt;/h1&gt;';<br/>&nbsp;&nbsp;&nbsp;&nbsp;return \$content;<br />});</code></pre><br />
-	<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem voluptas pariatur necessitatibus quod porro amet libero molestias hic debitis commodi quos doloribus reprehenderit sequi, recusandae, voluptatem aut dolores voluptate in!</p>
+		<h4>How to create settings page for a plugin?</h4>
+		<p>Easy! Simply add a new filter with your plugin's folder name, like so:</p>
+		<pre><code>// Here I am using this plugin's folder name, "the-title".<br />add_filter('plugin_settings_<strong>the-title</strong>', function(\$content) {<br />&nbsp;&nbsp;&nbsp;&nbsp;\$content .= '&lt;h1&gt;Hell There&lt;/h1&gt;';<br/>&nbsp;&nbsp;&nbsp;&nbsp;return \$content;<br />});</code></pre><br />
+		<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem voluptas pariatur necessitatibus quod porro amet libero molestias hic debitis commodi quos doloribus reprehenderit sequi, recusandae, voluptatem aut dolores voluptate in!</p>
+	</div>
+</div>
 EOT;
 		return $content;
 	}

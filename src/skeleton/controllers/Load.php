@@ -138,7 +138,7 @@ class Load extends KB_Controller
 				// Otherwise, delete the file!
 				else
 				{
-					// @unlink($cache_file_path);
+					@unlink($cache_file_path);
 				}
 			}
 		}

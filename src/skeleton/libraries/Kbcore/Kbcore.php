@@ -37,6 +37,10 @@
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**
+ * Some of our drivers need to respect this interface's 
+ * structure. So we are importing it here.
+ */
 require_once('CRUD_interface.php');
 
 /**
@@ -91,10 +95,19 @@ class Kbcore extends CI_Driver_Library
 		// Let's assign options from database to CodeIgniter config.
 		$this->ci->load->config('defaults');
 
+		/**
+		 * Here we are making an instance of this driver global 
+		 * so that themes, plugins or others can use it.
+		 */
+		global $KB, $DB;
+		$KB = new stdClass();
 		foreach ($this->valid_drivers as $driver)
 		{
 			$this->{$driver}->initialize();
+			$KB->{$driver} = $this->{$driver};
 		}
+		$KB->ci =& $this->ci;
+		$DB =& $this->ci->db;
 
 		// Store language in session.
 		if ( ! $this->ci->session->language)

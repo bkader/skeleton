@@ -23,7 +23,7 @@
 			<?php endif; ?>
 				<li><?php echo anchor('', lang('view_site')) ?></li>
 				<li class="user-menu dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?php echo $c_user->first_name; ?> <?php echo user_avatar(24, $c_user->id, 'class="img-circle"'); ?></a>
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?php echo $c_user->first_name; ?><?php echo user_avatar(24, $c_user->id, 'class="img-circle"'); ?></a>
 					<ul class="dropdown-menu">
 						<li><a href="<?php echo admin_url('users/edit/'.$c_user->id); ?>"><?php _e('edit_profile'); ?></a></li>
 						<li class="divider"></li>

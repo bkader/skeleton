@@ -212,6 +212,7 @@ class Kbcore_plugins extends CI_Driver
 
 		if (isset($plugins[$name]) && ! in_array($name, $active_plugins))
 		{
+			do_action('plugin_activate_'.$name);
 			$active_plugins[] = $name;
 			return $this->_set_plugins($active_plugins);
 		}
@@ -236,6 +237,7 @@ class Kbcore_plugins extends CI_Driver
 			&& in_array($name, $active_plugins)
 			 && false !== ($key = array_search($name, $active_plugins)))
 		{
+			do_action('plugin_deactivate_'.$name);
 			unset($active_plugins[$key]);
 			return $this->_set_plugins($active_plugins);
 		}

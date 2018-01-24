@@ -132,8 +132,8 @@ img {
 .navbar-fixed-top {
     border: 0;
     border-radius: 0;
-    background: #3c8dbc;
-    border-bottom: 1px solid #367fa8;
+    background: $navbar-bg-color;
+    border-bottom: 1px solid darken($navbar-bg-color, 20%);
     color: #fff;
 
     .navbar-nav {
@@ -157,8 +157,8 @@ img {
 
         /* Navbar header */
         .navbar-header {
-            width: calc(16.66666667% + 5px);
-            background-color: #367fa8;
+            width: calc(16.66666667% + 4px);
+            background-color: darken($navbar-bg-color, 20%);
             margin-left: -15px;
 
             .navbar-brand {
@@ -174,7 +174,7 @@ img {
     display: none;
 
     @media (min-width: $break-small) {
-        background-color: #222d31;
+        background-color: darken($navbar-bg-color, 35%);
         border-right    : 1px solid #ddd;
         bottom          : 0;
         display         : block;
@@ -205,7 +205,7 @@ img {
                     &:hover,
                     &:focus {
                         color: #fff;
-                        background-color: #1a2225;
+                        background-color: darken($navbar-bg-color, 40%);
                     }
                 }
             }

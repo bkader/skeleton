@@ -148,6 +148,14 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 			$activation_code = random_string('alnum', 40);
 		}
 
+		// Add the language if it's not set.
+		if ( ! isset($data['language']))
+		{
+			$data['language'] = ($this->ci->session->language)
+				? $this->ci->session->language
+				: $this->ci->config->item('language');
+		}
+
 		// Let's insert the entity first and make sure it's created.
 		$guid = $this->_parent->entities->create($entity);
 		if ( ! $guid)

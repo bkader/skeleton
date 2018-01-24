@@ -100,15 +100,7 @@ class Admin extends Admin_Controller
 				exit;
 			}
 
-			$settings = $this->input->post(array(
-				'site_name',
-				'site_description',
-				'site_keywords',
-				'site_author',
-				'per_page',
-				'google_analytics_id',
-				'google_site_verification',
-			), true);
+			$settings = $this->input->post(array_keys($data), true);
 
 			foreach ($settings as $key => $val)
 			{

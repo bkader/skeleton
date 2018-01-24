@@ -12,7 +12,7 @@
 
 <div class="row">
 	<div class="col-md-3">
-		<?php echo img(get_upload_url('85818.jpg'), 'data-action="zoom" class="img-responsive') ?>
+		<?php echo img(get_upload_url('85818.jpg'), 'data-action="zoom" class="img-responsive"') ?>
 	</div>
 </div>
 

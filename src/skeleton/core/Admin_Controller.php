@@ -53,9 +53,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 class Admin_Controller extends User_Controller
 {
-	protected $styles = array();
-	protected $scripts = array();
-
 	/**
 	 * Class constructor
 	 * @return 	void
@@ -161,43 +158,31 @@ class Admin_Controller extends User_Controller
 			// add_ie9_support($output, (ENVIRONMENT === 'production'));
 			return $output;
 		});
-
-		$this->theme->remove('js', 'modernizr');
-		$this->theme->remove('js', 'jquery');
 	}
 
 	// ------------------------------------------------------------------------
 
 	protected function _load_assets()
 	{
-		$this->styles = array(
-			'font-awesome',
-			'bootstrap',
-			'toastr',
-			'admin',
-		);
-
-		$this->scripts = array(
-			'modernizr-2.8.3',
-			'html5shiv-3.7.3',
-			'respond-1.4.2',
-			'jquery-3.2.1',
-			'bootstrap',
-			'bootbox',
-			'toastr',
-			'admin',
-		);
+		$this->theme
+			// Add admin panel StyleSheets.
+			->add('css', get_common_url('css/font-awesome'), 'font-awesome')
+			->add('css', get_common_url('css/bootstrap'), 'bootstrap')
+			->add('css', get_common_url('css/toastr'), 'toastr')
+			->add('css', get_common_url('css/admin'), 'admin')
+			// Add admin panel JavaScripts.
+			->add('js', get_common_url('js/bootstrap'), 'bootstrap')
+			->add('js', get_common_url('js/bootbox'), 'bootbox')
+			->add('js', get_common_url('js/toastr'), 'toastr')
+			->add('js', get_common_url('js/admin'), 'admin');
 
 		// Add Right-To-Left support.
 		if (langinfo('direction') === 'rtl')
 		{
-			array_push($this->styles, 'bootstrap-rtl', 'admin-rtl');
+			$this->theme
+				->add('css', get_common_url('css/bootstrap-rtl'), 'bootstrap-rtl')
+				->add('css', get_common_url('css/admin-rtl'), 'admin-rtl');
 		}
-
-		$this->theme
-			->no_extension()
-			->add('css', site_url('load/styles?c=1&load='.implode(',', $this->styles)), 'styles')
-			->add('js', site_url('load/scripts?c=1&load='.implode(',', $this->scripts)), 'scripts');
 	}
 
 	// ------------------------------------------------------------------------
@@ -209,8 +194,9 @@ class Admin_Controller extends User_Controller
 	 */
 	protected function load_jquery_ui()
 	{
-		$this->theme->add('css', get_common_url('css/jquery-ui.min.css'));
-		$this->theme->add('js', get_common_url('js/jquery-ui.min.js'));
+		$this->theme
+			->add('css', get_common_url('css/jquery-ui'), 'jquery-ui')
+			->add('js', get_common_url('js/jquery-ui'), 'jquery-ui');
 	}
 
 	// ------------------------------------------------------------------------

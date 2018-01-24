@@ -75,6 +75,18 @@ class KB_Controller extends CI_Controller
 	protected $data = array();
 
 	/**
+	 * Array of StyleSheets to load.
+	 * @var array
+	 */
+	protected $styles = array();
+
+	/**
+	 * Array of JavaScripts to load.
+	 * @var array
+	 */
+	protected $scripts = array();
+
+	/**
 	 * Class constructor
 	 * @return 	void
 	 */

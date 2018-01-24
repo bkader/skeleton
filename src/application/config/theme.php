@@ -20,6 +20,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $config['themes_folder']  = 'content/themes';
 $config['uploads_folder'] = 'content/uploads';
 $config['common_folder']  = 'content/common';
+$config['cache_folder']   = 'content/cache';
 
 // Site default theme
 $config['theme'] = 'default';
@@ -47,14 +48,6 @@ $config['cdn_server'] = ''; // i.e: 'http://static.myhost.com/';
  * client is using.
  */
 $config['detect_browser'] = false;
-
-/**
- * Setting this to true will make the library deletect
- * client's language and set the language if config
- * array to client's.
- */
-$config['i18n_enabled']   = false;
-$config['i18n_available'] = array('english', 'french');
 
 // ------------------------------------------------------------------------
 // Backup plan :D for site name, desription & keywords

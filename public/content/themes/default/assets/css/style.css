@@ -1,4 +1,3 @@
-@charset "utf-8";
 html,
 body {
 	height: 100%;
@@ -24,9 +23,31 @@ textarea {
 	border-left: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.user-menu img {
+    margin-top: -2px;
+    margin-left: 12px;
+}
+
 .navbar {
 	border: none;
 	border-radius: 0;
+}
+
+.avatar-male,
+.avatar-female {
+    background-color   : #d1d1d1;
+    background-position: center center;
+    background-repeat  : no-repeat;
+    display            : inline-block;
+    height             : 225px;
+    width              : 225px;
+}
+
+.avatar-male {
+    background-image: url(../img/profile-m.jpg);
+}
+.avatar-female {
+    background-image: url(../img/profile-f.jpg);
 }
 
 

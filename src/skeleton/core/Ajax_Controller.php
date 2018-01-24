@@ -81,6 +81,8 @@ class Ajax_Controller extends KB_Controller
 		parent::__construct();
 
 		$this->response = new stdClass();
+		$this->response->status = false;
+		$this->response->message = null;
 
 		// We make sure that the controller accepts only AJAX requests.
 		// if ( ! $this->input->is_ajax_request())

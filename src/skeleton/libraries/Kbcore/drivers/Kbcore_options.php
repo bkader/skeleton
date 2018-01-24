@@ -163,6 +163,21 @@ class Kbcore_options extends CI_Driver
 
 	// ------------------------------------------------------------------------
 
+	public function update($name, array $data = array())
+	{
+		if (empty($data))
+		{
+			return false;
+		}
+
+		// Make sure to format value and options.
+		(isset($data['value'])) && $data['value'] = maybe_serialize($data['value']);
+		(isset($data['options'])) && $data['options'] = maybe_serialize($data['options']);
+
+		$this->ci->db->where('name', $name)->set($data)->update('options');
+		return ($this->ci->db->affected_rows() > 0);
+	}
+
 	/**
 	 * Update an option item if it exists or create it if it does not.
 	 * @access 	public

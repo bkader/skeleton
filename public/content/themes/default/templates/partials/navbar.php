@@ -37,8 +37,8 @@
 			<?php if ($this->auth->is_admin()): ?>
 				<li><?php echo admin_anchor('', lang('admin_panel')) ?></li>
 			<?php endif; ?>
-				<li class="dropdown">
-					<a href="<?php echo site_url($c_user->username) ?>" class="dropdown-toggle user-menu" data-toggle="dropdown"><?php echo $c_user->full_name ?></a>
+				<li class="user-menu dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?php echo $c_user->first_name; ?><?php echo user_avatar(24, $c_user->id, 'class="img-circle"'); ?></a>
 					<ul class="dropdown-menu pull-right">
 						<li><?php echo anchor($c_user->username, lang('profile')) ?></li>
 						<li><?php echo anchor('settings', lang('settings')) ?></li>

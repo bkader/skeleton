@@ -110,7 +110,7 @@ EOT;
 		}
 
 		// Make sure the user is not deactivating his own account himself/herself.
-		if ($id === $this->c_user->id)
+		if ($id == $this->c_user->id)
 		{
 			$this->response->message = lang('error_action_permission');
 			return;

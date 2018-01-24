@@ -390,15 +390,19 @@ EOT;
 	 * @var array
 	 */
 	private $_defaults = array(
-		'theme' => 'default',
-		'title_sep' => '&#150;',
-		'compress' => false,
-		'cache_lifetime' => 0,
-		'cdn_enabled' => false,
-		'cdn_server' => null,
-		'site_name' => 'CI-Theme',
-		'site_description' => 'Simply makes your CI-based applications themable. Easy and fun to use.',
-		'site_keywords' => 'codeigniter, themes, libraries, bkader, bouyakoub'
+		'themes_folder'     => 'content/themes',
+		'uploads_folder'    => 'content/uploads',
+		'common_folder'     => 'content/common',
+		'cache_folder'      => 'content/cache',
+		'theme'             => 'default',
+		'title_sep'         => '&#150;',
+		'compress'          => false,
+		'cache_lifetime'    => 0,
+		'cdn_enabled'       => false,
+		'cdn_server'        => null,
+		'site_name'         => 'CI-Theme',
+		'site_description'  => 'Simply makes your CI-based applications themable. Easy and fun to use.',
+		'site_keywords'     => 'codeigniter, themes, libraries, bkader, bouyakoub'
 	);
 	
 	/**
@@ -409,7 +413,11 @@ EOT;
 		// Prepare instance of CI object
 		$this->ci =& get_instance();
 		
-		$this->initialize($config);
+		// Initialize class preferences.
+		if (is_array($config) && ! empty($config))
+		{
+			$this->initialize($config);
+		}
 		
 		log_message('info', 'Theme Class Initialized');
 	}
@@ -1450,9 +1458,25 @@ EOT;
 	 */
 	private function _render_styles()
 	{
-		$output = '';
-		
 		do_action('enqueue_styles');
+
+		/**
+		 * Here we are allowing themes, plugins or other resources
+		 * to alter the behavior of this method.
+		 */
+		$_temp_output = apply_filters('output_styles', array(
+			'inline' => $this->_inline_styles,
+			'styles' => $this->_styles,
+			'output' => null,
+		));
+
+		// An output was created? Return it
+		if (is_string($_temp_output))
+		{
+			return $_temp_output;
+		}
+
+		$output = '';
 		
 		$i = 1;
 		$j = count($this->_styles);
@@ -1523,9 +1547,25 @@ EOT;
 	 */
 	private function _render_scripts()
 	{
-		$output = '';
-		
 		do_action('enqueue_scripts');
+
+		/**
+		 * Here we are allowing themes, plugins or other resources
+		 * to alter the behavior of this method.
+		 */
+		$_temp_output = apply_filters('output_scripts', array(
+			'inline'  => $this->_inline_scripts,
+			'scripts' => $this->_scripts,
+			'output'  => null,
+		));
+
+		// An output was created? Return it
+		if (is_string($_temp_output))
+		{
+			return $_temp_output;
+		}
+
+		$output = '';
 		
 		$i = 1;
 		$j = count($this->_scripts);
@@ -1731,38 +1771,30 @@ EOT;
 		 * $handle is the same.
 		 */
 		
-		/**
-		 * On the admin area of the site, modernizr and jquery are loaded
-		 * in a single line using "Load" controller. In other place, we 
-		 * check if they were not targeted to be removed and add them if so.
-		 */
-		if ($this->controller !== 'admin')
+		// Add modernizr if not targetted for remove.
+		if (isset($this->_removed_scripts) 
+			&& ! in_array('modernizr-js', $this->_removed_scripts))
 		{
-			// Add modernizr if not targetted for remove.
-			if (isset($this->_removed_scripts) 
-				&& ! in_array('modernizr-js', $this->_removed_scripts))
-			{
-				$modernizr_url = (true === $this->cdn_enabled(false)) 
-					? 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js' 
-					: $this->common_url('js/modernizr-2.8.3.min.js');
-				
-				$this->add('js', $modernizr_url, 'modernizr', null, true);
-				
-				unset($modernizr_url);
-			}
+			$modernizr_url = (true === $this->cdn_enabled(false)) 
+				? 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js' 
+				: $this->common_url('js/modernizr-2.8.3.min.js');
 			
-			// Add jQuery if not targetted for remove.
-			if (is_array($this->_removed_scripts) 
-				&& ! in_array('jquery-js', $this->_removed_scripts))
-			{
-				$jquery_url = (true === $this->cdn_enabled(false)) 
-					? 'https://code.jquery.com/jquery-3.2.1.min.js' 
-					: $this->common_url('js/jquery-3.2.1.min.js');
-				
-				$this->add('js', $jquery_url, 'jquery', null, true);
-				
-				unset($jquery_url);
-			}
+			$this->add('js', $modernizr_url, 'modernizr', null, true);
+			
+			unset($modernizr_url);
+		}
+		
+		// Add jQuery if not targetted for remove.
+		if (is_array($this->_removed_scripts) 
+			&& ! in_array('jquery-js', $this->_removed_scripts))
+		{
+			$jquery_url = (true === $this->cdn_enabled(false)) 
+				? 'https://code.jquery.com/jquery-3.2.1.min.js' 
+				: $this->common_url('js/jquery-3.2.1.min.js');
+			
+			$this->add('js', $jquery_url, 'jquery', null, true);
+			
+			unset($jquery_url);
 		}
 		
 		/**
@@ -2544,6 +2576,116 @@ EOT;
 		
 		return $output;
 	}
+
+	// ------------------------------------------------------------------------
+
+	private function _load_asset($file)
+	{
+		// Backup the file for later use.
+		$old_file = $file;
+
+		// Prepare an empty output.
+		$output = '';
+
+		// Make sure it's a full URL.
+		if (filter_var($file, FILTER_VALIDATE_URL) === FALSE)
+		{
+			$file = $this->theme_url($file);
+		}
+
+		// Check if the file exits first.
+		$found = false;
+		$file_headers = get_headers($file);
+		if (stripos($file_headers[0], '200 OK'))
+		{
+			$found = true;
+		}
+
+		// Not found? Return nothing.
+		if ($found === false)
+		{
+			return "/* Missing file: {$old_file} */";
+		}
+
+		// Use cURL if enabled.
+		if (function_exists('curl_init'))
+		{
+			$curl = curl_init();
+			curl_setopt($curl, CURLOPT_URL, $file);
+			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($curl, CURLOPT_HEADER, false);
+			$output .= curl_exec($curl);
+			curl_close($curl);
+		}
+		// Otherwise, simply use file_get_contents.
+		else
+		{
+			$output .= file_get_contents($file);
+		}
+
+		/**
+		 * Remember, we have backed up the file right?
+		 * The reason behind this it to set relative paths inside it.
+		 * For instance, if an image or a fond is used in the CSS file, 
+		 * you might see something like this: url('../').
+		 * Here we are simply replacing that relative path and use an
+		 * absolute path so image or font don't get broken.
+		 */
+		if (pathinfo($file, PATHINFO_EXTENSION) === 'css'
+			&& preg_match_all('/url\((["\']?)(.+?)\\1\)/i', $output, $matches, PREG_SET_ORDER))
+		{
+			$search  = array();
+			$replace = array();
+
+			$import_url = str_replace(array('http:', 'https:', basename($file)), '', $file);
+
+			foreach ($matches as $match)
+			{
+				$count = substr_count($match[2], '../');
+				$search[] = str_repeat('../', $count);
+				$temp_import_url = $import_url;
+				for ($i=1; $i <= $count; $i++) { 
+					$temp_import_url = str_replace(basename($temp_import_url), '', $temp_import_url);
+				}
+				$replace[] = rtrim($temp_import_url, '/').'/';
+			}
+
+			// Replace everything if the output.
+			$output = str_replace(array_unique($search), array_unique($replace), $output);
+		}
+
+		return $output;
+	}
+
+	private function _compress_css($css = '')
+	{
+		$replace = array(
+			"#/\*.*?\*/#s" => "",  // Strip C style comments.
+			"#\s\s+#"      => " ", // Strip excess whitespace.
+		);
+		
+		$search = array_keys($replace);
+		
+		$css = preg_replace($search, $replace, $css);
+
+		$replace = array(
+			": "  => ":",
+			"; "  => ";",
+			" {"  => "{",
+			" }"  => "}",
+			", "  => ",",
+			"{ "  => "{",
+			";}"  => "}", // Strip optional semicolons.
+			",\n" => ",", // Don't wrap multiple selectors.
+			"\n}" => "}", // Don't wrap closing braces.
+			"} "  => "}\n", // Put each rule on it's own line.
+		);
+		
+		$search = array_keys($replace);
+		$css = str_replace($search, $replace, $css);
+
+		return trim($css);
+	}
 	
 	// --------------------------------------------------------------------
 	
@@ -2652,6 +2794,8 @@ EOT;
 		$this->_remove_extension = false;
 		return $this;
 	}
+
+	// ------------------------------------------------------------------------
 	
 	/**
 	 * Removes files extension
@@ -2691,6 +2835,8 @@ EOT;
 		
 		return $file;
 	}
+
+	// ------------------------------------------------------------------------
 	
 	/**
 	 * Make sure the .htaccess file that denies direct
@@ -2781,7 +2927,7 @@ EOT;
 	public function compress_output($output)
 	{
 		// Make sure $output is always a string
-		is_string($output) or $output = (string) $output;
+		(is_string($output)) OR $output = (string) $output;
 		
 		// In orders, we are searching for
 		// 1. White-spaces after tags, except space.
@@ -3907,6 +4053,16 @@ if ( ! function_exists('theme_get_var'))
 	}
 }
 
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('set_assets_cache'))
+{
+	function set_assets_cache($time = 0)
+	{
+		return get_instance()->theme->set_assets_cache($time);
+	}
+}
+
 /*==========================================
 =            LANGUAGE FUNCTIONS            =
 ==========================================*/
@@ -3965,8 +4121,14 @@ if ( ! function_exists('print_alert'))
 	 * @param  bool 	$js 	html or js
 	 * @return string
 	 */
-	function print_alert($message = null, $type = 'info', $js = false)
+	function print_alert($message = null, $type = 'info', $js = false, $echo = true)
 	{
-		echo get_instance()->theme->print_alert($message, $type, $js);
+		$alert = get_instance()->theme->print_alert($message, $type, $js);
+		if ($echo === false)
+		{
+			return $alert;
+		}
+
+		echo $alert;
 	}
 }

@@ -35,3 +35,7 @@ textarea {
 	border-right: 1px solid #eee; /* Fallback */
 	border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
+.user-menu img {
+    margin-left: 0;
+    margin-right: 12px;
+}

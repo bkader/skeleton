@@ -137,12 +137,10 @@ class Admin extends Admin_Controller
 			exit;
 		}
 
-		// Load the settings file now.
-		$data['settings'] = apply_filters('plugin_settings_'.$plugin, '');
-		$data['hidden'] = $this->create_csrf();
 		$this->theme
 			->set_title(lang('plugin_settings'))
 			->render($data);
+
 	}
 
 	// ------------------------------------------------------------------------

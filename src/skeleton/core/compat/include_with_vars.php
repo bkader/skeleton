@@ -38,81 +38,47 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Because this file is the first one to be loaded, we make sure
- * to load our needed resources here.
- */
-require_once(KBPATH.'core/compat/include_with_vars.php');
-require_once(KBPATH.'core/compat/print_d.php');
-require_once(KBPATH.'core/compat/str_to_bool.php');
-require_once(KBPATH.'core/compat/is_serialized.php');
-require_once(KBPATH.'core/compat/is_json.php');
-require_once(KBPATH.'core/compat/bool_or_serialize.php');
-
-/**
- * KB_Config Class
- *
- * This file extending CI_Config class in order to add, alter
- * or enhance some of the parent's methods.
+ * Including files with optional variables.
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @category 	Core Extension
+ * @category 	Helpers
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
-class KB_Config extends CI_Config
+
+if ( ! function_exists('include_with_vars'))
 {
 	/**
-	 * Class constructor
-	 * @return 	void
-	 */
-	public function __construct()
-	{
-		// Our our custom config path.
-		$this->_config_paths[] = KBPATH;
-
-		// Now we call parent's constructor.
-		parent::__construct();
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Add the possibility to set an item with an index.
-	 * @access 	public
-	 * @param 	string 	$item 	The key of the item.
-	 * @param 	mixed 	$value 	The value of the item.
-	 * @param 	mixed 	$index 	The index of the item.
-	 */
-	public function set_item($item, $value = null, $index = '')
-	{
-		if ($index == '')
-		{
-			$this->config[$item] = $value;
-		}
-		else
-		{
-			$this->config[$index][$item] = $value;
-		}
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Returns the name or details about the language currently in use.
-	 * @access 	public
-	 * @param 	mixed 	what to retrieve.
+	 * Including files with optional variables.
+	 * @param 	string 	$filepath 	The file to include.
+	 * @param 	array 	$vars 		Variables to pass.
+	 * @param 	bool 	$print 		Whether to print th output.
 	 * @return 	mixed
 	 */
-	public function lang()
+	function include_with_vars($filepath, $vars = array(), $print = false)
 	{
-		return call_user_func_array(
-			array(get_instance()->lang, 'lang'),
-			func_get_args()
-		);
-	}
+		$output = null;
 
+		if (is_file($filepath))
+		{
+			(is_array($vars)) OR $vars = array($vars);
+			extract($vars);
+
+			ob_start();
+
+			include_once($filepath);
+			$output = ob_get_clean();
+		}
+
+		if ($print === false)
+		{
+			return $output;
+		}
+
+		print $output;
+	}
 }
