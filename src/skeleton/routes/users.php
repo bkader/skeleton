@@ -50,16 +50,26 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @version 	1.0.0
  */
 
-// Login page and sub-pages.
+/// Login page and sub-pages.
 Route::any('login', 'users/login', function() {
-	Route::any('recover', 'users/recover');
+
+	// Restore deleted account page.
 	Route::any('restore', 'users/restore');
+
+	// Lost password page.
+	Route::any('recover', 'users/recover');
+
+	// Reset password page.
 	Route::any('reset(.*)', 'users/reset$1');
 });
 
 // Register page and sub-pages.
 Route::any('register', 'users/register', function() {
+
+	// Resend account activation link.
 	Route::any('resend', 'users/resend');
+
+	// Account activation URL.
 	Route::get('activate(.*)', 'users/activate$1');
 });
 

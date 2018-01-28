@@ -1,4 +1,0 @@
-function sendAlert() { }
-{
-    alert('Hello');
-}

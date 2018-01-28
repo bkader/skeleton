@@ -53,13 +53,6 @@ $route['default_controller'] = 'welcome';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
-// Some routing patterns.
-Route::pattern(array(
-	'id'     => '[0-9]+',
-	'key'    => '[a-zA-Z0-9]+',
-	'method' => '[a-zA-Z0-9\-_]+',
-));
-
 // ------------------------------------------------------------------------
 // PUT YOUR ROUTE RULES BELOW.
 // ------------------------------------------------------------------------

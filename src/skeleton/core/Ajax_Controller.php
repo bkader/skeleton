@@ -85,10 +85,10 @@ class Ajax_Controller extends KB_Controller
 		$this->response->message = null;
 
 		// We make sure that the controller accepts only AJAX requests.
-		// if ( ! $this->input->is_ajax_request())
-		// {
-		// 	show_404();
-		// }
+		if ( ! $this->input->is_ajax_request())
+		{
+			show_404();
+		}
 
 		/**
 		 * Disable parsing of the {elapsed_time} and {memory_usage} 
