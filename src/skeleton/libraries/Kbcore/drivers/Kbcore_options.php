@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
-class Kbcore_options extends CI_Driver implements CRUD_Interface
+class Kbcore_options extends CI_Driver implements CRUD_interface
 {
 	/**
 	 * Array of cached options to reduce DB access.
