@@ -82,7 +82,6 @@ class Kbcore_variables extends CI_Driver implements CRUD_interface
 		// Make sure both guid and name are set.
 		if ( ! isset($data['guid']) OR ! isset($data['name']))
 		{
-			die('here');
 			return false;
 		}
 
@@ -159,7 +158,6 @@ class Kbcore_variables extends CI_Driver implements CRUD_interface
 			// Possible comparison between arrays.
 			if (is_string($key) && in_array($key, array('value', 'params')))
 			{
-				die('here');
 				$val = to_bool_or_serialize($val);
 			}
 

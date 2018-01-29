@@ -40,7 +40,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 /**
  * Captcha Configuration
  *
- * This files holds some default configurations that are passed 
+ * This files holds some default configurations that are passed
  * through filters making them editable by plugins and themes.
  *
  * @package 	CodeIgniter

@@ -5,7 +5,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * Base Site URL.
  * @see application/config/config.php:6
  */
-$config['base_url'] = 'http://dev.example.com/cibase/public/';
+$config['base_url'] = 'http://localhost/skeleton/public/';
 
 /**
  * Index File

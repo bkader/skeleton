@@ -101,7 +101,7 @@ switch (ENVIRONMENT)
  * CodeIgniter core classes and files.
  *
  */
-	$skeleton_src = 'D:/projects/web/development/cibase/src';
+	$skeleton_src = '/var/www/html/skeleton/src';
 	$skeleton_path = "{$skeleton_src}/skeleton";
 
 /*

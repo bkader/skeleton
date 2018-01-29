@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
-class Kbcore_options extends CI_Driver
+class Kbcore_options extends CI_Driver implements CRUD_Interface
 {
 	/**
 	 * Array of cached options to reduce DB access.
@@ -86,6 +86,310 @@ class Kbcore_options extends CI_Driver
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Create a new options.
+	 * @access 	public
+	 * @param 	array 	$data 	Array of data to insert.
+	 * @return 	the new row ID if found, else false.
+	 */
+	public function create(array $data = array())
+	{
+		// If $data is empty, nothing to do.
+		if (empty($data))
+		{
+			return false;
+		}
+
+		// Make sure the name is set and unique.
+		if ( ! isset($data['name']) OR $this->get_by('name', $data['name']))
+		{
+			return false;
+		}
+
+		/**
+		 * Here we make sure to prepare "value" and "options" if they
+		 * are set and not empty.
+		 */
+		if (isset($data['value']) && ! empty($data['value']))
+		{
+			$data['value'] = to_bool_or_serialize($data['value']);
+		}
+		if (isset($data['options']) && ! empty($data['options']))
+		{
+			$data['options'] = to_bool_or_serialize($data['options']);
+		}
+
+		// Insert the option into database.
+		$this->ci->db->insert('options', $data);
+		return ($this->ci->db->affected_rows() > 0);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve a single row by it's primary ID.
+	 * @access 	public
+	 * @param 	mixed 	$id 	The primary key value.
+	 * @return 	object if found, else null
+	 */
+	public function get($id)
+	{
+		// If the item was cached, use it. Otherwise get it.
+		return (isset($this->cached[$name]))
+			? $this->cached[$name]
+			: $this->get_by('name', $id);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve a single option by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field 	Column name or associative array.
+	 * @param 	mixed 	$match 	Comparison value.
+	 * @return 	object if found, else null.
+	 */
+	public function get_by($field, $match = null)
+	{
+		// Make everything as an array.
+		(is_array($field)) OR $field = array($field => $match);
+
+		foreach ($field as $key => $val)
+		{
+			if (is_int($key) && is_array($val))
+			{
+				$this->ci->db->where($val);
+			}
+			elseif (is_array($val))
+			{
+				$this->ci->db->where_in($key, $val);
+			}
+			else
+			{
+				$this->ci->db->where($key, $val);
+			}
+		}
+
+		$row = $this->ci->db->get('options')->row();
+
+		// If the row is found, format it.
+		if ($row)
+		{
+			// Prepare the "value" and "options".
+			$row->value = from_bool_or_serialize($row->value);
+			(empty($row->options)) OR $row->options = from_bool_or_serialize($row->options);
+
+			// Cache the item for eventual use.
+			$this->cached[$row->name] = $row->value;
+		}
+
+		return $row;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve multiple options by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field 	Column name or associative array.
+	 * @param 	mixed 	$match 	Comparison value.
+	 * @param 	int 	$limit 	Limit to use for getting records.
+	 * @param 	int 	$offset Database offset.
+	 * @return 	array o objects if found, else null.
+	 */
+	public function get_many($field = null, $match = null, $limit = 0, $offset = 0)
+	{
+		// Prepare WHERE clause.
+		if ( ! empty($field))
+		{
+			(is_array($field)) OR $field = array($field => $match);
+
+			foreach ($field as $key => $val)
+			{
+				if (is_int($key) && is_array($val))
+				{
+					$this->ci->db->where($val);
+				}
+				elseif (is_array($val))
+				{
+					$this->ci->db->where_in($key, $val);
+				}
+				else
+				{
+					$this->ci->db->where($key, $val);
+				}
+			}
+		}
+
+		// Apply limits?
+		if ($limit > 0)
+		{
+			$this->ci->db->limit($limit, $offset);
+		}
+
+		// Attempt to retrieve all options.
+		$rows = $this->ci->db->get('options')->result();
+
+		// If we found any, format their values and options columns
+		if ($rows)
+		{
+			foreach ($rows as &$row)
+			{
+				$row->value = from_bool_or_serialize($row->value);
+				$row->options = from_bool_or_serialize($row->options);
+
+				// Cache items for eventual use.
+				$this->cached[$row->name] = $row->value;
+			}
+		}
+
+		// Return the final result.
+		return $rows;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Retrieve all options.
+	 * @access 	public
+	 * @param 	int 	$limit 	Limit to use for getting records.
+	 * @param 	int 	$offset Database offset.
+	 * @return 	array o objects if found, else null.
+	 */
+	public function get_all($limit = 0, $offset = 0)
+	{
+		return $this->get_many(null, null, $limit, $offset);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Update a single options by its name.
+	 * @access 	public
+	 * @param 	mixed 	$id 	The option's name.
+	 * @param 	array 	$data 	Array of data to update.
+	 * @return 	boolean
+	 */
+	public function update($id, array $data = array())
+	{
+		return $this->update_by(array('name' => $id), $data);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Update a single, all or multiple options by arbitrary WHERE clause.
+	 * @access 	public
+	 * @return 	boolean
+	 */
+	public function update_by()
+	{
+		// Collect function arguments and make sure there are some.
+		$args = func_get_args();
+		if (empty($args))
+		{
+			return false;
+		}
+
+		// The data is always the last array.
+		$data = array_pop($args);
+		if ( ! is_array($data) OR empty($data))
+		{
+			return false;
+		}
+
+		// Format "value" and "options".
+		if (isset($data['value']) && ! empty($data['value']))
+		{
+			$data['value'] = to_bool_or_serialize($data['value']);
+		}
+		if (isset($data['options']) && ! empty($data['options']))
+		{
+			$data['options'] = to_bool_or_serialize($data['options']);
+		}
+
+		// Prepare the update query.
+		$this->ci->db->set($data);
+
+		// All remaining arguments will be used as WHERE clause.
+		if ( ! empty($args))
+		{
+			(is_array($args[0])) && $args = $args[0];
+			foreach ($args as $key => $val)
+			{
+				if (is_int($key) && is_array($val))
+				{
+					$this->ci->db->where($val);
+				}
+				elseif (is_array($val))
+				{
+					$this->ci->db->where_in($key, $val);
+				}
+				else
+				{
+					$this->ci->db->where($key, $val);
+				}
+			}
+		}
+
+		// Proceed to update and return the status.
+		$this->ci->db->update('options');
+		return ($this->ci->db->affected_rows() > 0);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Delete a single option by its name.
+	 * @access 	public
+	 * @param 	mixed 	$id 	The option's name.
+	 * @return 	boolean
+	 */
+	public function delete($id)
+	{
+		return $this->delete_by('name', $id);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Delete a single, all or multiple options by arbitrary WHERE clause.
+	 * @access 	public
+	 * @param 	mixed 	$field 	Column name or associative array.
+	 * @param 	mixed 	$match 	Comparison value.
+	 * @return 	boolean
+	 */
+	public function delete_by($field = null, $match = null)
+	{
+		// Prepare WHERE clause.
+		if ( ! empty($field))
+		{
+			(is_array($field)) OR $field = array($field => $match);
+
+			foreach ($field as $key => $val)
+			{
+				if (is_int($key) && is_array($val))
+				{
+					$this->ci->db->where($val);
+				}
+				elseif (is_array($val))
+				{
+					$this->ci->db->where_in($key, $val);
+				}
+				else
+				{
+					$this->ci->db->where($key, $val);
+				}
+			}
+		}
+
+		// Proceed to delete.
+		$this->ci->db->delete('options');
+		return ($this->ci->db->affected_rows() > 0);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Create a new option item.
 	 * @access 	public
 	 * @param 	string 	$name 		the option's name.
@@ -96,87 +400,25 @@ class Kbcore_options extends CI_Driver
 	 * @param 	bool 	$required 	Whether to make the field required.
 	 * @return 	bool
 	 */
-	public function create(
-		$name, 
-		$value = null, 
-		$tab = '', 
-		$field_type = 'text', 
-		$options = '', 
+	public function add_item(
+		$name,
+		$value = null,
+		$tab = '',
+		$field_type = 'text',
+		$options = '',
 		$required = true)
 	{
-		$this->ci->db->insert('options', array(
+		return $this->create(array(
 			'name'       => strtolower($name),
-			'value'      => to_bool_or_serialize($value),
+			'value'      => $value,
 			'tab'        => $tab,
 			'field_type' => $field_type,
-			'options'    => to_bool_or_serialize($options),
+			'options'    => $options,
 			'required'   => ($required === true) ? 1 : 0,
 		));
-
-		return ($this->ci->db->affected_rows() > 0);
 	}
 
 	// ------------------------------------------------------------------------
-
-	/**
-	 * Delete a single option item by it's name.
-	 * @access 	public
-	 * @param 	mixed 	$name 	string|string[]
-	 * @return 	boolean
-	 */
-	public function delete($name)
-	{
-		return $this->delete_by('name', $name);
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Delete a single or multiple options by arbitrary WHERE clause.
-	 * @param 	mixed 	$field
-	 * @param 	mixed 	$match
-	 * @return 	boolean
-	 */
-	public function delete_by($field = null, $match = null)
-	{
-		// Arguments provided?
-		if ( ! empty($field))
-		{
-			if (is_array($field))
-			{
-				$this->ci->db->where($field);
-			}
-			elseif (is_array($match))
-			{
-				$this->ci->db->where_in($field, $match);
-			}
-			else
-			{
-				$this->ci->db->where($field, $match);
-			}
-		}
-
-		// Proceed to deleting.
-		$this->ci->db->delete('options');
-		return ($this->ci->db->affected_rows() > 0);
-	}
-
-	// ------------------------------------------------------------------------
-
-	public function update($name, array $data = array())
-	{
-		if (empty($data))
-		{
-			return false;
-		}
-
-		// Make sure to format value and options.
-		(isset($data['value'])) && $data['value'] = maybe_serialize($data['value']);
-		(isset($data['options'])) && $data['options'] = maybe_serialize($data['options']);
-
-		$this->ci->db->where('name', $name)->set($data)->update('options');
-		return ($this->ci->db->affected_rows() > 0);
-	}
 
 	/**
 	 * Update an option item if it exists or create it if it does not.
@@ -188,87 +430,13 @@ class Kbcore_options extends CI_Driver
 	public function set_item($name, $new_value = null)
 	{
 		// Not found? Create it.
-		if ( ! $this->get($name, false))
+		if ( ! $this->get($name))
 		{
-			return $this->create($name, $new_value);
+			return $this->add_item($name, $new_value);
 		}
 
 		// Found? update it.
-		$this->ci->db
-			->where('LOWER(name)', strtolower($name))
-			->set('value', to_bool_or_serialize($new_value))
-			->update('options');
-
-		return true;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Retrieve a single option item by it's name (primary key)
-	 * @access 	public
-	 * @param 	string 	$name 	The item's name.
-	 * @return 	object if found, else null
-	 */
-	public function get($name)
-	{
-		$row = $this->ci->db
-			->where('LOWER(name)', strtolower($name))
-			->get('options')
-			->row();
-
-		// Found? cache it then return it.
-		if ($row)
-		{
-			$row->value = from_bool_or_serialize($row->value);
-			$this->cached[$name] = $row->value;
-		}
-
-		return $row;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Retrieve multiple options by arbitrary WHERE clause.
-	 * @access 	public
-	 * @param 	mixed 	$field
-	 * @param 	mixed 	$match
-	 * @return 	array of objects if found, else null.
-	 */
-	public function get_many($field = null, $match = null)
-	{
-		// Arguments passed?
-		if ( ! empty($field))
-		{
-			if (is_array($field))
-			{
-				$this->ci->db->where($field);
-			}
-			elseif (is_array($match))
-			{
-				$this->ci->db->where_in($field, $match);
-			}
-			else
-			{
-				$this->ci->db->where($field, $match);
-			}
-		}
-
-		$rows = $this->ci->db->get('options')->result();
-
-		// Found any? Format them.
-		if ($rows)
-		{
-			foreach ($rows as &$row)
-			{
-				(empty($row->value)) OR $row->value = from_bool_or_serialize($row->value);
-				(empty($row->options)) OR $row->options = from_bool_or_serialize($row->options);
-			}
-		}
-
-		// Return the final result.
-		return $rows;
+		return $this->update($name, array('value' => $new_value));
 	}
 
 	// ------------------------------------------------------------------------
@@ -303,6 +471,7 @@ class Kbcore_options extends CI_Driver
 			return $item;
 		}
 
+		// Return the fall-back value.
 		return $default;
 	}
 
@@ -366,15 +535,15 @@ if ( ! function_exists('add_option'))
 	 * @param 	bool 	$required 	Whether to make the field required.
 	 * @return 	bool
 	 */
-	function add_option(
-		$name, 
-		$value = null, 
-		$tab = '', 
-		$field_type = 'text', 
+	function add_item(
+		$name,
+		$value = null,
+		$tab = '',
+		$field_type = 'text',
 		$options = '',
 		$required = true)
 	{
-		return get_instance()->kbcore->options->create($name, $value, $tab, $field_type, $options, $required);
+		return get_instance()->kbcore->options->add_item($name, $value, $tab, $field_type, $options, $required);
 	}
 }
 
