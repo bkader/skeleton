@@ -54,3 +54,5 @@ $lang['media'] = 'Media';
 $lang['library'] = 'Library';
 
 $lang['media_library'] = 'Media Library';
+
+$lang['media_upload'] = 'Media successfully uploaded.';
