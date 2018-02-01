@@ -390,9 +390,9 @@ class Kbcore_groups extends CI_Driver implements CRUD_interface
 		if ($groups)
 		{
 			$ids = array();
-			foreach ($groups as $user)
+			foreach ($groups as $group)
 			{
-				$ids[] = $user->id;
+				$ids[] = $group->id;
 			}
 
 			return $this->_parent->entities->delete_by('id', $ids);
@@ -432,9 +432,9 @@ class Kbcore_groups extends CI_Driver implements CRUD_interface
 		if ($groups)
 		{
 			$ids = array();
-			foreach ($groups as $user)
+			foreach ($groups as $object)
 			{
-				$ids[] = $user->id;
+				$ids[] = $object->id;
 			}
 
 			return $this->_parent->entities->remove_by('id', $ids);

@@ -59,7 +59,12 @@ $lang['set_profile_error']   = 'Impossible de mettre à jour le profil.';
 // ------------------------------------------------------------------------
 
 // Update avatar page.
-$lang['set_avatar_title'] = 'Mettre à jour Avatar';
+$lang['set_avatar_title']    = 'Mise à jour de l\'avatar';
+$lang['avatar']              = 'Avatar';
+$lang['update_avatar']       = 'Mise à jour de l\'avatar';
+$lang['add_image']           = 'Ajouter une image';
+$lang['use_gravatar']        = 'Utiliser Gravatar';
+$lang['use_gravatar_notice'] = 'Si vous cochez cette option, votre photo de profil sera supprimée et votre photo <a href="%s" target="_blank">Gravatar</a> sera utilisée à la place.';
 
 // ------------------------------------------------------------------------
 

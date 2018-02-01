@@ -760,3 +760,37 @@ input,
 textarea {
   font-family: 'Fira Sans', 'Droid Arabic Kufi', sans-serif;
 }
+
+/* Media Library */
+.attachments > .attachment {
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  margin-bottom: 30px;
+}
+.attachments > .attachment > a {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+}
+@media screen and (min-width: 480px) {
+  .attachments > .attachment {
+    height: 235px;
+  }
+}
+@media screen and (min-width: 768px) {
+  .attachments > .attachment {
+    height: 137px;
+  }
+}
+@media screen and (min-width: 992px) {
+  .attachments > .attachment {
+    height: 180px;
+  }
+}
+@media screen and (min-width: 1200px) {
+  .attachments > .attachment {
+    height: 127px;
+  }
+}

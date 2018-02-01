@@ -38,52 +38,58 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Kbcore_objects_m Class
+ * Media_lib Class
  *
- * This model handles operations done on objects table.
+ * This library handles all operations done on site's media files.
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @category 	Models
+ * @category 	Modules\Libraries
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
- * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
-class Kbcore_objects_m extends KB_Model
+class Media_lib
 {
 	/**
-	 * Class constuctor
+	 * Instance of CI object.
+	 * @var object
+	 */
+	private $ci;
+
+	/**
+	 * Class constructor.
 	 * @return 	void
 	 */
 	public function __construct()
 	{
-		// Model preferences.
-		$this->_table      = 'objects';
-		$this->primary_key = 'guid';
+		// Prepare instance of CI object.
+		$this->ci =& get_instance();
 
-		// Add observers.
-		array_unshift($this->before_get, 'join_entity');
-
-		// Call parent's constructor.
-		parent::__construct();
+		// Make sure to load media language file.
+		$this->ci->load->language('media/media_admin');
 	}
 
 	// ------------------------------------------------------------------------
-	// Observers.
-	// ------------------------------------------------------------------------
 
 	/**
-	 * Make sure to always join the entity before getting the object.
+	 * Retrieve all media stored in database.
 	 * @access 	public
-	 * @param 	none
+	 * @param 	int 	$limit 	MySQL limit used by pagination.
+	 * @param 	int 	$offset 	MySQL offset used by pagination.
 	 * @return 	void
 	 */
-	protected function join_entity()
+	public function list_media($limit = 0, $offset = 0)
 	{
-		$this->_database->join('entities', 'objects.guid = entities.id');
-		$this->_database->where('entities.type', 'object');
+		// global $KB;
+		return $this->ci->kbcore->objects->get_many(
+			'subtype',
+			'attachment',
+			$limit,
+			$offset
+		);
 	}
 
 }

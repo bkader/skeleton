@@ -7,6 +7,9 @@
 
     $(document).ready(function() {
 
+        $('.sortable').sortable();
+        $('.sortable').disableSelection();
+
         // Some Toastr options.
         toastr.options = {
             "closeButton": true,

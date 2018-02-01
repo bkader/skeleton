@@ -38,7 +38,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Some of our drivers need to respect this interface's 
+ * Some of our drivers need to respect this interface's
  * structure. So we are importing it here.
  */
 require_once('CRUD_interface.php');
@@ -79,6 +79,7 @@ class Kbcore extends CI_Driver_Library
 			'entities',
 			'groups',
 			'menus',
+			'media',
 			'metadata',
 			'options',
 			'objects',
@@ -86,6 +87,7 @@ class Kbcore extends CI_Driver_Library
 			'relations',
 			'users',
 			'variables',
+			'theme',
 		);
 
 		// Here we load all what we need.
@@ -96,7 +98,7 @@ class Kbcore extends CI_Driver_Library
 		$this->ci->load->config('defaults');
 
 		/**
-		 * Here we are making an instance of this driver global 
+		 * Here we are making an instance of this driver global
 		 * so that themes, plugins or others can use it.
 		 */
 		global $KB, $DB;
@@ -119,20 +121,21 @@ class Kbcore extends CI_Driver_Library
 		$this->ci->load->helper('url');
 
 		/**
-		 * Loading the language helper is now useless because the 
+		 * Loading the language helper is now useless because the
 		 * lang() function was moved to KB_Lang.php file so it is
 		 * available even if we don't load the helpe.
 		 */
 		// $this->ci->load->helper('language');
 
 		// Loading theme library.
-		$this->ci->load->library('theme');
+		// $this->ci->load->library('theme');
+		$this->ci->theme =& $this->theme;
 
 		// Make current language available to themes.
 		$this->_languages_list();
 
 		// Load main language file.
-		$this->ci->load->language('bkader_main');
+		$this->ci->load->language('main');
 
 		// Attempt to authenticate the current user.
 		// $this->auth->authenticate();
@@ -385,7 +388,7 @@ class Kbcore extends CI_Driver_Library
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Pass available site languages to theme views in order to use them 
+	 * Pass available site languages to theme views in order to use them
 	 * for language switch.
 	 * @access 	private
 	 * @param 	void

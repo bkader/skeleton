@@ -33,6 +33,8 @@ add_action('after_theme_setup', function() {
 	add_script("bootstrap", 'assets/js/bootstrap.min');
 	add_style('zoom', get_common_url('css/zoom.min'));
 	add_script('zoom', get_common_url('js/zoom.min'));
+
+	//
 });
 
 // ------------------------------------------------------------------------
@@ -50,6 +52,13 @@ add_action('theme_menus', function() {
 		'footer-menu'  => 'lang:footer_menu',
 		'sidebar-menu' => 'lang:sidebar_menu',
 	));
+});
+
+// ------------------------------------------------------------------------
+
+add_action('theme_images', function() {
+	add_image_size('post', 220, 180, true);
+	add_image_size('avatar', 100, 100, true);
 });
 
 // ------------------------------------------------------------------------

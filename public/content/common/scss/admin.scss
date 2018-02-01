@@ -385,3 +385,37 @@ input,
 textarea {
     font-family: 'Fira Sans', 'Droid Arabic Kufi', sans-serif;
 }
+
+/* Media Library */
+.attachments {
+
+    > .attachment {
+        overflow: hidden;
+        position: relative;
+        cursor: pointer;
+        margin-bottom: 30px;
+
+        > a {
+            display: block;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+        }
+
+        @media screen and (min-width: $break-xsmall) {
+            height: 235px;
+        }
+
+        @media screen and (min-width: $break-small) {
+            height: 137px;
+        }
+
+        @media screen and (min-width: $break-medium) {
+            height: 180px;
+        }
+
+        @media screen and (min-width: $break-large) {
+            height: 127px;
+        }
+    }
+}

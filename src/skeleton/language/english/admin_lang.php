@@ -38,38 +38,60 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Kbcore_options_m Class
- *
- * This model handles operations done on options table.
+ * Main admin language (English)
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @category 	Models
+ * @category 	Language
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
-class Kbcore_options_m extends KB_Model
-{
-	/**
-	 * Class constructor
-	 * @return 	void
-	 */
-	public function __construct()
-	{
-		// Model preferences.
-		$this->_table      = 'options';
-		$this->primary_key = 'name';
 
-		// Add observers.
-		array_unshift($this->before_create, 'prepare_input(value,options)');
-		array_unshift($this->before_update, 'prepare_input(value,options)');
-		array_unshift($this->after_get,     'prepare_output(value,options)');
+$lang['dashboard']  = 'Dashboard';
+$lang['status']     = 'Status';
+$lang['action']     = 'Action';
+$lang['advanced']   = 'Advanced';
+$lang['created_by'] = 'Created by';
+$lang['updated_by'] = 'Updated by';
 
-		// Call parent's constructor.
-		parent::__construct();
-	}
+$lang['are_your_sure'] = 'Are you sure you want to %s?';
 
-}
+// General input fields and labels.
+$lang['name']        = 'Name';
+$lang['slug']        = 'Slug';
+$lang['title']       = 'Title';
+$lang['description'] = 'Description';
+$lang['content']     = 'Content';
+$lang['unspecified'] = 'Unspecified';
+$lang['url']         = 'URL';
+
+$lang['meta_title']       = 'Meta Title';
+$lang['meta_description'] = 'Meta Description';
+$lang['meta_keywords']    = 'Meta Keywords';
+
+// Users.
+$lang['user'] = 'User';
+$lang['users'] = 'Users';
+
+// Media.
+$lang['media'] = 'Media';
+$lang['library'] = 'Library';
+
+// Themes.
+$lang['theme'] = 'Theme';
+$lang['themes'] = 'Themes';
+
+// Menus.
+$lang['menu'] = 'Menu';
+$lang['menus'] = 'Menus';
+
+// Menus.
+$lang['plugin'] = 'Plugin';
+$lang['plugins'] = 'Plugins';
+
+// Languages.
+$lang['language'] = 'Language';
+$lang['languages'] = 'Languages';

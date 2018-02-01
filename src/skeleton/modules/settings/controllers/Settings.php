@@ -217,11 +217,19 @@ class Settings extends User_Controller
 		}
 		else
 		{
+			// Check CSRF.
+			if ( ! $this->check_csrf())
+			{
+				set_alert(lang('error_csrf'), 'error');
+			}
 			// Proceed to update.
-			$this->settings->change_password(
-				$this->auth->user_id(),
-				$this->input->post('npassword', true)
-			);
+			else
+			{
+				$this->settings->change_password(
+					$this->auth->user_id(),
+					$this->input->post('npassword', true)
+				);
+			}
 
 			// Redirect back to same page.
 			redirect('settings/password', 'refresh');
@@ -276,11 +284,19 @@ class Settings extends User_Controller
 		}
 		else
 		{
+			// We first check CSRF.
+			if ( ! $this->check_csrf())
+			{
+				set_alert(lang('error_csrf'), 'error');
+			}
 			// Prepare email change.
-			$this->settings->prep_change_email(
-				$this->auth->user_id(),
-				$this->input->post('nemail', true)
-			);
+			else
+			{
+				$this->settings->prep_change_email(
+					$this->auth->user_id(),
+					$this->input->post('nemail', true)
+				);
+			}
 
 			// Redirect back to same page.
 			redirect('settings/email', 'refresh');
@@ -297,7 +313,137 @@ class Settings extends User_Controller
 	 */
 	public function avatar()
 	{
-		//TODO: develop this method.
+		// Prepare form validation.
+		$this->prep_form(array(
+			array(	'field' => 'user_id',
+					'label' => 'ID',
+					'rules' => 'required')
+		));
+
+		// Before submitting the form.
+		if ($this->form_validation->run() == false)
+		{
+			// Add data to form.
+			$data['hidden'] = $this->create_csrf();
+			$data['hidden']['user_id'] = $this->c_user->id;
+
+			// Set page title and render view.
+			$this->theme
+				->set_title(lang('update_avatar'))
+				->render($data);
+		}
+		else
+		{
+			return $this->up_avatar();
+		}
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Upload and update avatar.
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
+	public function up_avatar()
+	{
+		// Make sure CSRF if valid.
+		if ( ! $this->check_csrf())
+		{
+			set_alert(lang('error_csrf'), 'error');
+			redirect('settings/avatar');
+			exit;
+		}
+
+		// Collect data first.
+		$user_id = (int) $this->input->post('user_id', true);
+		$use_gravatar = ($this->input->post('use_gravatar') == '1');
+
+		// Make sure the user is updating his/her avatar.
+		if ($user_id !== $this->c_user->id)
+		{
+			set_alert(lang('error_csrf'), 'error');
+			redirect('settings/avatar');
+			exit;
+		}
+
+		// Using gravatar instead? Simply delete uploaded avatar.
+		if ($use_gravatar === true)
+		{
+			@unlink(FCPATH."content/uploads/avatars/{$this->c_user->avatar}.jpg");
+			set_alert(lang('set_avatar_success'), 'success');
+			redirect('settings/avatar');
+			exit;
+		}
+
+		// We generate the file name based on user's email address.
+		$file_name = $this->c_user->avatar.'.jpg';
+
+		$config['upload_path']   = './content/uploads/avatars/';
+		$config['file_name']     = $file_name;
+		$config['allowed_types'] = 'gif|jpg|png';
+		$config['overwrite']     = true;
+
+		$this->load->library('upload', $config);
+		unset($config);
+
+		// Proceed to upload.
+		if ( ! $this->upload->do_upload('avatar'))
+		{
+			log_message('error', $this->upload->display_errors());
+			set_alert(lang('set_avatar_error'), 'error');
+			redirect('settings/avatar');
+			exit;
+		}
+
+		// Everything went well, proceed.
+		$data = $this->upload->data();
+
+		$this->load->library('image_lib');
+
+		$config['image_library']  = 'GD2';
+		$config['source_image']   = $data['full_path'];
+		$config['maintain_ratio'] = true;
+
+		if ($data['image_width'] > $data['image_height'])
+		{
+			$config['height'] = 100;
+			$config['width'] = ($data['image_width'] * 100) / $data['image_height'];
+		}
+		else
+		{
+			$config['width'] = 100;
+			$config['height'] = ($data['image_height'] * 100) / $data['image_width'];
+		}
+		$this->image_lib->initialize($config);
+
+		// Error resizing?
+		if ( ! $this->image_lib->resize())
+		{
+			set_alert(lang('set_avatar_error'), 'error');
+			redirect('settings/avatar');
+			exit;
+		}
+
+		// Continue.
+		$this->image_lib->clear();
+
+		$config['width']  = 100;
+		$config['height'] = 100;
+		$this->image_lib->initialize($config);
+
+		if ( ! $this->image_lib->crop())
+		{
+			log_message('error', $this->upload->display_errors());
+			set_alert(lang('set_avatar_error'), 'error');
+			redirect('settings/avatar');
+			exit;
+		}
+
+		set_alert(lang('set_avatar_success'), 'success');
+		redirect('settings/avatar');
+		exit;
 	}
 
 }

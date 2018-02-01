@@ -5,7 +5,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * Base Site URL.
  * @see application/config/config.php:6
  */
-$config['base_url'] = 'http://stage.example.com/cibase/'; //http://demo.ianhub.com/skeleton/';
+$config['base_url'] = 'http://stage.example.com/skeleton/';
 
 /**
  * Index File

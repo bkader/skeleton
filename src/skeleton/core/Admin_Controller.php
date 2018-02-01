@@ -73,7 +73,7 @@ class Admin_Controller extends User_Controller
 		$this->_switch_to_admin();
 
 		// Load language file.
-		$this->load->language('bkader_admin');
+		$this->load->language('admin');
 
 		$this->_load_assets();
 

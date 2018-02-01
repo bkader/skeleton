@@ -275,19 +275,16 @@ class Kbcore_menus extends CI_Driver
 		// If locations are already stored, update them.
 		if ($option)
 		{
-			return $this->_parent->options->set_item(
-				'theme_menus_'.$this->_theme(),
-				$locations
-			);
+			return $this->_parent->options->set_item($option_name, $locations);
 		}
 
 		// If the option does not exist, create it.
-		return $this->_parent->options->create(
-			$option_name,
-			$locations,
-			'menus',
-			0
-		);
+		return $this->_parent->options->create(array(
+			'name'     => $option_name,
+			'value'    => $locations,
+			'tab'      => 'menus',
+			'required' => 0,
+		));
 	}
 
 	// --------------------------------------------------------------------
@@ -404,7 +401,7 @@ class Kbcore_menus extends CI_Driver
 		}
 
 		// TODO:
-		// This was removed because it was causing menus 
+		// This was removed because it was causing menus
 		// not to be removed.
 		// Make sure the menu exists.
 		// if ( ! $this->get_menu($menu_id))

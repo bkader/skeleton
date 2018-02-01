@@ -38,52 +38,19 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Kbcore_groups_m Class
- *
- * This model handles operations done on groups table.
+ * Media module language file (English)
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @category 	Models
+ * @category 	Modules\Language
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
- * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
-class Kbcore_groups_m extends KB_Model
-{
-	/**
-	 * Class constuctor
-	 * @return 	void
-	 */
-	public function __construct()
-	{
-		// Model preferences.
-		$this->_table      = 'groups';
-		$this->primary_key = 'guid';
 
-		// Add observers.
-		array_unshift($this->before_get, 'join_entity');
+$lang['media'] = 'Media';
+$lang['library'] = 'Library';
 
-		// Call parent's constructor.
-		parent::__construct();
-	}
-
-	// ------------------------------------------------------------------------
-	// Observers.
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Make sure to always join the entity before getting the group.
-	 * @access 	public
-	 * @param 	none
-	 * @return 	void
-	 */
-	protected function join_entity()
-	{
-		$this->_database->join('entities', 'groups.guid = entities.id');
-		$this->_database->where('entities.type', 'group');
-	}
-
-}
+$lang['media_library'] = 'Media Library';

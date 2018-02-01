@@ -133,10 +133,7 @@ class Kbcore_options extends CI_Driver implements CRUD_interface
 	 */
 	public function get($id)
 	{
-		// If the item was cached, use it. Otherwise get it.
-		return (isset($this->cached[$name]))
-			? $this->cached[$name]
-			: $this->get_by('name', $id);
+		return $this->get_by('name', $id);
 	}
 
 	// ------------------------------------------------------------------------

@@ -1,11 +1,11 @@
 {
-	"name": "Menus Module",
-	"description": "Manage site menus and locations.",
+	"name": "Media Manager",
+	"description": "Manage site media files.",
 	"version": "0.5.0",
 	"license": "MIT",
 	"author": "Kader Bouyakoub",
 	"author_uri": "https://github.com/bkader",
 	"author_email": "bkader@mail.com",
-	"admin_menu": "lang:menus",
-	"admin_order": 3
+	"admin_menu": "lang:media",
+	"admin_order": 1
 }

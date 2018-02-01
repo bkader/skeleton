@@ -390,9 +390,9 @@ class Kbcore_objects extends CI_Driver implements CRUD_interface
 		if ($objects)
 		{
 			$ids = array();
-			foreach ($objects as $user)
+			foreach ($objects as $object)
 			{
-				$ids[] = $user->id;
+				$ids[] = $object->id;
 			}
 
 			return $this->_parent->entities->delete_by('id', $ids);
@@ -411,7 +411,7 @@ class Kbcore_objects extends CI_Driver implements CRUD_interface
 	 */
 	public function remove($id)
 	{
-		return $this->_parent->entities->remove($id);
+		return $this->remove_by('id', $id);
 	}
 
 	// ------------------------------------------------------------------------
@@ -432,9 +432,9 @@ class Kbcore_objects extends CI_Driver implements CRUD_interface
 		if ($objects)
 		{
 			$ids = array();
-			foreach ($objects as $user)
+			foreach ($objects as $object)
 			{
-				$ids[] = $user->id;
+				$ids[] = $object->id;
 			}
 
 			return $this->_parent->entities->remove_by('id', $ids);
