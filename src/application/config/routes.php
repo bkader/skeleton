@@ -62,11 +62,11 @@ $route['translate_uri_dashes'] = FALSE;
 // ------------------------------------------------------------------------
 
 /**
- * The application has a built-in administration panel. Each module can 
+ * The application has a built-in administration panel. Each module can
  * have context controllers.
  *
  * @example 	Admin Controllers.
- * Each module can have a controller named "Admin.php". It will be then 
+ * Each module can have a controller named "Admin.php". It will be then
  * have an administration section and will be automatically added to
  * dashboard's menu. admin controller must extends "Admin_Controller" class.
  * To access admin section of a module, simply go to:
@@ -78,18 +78,18 @@ $route['translate_uri_dashes'] = FALSE;
  * "Ajax.php" controller that should extend our "Ajax_Controller" class.
  *
  * @example 	Process Controllers.
- * Sometimes, we want to create temporary keys they you will use in order 
- * to execute certain operation. i.e: When an account is created, an 
- * activation code is temporary created and stored in variables table. 
+ * Sometimes, we want to create temporary keys they you will use in order
+ * to execute certain operation. i.e: When an account is created, an
+ * activation code is temporary created and stored in variables table.
  * In order to activate the account, the user must go to:
  * <site_url>/process/users/activate/<code>.
- * Another example is when changing the email address. The code and email 
+ * Another example is when changing the email address. The code and email
  * are store in database and in order to proceed, the user must go to:
  * <site_url>/process/settings/email/<code>
  *
  * NOTE:
- * You can create as any site areas as you want. Simply add the context 
- * you want to the routing below. Let's say I want to add an "Api" 
+ * You can create as any site areas as you want. Simply add the context
+ * you want to the routing below. Let's say I want to add an "Api"
  * controller, all I need to do is adding to like so:
  * (admin|ajax|process) => (admin|ajax|process|api).
  */
@@ -100,7 +100,7 @@ Route::context('(admin|ajax|process)', '$1', array(
 
 /**
  * Because we are using Static Routing like Laravel's,
- * it is IMPORTANT to keep the line below ALWYAS at the 
+ * it is IMPORTANT to keep the line below ALWYAS at the
  * bottom of this file.
  */
 $route = Route::map($route);

@@ -56,3 +56,10 @@ $lang['library'] = 'Library';
 $lang['media_library'] = 'Media Library';
 
 $lang['media_upload'] = 'Media successfully uploaded.';
+$lang['drop_media'] = 'Drag and drop files here.';
+
+// Alerts.
+$lang['media_delete_alert'] = "You are about to permanently delete this item from your site.<br>This action cannot be undone.<br>'Cancel' to stop, 'OK' to delete.";
+
+$lang['media_delete_success'] = 'Media item successfully deleted.';
+$lang['media_delete_error']   = 'Unable to delete media item.';

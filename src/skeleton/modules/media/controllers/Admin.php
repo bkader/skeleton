@@ -59,10 +59,20 @@ class Admin extends Admin_Controller
 	 */
 	public function __construct()
 	{
+		// Add AJAX methods.
+		array_unshift(
+			$this->ajax_methods,
+			'create',
+			'show',
+			'update',
+			'delete'
+		);
 		parent::__construct();
 
 		// Make sure to load media library.
 		$this->load->language('media/media_admin');
+
+		$this->theme->add('js', get_common_url('js/media'), 'media');
 	}
 
 	// ------------------------------------------------------------------------
@@ -80,28 +90,6 @@ class Admin extends Admin_Controller
 			->add('css', get_common_url('css/dropzone'), 'dropzone')
 			->add('js', get_common_url('js/dropzone'), 'dropzone');
 
-		/**
-		 * Here we are preparing the upload URL and the
-		 * inline dropzone handler script.
-		 */
-		$upload_url = admin_url('media/upload');
-		$dropzone =<<<EOT
-\n\t<script>
-	var drop = new Dropzone(document.body, {
-		url: "{$upload_url}",
-		init: function() {
-			this.on('thumbnail', function(file, dataUri) {
-				$('.attachments').append('<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 attachment attachment"><a href="#" style="background-image: url('+dataUri+')"></a></div>');
-			});
-		},
-		success: function(file, response) {
-			location.reload();
-		}
-	});
-	</script>
-EOT;
-		$this->theme->add_inline('js', $dropzone);
-
 		// Prepare form validation.
 		$this->prep_form();
 
@@ -116,17 +104,43 @@ EOT;
 
 	// ------------------------------------------------------------------------
 
-	/**
-	 * Media upload handler method.
-	 * @access 	public
-	 * @return 	void
-	 */
-	public function upload()
+	public function create_new()
+	{}
+
+	// ------------------------------------------------------------------------
+
+	public function edit($id = 0)
+	{
+		echo "edit media #{$id}";
+	}
+
+	// ------------------------------------------------------------------------
+
+	public function show($id = 0)
+	{
+		$media = $this->kbcore->media->get($id);
+		if ( ! $media)
+		{
+			return;
+		}
+
+		$media->created_at = date('Y/m/d', $media->created_at);
+		$media->details = $this->kbcore->metadata->get_meta($id, 'media_meta')->value;
+
+		$this->response->header = 200;
+		$this->response->message = json_encode($media);
+	}
+
+	// ------------------------------------------------------------------------
+	// AJAX Methods.
+	// ------------------------------------------------------------------------
+
+	public function create()
 	{
 		// Make sure to create the upload folder if not found.
 		if ( ! is_dir(FCPATH.'content/uploads/'.date('Y/m/')))
 		{
-			mkdir(FCPATH.'content/uploads/'.date('Y/m/'), 0777);
+			mkdir(FCPATH.'content/uploads/'.date('Y/m/'), 0777, true);
 		}
 
 		// We prepare upload library configuration.
@@ -142,8 +156,8 @@ EOT;
 		// An error occured? Return it to browser.
 		if ( ! $this->upload->do_upload('file'))
 		{
-			echo $this->upload->display_errors();
-			die();
+			$this->response->header = 500;
+			$this->response->message = $this->upload->display_errors();
 		}
 		// File uploaded? Proceed.
 		else
@@ -157,7 +171,8 @@ EOT;
 			 */
 			$media = array(
 				'username' => base_url('content/uploads/'.date('Y/m/').$data['file_name']),
-				'name' => $data['raw_name'],
+				'name'    => $data['raw_name'],
+				'content' => $data['raw_name'],
 				'media_meta' => array(
 					'width' => $data['image_width'],
 					'height' => $data['image_height'],
@@ -171,7 +186,12 @@ EOT;
 			);
 
 			// Proceed to creating media object.
-			$this->kbcore->media->create($media);
+			$media_id = $this->kbcore->media->create($media);
+			if ( ! $media_id)
+			{
+				$this->response->header = 500;
+				return;
+			}
 
 			/**
 			 * We retrieve all current theme's images sizes from
@@ -209,8 +229,61 @@ EOT;
 			}
 
 			// Simple message that's is return to use.
-			echo lang('media_upload');
-			die();
+			$this->response->header  = 200;
+			$this->response->message = lang('media_upload');
 		}
 	}
+
+	// ------------------------------------------------------------------------
+
+	public function update($id)
+	{
+		$_put = file_get_contents('php://input');
+		// $temp_data = $data = array();
+		// parse_str($_put, $temp_data);
+
+		// foreach ($temp_data as $key => $val)
+		// {
+		// 	$data[$key] = $temp_data[$key][0]['value'];
+		// }
+		$this->response->header = 200;
+		$this->response->message = 'updated';
+	}
+
+	// ------------------------------------------------------------------------
+
+	public function delete($id = 0)
+	{
+		if ( ! is_numeric($id) OR $id <= 0)
+		{
+			return;
+		}
+
+		// Make sure the file exists.
+		$media = $this->kbcore->media->get($id);
+		if ( ! $media)
+		{
+			// $this->response->header = 400;
+			return;
+		}
+
+		// Proceed to remove from database.
+		if ($this->kbcore->media->delete($id))
+		{
+			$this->response->header = 200;
+			$this->response->message = lang('media_delete_success');
+
+			// Make sure to delete the file.
+			@array_map(
+				'unlink',
+				glob(FCPATH.'content/uploads/'.date('Y/m/', $media->created_at).$media->content.'*.*')
+			);
+		}
+		else
+		{
+			$this->response->header = 500;
+			$this->response->message = lang('media_delete_error');
+		}
+	}
+
 }

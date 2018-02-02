@@ -386,6 +386,11 @@ textarea {
     font-family: 'Fira Sans', 'Droid Arabic Kufi', sans-serif;
 }
 
+[data-dropzone] {
+    padding: 30px 30px 0;
+    background-color: #fefefe;
+    border: 1px dashed #ddd;
+}
 /* Media Library */
 .attachments {
 
@@ -395,27 +400,102 @@ textarea {
         cursor: pointer;
         margin-bottom: 30px;
 
-        > a {
+        > .attachment-inner {
             display: block;
             width: 100%;
             height: 100%;
             background-size: cover;
+            position: relative;
+
+            > .attachment-action {
+                opacity: 0;
+                text-align: center;
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                background-color: rgba(0, 0, 0, .5);
+                -webkit-transition: opacity 100ms ease-in-out;
+                transition: opacity 100ms ease-in-out;
+
+                > .btn + .btn {
+                    margin-left: 15px;
+                }
+            }
+
+            &:hover > .attachment-action {
+                opacity: 1;
+            }
+        }
+
+        @media screen and (max-width: $break-xsmall) {
+            height: 135px;
+
+            .attachment-action {
+                padding-top: 53px;
+            }
         }
 
         @media screen and (min-width: $break-xsmall) {
             height: 235px;
+
+            .attachment-action {
+                padding-top: 103px;
+            }
         }
 
         @media screen and (min-width: $break-small) {
             height: 137px;
+
+            .attachment-action {
+                padding-top: 53px;
+            }
         }
 
         @media screen and (min-width: $break-medium) {
             height: 180px;
+
+            .attachment-action {
+                padding-top: 73px;
+            }
         }
 
         @media screen and (min-width: $break-large) {
             height: 127px;
+
+            .attachment-action {
+                padding-top: 53px;
+            }
         }
     }
+}
+
+/* Helpers */
+.m0 {margin:0!important}
+.m5 {margin:5px!important}
+.m10 {margin:10px!important}
+.m15 {margin:15px!important}
+.mt0 {margin-top:0!important}
+.mt5 {margin-top:5px!important}
+.mt10 {margin-top:10px!important}
+.mt15 {margin-top:15px!important}
+.mb0 {margin-bottom:0!important}
+.mb5 {margin-bottom:5px!important}
+.mb10 {margin-bottom:10px!important}
+.mb15 {margin-bottom:15px!important}
+.ml0 {margin-left:0!important}
+.ml5 {margin-left:5px!important}
+.ml10 {margin-left:10px!important}
+.ml15 {margin-left:15px!important}
+.mr0 {margin-right:0!important}
+.mr5 {margin-right:5px!important}
+.mr10 {margin-right:10px!important}
+.mr15 {margin-right:15px!important}
+
+.txof {
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

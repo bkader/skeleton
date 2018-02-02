@@ -1,14 +1,10 @@
-(function(window, undefined) {
+(function($) {
     "use strict";
-
-    // Localize globals.
-    var document = window.document,
-        $ = window.$;
 
     $(document).ready(function() {
 
-        $('.sortable').sortable();
-        $('.sortable').disableSelection();
+        // $('.sortable').sortable();
+        // $('.sortable').disableSelection();
 
         // Some Toastr options.
         toastr.options = {
@@ -26,6 +22,16 @@
             toastr.options.rtl = true;
         }
 
+        $(document).on('click', '[data-modal]', function(e) {
+            e.preventDefault();
+            var that = $(this),
+                id = that.attr('data-media-id');
+            var target = $(this).attr('data-modal');
+            var modal = document.getElementById(target).innerHTML;
+            var the_modal = Handlebars.compile(modal, {id: id});
+            $(modal).modal();
+        });
+
         /**
          * (A)Synchronous anchors.
          */
@@ -39,6 +45,10 @@
 
             /* Does it have a confirm message? */
             if (typeof confirm !== "undefined" && confirm !== false) {
+                var _modal = document.getElementById("tpl-confirm").innerHTML;
+                var _the_modal = Handlebars.compile(_modal);
+                $(_the_modal({message: confirm, href: url})).modal();
+                return false;
                 bootbox.confirm({
                     size: "small",
                     message: confirm,
@@ -130,4 +140,4 @@
         }, 'json');
     }
 
-})(window);
+})(jQuery);

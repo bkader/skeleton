@@ -73,6 +73,12 @@ class Ajax_Controller extends KB_Controller
 	protected $response;
 
 	/**
+	 * Whether to secure the request.
+	 * @var boolean
+	 */
+	protected $secured = true;
+
+	/**
 	 * Class constructor
 	 * @return 	void
 	 */
@@ -81,7 +87,8 @@ class Ajax_Controller extends KB_Controller
 		parent::__construct();
 
 		$this->response = new stdClass();
-		$this->response->status = false;
+		$this->response->header  = 400;
+		$this->response->status  = false;
 		$this->response->message = null;
 
 		// We make sure that the controller accepts only AJAX requests.
@@ -91,7 +98,7 @@ class Ajax_Controller extends KB_Controller
 		}
 
 		/**
-		 * Disable parsing of the {elapsed_time} and {memory_usage} 
+		 * Disable parsing of the {elapsed_time} and {memory_usage}
 		 * pseudo-variables because we don't need them.
 		 */
 		$this->output->parse_exec_vars = FALSE;
@@ -108,34 +115,39 @@ class Ajax_Controller extends KB_Controller
 	 */
 	public function _remap($method, $params = array())
 	{
-		/**
-		 * Here we make sure the action is provided and the 
-		 * method to call exists.
-		 */
-		if ( ! $this->input->request('action') 
-			OR ! method_exists($this, $method))
+		// Secured ?
+		if ($this->secured === true)
 		{
-			$this->response->status = false;
-			$this->response->message = 'Bad Request';
-			return $this->response();
+			// Check action.
+			if ( ! $this->input->request('action'))
+			{
+				$this->response->message = 'Bad Request';
+				return $this->response();
+			}
+
+			// We now compare the request method to allowed actions.
+			$_action = $this->input->request('action');
+			$_method = $this->input->server('REQUEST_METHOD');
+
+			if (($_method == 'GET' && ! in_array($_action, $this->actions_get))
+				OR ($_method == 'POST' && ! in_array($_action, $this->actions_post)))
+			{
+				$this->response->message = 'Bad Request';
+				return $this->response();
+			}
+
+			// We first check the authenticity of the safe URL.
+			if ( ! check_safe_url())
+			{
+				$this->response->message = lang('error_safe_url');
+			}
 		}
 
-		// We now compare the request method to allowed actions.
-		$_action = $this->input->request('action');
-		$_method = $this->input->server('REQUEST_METHOD');
-
-		if (($_method == 'GET' && ! in_array($_action, $this->actions_get)) 
-			OR ($_method == 'POST' && ! in_array($_action, $this->actions_post)))
+		// We make sure the method exists.
+		if ( ! method_exists($this, $method))
 		{
-			$this->response->status = false;
 			$this->response->message = 'Bad Request';
 			return $this->response();
-		}
-
-		// We first check the authenticity of the safe URL.
-		if ( ! check_safe_url())
-		{
-			$this->response->message = lang('error_safe_url');
 		}
 
 		// Call the method.
@@ -152,8 +164,7 @@ class Ajax_Controller extends KB_Controller
 	 */
 	protected function response()
 	{
-		if ((isset($this->response->status) && $this->response->status === false) 
-			&& ! isset($this->response->message))
+		if ( ! isset($this->response->message))
 		{
 			$this->response->message = 'Bad Request';
 		}
@@ -161,7 +172,8 @@ class Ajax_Controller extends KB_Controller
 		// Proceed to output.
 		return $this->output
 			->set_content_type('json')
-			->set_output(json_encode($this->response));
+			->set_status_header($this->response->header)
+			->set_output(json_encode($this->response->message));
 	}
 
 }

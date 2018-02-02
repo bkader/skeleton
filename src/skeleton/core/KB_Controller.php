@@ -40,9 +40,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 /**
  * KB_Controller Class
  *
- * All controllers should extend this class if you want to use all skeleton 
- * features OR you can create your own MY_Controller inside application/core 
- * and make it extend this class. Then, all your controllers may extend your 
+ * All controllers should extend this class if you want to use all skeleton
+ * features OR you can create your own MY_Controller inside application/core
+ * and make it extend this class. Then, all your controllers may extend your
  * custom class, MY_Controller.
  *
  * @package 	CodeIgniter
@@ -87,6 +87,18 @@ class KB_Controller extends CI_Controller
 	protected $scripts = array();
 
 	/**
+	 * Array of method that accept only AJAX requests.
+	 * @var array
+	 */
+	protected $ajax_methods = array();
+
+	/**
+	 * Object used by AJAX methods as response.
+	 * @var object
+	 */
+	protected $response;
+
+	/**
 	 * Class constructor
 	 * @return 	void
 	 */
@@ -118,7 +130,81 @@ class KB_Controller extends CI_Controller
 		log_message('info', 'KB_Controller Class Initialized');
 	}
 
-	// --------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+
+	public function _remap($method, $params = array())
+	{
+		// The method is not found? Nothing to do.
+		if ( ! method_exists($this, $method))
+		{
+			show_404();
+		}
+
+		// Not an AJAX method?
+		if ( ! in_array($method, $this->ajax_methods))
+		{
+			return call_user_func_array(array($this, $method), $params);
+		}
+
+		// We make sure the request done is AJAX.
+		if ( ! $this->input->is_ajax_request())
+		{
+			show_404();
+		}
+
+		// Prepare the response object.
+		$this->response          = new stdClass();
+		$this->response->header  = 400;
+		$this->response->message = 'Bad Request';
+
+		/**
+		 * Disable parsing of the {elapsed_time} and {memory_usage}
+		 * pseudo-variables because we don't need them.
+		 */
+		$this->output->parse_exec_vars = false;
+
+		/**
+		 * If we are on an "Admin" controller, we make sure to secure
+		 * requests by checking the safe url and making sure that an
+		 * administration is performing the action.
+		 */
+		if ($this->router->fetch_class() === 'Admin'
+			&& ( ! check_safe_url() OR ! $this->auth->is_admin()))
+		{
+			$this->response->header = 401;
+			$this->response->message = lang('error_action_permission');
+			return $this->response();
+		}
+
+		// Let the method perform actions.
+		call_user_func_array(array($this, $method), $params);
+
+		// Always return the final response.
+		return $this->response();
+	}
+
+	// ------------------------------------------------------------------------
+
+	protected function response()
+	{
+		// Make sure to always have a message and content type.
+		(isset($this->response->message)) OR $this->response->message = 'Bad Request';
+		(isset($this->response->type)) OR $this->response->type = 'json';
+
+		// Make sure to json_encode message if using JSON.
+		if ($this->response->type === 'json')
+		{
+			$this->response->message = json_encode($this->response->message);
+		}
+
+		// Return the final output.
+		return $this->output
+			->set_content_type($this->response->type)
+			->set_status_header($this->response->header)
+			->set_output($this->response->message);
+	}
+
+	// ------------------------------------------------------------------------
 
 	/**
 	 * Prepare form validation.
@@ -155,7 +241,7 @@ class KB_Controller extends CI_Controller
 		}
 	}
 
-	// --------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
 	/**
 	 * Generate a CSRF protection token.
@@ -183,7 +269,7 @@ class KB_Controller extends CI_Controller
 		return array($csrf_key => $csrf_value);
 	}
 
-	// --------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
 	/**
 	 * Checks a CSRF protection token.

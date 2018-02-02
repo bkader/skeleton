@@ -171,7 +171,9 @@ class Admin_Controller extends User_Controller
 			->add('css', get_common_url('css/toastr'), 'toastr')
 			->add('css', get_common_url('css/admin'), 'admin')
 			// Add admin panel JavaScripts.
+			->add('js', get_common_url('js/handlebars'), 'handlebars')
 			->add('js', get_common_url('js/bootstrap'), 'bootstrap')
+			->add('js', get_common_url('js/axios'), 'axios')
 			->add('js', get_common_url('js/bootbox'), 'bootbox')
 			->add('js', get_common_url('js/toastr'), 'toastr')
 			->add('js', get_common_url('js/admin'), 'admin');

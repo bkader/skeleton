@@ -92,7 +92,7 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 		}
 
 		// Check the integrity of of $data.
-		if ( ! isset($data['guid']) 
+		if ( ! isset($data['guid'])
 			OR ( ! isset($data['name']) OR empty($data['name'])))
 		{
 			return false;
@@ -418,15 +418,15 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 			 * The reason we are doing this check is to allow
 			 * the user use the following structure:
 			 * @example:
-			 * 
+			 *
 			 * update_meta(1, array(
 			 *     'phone' => '0123456789',
 			 *     'address', // <-- See this!
 			 *     'company' => 'Company Name',
 			 * ));
 			 *
-			 * Both "phone" and "company" will use their respective 
-			 * value while "address" and all other metadata using 
+			 * Both "phone" and "company" will use their respective
+			 * value while "address" and all other metadata using
 			 * the same structure will use $value.
 			 */
 			if (is_int($key))
@@ -511,15 +511,15 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 			 * The reason we are doing this check is to allow
 			 * the user use the following structure:
 			 * @example:
-			 * 
+			 *
 			 * update_meta(1, array(
 			 *     'phone' => '0123456789',
 			 *     'address', // <-- See this!
 			 *     'company' => 'Company Name',
 			 * ));
 			 *
-			 * Both "phone" and "company" will use their respective 
-			 * value while "address" and all other metadata using 
+			 * Both "phone" and "company" will use their respective
+			 * value while "address" and all other metadata using
 			 * the same structure will use $value.
 			 */
 			if (is_int($key))
@@ -540,6 +540,13 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 			// Found by different value? Update it.
 			if ($md)
 			{
+				// Merge array.
+				if (is_array($md->value))
+				{
+					$val = array_merge($md->value, $val);
+				}
+
+				// Proceed to update.
 				$this->update($md->id, array('value' => $val));
 			}
 			else
@@ -557,7 +564,7 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 	 * Delete a single or multiple metadata.
 	 * @access 	public
 	 * @return 	boolean
-	 * 
+	 *
 	 * @example:
 	 * To delete all metadata of an entity, just pass the ID.
 	 * To delete a specific metadata, pass its name as the second parameter.

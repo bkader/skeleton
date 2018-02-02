@@ -373,6 +373,30 @@ EOT;
 	private $_removed_scripts = array();
 
 	/**
+	 * Whether to compress final HTML output.
+	 * @var boolean
+	 */
+	private $_compress = false;
+
+	/**
+	 * Final output cache file.
+	 * @var integer
+	 */
+	private $_cache_lifetime = 0;
+
+	/**
+	 * Whether to use CDN.
+	 * @var boolean
+	 */
+	private $_cdn_enabled = false;
+
+	/**
+	 * The URL to use as CDN.
+	 * @var string
+	 */
+	private $_cdn_server = '';
+
+	/**
 	 * Array of generated alert messages
 	 * @var array
 	 */
@@ -2591,116 +2615,6 @@ EOT;
 		}
 
 		return $output;
-	}
-
-	// ------------------------------------------------------------------------
-
-	private function _load_asset($file)
-	{
-		// Backup the file for later use.
-		$old_file = $file;
-
-		// Prepare an empty output.
-		$output = '';
-
-		// Make sure it's a full URL.
-		if (filter_var($file, FILTER_VALIDATE_URL) === FALSE)
-		{
-			$file = $this->theme_url($file);
-		}
-
-		// Check if the file exits first.
-		$found = false;
-		$file_headers = get_headers($file);
-		if (stripos($file_headers[0], '200 OK'))
-		{
-			$found = true;
-		}
-
-		// Not found? Return nothing.
-		if ($found === false)
-		{
-			return "/* Missing file: {$old_file} */";
-		}
-
-		// Use cURL if enabled.
-		if (function_exists('curl_init'))
-		{
-			$curl = curl_init();
-			curl_setopt($curl, CURLOPT_URL, $file);
-			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($curl, CURLOPT_HEADER, false);
-			$output .= curl_exec($curl);
-			curl_close($curl);
-		}
-		// Otherwise, simply use file_get_contents.
-		else
-		{
-			$output .= file_get_contents($file);
-		}
-
-		/**
-		 * Remember, we have backed up the file right?
-		 * The reason behind this it to set relative paths inside it.
-		 * For instance, if an image or a fond is used in the CSS file,
-		 * you might see something like this: url('../').
-		 * Here we are simply replacing that relative path and use an
-		 * absolute path so image or font don't get broken.
-		 */
-		if (pathinfo($file, PATHINFO_EXTENSION) === 'css'
-			&& preg_match_all('/url\((["\']?)(.+?)\\1\)/i', $output, $matches, PREG_SET_ORDER))
-		{
-			$search  = array();
-			$replace = array();
-
-			$import_url = str_replace(array('http:', 'https:', basename($file)), '', $file);
-
-			foreach ($matches as $match)
-			{
-				$count = substr_count($match[2], '../');
-				$search[] = str_repeat('../', $count);
-				$temp_import_url = $import_url;
-				for ($i=1; $i <= $count; $i++) {
-					$temp_import_url = str_replace(basename($temp_import_url), '', $temp_import_url);
-				}
-				$replace[] = rtrim($temp_import_url, '/').'/';
-			}
-
-			// Replace everything if the output.
-			$output = str_replace(array_unique($search), array_unique($replace), $output);
-		}
-
-		return $output;
-	}
-
-	private function _compress_css($css = '')
-	{
-		$replace = array(
-			"#/\*.*?\*/#s" => "",  // Strip C style comments.
-			"#\s\s+#"      => " ", // Strip excess whitespace.
-		);
-
-		$search = array_keys($replace);
-
-		$css = preg_replace($search, $replace, $css);
-
-		$replace = array(
-			": "  => ":",
-			"; "  => ";",
-			" {"  => "{",
-			" }"  => "}",
-			", "  => ",",
-			"{ "  => "{",
-			";}"  => "}", // Strip optional semicolons.
-			",\n" => ",", // Don't wrap multiple selectors.
-			"\n}" => "}", // Don't wrap closing braces.
-			"} "  => "}\n", // Put each rule on it's own line.
-		);
-
-		$search = array_keys($replace);
-		$css = str_replace($search, $replace, $css);
-
-		return trim($css);
 	}
 
 	// --------------------------------------------------------------------

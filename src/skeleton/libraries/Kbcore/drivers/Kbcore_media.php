@@ -158,7 +158,7 @@ class Kbcore_media extends CI_Driver implements CRUD_interface
 	 */
 	public function delete($id)
 	{
-		return $this->_parent->delete($id);
+		return $this->_parent->objects->remove($id);
 	}
 
 	/**
@@ -182,49 +182,7 @@ class Kbcore_media extends CI_Driver implements CRUD_interface
 				$ids[] = $item->id;
 			}
 
-			return $this->_parent->entities->delete_by('id', $ids);
-		}
-
-		return false;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Completely remove a single media item by ID or username.
-	 * @access 	public
-	 * @param 	mixed 	$id
-	 * @return 	boolean
-	 */
-	public function remove($id)
-	{
-		return $this->_parent->entities->remove($id);
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Completely remove multiple items by arbitrary WHERE clause.
-	 * @access 	public
-	 * @param 	mixed 	$field
-	 * @param 	mixed 	$match
-	 * @return 	boolean
-	 */
-	public function remove_by($field = null, $match = null)
-	{
-		// See if items exist.
-		$items = $this->get_many($field, $match);
-
-		// If there are any, we collect their IDs to send only one request.
-		if ($items)
-		{
-			$ids = array();
-			foreach ($items as $item)
-			{
-				$ids[] = $item->id;
-			}
-
-			return $this->_parent->entities->remove_by('id', $ids);
+			return $this->_parent->entities->remove('id', $ids);
 		}
 
 		return false;

@@ -38,65 +38,21 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Language Module - Language Controller
+ * Media Module Routes
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @category 	Modules\Controllers
+ * @category 	Modules\Routes
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
- * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
-class Language extends KB_Controller
-{
-	/**
-	 * Switch site language.
-	 * @access 	public
-	 * @param 	string 	$folder The language's folder name.
-	 * @return 	void
-	 */
-	public function switch($folder = null)
-	{
-		// Prepare redirection.
-		$redirect = ($this->input->get_post('next'))
-			? $this->input->get_post('next')
-			: $this->input->referrer('/', true);
 
-		// No language set? Nothing to do.
-		if (empty($folder))
-		{
-			redirect($redirect);
-			exit;
-		}
-
-		// Language not available? Nothing to do.
-		if (in_array($folder, $this->config->item('languages')))
-		{
-			$this->session->set_userdata('language', $folder);
-		}
-
-		redirect($redirect);
-		exit;
-	}
-
-	// ------------------------------------------------------------------------
-
-	public function line()
-	{
-		$line = $this->input->post('line');
-		if (empty($line))
-		{
-			return;
-		}
-
-		$file = $this->input->post('file');
-		(empty($file)) OR $this->load->language($file);
-
-		echo 'fuck';
-		die();
-		die($this->lang->line($line));
-	}
-
-}
+// Dashboard routes.
+Route::resources('admin/media', array(
+	'module'     => 'media',
+	'controller' => 'admin',
+	'constraint' => '([0-9]+)'
+));

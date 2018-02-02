@@ -62,3 +62,27 @@
 	</div><!--/.row-->
 </div><!--/.container-fluid-->
 <?php the_alert(); ?>
+
+<script type="text/x-handlebars-template" id="tpl-alert">
+	<div class="alert alert-{{type}} alert-dismissable text-left" role="alert">
+		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+		{{message}}
+	</div>
+</script>
+
+<script type="text/x-handlebars-template" id="tpl-confirm">
+	<div class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-sm" role="document">
+			<div class="modal-content">
+				<div class="modal-body">
+					{{message}}
+					<br />
+					<div class="mt15">
+						<button type="button" class="btn btn-default" data-dismiss="modal"><?php _e('no'); ?></button>
+						<a href="{{href}}" class="btn btn-primary pull-right"><?php _e('yes'); ?></a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
