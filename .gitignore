@@ -16,14 +16,21 @@ src/application/logs/*
 src/application/config/encryption_key.php
 src/application/config/*/encryption_key.php
 
-# keep all .htaccess and .gitkeep
+# keep all .htaccess, .gitkeep and index.html
 !**/.htaccess
 !**/.gitkeep
+!**/index.html
 
 # Ignore all captcha images.
 public/content/captcha/*
 !public/content/captcha/.index.html
 public/content/cache-assets/*
+
+# Ignore all uploaded files.
+public/content/uploads/*
+!public/content/uploads/index.html
+!public/content/uploads/temp/*
+!public/content/uploads/temp/index.html
 
 # Sublime Text cache files
 *.tmlanguage.cache
