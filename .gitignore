@@ -28,7 +28,7 @@ public/content/cache-assets/*
 # Ignore all uploaded files.
 public/content/uploads/*
 !public/content/uploads/index.html
-!public/content/uploads/temp/index.html
+!public/content/uploads/temp/*
 
 # Sublime Text cache files
 *.tmlanguage.cache
