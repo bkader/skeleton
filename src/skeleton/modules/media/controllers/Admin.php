@@ -203,6 +203,9 @@ class Admin extends Admin_Controller
 				// Load Image_lib library.
 				$this->load->library('image_lib');
 
+				// Prepare media sizes.
+				$media_sizes = array();
+
 				// Loop through all sizes and prepare for creation.
 				foreach ($sizes as $name => $details)
 				{
@@ -211,20 +214,82 @@ class Admin extends Admin_Controller
 					 * clear the library to avoid issues.
 					 */
 					$this->image_lib->clear();
+					unset($config);
 
 					// Prepare image library configuration.
 					$config['upload_path']    = './content/uploads/'.date('Y/m/');
 					$config['image_library']  = 'gd2';
 					$config['source_image']   = $data['full_path'];
-					$config['maintain_ratio'] = $details['crop'];
-					$config['width']          = $details['width'];
-					$config['height']         = $details['height'];
-					$config['create_thumb']   = true;
-					$config['thumb_marker']   = '-'.$details['width'].'x'.$details['height'];
+					$config['new_image']      = $config['upload_path'].$data['raw_name'].'-'.$details['width'].'x'.$details['height'].$data['file_ext'];
+					$config['maintain_ratio'] = true;
 
-					// Initialize library and resize the image.
-					$this->image_lib->initialize($config);
-					$this->image_lib->resize();
+					if ($details['crop'])
+					{
+						if ($data['image_width'] > $data['image_height']) {
+							$config['height'] = $details['height'];
+							$config['width']  = ($config['height'] * $data['image_height']) / $data['image_width'];
+						} else {
+							$config['width']  = $details['width'];
+							$config['height']  = ($config['width'] * $data['image_width']) / $data['image_height'];
+						}
+
+						// Initialize library and resize the image.
+						$this->image_lib->initialize($config);
+
+						// Let's resize the image.
+						$status = $this->image_lib->resize();
+
+						// Let's crop it now.
+						// $this->image_lib->clear();
+
+						// $config2['image_library']  = 'gd2';
+						// $config2['source_image']   = $config['new_image'];
+						// $config2['width']          = $details['width'];
+						// $config2['height']         = $details['height'];
+						// $config2['maintain_ratio'] = false;
+
+						// $config2['x_axis'] = ($config['width'] > $config['height'])
+						// 	? (($config['width'] - $details['width']) / 2)
+						// 	: 0;
+						// $config2['y_axis'] = ($config['height'] > $details['width'])
+						// 	? (($config['height'] - $details['height']) / 2)
+						// 	: 0;
+
+						// $this->image_lib->initialize($config2);
+
+						// $status = $this->image_lib->crop();
+					}
+					else
+					{
+						$config['width'] = $details['width'];
+						$config['height'] = $details['height'];
+
+						// Initialize library and resize the image.
+						$this->image_lib->initialize($config);
+
+						// Let's resize the image.
+						$status = $this->image_lib->resize();
+					}
+
+					// If successful, add sizes.
+					if ($status === true)
+					{
+						$media_sizes[$name] = array(
+							'file'      => $data['raw_name'].$config['thumb_marker'].$data['file_ext'],
+							'width'     => $details['width'],
+							'height'    => $details['height'],
+							'file_mime' => $data['file_type'],
+						);
+					}
+				}
+
+				if ( ! empty($media_sizes))
+				{
+					$this->kbcore->metadata->update_meta(
+						$media_id,
+						'media_meta',
+						array('sizes' => $media_sizes)
+					);
 				}
 			}
 
@@ -239,15 +304,31 @@ class Admin extends Admin_Controller
 	public function update($id)
 	{
 		$_put = file_get_contents('php://input');
-		// $temp_data = $data = array();
-		// parse_str($_put, $temp_data);
+		$temp_data = $data = array();
+		parse_str($_put, $temp_data);
 
-		// foreach ($temp_data as $key => $val)
-		// {
-		// 	$data[$key] = $temp_data[$key][0]['value'];
-		// }
-		$this->response->header = 200;
-		$this->response->message = 'updated';
+		$this->load->helper('security');
+		foreach ($temp_data as $key => $val)
+		{
+			$data[$key] = xss_clean($temp_data[$key][0]['value']);
+		}
+
+		if (empty($data))
+		{
+			return;
+		}
+
+		// Try to update.
+		if ($this->kbcore->media->update($id, $data))
+		{
+			$this->response->header = 200;
+			$this->response->message = lang('media_update_success');
+		}
+		else
+		{
+			$this->response->header = 500;
+			$this->response->message = lang('media_update_error');
+		}
 	}
 
 	// ------------------------------------------------------------------------

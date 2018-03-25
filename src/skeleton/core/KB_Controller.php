@@ -132,6 +132,16 @@ class KB_Controller extends CI_Controller
 
 	// ------------------------------------------------------------------------
 
+
+	/**
+	 * We are remapping things just so we can handle methods that are
+	 * http accessed and methods that require AJAX requests only.
+	 *
+	 * @access 	public
+	 * @param 	string 	$method 	The method's name.
+	 * @param 	array 	$params 	Arguments to pass to the method.
+	 * @return 	mixed 	Depends on the called method.
+	 */
 	public function _remap($method, $params = array())
 	{
 		// The method is not found? Nothing to do.
@@ -185,6 +195,13 @@ class KB_Controller extends CI_Controller
 
 	// ------------------------------------------------------------------------
 
+	/**
+	 * This method handles the rest of AJAX requests.
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	string
+	 */
 	protected function response()
 	{
 		// Make sure to always have a message and content type.

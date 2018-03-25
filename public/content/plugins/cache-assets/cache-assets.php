@@ -40,7 +40,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 /**
  * Cache Assets Plugin
  *
- * This plugins turns theme class assets cache on to reduce 
+ * This plugins turns theme class assets cache on to reduce
  * HTTP requests and cache assets.
  *
  * @package 	CodeIgniter
@@ -99,7 +99,7 @@ class Cache_assets
 	 * @var array
 	 */
 	private static $dashboard_dropdown = array(
-		'true'  => 'lang:yes',
+		'true' => 'lang:yes',
 		'false' => 'lang:no',
 	);
 
@@ -150,14 +150,13 @@ class Cache_assets
 		// Not found? create it.
 		else
 		{
-			$KB->options->create(
-				'assets_cache_time',
-				self::$cache_time,
-				'',
-				'dropdown',
-				self::$time_dropdown,
-				1
-			);
+			$KB->options->create(array(
+				'name'       => 'assets_cache_time',
+				'value'      => self::$cache_time,
+				'field_type' => 'dropdown',
+				'options'    => self::$time_dropdown,
+				'required'   => 1,
+			));
 		}
 
 		// Dashboard cache option.
@@ -193,14 +192,13 @@ class Cache_assets
 		// Not found? create it.
 		else
 		{
-			$KB->options->create(
-				'assets_cache_dashboard',
-				self::$cache_dashboard,
-				'',
-				'dropdown',
-				self::$dashboard_dropdown,
-				1
-			);
+			$KB->options->create(array(
+				'name'       => 'assets_cache_dashboard',
+				'value'      => self::$cache_dashboard ? 'true' : 'false',
+				'field_type' => 'dropdown',
+				'options'    => self::$dashboard_dropdown,
+				'required'   => 1,
+			));
 		}
 
 		return true;
@@ -252,7 +250,7 @@ class Cache_assets
 		// Format options if not formatted.
 		$db_time_option = $KB->options->item('assets_cache_time', false);
 		$db_dash_option = $KB->options->item('assets_cache_dashboard', null);
-		if (( ! $db_time_option OR ! is_numeric($db_time_option)) 
+		if (( ! $db_time_option OR ! is_numeric($db_time_option))
 			OR ( ! $db_dash_option OR ! is_bool($db_dash_option)))
 		{
 			self::activate();
@@ -338,15 +336,15 @@ class Cache_assets
 			// Use Input class to secure POST.
 			global $IN;
 			$new_time = $IN->post('assets_cache_time', true);
-			$new_dash = ($IN->post('assets_cache_dashboard', true) === 'true');
+			$new_dash = ($IN->post('assets_cache_dashboard') === 'true');
 
 			// Successfully updated?
-			if ( ! $KB->options->set_item('assets_cache_time', $new_time) 
-				OR  ! $KB->options->set_item('assets_cache_dashboard', $new_dash))
+			if ( ! $KB->options->set_item('assets_cache_time', $new_time)
+				&& ! $KB->options->set_item('assets_cache_dashboard', $new_dash))
 			{
 				set_alert(lang('plugin_settings_error'), 'error');
 			}
-				
+
 			set_alert(lang('plugin_settings_success'), 'success');
 			redirect(current_url(), 'refresh');
 			exit;
@@ -393,8 +391,8 @@ class Cache_assets
 		$default = $KB->options->item('language');
 
 		// Hold the current language file.
-		$current = ($KB->ci->session->language) 
-			? $KB->ci->session->language 
+		$current = ($KB->ci->session->language)
+			? $KB->ci->session->language
 			: $KB->options->item('language');
 
 		// Let's see if the default language file exists.
@@ -453,7 +451,7 @@ class Cache_assets
 		$cache_file_path = FCPATH.self::$cache_folder.$cache_file.'.css';
 
 		// Cache file found but dead? Delete it.
-		if (is_file($cache_file_path) 
+		if (is_file($cache_file_path)
 			&& filemtime($cache_file_path) <= time() - self::_cache_time())
 		{
 			@unlink($cache_file_path);
@@ -469,7 +467,7 @@ class Cache_assets
 				if (isset($inline[$handle]))
 				{
 					$_temp_output .= str_replace(
-						array('<style>', '</style>'), 
+						array('<style>', '</style>'),
 						'',
 						$inline[$handle]
 					);
@@ -488,7 +486,7 @@ class Cache_assets
 			}
 
 			// We make sure to move all @imports to top.
-	        if (preg_match_all('/(;?)(@import (?<url>url\()?(?P<quotes>["\']?).+?(?P=quotes)(?(url)\)))/', $_temp_output, $matches)) 
+	        if (preg_match_all('/(;?)(@import (?<url>url\()?(?P<quotes>["\']?).+?(?P=quotes)(?(url)\)))/', $_temp_output, $matches))
 	        {
 	            // remove from output
 	            foreach ($matches[0] as $import)
@@ -531,7 +529,7 @@ class Cache_assets
 		$cache_file_path = FCPATH.self::$cache_folder.$cache_file.'.js';
 
 		// Cache file found but dead? Delete it.
-		if (is_file($cache_file_path) 
+		if (is_file($cache_file_path)
 			&& filemtime($cache_file_path) <= time() - self::_cache_time())
 		{
 			@unlink($cache_file_path);
@@ -547,7 +545,7 @@ class Cache_assets
 				if (isset($inline[$handle]))
 				{
 					$_temp_output .= str_replace(
-						array('<script>', '</script>'), 
+						array('<script>', '</script>'),
 						'',
 						$inline[$handle]
 					);
@@ -575,7 +573,7 @@ class Cache_assets
 			fwrite($cache_file_path, self::_compress_js($_temp_output));
 			fclose($cache_file_path);
 		}
-	
+
 		return '<script type="text/javascript" src="'.base_url(self::$cache_folder.$cache_file.'.js').'"></script>';
 	}
 
@@ -597,7 +595,7 @@ class Cache_assets
 
 		/**
 		 * NOTE:
-		 * Commented lines below seem to cause problems on the demo 
+		 * Commented lines below seem to cause problems on the demo
 		 * this is why they have been commented out.
 		 */
 
@@ -634,7 +632,7 @@ class Cache_assets
 		/**
 		 * Remember, we have backed up the file right?
 		 * The reason behind this it to set relative paths inside it.
-		 * For instance, if an image or a fond is used in the CSS file, 
+		 * For instance, if an image or a fond is used in the CSS file,
 		 * you might see something like this: url('../').
 		 * Here we are simply replacing that relative path and use an
 		 * absolute path so image or font don't get broken.
@@ -652,7 +650,7 @@ class Cache_assets
 				$count = substr_count($match[2], '../');
 				$search[] = str_repeat('../', $count);
 				$temp_import_url = $import_url;
-				for ($i=1; $i <= $count; $i++) { 
+				for ($i=1; $i <= $count; $i++) {
 					$temp_import_url = str_replace(basename($temp_import_url), '', $temp_import_url);
 				}
 				$replace[] = rtrim($temp_import_url, '/').'/';
@@ -681,7 +679,7 @@ class Cache_assets
 				" }",
 				", ",
 				"{ ",
-				";}",	// Strip optional semicolons.  
+				";}",	// Strip optional semicolons.
 				",\n", 	// Don't wrap multiple selectors.
 				"\n}",	// Don't wrap closing braces.
 				"} ",	// Put each rule on it's own line.

@@ -110,7 +110,7 @@ class Kbcore_media extends CI_Driver implements CRUD_interface
 	 */
 	public function update($id, array $data = array())
 	{
-		return $this->_parent->update_by(array('id' => $id,'subtype' => 'attachment'), $data);
+		return $this->_parent->objects->update_by(array('id' => $id,'subtype' => 'attachment'), $data);
 	}
 
 	// ------------------------------------------------------------------------
@@ -324,5 +324,36 @@ if ( ! function_exists('add_image_size'))
 	function add_image_size($name, $width = 0, $height = 0, $crop = false)
 	{
 		return get_instance()->kbcore->media->add_image_size($name, $width, $height, $crop);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_media_url'))
+{
+	function get_media_url($id, $size = null)
+	{
+		$media = get_instance()->kbcore->media->get($id);
+
+		if ( ! $media)
+		{
+			return null;
+		}
+
+		$url = $media->username;
+
+		if ($size !== null && $meta = get_meta($id, 'media_meta', true))
+		{
+			if ($meta && isset($meta['sizes'][$size]))
+			{
+				$url = str_replace(
+					basename($media->username),
+					$meta['sizes'][$size]['file'],
+					$media->username
+				);
+			}
+		}
+
+		return $url;
 	}
 }

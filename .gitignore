@@ -12,6 +12,10 @@ src/application/logs/*
 !src/application/logs/.gitkeep
 !src/application/logs/.htaccess
 
+# Remove generated encryption key file.
+src/application/config/encryption_key.php
+src/application/config/*/encryption_key.php
+
 # keep all .htaccess and .gitkeep
 !**/.htaccess
 !**/.gitkeep
@@ -19,10 +23,10 @@ src/application/logs/*
 # Ignore all captcha images.
 public/content/captcha/*
 !public/content/captcha/.index.html
+public/content/cache-assets/*
 
 # Sublime Text cache files
 *.tmlanguage.cache
 *.tmPreferences.cache
 *.stTheme.cache
 *.sublime-workspace
-*.sublime-project

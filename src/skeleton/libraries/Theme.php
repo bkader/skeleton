@@ -40,7 +40,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 /**
  * Theme Class
  *
- * This is the magical library that allow you to make create 
+ * This is the magical library that allow you to make create
  * amazing app-independent themes.
  *
  * @package 	CodeIgniter
@@ -71,7 +71,7 @@ class Theme
 </head>
 <body{body_class}>\n
 EOT;
-	
+
 	/**
 	 * Footer template.
 	 * @var string
@@ -82,7 +82,7 @@ EOT;
 </body>
 </html>
 EOT;
-	
+
 	/**
 	 * Google analytics template.
 	 * @var string
@@ -94,7 +94,7 @@ EOT;
     </script>
     <script src="https://www.google-analytics.com/analytics.js" async defer></script>
 EOT;
-	
+
 	/**
 	 * Default layout template to use as
 	 * a fallback if no layout is found
@@ -113,7 +113,7 @@ EOT;
 </div><!-- /.container -->
 {footer}
 EOT;
-	
+
 	/**
 	 * Default alert message template to use
 	 * as a fallback if none is provided.
@@ -124,7 +124,7 @@ EOT;
 		{message}
 	</div>
 EOT;
-	
+
 	/**
 	 * JavaSript alert template.
 	 */
@@ -134,7 +134,7 @@ EOT;
 +'{message}'
 +'</div>'
 EOT;
-	
+
 	/**
 	 * Array of default alerts classes.
 	 * @var  array
@@ -145,31 +145,31 @@ EOT;
 		'warning' => 'alert alert-warning',
 		'success' => 'alert alert-success',
 	);
-	
+
 	/**
 	 * Instance of CI object
 	 * @var 	object
 	 */
 	private $ci;
-	
+
 	/**
 	 * Default configuration array.
 	 * @var array
 	 */
 	private $_config;
-	
+
 	/**
 	 * Array of partial views.
 	 * @var  array
 	 */
 	private $_partials;
-	
+
 	/**
 	 * Array of variables to pass to view
 	 * @var array
 	 */
 	private $_data = array();
-	
+
 	/**
 	 * Inforation about access to module,
 	 * controller and method.
@@ -177,25 +177,25 @@ EOT;
 	public $module = null;
 	public $controller = null;
 	public $method = null;
-	
+
 	/**
 	 * Holds the full path to themes.
 	 * @var string
 	 */
 	private $_themes_folder = 'themes';
-	
+
 	/**
 	 * Holds the current theme's name.
 	 * @var string
 	 */
 	private $_theme = null;
-	
+
 	/**
 	 * Holds the current theme's language index.
 	 * @var string
 	 */
 	private $_theme_language_index = '';
-	
+
 	/**
 	 * Set to true if the language file was loaded.
 	 * @var bool
@@ -207,183 +207,183 @@ EOT;
 	 * @var array
 	 */
 	private $_language;
-	
+
 	/**
 	 * Holds an object of the current theme's details.
 	 * @var  object
 	 */
 	private $_theme_details;
-	
+
 	/**
 	 * Holds the currently used layout.
 	 * @var string
 	 */
 	private $_layout = null;
-	
+
 	/**
 	 * Holds the currently loaded view.
 	 * @var string
 	 */
 	private $_view = null;
-	
+
 	/**
 	 * Holds the realpath to theme's folder.
 	 * @var  string
 	 */
 	private $_theme_path;
-	
+
 	/**
 	 * Holds the realpath to theme's views folder.
 	 * @var string
 	 */
 	private $_views_path;
-	
+
 	/**
 	 * Holds the realpath to theme's layouts folder.
 	 * @var string
 	 */
 	private $_layouts_path;
-	
+
 	/**
 	 * Array of <html> tag classes.
 	 * @var array
 	 */
 	private $_html_classes = array();
-	
+
 	/**
 	 * Array of <html> lang attribute.
 	 * @var array
 	 */
 	private $_lang_attrs = array();
-	
+
 	/**
 	 * Array of site's charsets.
 	 * @var  array
 	 */
 	private $_charsets = array();
-	
+
 	/**
 	 * Holds the current page's title.
 	 * @var  string
 	 */
 	private $_title = null;
-	
+
 	/**
 	 * Holds the page's title parts separator.
 	 * @var string
 	 */
 	private $_title_sep = '&#150;';
-	
+
 	/**
 	 * Holds an array of all <meta> tags.
 	 * @var  array
 	 */
 	private $_metadata = array();
-	
+
 	/**
 	 * Array of stylesheets to add first.
 	 * @var array
 	 */
 	private $_prepended_styles = array();
-	
+
 	/**
 	 * Array of stylesheets
 	 * @var array
 	 */
 	private $_styles = array();
-	
+
 	/**
 	 * Array of inline styles.
 	 * @var array
 	 */
 	private $_inline_styles = array();
-	
+
 	/**
 	 * Array of remove styles.
 	 * @var array
 	 */
 	private $_removed_styles = array();
-	
+
 	/**
 	 * Extra string to use on {extra_head}
 	 * @var string
 	 */
 	private $_extra_head = null;
-	
+
 	/**
 	 * This flag is used to check if the header output was
 	 * called or not so we call it in case it wasn't.
 	 * @var boolean
 	 */
 	private $_header_called = false;
-	
+
 	/**
 	 * This flag is used to check if the footer output was
 	 * called or not so we call it in case it wasn't.
 	 * @var boolean
 	 */
 	private $_footer_called = false;
-	
+
 	/**
 	 * body classes.
 	 * @var array
 	 */
 	private $_body_classes = array();
-	
+
 	/**
 	 * Holds the current view content.
 	 * @var string
 	 */
 	private $_the_content;
-	
+
 	/**
 	 * Array of scripts to be put first.
 	 * @var array
 	 */
 	private $_prepended_scripts = array();
-	
+
 	/**
 	 * Array of JavaScripts files.
 	 * @var array
 	 */
 	private $_scripts = array();
-	
+
 	/**
 	 * Array of inline scripts to output.
 	 * @var array
 	 */
 	private $_inline_scripts = array();
-	
+
 	/**
 	 * Array of removed scripts
 	 * @var array
 	 */
 	private $_removed_scripts = array();
-	
+
 	/**
 	 * Array of generated alert messages
 	 * @var array
 	 */
 	private $_messages;
-	
+
 	/**
 	 * Whether to detect browser details or not.
 	 * @var  boolean
 	 */
 	private $_detect_browser = false;
-	
+
 	/**
 	 * Array of client browser's details.
 	 * @var array
 	 */
 	private $_client = array();
-	
+
 	/**
 	 * Set to true if on mobile browser.
 	 * @var boolean
 	 */
 	private $_is_mobile = false;
-	
+
 	/**
 	 * Put default preferences into class' property so
 	 * they can be overriden later.
@@ -404,7 +404,7 @@ EOT;
 		'site_description'  => 'Simply makes your CI-based applications themable. Easy and fun to use.',
 		'site_keywords'     => 'codeigniter, themes, libraries, bkader, bouyakoub'
 	);
-	
+
 	/**
 	 * Constructor
 	 */
@@ -412,18 +412,18 @@ EOT;
 	{
 		// Prepare instance of CI object
 		$this->ci =& get_instance();
-		
+
 		// Initialize class preferences.
 		if (is_array($config) && ! empty($config))
 		{
 			$this->initialize($config);
 		}
-		
+
 		log_message('info', 'Theme Class Initialized');
 	}
-	
+
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Initialize class preferences.
 	 *
@@ -433,16 +433,16 @@ EOT;
 	public function initialize($config = array())
 	{
 		$this->ci->benchmark->mark('theme_initialize_start');
-		
+
 		// Make sure URL helper is load then we load our helper
 		(function_exists('base_url')) or $this->ci->load->helper('url');
-		
+
 		// Initialize preferences.
 		$this->_charsets[] = $this->ci->config->item('charset');
-		
+
 		// Let's set class preferences.
 		$this->_config = array_replace_recursive($this->_defaults, $config);
-		
+
 		// See if any parameter was overridden.
 		foreach ($this->_defaults as $key => $val)
 		{
@@ -452,7 +452,7 @@ EOT;
 			}
 		}
 		unset($key, $val, $item);
-		
+
 		// Create class properties.
 		foreach ($this->_config as $key => $val)
 		{
@@ -467,16 +467,16 @@ EOT;
 				$this->{'_'.$key} = $val;
 			}
 		}
-		
+
 		// Let's store accessed module, controller and methods.
 		$this->module     = (method_exists($this->ci->router, 'fetch_module')) ? $this->ci->router->fetch_module() : null;
 		$this->controller = $this->ci->router->fetch_class();
 		$this->method     = $this->ci->router->fetch_method();
-		
+
 		// We store the real path to theme's folder.
 		$this->_theme_path = realpath(FCPATH."{$this->_themes_folder}/{$this->_theme}");
 		($this->_theme_path) && $this->_theme_path .= DS;
-		
+
 		// If the path to the theme was not found!
 		if (false === $this->_theme_path)
 		{
@@ -485,46 +485,46 @@ EOT;
 			{
 				return;
 			}
-			
+
 			// Simply die();
 			die();
 		}
-		
+
 		// Make sure the selected theme exists!
 		if (false === $this->_theme_path)
 		{
 			show_error("The theme your are currently using does not exist. Theme: '{$this->_theme}'");
 		}
-		
+
 		// Define a constant that can be used everywhere.
 		defined('THEME_PATH') OR define('THEME_PATH', $this->_theme_path);
-		
+
 		// Check if it's a mobile client.
 		(class_exists('CI_User_agent', false)) OR $this->ci->load->library('user_agent');
 		$this->_is_mobile = $this->ci->agent->is_mobile();
-		
+
 		// Let's detect client browser's details.
 		$this->_detect_browser();
-		
+
 		if ( ! is_file($this->_theme_path.'functions.php'))
 		{
 			show_error("Unable to locate the theme's 'functions.php' file.");
 		}
-		
+
 		include_once $this->_theme_path.'functions.php';
-		
+
 		/**
 		 * Here we are some default variables that you can
 		 * use on yout views.
 		 */
 		$this->set('uri_string', uri_string(), true);
-		
+
 		// Benchmark for eventual use.
 		$this->ci->benchmark->mark('theme_initialize_end');
 	}
-	
+
 	// ------------------------------------------------------------------------
-	
+
 	/**
 	 * Remove all filters and actions.
 	 * @access 	protected
@@ -567,7 +567,7 @@ EOT;
 			'theme_view_fallback',
 			'theme_views_path'
 		);
-		
+
 		// Exclude filters?
 		$args = func_get_args();
 		if ( ! empty($args))
@@ -575,12 +575,12 @@ EOT;
 			(is_array($args[0])) && $args = $args[0];
 			$filters = array_diff($filters, $args);
 		}
-		
+
 		array_map('remove_all_filters', $filters);
 	}
-	
+
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Returns an array of themes details objects.
 	 * @access 	public
@@ -591,7 +591,7 @@ EOT;
 	{
 		// Prepare an empty array of folders.
 		$folders = array();
-		
+
 		// Let's go through folders and check if there are any.
 		if ($handle = opendir($this->_themes_folder))
 		{
@@ -601,7 +601,7 @@ EOT;
 				'index.html',
 				'.htaccess'
 			);
-			
+
 			while (false !== ($file = readdir($handle)))
 			{
 				if ( ! in_array($file, $_to_eliminate))
@@ -610,7 +610,7 @@ EOT;
 				}
 			}
 		}
-		
+
 		// If there are any folders present, we get themes details.
 		if ( ! empty($folders))
 		{
@@ -624,11 +624,11 @@ EOT;
 				unset($folders[$key]);
 			}
 		}
-		
+
 		// Now we return the final result.
 		return $folders;
 	}
-	
+
 	/**
 	 * Return details about a given theme.
 	 * @access 	private
@@ -639,23 +639,23 @@ EOT;
 	{
 		// Prepare the path to the manifest.json file.
 		$theme_info = FCPATH."{$this->_themes_folder}/{$folder}/manifest.json";
-		
+
 		// Make sure the file exists.
 		if ( ! is_file($theme_info))
 		{
 			show_error("Unable to locate the theme's info file: {$theme_info}");
 		}
-		
+
 		// Get the manifest.json file content na json_decode it.
 		$manifest = file_get_contents($theme_info);
 		$manifest = json_decode(trim($manifest), true);
-		
+
 		// If it's no a valid array.
 		if ( ! is_array($manifest))
 		{
 			show_error("The 'manifest.json' file of the theme '{$folder}' does not contain a valid array.");
 		}
-		
+
 		/**
 		 * If the theme preview (default: screenshot.jpg) is
 		 * set but not a valid URL, we set it.
@@ -677,10 +677,10 @@ EOT;
 		{
 			$manifest['screenshot'] = false;
 		}
-		
+
 		// Always add the folder name to the array.
 		$manifest['folder'] = $folder;
-		
+
 		// Prepare array of default headers.
 		$defaults = array(
 			'name' => null,
@@ -696,11 +696,11 @@ EOT;
 			'tags' => null,
 			'screenshot' => null
 		);
-		
+
 		// Replace defaults and return the result.
 		return array_replace($defaults, $manifest);
 	}
-	
+
 	/**
 	 * Returns the theme's details.
 	 * @access 	public
@@ -717,14 +717,14 @@ EOT;
 		{
 			$return = $this->_get_theme_details($this->_theme);
 		}
-		
+
 		return (isset($return->{$key})) ? $return->{$key} : $return;
 	}
-	
+
 	// --------------------------------------------------------------------
 	// Setters
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Add variables to views.
 	 * @access 	public
@@ -742,29 +742,29 @@ EOT;
 		if (is_array($name))
 		{
 			$global = (bool) $value;
-			
+
 			foreach ($name as $key => $val)
 			{
 				$this->set($key, $val, $global);
 			}
-			
+
 			return $this;
 		}
-		
+
 		if ($global === true)
 		{
 			$this->ci->load->vars($name, $value);
 			return $this;
 		}
-		
+
 		$this->_data[$name] = $value;
 		return $this;
 	}
-	
+
 	// --------------------------------------------------------------------
 	// Theme Functions
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Returns path to where themes are located.
 	 * @access 	protected
@@ -777,10 +777,10 @@ EOT;
 		{
 			return realpath(FCPATH."{$this->_themes_folder}/{$uri}").DS;
 		}
-		
+
 		return realpath(FCPATH."{$this->_themes_folder}/{$uri}");
 	}
-	
+
 	/**
 	 * Returns URI to the folder containing themes.
 	 * @access 	protected
@@ -791,7 +791,7 @@ EOT;
 	{
 		return base_url("{$this->_themes_folder}/{$uri}");
 	}
-	
+
 	/**
 	 * Changes the currently used theme.
 	 * @access 	protected
@@ -802,12 +802,12 @@ EOT;
 	{
 		// Reset all.
 		$this->_reset();
-		
+
 		// Change config item.
 		$this->ci->config->set_item('theme', $theme);
 		return $this;
 	}
-	
+
 	/**
 	 * Returns the current theme's name.
 	 * @access 	protected
@@ -817,7 +817,7 @@ EOT;
 	{
 		return $this->_theme;
 	}
-	
+
 	/**
 	 * Returns theme url.
 	 * @access 	protected
@@ -830,10 +830,10 @@ EOT;
 		{
 			return "{$this->_cdn_server}{$this->_themes_folder}/{$this->_theme}/{$uri}";
 		}
-		
+
 		return base_url("{$this->_themes_folder}/{$this->_theme}/{$uri}");
 	}
-	
+
 	/**
 	 * Returns a path to a folder or file in theme's folder.
 	 * @access 	protected
@@ -844,11 +844,11 @@ EOT;
 	{
 		return realpath("{$this->_theme_path}/$uri");
 	}
-	
+
 	// --------------------------------------------------------------------
 	// Uploads and Common URLs and Path
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Return a URL to the uploads folder.
 	 * @access 	protected
@@ -861,10 +861,10 @@ EOT;
 		{
 			return "{$this->_cdn_server}{$this->_uploads_folder}/{$uri}";
 		}
-		
+
 		return base_url("{$this->_uploads_folder}/{$uri}");
 	}
-	
+
 	/**
 	 * Returns the realpath to the uploads folder.
 	 * @access 	protected
@@ -875,7 +875,7 @@ EOT;
 	{
 		return realpath(FCPATH."{$this->_uploads_folder}/{$uri}");
 	}
-	
+
 	/**
 	 * Return a URL to the common folder.
 	 * @access 	protected
@@ -888,10 +888,10 @@ EOT;
 		{
 			return "{$this->_cdn_server}{$this->_common_folder}/{$uri}";
 		}
-		
+
 		return base_url("{$this->_common_folder}/{$uri}");
 	}
-	
+
 	/**
 	 * Returns the realpath to the common folder.
 	 * @access 	protected
@@ -902,11 +902,11 @@ EOT;
 	{
 		return realpath(FCPATH."{$this->_common_folder}/{$uri}");
 	}
-	
+
 	// --------------------------------------------------------------------
 	// Layout Setter and Getter.
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Changes the currently used layout.
 	 * @access 	protected
@@ -918,7 +918,7 @@ EOT;
 		$this->_layout = $layout;
 		return $this;
 	}
-	
+
 	/**
 	 * Returns the current layout's name.
 	 * @access 	protected
@@ -927,14 +927,14 @@ EOT;
 	public function get_layout()
 	{
 		$this->_layout = apply_filters('theme_layout', $this->_layout);
-		
+
 		return $this->_layout;
 	}
-	
+
 	// --------------------------------------------------------------------
 	// View file Setter and Getter.
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Changes the currently used view.
 	 * @access 	protected
@@ -946,7 +946,7 @@ EOT;
 		$this->_view = $view;
 		return $this;
 	}
-	
+
 	/**
 	 * Returns the current view's name.
 	 * @access 	protected
@@ -956,13 +956,13 @@ EOT;
 	{
 		// Make sure the view is set.
 		(isset($this->_view)) OR $this->_view = $this->_guess_view();
-		
+
 		// See if there are any filters applied here.
 		$this->_view = apply_filters('theme_view', $this->_view);
-		
+
 		return $this->_view;
 	}
-	
+
 	/**
 	 * Attempt to guess the view file.
 	 * @access 	private
@@ -971,19 +971,19 @@ EOT;
 	private function _guess_view()
 	{
 		$view = "{$this->controller}/{$this->method}";
-		
+
 		if (isset($this->module) && $this->module !== null && $this->module <> $this->controller)
 		{
 			$view = "{$this->module}/{$view}";
 		}
-		
+
 		return $view;
 	}
-	
+
 	// --------------------------------------------------------------------
 	// Cache setter.
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Set cache time.
 	 * @access 	protected
@@ -998,11 +998,11 @@ EOT;
 		});
 		return $this;
 	}
-	
+
 	// --------------------------------------------------------------------
 	// Title Setter and Getter
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Sets the page title.
 	 * @access 	protected
@@ -1019,7 +1019,7 @@ EOT;
 		}
 		return $this;
 	}
-	
+
 	/**
 	 * Returns the current page's title.
 	 * @access 	protected
@@ -1037,32 +1037,32 @@ EOT;
 
 		// Make sure it's an array.
 		(is_array($this->_title)) OR $this->_title = array($this->_title);
-		
+
 		$this->_title = array_filter($this->_title);
-		
+
 		// If the title is empty, we guess.
 		(empty($this->_title)) && $this->_title = $this->_guess_title();
 
 		// Apply filter if there are any.
 		$this->_title = apply_filters('before_title', $this->_title);
-		
+
 		if ($before !== null)
 		{
 			array_unshift($this->_title, $before);
 		}
-		
+
 		if ($after !== null)
 		{
 			$this->_title[] = $after;
 		}
-		
+
 		// Create the title string.
 		$this->_title = implode($this->_title_sep, array_unique($this->_title, SORT_STRING));
-		
+
 		// Return the title.
 		return $before.$this->_title.$after;
 	}
-	
+
 	/**
 	 * Attempt to guess the title if it's not set.
 	 * @access 	private
@@ -1073,29 +1073,29 @@ EOT;
 		$temp_title = array(
 			$this->method
 		);
-		
-		
+
+
 		if ($this->controller != $this->method)
 		{
 			array_unshift($temp_title, $this->controller);
 		}
-		
+
 		if (isset($this->module) && $this->module !== null && $this->module <> $this->controller)
 		{
 			array_unshift($temp_title, $this->module);
 		}
-		
+
 		$temp_title = array_filter(array_map('ucwords', $temp_title));
 		$title      = implode($this->_title_sep, $temp_title);
 		return array(
 			$title
 		);
 	}
-	
+
 	// --------------------------------------------------------------------
 	// Metadata Functions
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Appends meta tags
 	 * @access 	protected
@@ -1112,18 +1112,18 @@ EOT;
 			{
 				$this->add_meta($key, $val, $type, $attrs);
 			}
-			
+
 			return $this;
 		}
-		
+
 		$this->_metadata[$type.'::'.$name] = array(
 			'content' => $content
 		);
 		(empty($attrs)) OR $this->_metadata[$type.'::'.$name]['attrs'] = $attrs;
-		
+
 		return $this;
 	}
-	
+
 	/**
 	 * Returns all cached metadata.
 	 * @access 	protected
@@ -1133,7 +1133,7 @@ EOT;
 	{
 		return $this->_metadata;
 	}
-	
+
 	/**
 	 * Takes all site meta tags and prepare the output string.
 	 * @access 	protected
@@ -1143,16 +1143,16 @@ EOT;
 	{
 		// If there are any 'before_metadata', apply them.
 		$metadata = apply_filters('before_metadata', '');
-		
+
 		// Append our output metadata.
 		$metadata .= $this->_render_metadata();
-		
+
 		// If there are any 'after_metadata', apply them.
 		$metadata = apply_filters('after_metadata', $metadata);
-		
+
 		return $metadata;
 	}
-	
+
 	/**
 	 * Collectes all additional metadata and prepare them for output
 	 * @access 	private
@@ -1163,30 +1163,30 @@ EOT;
 	{
 		// If there are any enqueued meta tags from functions, add them.
 		do_action('enqueue_metadata');
-		
+
 		// Kick off with an empty output.
 		$output = '';
-		
+
 		$i = 1;
 		$j = count($this->_metadata);
-		
+
 		foreach ($this->_metadata as $key => $val)
 		{
 			list($type, $name) = explode('::', $key);
 			$content = isset($val['content']) ? $val['content'] : null;
 			$attrs   = isset($val['attrs']) ? $val['attrs'] : null;
 			$output .= meta_tag($name, $content, $type, $attrs).($i === $j ? '' : "\n\t");
-			
+
 			$i++;
 		}
-		
+
 		return $output;
 	}
-	
+
 	// --------------------------------------------------------------------
 	// Assets Handlers.
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Add any type of CSS of JS files.
 	 * @access 	public
@@ -1204,10 +1204,10 @@ EOT;
 		{
 			return $this;
 		}
-		
+
 		// We start by removing the extension.
 		$file = $this->_remove_extension($file, $type);
-		
+
 		// If the $handle is not provided, we generate it.
 		if (empty($handle))
 		{
@@ -1220,7 +1220,7 @@ EOT;
 			$handle           = preg_replace("/-{$type}$/", '', $handle)."-{$type}";
 			$attributes['id'] = $handle;
 		}
-		
+
 		/**
 		 * If the file is a full url (cdn or using get_theme_url(..))
 		 * we use as it is, otherwise, we force get_theme_url()
@@ -1229,13 +1229,13 @@ EOT;
 		{
 			$file = $this->theme_url($file);
 		}
-		
+
 		// If the version is provided, use it.
 		if ( ! empty($ver))
 		{
 			$file .= "?ver={$ver}";
 		}
-		
+
 		if ($type == 'css')
 		{
 			$attributes['rel']  = 'stylesheet';
@@ -1247,33 +1247,33 @@ EOT;
 			$attributes['type'] = 'text/javascript';
 			$attributes['src']  = $file;
 		}
-		
+
 		// Merge any additional attributes.
 		$attributes = array_replace_recursive($attributes, $attrs);
-		
+
 		// Files to target.
 		$files = ('css' == $type) ? '_styles' : '_scripts';
-		
+
 		// Prepended files to target.
 		$prepended = ('css' == $type) ? '_prepended_styles' : '_prepended_scripts';
-		
+
 		// Should the file be prepended.
 		if (true === $prepend OR 'jquery-js' == $handle)
 		{
 			// We first add it to the $prepended_xx array.
 			$this->{$prepended}[$handle] = $attributes;
-			
+
 			// We merge everything.
 			$this->{$files} = array_replace_recursive($this->{$prepended}, (array) $this->{$files});
-			
+
 			// Don't go further.
 			return $this;
 		}
-		
+
 		$this->{$files}[$handle] = $attributes;
 		return $this;
 	}
-	
+
 	/**
 	 * Simply remove any added files.
 	 * @access 	public
@@ -1289,10 +1289,10 @@ EOT;
 		{
 			return $this;
 		}
-		
+
 		// Let's make $handle nicer :)/
 		$handle = preg_replace("/-{$type}$/", '', $handle)."-{$type}";
-		
+
 		if ($type == 'css')
 		{
 			$this->_removed_styles[] = $handle;
@@ -1303,11 +1303,11 @@ EOT;
 			$this->_removed_scripts[] = $handle;
 			unset($this->_scripts[$handle]);
 		}
-		
-		
+
+
 		return $this;
 	}
-	
+
 	/**
 	 * Remplaces any file by another.
 	 * @access 	public
@@ -1328,10 +1328,10 @@ EOT;
 		{
 			return $this;
 		}
-		
+
 		// We start by removing the extension.
 		$file = $this->_remove_extension($file, $type);
-		
+
 		// If the $handle is not provided, we generate it.
 		if (empty($handle))
 		{
@@ -1344,7 +1344,7 @@ EOT;
 			$handle           = preg_replace("/-{$type}$/", '', $handle)."-{$type}";
 			$attributes['id'] = $handle;
 		}
-		
+
 		/**
 		 * If the file is a full url (cdn or using get_theme_url(..))
 		 * we use as it is, otherwise, we force get_theme_url()
@@ -1353,13 +1353,13 @@ EOT;
 		{
 			$file = $this->theme_url($file);
 		}
-		
+
 		// If the version is provided, use it.
 		if ( ! empty($ver))
 		{
 			$file .= "?ver={$ver}";
 		}
-		
+
 		if ($type == 'css')
 		{
 			$attributes['rel']  = 'stylesheet';
@@ -1371,12 +1371,12 @@ EOT;
 			$attributes['type'] = 'text/javascript';
 			$attributes['src']  = $file;
 		}
-		
+
 		// Merge any additional attributes.
 		$attributes = array_replace_recursive($attributes, $attrs);
-		
+
 		// We replace the file if found.
-		
+
 		if ($type == 'css')
 		{
 			$this->_styles[$handle] = $attributes;
@@ -1387,7 +1387,7 @@ EOT;
 		}
 		return $this;
 	}
-	
+
 	/**
 	 * Allows user to add inline elements (CSS or JS)
 	 * @access 	public
@@ -1399,26 +1399,26 @@ EOT;
 	public function add_inline($type = 'css', $content = '', $handle = null)
 	{
 		$handle = preg_replace("/-{$type}$/", '', $handle)."-{$type}";
-		
+
 		// In case of inline styles.
 		if ('css' == $type)
 		{
 			$this->_inline_styles[$handle] = $content;
 		}
-		
+
 		// In case of inline scripts.
 		elseif ('js' == $type)
 		{
 			$this->_inline_scripts[$handle] = $content;
 		}
-		
+
 		return $this;
 	}
-	
+
 	// --------------------------------------------------------------------
 	// CSS Functions
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Returns the array of loaded CSS files
 	 * @access 	protected
@@ -1429,7 +1429,7 @@ EOT;
 	{
 		return $this->_styles;
 	}
-	
+
 	/**
 	 * Outputs all site stylesheets and inline styes string.
 	 * @return 	string
@@ -1437,19 +1437,19 @@ EOT;
 	public function output_styles()
 	{
 		$styles = '';
-		
+
 		// Any before styles filters?
 		$styles = apply_filters('before_styles', $styles);
-		
+
 		// Render all enqueued ones.
 		$styles .= $this->_render_styles();
-		
+
 		// Any after styles filters?
 		$styles = apply_filters('after_styles', $styles);
-		
+
 		return $styles;
 	}
-	
+
 	/**
 	 * Collect all additional CSS files and prepare them for output
 	 * @access 	private
@@ -1477,7 +1477,7 @@ EOT;
 		}
 
 		$output = '';
-		
+
 		$i = 1;
 		$j = count($this->_styles);
 		foreach ($this->_styles as $handle => $file)
@@ -1487,26 +1487,26 @@ EOT;
 				$output .= $this->_inline_styles[$handle]."\n\t";
 				unset($this->_inline_styles[$handle]);
 			}
-			
+
 			if (false !== $file)
 			{
 				$output .= '<link'._stringify_attributes($file).' />'.($i === $j ? '' : "\n\t");
 			}
 			$i++;
 		}
-		
+
 		if ( ! empty($this->_inline_styles))
 		{
 			$output .= implode("\n\t", $this->_inline_styles);
 		}
-		
+
 		return $output;
 	}
-	
+
 	// --------------------------------------------------------------------
 	// JS Functions
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Returns the array of loaded JS files
 	 * @access 	protected
@@ -1517,7 +1517,7 @@ EOT;
 	{
 		return $this->_scripts;
 	}
-	
+
 	/**
 	 * Outputs all script tags and inline scripts.
 	 * @access 	protected
@@ -1526,19 +1526,19 @@ EOT;
 	public function output_scripts()
 	{
 		$scripts = '';
-		
+
 		// Any before scripts filters?
 		$scripts = apply_filters('before_scripts', $scripts)."\t";
-		
+
 		// Render all enqueued ones.
 		$scripts .= $this->_render_scripts();
-		
+
 		// Any after scripts filters?
 		$scripts = apply_filters('after_scripts', $scripts)."\t";
-		
+
 		return $scripts;
 	}
-	
+
 	/**
 	 * Collect all additional JS files and prepare them for output
 	 * @access 	private
@@ -1566,10 +1566,10 @@ EOT;
 		}
 
 		$output = '';
-		
+
 		$i = 1;
 		$j = count($this->_scripts);
-		
+
 		if ( ! empty($this->_scripts))
 		{
 			foreach ($this->_scripts as $handle => $file)
@@ -1579,28 +1579,28 @@ EOT;
 					$output .= $this->_inline_scripts[$handle]."\n\t";
 					unset($this->_inline_scripts[$handle]);
 				}
-				
+
 				if (false !== $file)
 				{
 					$output .= '<script'._stringify_attributes($file).'></script>'.($i === $j ? '' : "\n\t");
 				}
-				
+
 				$i++;
 			}
 		}
-		
+
 		if ( ! empty($this->_inline_scripts))
 		{
 			$output .= implode("\n\t", $this->_inline_scripts);
 		}
-		
+
 		return $output;
 	}
-	
+
 	// --------------------------------------------------------------------
 	// Google Analytics Output
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Outputs the default google analytics code.
 	 * @access 	protected
@@ -1618,11 +1618,11 @@ EOT;
 		}
 		return $output;
 	}
-	
+
 	// --------------------------------------------------------------------
 	// Extra head function.
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Outputs all additional head string.
 	 * @access 	protected
@@ -1634,11 +1634,11 @@ EOT;
 		// If there any extra head filters, add them.
 		return apply_filters('extra_head', $content);
 	}
-	
+
 	// --------------------------------------------------------------------
 	// Partial Views Functions
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Adds partial view
 	 * @access 	protected
@@ -1650,12 +1650,12 @@ EOT;
 	{
 		// If $name is not set, we take the last string.
 		(empty($name)) && $name = basename($view);
-		
+
 		$this->_partials[$name] = $this->_load_file($view, $data, 'partial');
-		
+
 		return $this;
 	}
-	
+
 	/**
 	 * Displays a partial view alone.
 	 * @access 	protected
@@ -1673,19 +1673,19 @@ EOT;
 		{
 			return $this->_partials[$name];
 		}
-		
+
 		if ($load === true)
 		{
 			return $this->_load_file($view, $data, 'partial');
 		}
-		
+
 		return null;
 	}
-	
+
 	// --------------------------------------------------------------------
 	// Header and footer functions
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Returns or ouputs the header file or provided template.
 	 * @access 	protected
@@ -1702,12 +1702,12 @@ EOT;
 		 */
 		($file === null) && $file = 'header';
 		$header_file = $this->theme_path(preg_replace('/.php$/', '', $file).'.php');
-		
+
 		if (file_exists($header_file))
 		{
 			$output = $this->ci->load->file($header_file, true);
 		}
-		
+
 		/**
 		 * If the header file is not found, we proceed
 		 * to replacements and prepare our output.
@@ -1716,45 +1716,45 @@ EOT;
 		{
 			// Base url
 			$replace['base_url'] = base_url();
-			
+
 			// <html> class.
 			$replace['html_class'] = $this->get_html_class();
-			
+
 			// Language attributes.
 			$replace['language_attributes'] = $this->get_language_attributes();
-			
+
 			// Charset.
 			$replace['charset'] = $this->charset();
-			
+
 			// Page title.
 			$replace['title'] = $this->get_title();
-			
+
 			// Let's add <meta> tags now;
 			$replace['metadata'] = $this->output_metadata();
-			
+
 			// Prepare all stylesheets.
 			$replace['stylesheets'] = $this->output_styles();
-			
+
 			// Any additional extra head?
 			$replace['extra_head'] = $this->output_extra_head();
-			
+
 			// Prepare body class.
 			$replace['body_class'] = $this->body_class();
-			
+
 			$output = $this->_template_header;
-			
+
 			foreach ($replace as $key => $val)
 			{
 				$output = str_replace('{'.$key.'}', $val, $output);
 			}
 		}
-		
+
 		// Change the flag status
 		$this->_header_called = true;
-		
+
 		return $output;
 	}
-	
+
 	/**
 	 * Returns or ouputs the footer file or provided template.
 	 * @access 	protected
@@ -1770,33 +1770,33 @@ EOT;
 		 * replace_js, remove_js or even add_js if the given
 		 * $handle is the same.
 		 */
-		
+
 		// Add modernizr if not targetted for remove.
-		if (isset($this->_removed_scripts) 
+		if (isset($this->_removed_scripts)
 			&& ! in_array('modernizr-js', $this->_removed_scripts))
 		{
-			$modernizr_url = (true === $this->cdn_enabled(false)) 
-				? 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js' 
+			$modernizr_url = (true === $this->cdn_enabled(false))
+				? 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js'
 				: $this->common_url('js/modernizr-2.8.3.min.js');
-			
+
 			$this->add('js', $modernizr_url, 'modernizr', null, true);
-			
+
 			unset($modernizr_url);
 		}
-		
+
 		// Add jQuery if not targetted for remove.
-		if (is_array($this->_removed_scripts) 
+		if (is_array($this->_removed_scripts)
 			&& ! in_array('jquery-js', $this->_removed_scripts))
 		{
-			$jquery_url = (true === $this->cdn_enabled(false)) 
-				? 'https://code.jquery.com/jquery-3.2.1.min.js' 
+			$jquery_url = (true === $this->cdn_enabled(false))
+				? 'https://code.jquery.com/jquery-3.2.1.min.js'
 				: $this->common_url('js/jquery-3.2.1.min.js');
-			
+
 			$this->add('js', $jquery_url, 'jquery', null, true);
-			
+
 			unset($jquery_url);
 		}
-		
+
 		/**
 		 * If the footer file exists, we use it.
 		 * This allows the user to override the default
@@ -1804,7 +1804,7 @@ EOT;
 		 */
 		($file === null) && $file = 'footer';
 		$footer_file = $this->theme_path(preg_replace('/.php$/', '', $file).'.php');
-		
+
 		if (file_exists($footer_file))
 		{
 			$output = $this->ci->load->file($footer_file, true);
@@ -1823,15 +1823,15 @@ EOT;
 				$this->output_analytics()
 			), $this->_template_footer);
 		}
-		
+
 		// Change the flag status
 		$this->_footer_called = true;
-		
+
 		return $output;
 	}
-	
+
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Return the string to use for get_html_class()
 	 * @access 	protected
@@ -1842,13 +1842,13 @@ EOT;
 	{
 		// Apply any filters targetting this class.
 		$this->_html_classes = apply_filters('html_class', $this->_html_classes);
-		
+
 		// If any class is provided, add it.
 		if ($class !== null)
 		{
 			$this->_html_classes[] = $class;
 		}
-		
+
 		/**
 		 * By using the following, we make sure to trim spaces
 		 * and remove any duplicate classes.
@@ -1857,18 +1857,18 @@ EOT;
 		{
 			$this->_html_classes = array_unique(array_map('trim', $this->_html_classes));
 		}
-		
+
 		// If there are any classes, we build the attribute.
 		if ( ! empty($this->_html_classes))
 		{
 			return ' class="'.implode(' ', $this->_html_classes).'"';
 		}
-		
+
 		return null;
 	}
-	
+
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Set <html> language attributes.
 	 * @access 	protected
@@ -1879,30 +1879,30 @@ EOT;
 	{
 		// Add the first attributes which is the language set in config.
 		$attrs = array($this->language('code'));
-		
+
 		// Apply any filters targetting these attributes.
 		$attrs = apply_filters('language_attributes', $attrs);
-		
+
 		// If there are any extra attributes, we add them.
 		if ($attributes !== null)
 		{
 			$attrs[] = $attributes;
 		}
-		
+
 		// Trim spaces and remove duplicates.
 		$attrs = array_unique(array_map('trim', $attrs));
-		
+
 		// If there are any attributes, we return them.
 		if ( ! empty($attrs))
 		{
 			return ' lang="'.implode(' ', $attrs).'"';
 		}
-		
+
 		return null;
 	}
-	
+
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Return the string to use for get_body_class()
 	 * @access 	protected
@@ -1913,28 +1913,28 @@ EOT;
 	{
 		// Apply any filters targetting this class.
 		$this->_body_classes = apply_filters('body_class', $this->_body_classes);
-		
+
 		// If any class is provided, add it.
 		if ($class !== null)
 		{
 			$this->_body_classes[] = $class;
 		}
-		
+
 		/**
 		 * By using the following, we make sure to trim spaces
 		 * and remove any duplicate classes.
 		 */
 		$this->_body_classes = array_unique(array_map('trim', $this->_body_classes));
-		
+
 		// If there are any classes, we build the attribute.
 		if ( ! empty($this->_body_classes))
 		{
 			return ' class="'.implode(' ', $this->_body_classes).'"';
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Returns the array of body classes.
 	 * @access 	protected
@@ -1945,7 +1945,7 @@ EOT;
 	{
 		return $this->_body_classes;
 	}
-	
+
 	/**
 	 * Returns the <meta> charset tag.
 	 * @access 	protected
@@ -1956,26 +1956,26 @@ EOT;
 	{
 		// Let's apply filters targetting it.
 		$this->_charsets = apply_filters('the_charset', $this->_charsets);
-		
+
 		// If there are any additional $charset,add it.
 		if ($charset !== null)
 		{
 			$this->_charsets[] = $charset;
 		}
-		
+
 		// Trim space and remplace duplicates.
 		$this->_charsets = array_unique(array_map('trim', $this->_charsets));
-		
+
 		if ( ! empty($this->_charsets))
 		{
 			return '<meta charset="'.implode(' ', $this->_charsets).'">';
 		}
-		
+
 		return null;
 	}
-	
+
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Returns the array of site's charsets.
 	 * @access 	protected
@@ -1986,11 +1986,11 @@ EOT;
 	{
 		return $this->_charsets;
 	}
-	
+
 	// --------------------------------------------------------------------
 	// Content functions
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Returns the current view file content.
 	 */
@@ -1998,9 +1998,9 @@ EOT;
 	{
 		return $this->_the_content;
 	}
-	
+
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Allow themes to be translated.
 	 * @access 	protected
@@ -2012,40 +2012,40 @@ EOT;
 	{
 		// Format the path.
 		$path = $this->theme_path(str_replace($this->_theme_path, '', $path));
-		
+
 		$index = apply_filters('theme_translation_index', $index);
-		
+
 		// The folder does not exist? Nothing to do.
 		if (false === $path)
 		{
 			return;
 		}
-		
+
 		// Make sure to put .htaccess
 		($path) && $this->_check_htaccess($path);
-		
+
 		// Make sure the english version exists!
 		$english_file = $path.DS.'english.php';
 		if ( ! is_file($english_file))
 		{
 			return;
 		}
-		
+
 		// Include the english version first make sure it's valid.
 		include($english_file);
-		
+
 		// Was the language array updated?
 		$full_lang = (isset($lang)) ? $lang : array();
 		unset($lang);
-		
+
 		// Catch the currently used language.
 		$site_lang = $this->ci->config->item('language');
-		
+
 		// Now we load the current language file.
 		if ($site_lang <> 'english')
 		{
 			$lang_file = $path.DS.$site_lang.'.php';
-			
+
 			// Load the file only if it exists.
 			if (is_file($lang_file))
 			{
@@ -2053,32 +2053,32 @@ EOT;
 				(isset($lang)) && $full_lang = array_replace_recursive($full_lang, $lang);
 			}
 		}
-		
+
 		// Now we add the language array to the global array.
 		if ( ! empty($full_lang))
 		{
-			
+
 			// Adding an index?
 			if ($index !== null)
 			{
 				// Set theme language index.
 				$this->_theme_language_index = $index;
-				
+
 				// Add the index to translation.
 				$full_lang = array(
 					$index => $full_lang
 				);
 			}
-			
+
 			// Merge all.
 			$this->ci->lang->language = array_replace_recursive($this->ci->lang->language, $full_lang);
 		}
-		
+
 		$this->_theme_lang_loaded = true;
 	}
-	
+
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Return the current theme's language index.
 	 * @access 	public
@@ -2110,11 +2110,11 @@ EOT;
 		// Return a single key or the whole array?
 		return ($key && isset($return[$key])) ? $return[$key] : $return;
 	}
-	
+
 	// --------------------------------------------------------------------
 	// Alert messages functions
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Stores alert messages in flashdata.
 	 * @access 	protected
@@ -2129,28 +2129,28 @@ EOT;
 		{
 			return;
 		}
-		
+
 		(is_array($message)) OR $message = array(
 			$type => $message
 		);
-		
+
 		// Prepare out empty messages array.
 		(is_array($this->_messages)) OR $this->_messages = array();
-		
+
 		foreach ($message as $key => $val)
 		{
 			$this->_messages[] = array(
 				$key => $val
 			);
 		}
-		
+
 		// Make sure the session library is loaded.
 		(class_exists('CI_Session', false)) OR $this->ci->load->library('session');
-		
+
 		// Set the flash data.
 		return $this->ci->session->set_flashdata('__ci_alert', $this->_messages);
 	}
-	
+
 	/**
 	 * Returns all available alert messages.
 	 * @access 	protected
@@ -2163,29 +2163,29 @@ EOT;
 		{
 			// Make sure the session library is loaded.
 			(class_exists('CI_Session', false)) OR $this->ci->load->library('session');
-			
+
 			$this->_messages = $this->ci->session->flashdata('__ci_alert');
 		}
-		
+
 		// If there are still no messages, nothing to do.
 		if (empty($this->_messages))
 		{
 			return '';
 		}
-		
+
 		// Prepare the alert template.
 		$this->_template_alert = apply_filters('alert_template', $this->_template_alert);
-		
+
 		// Now we prepare alert classes.
 		$this->_alert_classes = apply_filters('alert_classes', $this->_alert_classes);
-		
+
 		$output = '';
-		
+
 		foreach ($this->_messages as $message)
 		{
 			reset($message);
 			$key = key($message);
-			
+
 			$output .= str_replace(array(
 				'{class}',
 				'{message}'
@@ -2194,10 +2194,10 @@ EOT;
 				$message[$key]
 			), $this->_template_alert);
 		}
-		
+
 		return $output;
 	}
-	
+
 	/**
 	 * Prints an alert.
 	 * @access 	protected
@@ -2212,7 +2212,7 @@ EOT;
 		{
 			return '';
 		}
-		
+
 		// Prepare the alert template.
 		if ($js === true)
 		{
@@ -2222,10 +2222,10 @@ EOT;
 		{
 			$template = apply_filters('alert_template', $this->_template_alert);
 		}
-		
+
 		// Now we prepare alert classes.
 		$this->_alert_classes = apply_filters('alert_classes', $this->_alert_classes);
-		
+
 		$output = str_replace(array(
 			'{class}',
 			'{message}'
@@ -2233,12 +2233,12 @@ EOT;
 			$this->_alert_classes[$type],
 			$message
 		), $template);
-		
+
 		return $output;
 	}
-	
+
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Instead of chaining this class methods or calling them one by one,
 	 * this method is a shortcut to do anything you want in a single call.
@@ -2252,14 +2252,14 @@ EOT;
 	{
 		// Start benchmark
 		$this->ci->benchmark->mark('theme_render_start');
-		
+
 		// Load the language file only if it was not loaded.
 		$theme_lang = apply_filters('theme_translation', false);
 		if (false !== $theme_lang && $this->_theme_lang_loaded === false)
 		{
 			$this->load_translation($theme_lang);
 		}
-		
+
 		/**
 		 * In case $title is an array, it will be used as $options.
 		 * If then $options is a boolean, it will be used for $return.
@@ -2270,7 +2270,7 @@ EOT;
 			$options = $title;
 			$title   = null;
 		}
-		
+
 		// Loop through all options now.
 		foreach ($options as $key => $val)
 		{
@@ -2282,7 +2282,7 @@ EOT;
 			{
 				$this->add($key, $val);
 			}
-			
+
 			// We call the method only if it exists.
 			elseif (method_exists($this, '_set_'.$key))
 			{
@@ -2291,34 +2291,34 @@ EOT;
 					'_set_'.$key
 				), (array) $val);
 			}
-			
+
 			// Otherwise we set variables to views.
 			else
 			{
 				$this->set($key, $val);
 			}
 		}
-		
+
 		// Now we render the final output.
 		$output = $this->_load($this->get_view(), $data);
-		
+
 		// Start benchmark
 		$this->ci->benchmark->mark('theme_render_end');
-		
+
 		// Pass elapsed time to views.
 		if ($this->ci->output->parse_exec_vars === true)
 		{
 			$output = str_replace('{theme_time}', $this->ci->benchmark->elapsed_time('theme_render_start', 'theme_render_end'), $output);
 		}
-		
+
 		if ($return === true)
 		{
 			return $output;
 		}
-		
+
 		$this->ci->output->set_output($output);
 	}
-	
+
 	/**
 	 * Unlike the method above it, this one builts the output and does not
 	 * display it. You would have to echo it.
@@ -2331,9 +2331,9 @@ EOT;
 	{
 		return $this->_render($data, $title, $options, true);
 	}
-	
+
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Returns an array of client's details: browser's name
 	 * and version, as well as the platform.
@@ -2353,12 +2353,12 @@ EOT;
 			$this->_detect_browser = true;
 			$this->_detect_browser();
 		}
-		
+
 		return ($key !== null && isset($this->_client[$key])) ? $this->_client[$key] : $this->_client;
 	}
-	
+
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Returns true if CDN use is enable and
 	 * a CDN url is set.
@@ -2372,12 +2372,12 @@ EOT;
 		{
 			return (true === $this->_cdn_enabled);
 		}
-		
+
 		return (true === $this->_cdn_enabled && !empty($this->_cdn_server));
 	}
-	
+
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Returns true if on mobile.
 	 * @access 	protected
@@ -2387,9 +2387,9 @@ EOT;
 	{
 		return $this->_is_mobile;
 	}
-	
+
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Loads a file.
 	 * @access 	private
@@ -2403,44 +2403,44 @@ EOT;
 		// Remove extension and prepare empty output.
 		$file   = preg_replace('/.php$/', '', $file).'.php';
 		$output = '';
-		
+
 		$alt_file  = null; // Alternative file.
 		$fallback  = null; // Fallback template.
 		$full_path = $this->_theme_path; // Full path to theme's folder.
 		$alt_path  = KBPATH.'views/'; // Full path to default CodeIgniter views folder.
-		
+
 		switch ($type)
 		{
 			// In case of a partial view.
 			case 'partial':
-				
+
 				/**
 				 * Alterative file just in case.
 				 */
 				$alt_file = apply_filters('theme_partial_fallback', $alt_file);
-				
+
 				/**
 				 * We are settings the fallback partial to $_template_partial
 				 * even if it does not exist.
 				 */
 				$fallback = 'partial';
-				
+
 				/**
 				 * By adding this hook, we let the user handle
 				 * the path to partial views.
 				 */
 				$full_path = apply_filters('theme_partials_path', $full_path);
-				
+
 				// Alternative path to partials file.
 				$alt_path .= 'partials/';
-				
+
 				break;
-			
+
 			// --------------------------------------------------------------------
-			
+
 			// In case of a layout.
 			case 'layout':
-				
+
 				/**
 				 * If the layout file is not found, we let the user
 				 * choose a fallback file if there is one.
@@ -2449,49 +2449,49 @@ EOT;
 				 */
 				$alt_file = 'index.php';
 				$alt_file = apply_filters('theme_layout_fallback', $alt_file);
-				
+
 				// The fallback is $_template_layout property.
 				$fallback = 'layout';
-				
+
 				/**
 				 * By adding this hook, we let the user handle
 				 * the path to layouts files.
 				 */
 				$full_path = apply_filters('theme_layouts_path', $full_path);
-				
+
 				// Alternative path to layouts files.
 				$alt_path .= 'layouts/';
-				
+
 				break;
-			
+
 			// --------------------------------------------------------------------
-			
+
 			// In case of a single view file.
 			case 'view':
-				
+
 				/**
 				 * Alterative file just in case.
 				 */
 				$alt_file = apply_filters('theme_view_fallback', $alt_file);
-				
+
 				/**
 				 * We are settings the fallback partial to $_template_view
 				 * even if it does not exist.
 				 */
 				$fallback = 'view';
-				
+
 				/**
 				 * By adding this hook, we let the user handle
 				 * the path to view views.
 				 */
 				$full_path = apply_filters('theme_views_path', $full_path);
-				
+
 				break;
 		}
-		
+
 		// Format $file.
 		$file = str_replace('/', DS, $file);
-		
+
 		// Generate the full path if it's not provided.
 		if ( ! is_file($file))
 		{
@@ -2508,16 +2508,16 @@ EOT;
 			$file_path     = $file;
 			$alt_file_path = false;
 		}
-		
+
 		// If the file exists, we use it.
 		if (false !== $file_path)
 		{
 			// Make sure to create the .htaccess file.
 			$this->_check_htaccess($full_path);
-			
+
 			// If there are any vars to pass, use them.
 			(empty($data)) OR $this->ci->load->vars($data);
-			
+
 			// Let's prepare the output.
 			$output = $this->ci->load->file($file_path, true);
 		}
@@ -2526,10 +2526,10 @@ EOT;
 		{
 			// Change the full path to the new file.
 			$file_path = $this->theme_path($alt_file);
-			
+
 			// If there are any vars, use them.
 			(empty($data)) OR $this->ci->load->vars($data);
-			
+
 			// Prepare the output.
 			$output = $this->ci->load->file($file_path, true);
 		}
@@ -2538,7 +2538,7 @@ EOT;
 		{
 			// If there are any vars to pass, use them.
 			(empty($data)) OR $this->ci->load->vars($data);
-			
+
 			// Let's prepare the output.
 			$output = $this->ci->load->file($alt_file_path, true);
 		}
@@ -2550,7 +2550,7 @@ EOT;
 			{
 				return "{{$val}}";
 			}, array_keys($data));
-			
+
 			/**
 			 * Because the layout fallback container {navbar}, {sidebar} && {footer}
 			 * placeholders, we make sure to either load them OR remplace them with
@@ -2562,10 +2562,10 @@ EOT;
 				$search[] = '{sidebar}';
 				$search[] = '{footer}';
 			}
-			
+
 			// Things we use to replace.
 			$replace = array_values($data);
-			
+
 			// We prepare the final output.
 			$output = str_replace($search, $replace, $this->{"_template_{$fallback}"});
 		}
@@ -2573,7 +2573,7 @@ EOT;
 		{
 			show_error("The following view file could not be found anywhere in your theme folder: <br />{$file_path}\\{$file}");
 		}
-		
+
 		return $output;
 	}
 
@@ -2626,7 +2626,7 @@ EOT;
 		/**
 		 * Remember, we have backed up the file right?
 		 * The reason behind this it to set relative paths inside it.
-		 * For instance, if an image or a fond is used in the CSS file, 
+		 * For instance, if an image or a fond is used in the CSS file,
 		 * you might see something like this: url('../').
 		 * Here we are simply replacing that relative path and use an
 		 * absolute path so image or font don't get broken.
@@ -2644,7 +2644,7 @@ EOT;
 				$count = substr_count($match[2], '../');
 				$search[] = str_repeat('../', $count);
 				$temp_import_url = $import_url;
-				for ($i=1; $i <= $count; $i++) { 
+				for ($i=1; $i <= $count; $i++) {
 					$temp_import_url = str_replace(basename($temp_import_url), '', $temp_import_url);
 				}
 				$replace[] = rtrim($temp_import_url, '/').'/';
@@ -2663,9 +2663,9 @@ EOT;
 			"#/\*.*?\*/#s" => "",  // Strip C style comments.
 			"#\s\s+#"      => " ", // Strip excess whitespace.
 		);
-		
+
 		$search = array_keys($replace);
-		
+
 		$css = preg_replace($search, $replace, $css);
 
 		$replace = array(
@@ -2680,15 +2680,15 @@ EOT;
 			"\n}" => "}", // Don't wrap closing braces.
 			"} "  => "}\n", // Put each rule on it's own line.
 		);
-		
+
 		$search = array_keys($replace);
 		$css = str_replace($search, $replace, $css);
 
 		return trim($css);
 	}
-	
+
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Loads view file
 	 * @access 	private
@@ -2703,13 +2703,13 @@ EOT;
 		// Done after theme setup and theme menus.
 		do_action('after_theme_setup');
 		do_action('theme_menus');
-		
+
 		// Prepare our empty layout array.
 		$layout = array();
-		
+
 		// If there are any partial views enqueued, load theme.
 		do_action('enqueue_partials');
-		
+
 		if (isset($this->_partials) && is_array($this->_partials))
 		{
 			foreach ($this->_partials as $name => $partial)
@@ -2717,23 +2717,23 @@ EOT;
 				$layout[$name] = $partial;
 			}
 		}
-		
+
 		// Pass all given $data to the requested view file then load it.
 		$this->_the_content = $layout['content'] = $this->_load_file($view, $data, 'view');
-		
+
 		// If there are any filter applied to it, use them.
 		$this->_the_content = apply_filters('the_content', $this->_the_content);
-		
+
 		/**
 		 * Let's now prepare the layout file to load.
 		 * It is possible to change the layout on functions.php
 		 * by using the 'theme_layout' filter.
 		 */
 		$this->_layout = apply_filters('theme_layout', $this->_layout);
-		
+
 		// Use the default layout if not found.
 		(null === $this->_layout) && $this->_layout = 'default';
-		
+
 		/**
 		 * Disable sodding IE7's constant cacheing!!
 		 * @author 	Philip Sturgeon
@@ -2746,44 +2746,44 @@ EOT;
 		$this->ci->output->set_header('Cache-Control: post-check=0, pre-check=0, max-age=0');
 		$this->ci->output->set_header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
 		$this->ci->output->set_header('Pragma: no-cache');
-		
+
 		// Let CI do the caching instead of the browser
 		$this->ci->output->cache($this->_cache_lifetime);
-		
+
 		// Load the layout file.
 		$output = $this->_load_file($this->_layout, $layout, 'layout');
-		
+
 		// If the header file was not called, make sure to call it.
 		if ($this->_header_called === false)
 		{
 			$output = $this->get_header().$output;
 		}
-		
+
 		// If the footer file was not called, make sure to call it.
 		if ($this->_footer_called === false)
 		{
 			$output = $output.PHP_EOL.$this->get_footer();
 		}
-		
+
 		// Should we compress the output?
 		if ($this->_compress === true)
 		{
 			$output = $this->compress_output($output);
 		}
-		
+
 		return $output;
 	}
-	
+
 	// --------------------------------------------------------------------
 	// Utilities
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Whether to use _remove_extension or not.
 	 * @var bool
 	 */
 	private $_remove_extension = true;
-	
+
 	/**
 	 * Disable the use of _remove_extension method.
 	 * @access 	public
@@ -2796,7 +2796,7 @@ EOT;
 	}
 
 	// ------------------------------------------------------------------------
-	
+
 	/**
 	 * Removes files extension
 	 * @access 	protected
@@ -2815,29 +2815,29 @@ EOT;
 			}
 			return $temp_files;
 		}
-		
+
 		// Removing extension is disabled? Return the file as-is.
 		if ($this->_remove_extension === false)
 		{
 			return $file;
 		}
-		
+
 		// Let's make sure to remove all dots first.
 		$ext = preg_replace("/^\.+|\.+$/", '', strtolower($ext));
-		
+
 		/**
 		 * Let's first check if the file extension is
 		 * present or not. If not, add it.
 		 */
 		$found_ext = pathinfo($file, PATHINFO_EXTENSION);
-		
+
 		($found_ext == $ext) OR $file = $file.'.'.$ext;
-		
+
 		return $file;
 	}
 
 	// ------------------------------------------------------------------------
-	
+
 	/**
 	 * Make sure the .htaccess file that denies direct
 	 * access to folder is present.
@@ -2857,14 +2857,14 @@ EOT;
 		 * If the selected path is not valid, or is not writtable
 		 * or the .htaccess file is already there, nothing to do.
 		 */
-		if ($path == $this->_theme_path 
-			OR false === realpath($path) 
-			OR !is_writable($path) 
+		if ($path == $this->_theme_path
+			OR false === realpath($path)
+			OR !is_writable($path)
 			OR is_file($path.DS.'.htaccess'))
 		{
 			return;
 		}
-		
+
 		$_htaccess_content = <<<EOT
 <IfModule authz_core_module>
 	Require all denied
@@ -2877,9 +2877,9 @@ EOT;
 		fwrite($_htaccess_file, $_htaccess_content);
 		fclose($_htaccess_file);
 	}
-	
+
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Detect browser details.
 	 * @access 	private
@@ -2893,31 +2893,31 @@ EOT;
 		{
 			return;
 		}
-		
+
 		// Make sure to load user_agent library if not loaded.
 		if ( ! class_exists('CI_User_agent', false))
 		{
 			$this->ci->load->library('user_agent');
 		}
-		
+
 		// Get the browser's name.
 		$this->_client['browser'] = ($this->_is_mobile === true) ? $this->ci->agent->mobile() : $this->ci->agent->browser();
-		
+
 		// Add browse's version.
 		$this->_client['version'] = $this->ci->agent->version();
-		
+
 		// Collect accepted languages.
 		$this->_client['languages'] = array_values(array_filter($this->ci->agent->languages(), function($lang)
 		{
 			return strlen($lang) <= 3;
 		}));
-		
+
 		// Set the client used platform (Windows, IOs, Unix ...).
 		$this->_client['platform'] = $this->ci->agent->platform();
 	}
-	
+
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Compresses the HTML output
 	 * @access 	private
@@ -2928,14 +2928,14 @@ EOT;
 	{
 		// Make sure $output is always a string
 		(is_string($output)) OR $output = (string) $output;
-		
+
 		// In orders, we are searching for
 		// 1. White-spaces after tags, except space.
 		// 2. White-spaces before tags, except space.
 		// 3. Multiple white-spaces sequences.
 		// 4. HTML comments
 		// 5. CDATA
-		
+
 		// We return the minified $output
 		$output = preg_replace(array(
 			'/\>[^\S ]+/s',
@@ -2950,10 +2950,10 @@ EOT;
 			'',
 			"//&lt;![CDATA[\n".'\1'."\n//]]>"
 		), $output);
-		
+
 		return $output;
 	}
-	
+
 }
 
 // --------------------------------------------------------------------
@@ -2992,7 +2992,7 @@ if ( ! function_exists('is_module'))
 		{
 			return (get_instance()->theme->module !== null);
 		}
-		
+
 		/**
 		 * Doing the following makes it possible to
 		 * check for multiple modules.
@@ -3001,9 +3001,9 @@ if ( ! function_exists('is_module'))
 		{
 			$modules = array_map('trim', explode(',', $modules));
 		}
-		
+
 		// Compare between modules names.
-		return (in_array(get_instance()->theme->module, $modules));
+		return (in_array(get_instance()->router->fetch_module(), $modules));
 	}
 }
 
@@ -3020,9 +3020,9 @@ if ( ! function_exists('is_controller'))
 		{
 			$controllers = array_map('trim', explode(',', $controllers));
 		}
-		
+
 		// Compare between controllers names.
-		return (in_array(get_instance()->theme->controller, $controllers));
+		return (in_array(get_instance()->router->fetch_class(), $controllers));
 	}
 }
 
@@ -3039,9 +3039,23 @@ if ( ! function_exists('is_method'))
 		{
 			$methods = array_map('trim', explode(',', $methods));
 		}
-		
+
 		// Compare between methods names.
-		return (in_array(get_instance()->theme->method, $methods));
+		return (in_array(get_instance()->router->fetch_method(), $methods));
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('is_admin'))
+{
+	/**
+	 * This function returns TRUE if we are on the admin controller.
+	 * @return boolean
+	 */
+	function is_admin()
+	{
+		return (get_instance()->router->fetch_class() === 'admin');
 	}
 }
 
@@ -3472,7 +3486,7 @@ if ( ! function_exists('img_alt'))
 			$params['background'] = $background;
 			$params['foreground'] = $foreground;
 		}
-		
+
 		$params['height']     = (empty($params['height'])) ? $params['width'] : $params['height'];
 		$params['text']       = (empty($params['text'])) ? $params['width'].' x '.$params['height'] : $params['text'];
 		$params['background'] = (empty($params['background'])) ? 'CCCCCC' : $params['height'];
@@ -3500,7 +3514,7 @@ if ( ! function_exists('the_title'))
 		{
 			return get_instance()->theme->get_title($before, $after);
 		}
-		
+
 		echo get_instance()->theme->get_title($before, $after);
 	}
 }
@@ -3515,7 +3529,7 @@ if ( ! function_exists('the_extra_head'))
 		{
 			return get_instance()->theme->output_extra_head($content);
 		}
-		
+
 		echo get_instance()->theme->output_extra_head($content);
 	}
 }
@@ -3528,7 +3542,7 @@ if ( ! function_exists('add_ie9_support'))
 	{
 		$html5shiv = 'https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js';
 		$respond   = 'https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js';
-		
+
 		if ($remote === false)
 		{
 			$html5shiv = get_common_url('js/html5shiv-3.7.3.min.js');
@@ -3553,7 +3567,7 @@ if ( ! function_exists('the_content'))
 		{
 			return get_instance()->theme->output_content();
 		}
-		
+
 		echo get_instance()->theme->output_content();
 	}
 }
@@ -3589,7 +3603,7 @@ if ( ! function_exists('meta_tag')): /**
  * @param   string  $type       the type of meta tag.
  * @param   mixed   $attrs      array of string of attributes.
  * @return  string
- */ 
+ */
 	function meta_tag($name, $content = null, $type = 'meta', $attrs = array())
 	{
 		// Loop through multiple meta tags
@@ -3600,10 +3614,10 @@ if ( ! function_exists('meta_tag')): /**
 			{
 				$meta[] = meta_tag($key, $val, $type, $attrs);
 			}
-			
+
 			return implode("\n\t", $meta);
 		}
-		
+
 		$attributes = array();
 		switch ($type)
 		{
@@ -3612,7 +3626,7 @@ if ( ! function_exists('meta_tag')): /**
 				$attributes['rel']  = $name;
 				$attributes['href'] = $content;
 				break;
-			
+
 			// In case of a meta tag.
 			case 'meta':
 			default:
@@ -3620,21 +3634,21 @@ if ( ! function_exists('meta_tag')): /**
 				{
 					return "<meta charset=\"{$content}\" />";
 				}
-				
+
 				if ($name == 'base')
 				{
 					return "<base href=\"{$content}\" />";
 				}
-				
+
 				// The tag by default is "meta"
-				
+
 				$tag = 'meta';
-				
+
 				// In case of using Open Graph tags,
 				// we user 'property' instead of 'name'.
-				
+
 				$type = (false !== strpos($name, 'og:')) ? 'property' : 'name';
-				
+
 				if ($content === null)
 				{
 					$attributes[$type] = $name;
@@ -3644,12 +3658,12 @@ if ( ! function_exists('meta_tag')): /**
 					$attributes[$type]     = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
 					$attributes['content'] = htmlspecialchars($content, ENT_QUOTES, 'UTF-8');
 				}
-				
+
 				break;
 		}
-		
+
 		$attributes = (is_array($attrs)) ? _stringify_attributes(array_merge($attributes, $attrs)) : _stringify_attributes($attributes).' '.$attrs;
-		
+
 		return "<{$tag}{$attributes}/>";
 	}
 endif;
@@ -3668,7 +3682,7 @@ if ( ! function_exists('the_metadata'))
 		{
 			return get_instance()->theme->output_metadata();
 		}
-		
+
 		echo get_instance()->theme->output_metadata();
 	}
 }
@@ -3710,23 +3724,23 @@ if ( ! function_exists('css'))
 				'rel' => 'stylesheet',
 				'type' => 'text/css'
 			);
-			
+
 			$file = ($common === true) ? get_common_url($file) : get_theme_url($file);
-			
+
 			$file               = preg_replace('/.css$/', '', $file).'.css';
 			$attributes['href'] = $file;
-			
+
 			// Are there any other attributes to use?
 			if (is_array($attrs))
 			{
 				$attributes = array_replace_recursive($attributes, $attrs);
 				return '<link'._stringify_attributes($attributes).'/>'."\n";
 			}
-			
+
 			$attributes = _stringify_attributes($attributes)." {$attrs}";
 			return '<link'.$attributes.' />'."\n\t";
 		}
-		
+
 		return null;
 	}
 }
@@ -3746,7 +3760,7 @@ if ( ! function_exists('the_stylesheets'))
 		{
 			return get_instance()->theme->output_styles();
 		}
-		
+
 		echo get_instance()->theme->output_styles();
 	}
 }
@@ -3832,23 +3846,23 @@ if ( ! function_exists('js'))
 		if ($file)
 		{
 			$attributes['type'] = 'text/javascript';
-			
+
 			$file = ($common === true) ? get_common_url($file) : get_theme_url($file);
-			
+
 			$file              = preg_replace('/.js$/', '', $file).'.js';
 			$attributes['src'] = $file;
-			
+
 			// Are there any other attributes to use?
 			if (is_array($attrs))
 			{
 				$attributes = array_replace_recursive($attributes, $attrs);
 				return '<link'._stringify_attributes($attributes).'/>'."\n";
 			}
-			
+
 			$attributes = _stringify_attributes($attributes)." {$attrs}";
 			return '<script'.$attributes.'></script>'."\n";
 		}
-		
+
 		return null;
 	}
 }
@@ -3868,7 +3882,7 @@ if ( ! function_exists('the_javascripts'))
 		{
 			return get_instance()->theme->output_scripts();
 		}
-		
+
 		echo get_instance()->theme->output_scripts();
 	}
 }
@@ -3967,7 +3981,7 @@ if ( ! function_exists('get_header'))
 		{
 			return get_instance()->theme->get_header($file);
 		}
-		
+
 		echo get_instance()->theme->get_header($file);
 	}
 }

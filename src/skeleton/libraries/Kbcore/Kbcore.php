@@ -87,7 +87,7 @@ class Kbcore extends CI_Driver_Library
 			'relations',
 			'users',
 			'variables',
-			'theme',
+			// 'theme',
 		);
 
 		// Here we load all what we need.
@@ -128,8 +128,7 @@ class Kbcore extends CI_Driver_Library
 		// $this->ci->load->helper('language');
 
 		// Loading theme library.
-		// $this->ci->load->library('theme');
-		$this->ci->theme =& $this->theme;
+		$this->ci->load->library('theme');
 
 		// Make current language available to themes.
 		$this->_languages_list();

@@ -286,6 +286,7 @@ class Kbcore_objects extends CI_Driver implements CRUD_interface
 			return false;
 		}
 
+
 		// Split data.
 		list($entity, $object, $meta) = $this->_split_data($data);
 
@@ -296,9 +297,17 @@ class Kbcore_objects extends CI_Driver implements CRUD_interface
 		}
 
 		// Update objects table.
-		if ( ! empty($object) && ! $this->ci->bkader_objects_m->update($id, $object))
+		if ( ! empty($object))
 		{
-			return false;
+			$this->ci->db
+				->where('guid', $id)
+				->set($object)
+				->update('objects');
+
+			if ($this->ci->db->affected_rows() <= 0)
+			{
+				return false;
+			}
 		}
 
 		// If there are any metadata to update.
@@ -333,6 +342,7 @@ class Kbcore_objects extends CI_Driver implements CRUD_interface
 			return false;
 		}
 
+
 		// Get objects
 		if ( ! empty($args))
 		{
@@ -349,7 +359,7 @@ class Kbcore_objects extends CI_Driver implements CRUD_interface
 		{
 			foreach ($objects as $object)
 			{
-				$this->update($object->id, $data);
+				return $this->update($object->id, $data);
 			}
 
 			return true;

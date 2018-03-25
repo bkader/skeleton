@@ -100,7 +100,7 @@ $config['charset'] = 'UTF-8';
 | setting this variable to TRUE (boolean).  See the user guide for details.
 |
 */
-$config['enable_hooks'] = FALSE;
+$config['enable_hooks'] = TRUE;
 
 /*
 |--------------------------------------------------------------------------
@@ -558,7 +558,25 @@ $config['proxy_ips'] = '';
 | directory.
 |
 */
-$config['modules_locations'] = array(APPPATH.'modules/', KBPATH.'modules/');
+$config['modules_locations'] = array(
+	/**
+	 * There reason we are putting modules within the public
+	 * folder is to make it possible to load their own assets.
+	 * It is up to you to secure them by using usual CodeIgniter
+	 * check:
+	 * defined('BASEPATH') OR exit('No direct script access allowed');
+	 */
+	FCPATH.'content/modules/',
+
+	/**
+	 * Other locations are here for backup only. In case modules cannot be
+	 * found in the public area, we will look for them inside the following
+	 * folders.
+	 * NOTE: Modules' assets cannot be loaded from within those directories.
+	 */
+	APPPATH.'modules/',
+	KBPATH.'modules/',
+);
 
 /*
 |--------------------------------------------------------------------------

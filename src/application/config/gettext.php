@@ -35,14 +35,17 @@
  * @link 		https://github.com/bkader
  * @since 		Version 1.0.0
  */
+
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Media module language file (English)
+ * Gettext hook configuration.
+ *
+ * This file holds all needs configurations needed by the Gettext class.
  *
  * @package 	CodeIgniter
- * @subpackage 	Skeleton
- * @category 	Modules\Language
+ * @subpackage 	Gettext
+ * @category 	Configuration
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
@@ -50,19 +53,58 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @version 	1.0.0
  */
 
-$lang['media'] = 'Media';
-$lang['library'] = 'Library';
+/**
+ * Whether to use the class or not.
+ * Setting this to FALSE will simply ignore the class
+ */
+$config['enabled'] = true;
 
-$lang['media_library'] = 'Media Library';
+// ------------------------------------------------------------------------
 
-$lang['media_upload'] = 'Media successfully uploaded.';
-$lang['drop_media'] = 'Drag and drop files here.';
+/**
+ * The default language used on the website.
+ * You can set your language here or you can leave it
+ * empty and the class will use the language set in
+ * config.php file.
+ */
+$config['language'] = 'english';
 
-// Alerts.
-$lang['media_delete_alert'] = "You are about to permanently delete this item from your site.<br>This action cannot be undone.<br>'Cancel' to stop, 'OK' to delete.";
+// ------------------------------------------------------------------------
 
-$lang['media_delete_success'] = 'Media item successfully deleted.';
-$lang['media_delete_error']   = 'Unable to delete media item.';
+/**
+ * Here you can set the default application language
+ * file name. Default: application.
+ */
+$config['default_file'] = null;
 
-$lang['media_update_success'] = 'Media item successfully updated.';
-$lang['media_update_error'] = 'Unable to update media item.';
+// ------------------------------------------------------------------------
+
+// Here you can set the list of available languages.
+$config['languages'] = array(
+	'arabic',
+	'english',
+	'french',
+	'german',
+	'italian',
+	'portuguese',
+	'spanish',
+);
+
+// ------------------------------------------------------------------------
+
+// Whether to detect client's language or not.
+$config['detect'] = false;
+
+// ------------------------------------------------------------------------
+
+/**
+ * If you want to store the language inside a cookie, you
+ * can set the cookie name here.
+ *
+ * NOTE:
+ * Your site will always be in the default language if you set "detect"
+ * to FALSE and "cookie" to NULL.
+ * If you don't wish to store the language in cookies, make sure to
+ * turn "detect" to TRUE in order to use client's language if available.
+ */
+$config['cookie'] = 'ci_language';

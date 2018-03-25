@@ -62,6 +62,7 @@
                 data: data,
                 url: url,
                 success: function (response) {
+                    console.log(response);
                     toastr.success(response);
                 },
                 error: function (err) {

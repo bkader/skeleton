@@ -42,13 +42,11 @@
 							<img src="{{username}}" alt="{{name}}">
 						</div>
 						<div class="col-sm-12 col-md-5">
-							<dl class="dl-horizontal">
-								<dt>File name:</dt><dd class="txof">{{details.file_name}}</dd>
-								<dt>File type:</dt><dd class="txof">{{details.file_mime}}</dd>
-								<dt>Uploaded on:</dt><dd class="txof">{{created_at}}</dd>
-								<dt>File size:</dt><dd class="txof">{{details.file_size}}</dd>
-								<dt>Dimensions:</dt><dd class="txof">{{details.width}} x {{details.height}}</dd>
-							</dl>
+								<strong>File name</strong>:&nbsp;<span class="txof">{{details.file_name}}</span><br />
+								<strong>File type</strong>:&nbsp;<span class="txof">{{details.file_mime}}</span><br />
+								<strong>Uploaded on</strong>:&nbsp;<span class="txof">{{created_at}}</span><br />
+								<strong>File size</strong>:&nbsp;<span class="txof">{{details.file_size}}</span><br />
+								<strong>Dimensions</strong>:&nbsp;<span class="txof">{{details.width}} x {{details.height}}</span>
 							<hr />
 
 							<?php echo form_open('admin/media/update/{{id}}', 'role="form" data-update'); ?>
@@ -65,7 +63,7 @@
 									<textarea class="form-control" type="text" name="description" id="description">{{description}}</textarea>
 								</div>
 
-								<button type="submit" class="btn btn-primary btn-sm">Update</button>&nbsp;&#124;&nbsp;<a href="<?php echo admin_url("media/{$item->id}/edit"); ?>">Edit</a>&nbsp;&#124;&nbsp;<a href="#" class="text-danger" data-delete data-mid="<?php echo $item->id; ?>" ajaxify="<?php echo safe_admin_url('media/delete/'.$item->id); ?>">Delete</i></button>
+								<button type="submit" class="btn btn-primary btn-sm">Update</button>&nbsp;&#124;&nbsp;<a href="<?php echo admin_url("media/{{id}}/edit"); ?>">Edit</a>&nbsp;&#124;&nbsp;<a href="#" class="text-danger" data-delete data-mid="<?php echo $item->id; ?>" ajaxify="<?php echo safe_admin_url('media/delete/'.$item->id); ?>">Delete</i></button>
 							<?php echo form_close(); ?>
 						</div>
 					</div>

@@ -162,6 +162,13 @@ class Admin_Controller extends User_Controller
 
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Load admin panel assets.
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
 	protected function _load_assets()
 	{
 		$this->theme
