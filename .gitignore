@@ -25,6 +25,11 @@ public/content/captcha/*
 !public/content/captcha/.index.html
 public/content/cache-assets/*
 
+# Ignore all uploaded files.
+public/content/uploads/*
+!public/content/uploads/index.html
+!public/content/uploads/temp/index.html
+
 # Sublime Text cache files
 *.tmlanguage.cache
 *.tmPreferences.cache
