@@ -1,6 +1,12 @@
 # CodeIgniter Skeleton
 A CodeIgniter starter kit with lots of addons to give you a head start when developing web application.
 
+## Demo
+If you want to try it before using it and contributing to it, you can visit the demo:
+* [Demo Link](http://demo.ianhub.net/skeleton/).
+* Username: **admin** (male) or **wadmin** (female)
+* Password: **admin123**
+
 Don't forget to contribute if you please! If you have any suggestions, let me know and please, don't forget that I am human, I am not perfect, I DO mistakes, lots of mistakes! So if you find any issues, just let me know and feel free to suggest any changes and enhancements.
 
 ## How does it cost?
