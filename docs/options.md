@@ -1,27 +1,38 @@
-
 # Options
 
-* [What are options?](#what-are-options)  
+* [What are options?](#what-are-options)
 * [Creating Options](#creating-options)
 * [Updating Options](#updating-options)
 * [Deleting Options](#deleting-options)
 * [Retrieving Options](#retrieving-options)
-* [IMPORTANT!](#important)  
+* [IMPORTANT!](#important)
 
 ## What are options?
-Options are simply site settings stored in **options** table. Even if this table is empty, options are still found and they are stored inside *skeleton/config/defaults.php* file.  
+Options are simply site settings stored in **options** table. Even if this table is empty, options are still found and they are stored inside *skeleton/config/defaults.php* file.
+![Options Table](table_options.png)
 
-### Creating Options:
-In order to create new options, you can do like in the example below: 
+## Creating Options
+In order to create new options, you can do like in the example below:
 ```php
-$this->app->options->create($name, $value);
+// $data here is an array of data to insert.
+$this->kbcore->options->create($data);
+
+// Similar method but with lots of arguments:
+$this->bkcore->add_item(
+	$name,
+	$value = null,
+	$tab = '',
+	$field_type = 'text',
+	$options = '',
+	$required = true
+);
 // Or the helper:
-add_option($name, $value);
+add_option(...); // Same arguments.
 ```
 
 If you want to display the option on the administration panel, make sure to complete all arguments and edit the corresponding controller and view to display it. Example:
 ```php
-$this->app->options->create(
+$this->kbcore->options->create(
 	'allow_registration',	// The option's name.
 	true,					// The options's value.
 	'users',				// On which tab to display.
@@ -35,43 +46,63 @@ $this->app->options->create(
 ```
 To display it, go to *skeleton/modules/settings/controllers/Admin.php* and edit the section you have choose as **tab** (or add a new one and don't forget to add the view and edit other views so they include the link to it).
 
-### Updating Options:
-To update an option, you can use the **set_item** method or its helper **set_option**, like so:
+## Updating Options
+Several methods are available in order to update a single or multiple options. Let me explain with few examples:
 ```php
-$this->app->options->set_item($name, $new_value);
-// Or the helper:
-set_option($name, $new_value);
-```
-**Note**: These functions will create the item if it does not exist. So you can use it to add options as well BUT, you cannot add extra arguments: **tab**, **field_type**, **options** and **required**.
+/*
+ * To update a single option by its name, use it as
+ * the first argument. THe second argument should be
+ * an array of whatever you want to update (value,
+ * tab, field_type, options or required).
+ */
+$this->kbcore->options->update($name, $data);
 
-### Deleting Options:
-To delete a single option, you can use in your controllers:
-```php
-$this->app->options->delete($name);
-// Or the helper:
-delete_option($name); // i.e: delete_option('site_name');
+/*
+ * In case you want to only update the value of the
+ * option, you may use to the method above, but there
+ * is another method that use can use to achieve this.
+ */
+$this->kbcore->options->set_item($name, $new_value);
+set_option($name, $new_value); // The helper.
 ```
-To delete multiple options, you can use the following:  
-```php
-$this->app->options->delete_by($field, $match);
-// Or the helper:
-delete_option_by(...); // Alias: delete_options(...);
-```
-### Retrieving Options:
-If you want to retrieve a single options, you can do like the following:  
-```php
-$this->app->options->get($name); // Returns an object if found.
 
-// The method below returns the value if found, else $default.
-$this->app->options->item($name, $default);
-// Or its helper:
-get_option($name, $default);
-```
-If you want to retrieve multiple options, you do do like so:
+## Deleting Options
+You may delete a single, all or multiple options by arbitrary WHERE clause. See examples below:
 ```php
-$this->app->options->get_many($field, $match);
-// Or the helper:
-get_options($field, $match);
+// Delete a single option by its name.
+$this->kbcore->options->delete($name);
+delete_option($name); // The helper.
+
+/*
+ * The method below may be used to delete a single,
+ * all, or multiple options by arbitrary WHERE clause.
+ */
+$this->kbcore->options->delete_by($field, $match);
+delete_option_by($field, $match);
+delete_options($field, $match);
 ```
-## IMPORTANT:
-All methods and functions are to be used in controllers. In case you want to use them in libraries, make sure to never use helpers because they will trigger an `undefined property: $app` error.
+## Retrieving Options
+It is possible to retrieve a single, all or multiple options by arbitrary WHERE clause. See examples below:
+```php
+// Retrieve a single option by its name.
+$this->kbcore->options->get($name);
+
+// Retrieve a single option by arbitrary WHERE clause.
+$this->kbcore->options->get_by($field, $name);
+
+// Retrieve multiple options by arbitrary WHERE clause.
+$this->kbcore->options->get_many($field, $name);
+
+// Retrieve ALL options.
+$this->kbcore->options->get_all($limit, $offset);
+
+/*
+ * The method below returns the option's value if
+ * found, otherwise, it returns the second argument
+ * if set (use as the default returned value).
+ */
+$this->kbcore->item($name, $default);
+get_option($name, $default); // The helper.
+```
+## IMPORTANT
+All methods and functions are to be used in controllers. In case you want to use them in libraries, make sure to never use helpers because they will trigger an `undefined property: $kbcore` error.

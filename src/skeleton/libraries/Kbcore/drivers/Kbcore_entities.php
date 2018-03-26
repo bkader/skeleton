@@ -433,12 +433,12 @@ class Kbcore_entities extends CI_Driver implements CRUD_interface
 			/**
 			 * NOTE:
 			 * Because users, objects and groups libraries have their delete
-			 * methods that will call this class methods, the final result 
-			 * will be FALSE, because when the entity is removed and we 
-			 * target others tables (users, objects and group) to delete rows 
+			 * methods that will call this class methods, the final result
+			 * will be FALSE, because when the entity is removed and we
+			 * target others tables (users, objects and group) to delete rows
 			 * they will return FALSE and rows are not deleted (soft-delete).
 			 * This is why with are using below:
-			 * 
+			 *
 			 * $this->ci->db->delete('users' ...);
 			 * $this->ci->db->delete('object' ...);
 			 * $this->ci->db->delete('groups' ...);
@@ -571,13 +571,35 @@ class Kbcore_entities extends CI_Driver implements CRUD_interface
 	/**
 	 * Returns an array of stored entities.
 	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$param
 	 * @return 	array
 	 */
-	public function get_all_ids()
+	public function get_all_ids($field = null, $match = null)
 	{
 		// Prepare an empty $ids array.
 		$ids = array();
 
+		// Prepare our WHERE clause.
+		if ( ! empty($field))
+		{
+			(is_array($field)) OR $field = array($field => $match);
+			foreach ($field as $key => $val)
+			{
+				if (is_int($key) && is_array($val))
+				{
+					$this->ci->db->where($val);
+				}
+				elseif (is_array($val))
+				{
+					$this->ci->db->where_in($key, $val);
+				}
+				else
+				{
+					$this->ci->db->where($key, $val);
+				}
+			}
+		}
 
 		// Try to get all entities.
 		$entities = $this->ci->db
@@ -605,12 +627,13 @@ if ( ! function_exists('get_entities_ids'))
 {
 	/**
 	 * Returns an array of all availables entities.
-	 * @param 	none
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$param
 	 * @return 	array
 	 */
-	function get_entities_ids()
+	function get_entities_ids($field = null, $match = null)
 	{
-		return get_instance()->kbcore->entities->get_all_ids();
+		return get_instance()->kbcore->entities->get_all_ids($field, $match);
 	}
 }
 
@@ -792,7 +815,7 @@ if ( ! function_exists('remove_entity'))
 if ( ! function_exists('remove_entity_by'))
 {
 	/**
-	 * Completely remove a single or multiple entities and all what's 
+	 * Completely remove a single or multiple entities and all what's
 	 * related to them by arbitrary WHERE clause.
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
@@ -809,7 +832,7 @@ if ( ! function_exists('remove_entity_by'))
 if ( ! function_exists('remove_entities'))
 {
 	/**
-	 * Completely remove a single or multiple entities and all what's 
+	 * Completely remove a single or multiple entities and all what's
 	 * related to them by arbitrary WHERE clause.
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
@@ -842,7 +865,7 @@ if ( ! function_exists('restore_entity'))
 if ( ! function_exists('restore_entity_by'))
 {
 	/**
-	 * Restore a single or multiple entities previously soft deleted 
+	 * Restore a single or multiple entities previously soft deleted
 	 * by arbitrary WHERE clause.
 	 * @access 	public
 	 * @param 	mixed 	$field
@@ -860,7 +883,7 @@ if ( ! function_exists('restore_entity_by'))
 if ( ! function_exists('restore_entities'))
 {
 	/**
-	 * Restore a single or multiple entities previously soft deleted 
+	 * Restore a single or multiple entities previously soft deleted
 	 * by arbitrary WHERE clause.
 	 * @access 	public
 	 * @param 	mixed 	$field

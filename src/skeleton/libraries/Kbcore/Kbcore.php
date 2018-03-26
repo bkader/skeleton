@@ -151,7 +151,7 @@ class Kbcore extends CI_Driver_Library
 	/**
 	 * Quick action to add meta tags to given page.
 	 * @access 	public
-	 * @param 	object 	$object 	the page or course.
+	 * @param 	mixed 	$object 	the page or course. (object or array)
 	 * @author 	Kader Bouyakoub
 	 * @version 1.0
 	 * @return 	void
@@ -212,30 +212,32 @@ class Kbcore extends CI_Driver_Library
 		// Add canonical tag.
 		$this->ci->theme->add_meta('canonical', current_url(), 'rel');
 
-		// if ($this->ci->config->item('site_name'))
-		// {
-		// 	$this->ci->theme->add_meta('og:title', $this->ci->config->item('site_name'));
-		// }
-
-		// if ($this->ci->config->item('site_description'))
-		// {
-		// 	$this->ci->theme->add_meta('og:description', $this->ci->config->item('site_description'));
-		// }
-
-		// // Default open graph tags.
-		// $this->ci->theme->add_meta('og:type', 'website');
-		// $this->ci->theme->add_meta('og:url', current_url());
-
-		// If no $object provided, we stop.
-		if ( ! empty($object))
+		// Is $object provided?
+		if ($object !== null)
 		{
-			$this->ci->theme->add_meta('title', $object->name);
-			$this->ci->theme->add_meta('og:title', $object->name);
-
-			if ( ! empty($object->description))
+			// Is it an object?
+			if (is_object($object))
 			{
-				$this->ci->theme->add_meta('description', $object->description);
-				$this->ci->theme->add_meta('og:description', $object->description);
+				$this->ci->theme->add_meta('title', $object->name);
+				$this->ci->theme->add_meta('og:title', $object->name);
+
+				if ( ! empty($object->description))
+				{
+					$this->ci->theme->add_meta('description', $object->description);
+					$this->ci->theme->add_meta('og:description', $object->description);
+				}
+			}
+			// Is it an array?
+			elseif (is_array($object))
+			{
+				$this->ci->theme->add_meta('title', $object['name']);
+				$this->ci->theme->add_meta('og:title', $object['name']);
+
+				if ( ! empty($object['description']))
+				{
+					$this->ci->theme->add_meta('description', $object['description']);
+					$this->ci->theme->add_meta('og:description', $object['description']);
+				}
 			}
 		}
 	}

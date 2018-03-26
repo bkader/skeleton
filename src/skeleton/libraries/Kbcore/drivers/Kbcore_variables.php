@@ -185,10 +185,10 @@ class Kbcore_variables extends CI_Driver implements CRUD_interface
 				$var->value = from_bool_or_serialize($var->value);
 			}
 
-			// Let's now format variable options.
-			if ( ! empty($var->options))
+			// Let's now format variable params.
+			if ( ! empty($var->params))
 			{
-				$var->options = from_bool_or_serialize($var->options);
+				$var->params = from_bool_or_serialize($var->params);
 			}
 		}
 
@@ -250,10 +250,10 @@ class Kbcore_variables extends CI_Driver implements CRUD_interface
 					$var->value = from_bool_or_serialize($var->value);
 				}
 
-				// Let's now format variable options.
-				if ( ! empty($var->options))
+				// Let's now format variable params.
+				if ( ! empty($var->params))
 				{
-					$var->options = from_bool_or_serialize($var->options);
+					$var->params = from_bool_or_serialize($var->params);
 				}
 			}
 		}
@@ -557,6 +557,24 @@ if ( ! function_exists('update_var_by'))
 	 * @return 	boolean
 	 */
 	function update_var_by()
+	{
+		return call_user_func_array(
+			array(get_instance()->kbcore->variables, 'update_by'),
+			func_get_args()
+		);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('update_vars'))
+{
+	/**
+	 * Update a single or multiple variables by arbitrary WHERE clause.
+	 * @param 	mixed
+	 * @return 	boolean
+	 */
+	function update_vars()
 	{
 		return call_user_func_array(
 			array(get_instance()->kbcore->variables, 'update_by'),

@@ -1,11 +1,14 @@
 
 # Modifications
-We are following the standard project folder, you might see few available directories: **docs**, **license**, **public**, **src** and **tests**.  
+
+We are following the standard project folder, you might see few available directories: **docs**, **license**, **public**, **src** and **tests**.
 
 ## CodeIgniter:
+
 Few modifications, enhancement and rewriting have been done to suit the need of the application. These are few to none changes but we have to mention them due to license agreement and so that you know what to do in case of a new CodeIgniter release.
 
 ### index.php:
+
 On this file, we have first added the path to **src** folder which starts from line **#92** to line **#102**.
 ```php
 /*
@@ -28,7 +31,9 @@ define('KBPATH', $skeleton_path.DIRECTORY_SEPARATOR);
 // Define a constant representing DIRECTORY_SEPARATOR.
 define('DS', DIRECTORY_SEPARATOR);
 ```
+
 ### CodeIgniter.php:
+
 We have include our custom **constants.php** file in which you will find some useful constants. At like **#75**:
 ```php
 	// Some useful constants are added.
@@ -43,7 +48,7 @@ From line **#218** to **#223** we have loaded our custom plugins class **CI_Plug
  */
 	$PLG =& load_class('Plugins', 'libraries');
 ```
-And because we have included this class, you will also find on this file:  
+And because we have included this class, you will also find on this file:
 
 ```php
 $PLG->do_action('pre_system'); 					// Line #217
@@ -78,8 +83,10 @@ else
 	$e404 = TRUE;
 }
 ```
+
 ### Common.php
-The **load_class** function has been altered a litte bit. In fact we have added our custom path to class loading and we are loading our custom classes right after core classes are loaded in order to enhance or override behavior.  
+
+The **load_class** function has been altered a litte bit. In fact we have added our custom path to class loading and we are loading our custom classes right after core classes are loaded in order to enhance or override behavior.
 At line **#155**:
 ```php
 // Before
@@ -104,45 +111,29 @@ if (file_exists(KBPATH.$directory.'/KB_'.$class.'.php'))
 	}
 }
 ```
-### Controller.php:
-The only thing we have edited here is adding the config class to loader where it's loaded:
-```php
-// Line #78 (before):
-$this->load =& load_class('Loader', 'core');
-
-// After:
-$this->load =& load_class('Loader', 'core', $this->config);
-```
-This modification is not really required, it was done to enhance the execution time only. But if you use it, it is good to edit the **Loader.php** file as well.  
-
-### Loader.php:
-Because of the modification we did to **Controller.php** file, the class constructor has been changed:  
-```php
-// Before:
-public function __construct()
-{
-	$this->_ci_ob_level = ob_get_level();
-	$this->_ci_classes =& is_loaded();
-
-	log_message('info', 'Loader Class Initialized');
-}
-
-// After:
-public function __construct(CI_Config $config)
-{
-	$this->config =& $config;
-	$this->_ci_ob_level = ob_get_level();
-	$this->_ci_classes =& is_loaded();
-
-	log_message('info', 'Loader Class Initialized');
-}
-```
-After this, wherever the `config_item(...)` it is used, it was changed to `$this->config->item(...)`.
 
 ## Custom Classes:
+
+### Admin_Controller.php
+
+This controller is used for the administration area of the site. All controllers extending it require a logged in user of **administrator** rank.
+There are two (**2**) method that you can use when you extending this controller:
+
+* **load_jquery_ui**: As it says, it only loads jQuery UI assets.
+* **add_sortable_list**: It make a list sortable using jQuery UI (please check the code to see how it works - Or check menus module).
+
 As said earlier, so we don't touch a lot core classes, we created our own custom ones in order to enhance or override some behaviors and so we can integrate an **HMVC** structure.
 
+### Ajax_Controller.php
+
+Controllers extending this class accept only AJAX requests. They should have some properties declared in order to work correctly:
+
+* **$actions_get** (*array*): Array of method that accept GET requests.
+* **$actions_post** (*array*): Array of method that accept POST requests.
+* **$secured** (*boolean*): Whether to secure the request or not.
+
 ### KB_Config.php:
+
 At the very top of this file, we have included some of our collected custom helpers to suit our needs. So from line **#44** up to line **#48** you will find the following:
 ```php
 require_once(KBPATH.'core/compat/print_d.php');
@@ -201,11 +192,67 @@ print_r($this->config->lang(TRUE);
 ```
 **Note**: A method with the same name can be found in **KB_Lang.php** file. In fact, the one in **KB_Config.php** uses it.
 
-### KB_Lang.php:
-The default behavior of **Lang** class has been changed a bit as well.  
-When loading a language file, the **fallback** language is loaded first (Default: english), then the requested file is loaded ad keys are changed. This way even if a line is not translated into the language you want to use, it will still be available in the fallback language (english).  
+### KB_Controller.php
 
-**IMPORTANT**: Make sure to have your language files in the fallback language first, otherwise this will trigger the error of the not found file.  
+If you want to fully use the skeleton, your controllers must extend this class. It contains several useful methods:
+
+**prep_form**:
+This method is a shortcut to use CodeIgniter Form validation. Here is an example of how to use it in your controller:
+```php
+$this->prep_form(array(
+	// Field:
+	array(
+		'field' => 'username',
+		'label' => 'Username',
+		'rules' => 'required|min_length5]',
+	),
+));
+// As you can see, we are passing validation rules as argument.
+```
+... the rest will be added soon.
+
+### KB_Hooks.php
+
+This class is used so hooks from sekeleton folder can be used as well.
+
+### KB_Input.php
+
+Four (**4**) methods have been added to this class.
+#### 1. request:
+
+This method fetches an item from the **$_REQUEST** array.
+```php
+echo $this->input->request('action'); // Example only.
+```
+Arguments:
+- index (_string_): Index for item to be fetched from $_REQUEST.
+- xss_clean (_boolean_): Whether to apply XSS filtering.
+
+#### 2. protocol:
+
+This method returns the protocol that the request was made with.
+#### 3. referrer:
+
+Returns the protocol that the request was made with.
+Arguments:
+
+- default (_string_): What to return if no referrer is found.
+- xss_clean (_boolean_): Whether to apply XSS filtering.
+
+#### 4. query_string:
+
+Returns the query string. that's all.
+Arguments:
+
+- default (_string_): What to return if nothing found.
+- xss_clean (_boolean_): Whether to apply XSS filtering.
+
+### KB_Lang.php:
+
+The default behavior of **Lang** class has been changed a bit as well.
+When loading a language file, the **fallback** language is loaded first (Default: english), then the requested file is loaded ad keys are changed. This way even if a line is not translated into the language you want to use, it will still be available in the fallback language (english).
+
+**IMPORTANT**: Make sure to have your language files in the fallback language first, otherwise this will trigger the error of the not found file.
 
 The **line** method has been overridden as well. It accepts a second argument which is the **index**. This is useful if your language lines are in a multidimensional array. Also used when translating **themes**. Example:
 ```php
@@ -234,11 +281,11 @@ echo $this->lang->line('hello_world');
 // Outpus: "FIXME('hello_world)".
 // If changed it outputs: "Hello World".
 ```
-Another method was added **lang**. What it does is explained above (**KB_Config.php** file).  
+Another method was added **lang**. What it does is explained above (**KB_Config.php** file).
 
-At the bottom of the file, the **lang** function was taken from the language helper and put there so it can be available even if the helper is not loaded.  
+At the bottom of the file, the **lang** function was taken from the language helper and put there so it can be available even if the helper is not loaded.
 
-Three additional functions were added:  
+Three additional functions were added:
 - **line**: that uses the class method with **line** and **index** as arguments.
 - **__**: this is an alias, you can use it or not.
 - **_e**: This function will echo the line instead of returning it. This is useful in views. See the example below:
@@ -251,40 +298,19 @@ echo __('login', 'button');	// Outputs: "Sign In".
 _e('login', 'button');
 ```
 
-### KB_Input.php:
-Four (**4**) methods have been added to this class.  
-#### 1. request:
-This method fetches an item from the **$_REQUEST** array.
-```php
-echo $this->input->request('action'); // Example only.
-```
-Arguments:
-- index (_string_): Index for item to be fetched from $_REQUEST.
-- xss_clean (_boolean_): Whether to apply XSS filtering.
-
-#### 2. protocol:
-This method returns the protocol that the request was made with.
-#### 3. referrer:
-Returns the protocol that the request was made with.  
-Arguments:
-
-- default (_string_): What to return if no referrer is found.
-- xss_clean (_boolean_): Whether to apply XSS filtering.
-
-#### 4. query_string:
-Returns the query string. that's all.  
-Arguments:
-
-- default (_string_): What to return if nothing found.
-- xss_clean (_boolean_): Whether to apply XSS filtering.
-
 ### KB_Loader.php:
-This class overrides some of default **Loader** class behavior in order to use **HVMC** structure. In was inspired from [Jens Segers extension](https://github.com/jenssegers/codeigniter-hmvc-modules), take a look at the repository to know more.  
+
+This class overrides some of default **Loader** class behavior in order to use **HVMC** structure. In was inspired from [Jens Segers extension](https://github.com/jenssegers/codeigniter-hmvc-modules), take a look at the repository to know more.
 You may find out that some of original methods were removed because they were kind of unnecessary and because we made deeper checks by editing **_ci_load** and **_ci_load_stock_library** methods.
 
+### KB_Model.php:
+
+Because, again, we believe is simplicity, we are using an modified version of [Jamie Rumbelow](https://github.com/jamierumbelow/codeigniter-base-model)'s Base Model. Few methods have been added to it but we will leave this for **Models** sections.
+
 ### KB_Router.php:
-Because we are using **HMVC** structure, we had to do some changes on default **Router** class behavior. This was as said above, inspired from **Jens Segers** extension but with some modifications.  
-The new thing about this is that you can have routes folder in your application, or skeleton folder (_APPPATH/routes/_) in which you can put separate routing files that will be included before routes are set.  
+
+Because we are using **HMVC** structure, we had to do some changes on default **Router** class behavior. This was as said above, inspired from **Jens Segers** extension but with some modifications.
+The new thing about this is that you can have routes folder in your application, or skeleton folder (_APPPATH/routes/_) in which you can put separate routing files that will be included before routes are set.
 
 At the very top of the this file, will you see that we are including a **Route.php** file. This allow us define routes statically. This was inspired from [Bonfire](https://github.com/ci-bonfire/Bonfire/blob/develop/bonfire/libraries/Route.php)'s. Make sure to **ALWAYS** keep the following line at the end of your main routes file (_APPPATH/config/routes.php_):
 ```php
@@ -301,7 +327,7 @@ Route::delete('...');
 ```
 There are more methods but you will find them on the documentation dedicated to routing.
 
-Other methods are available too. For example:  
+Other methods are available too. For example:
 ```php
 // To retrieve the full path to module's directory:
 $this->router->module_path('module_name');
@@ -315,5 +341,6 @@ $details = $this->router->module_details('menus');
 // We will talk more about this in "modules" section.
 ```
 
-### KB_Model.php:
-Because, again, we believe is simplicity, we are using an modified version of [Jamie Rumbelow](https://github.com/jamierumbelow/codeigniter-base-model)'s Base Model. Few methods have been added to it but we will leave this for **Models** sections.
+### User_Controller.php
+
+Controllers extending this class require a logged in users.

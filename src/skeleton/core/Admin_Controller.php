@@ -275,8 +275,11 @@ class Admin_Controller extends User_Controller
 	</script>
 EOT;
 
-		// No we add it as an inline script.
-		$this->theme->add_inline('js', $this->theme->compress_output($script));
+		// We make sure to load jQuery UI then output script.
+		$this->theme
+			->add('css', get_common_url('css/jquery-ui'), 'jquery-ui')
+			->add('js', get_common_url('js/jquery-ui'), 'jquery-ui')
+			->add_inline('js', $this->theme->compress_output($script));
 	}
 
 	// ------------------------------------------------------------------------
