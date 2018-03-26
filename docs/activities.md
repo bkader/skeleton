@@ -1,29 +1,31 @@
 # Activities
 
-* [Definition](#markdown-header-definition)  
-* [Creating Activities](#markdown-header-creating-activities)
-* [Updating Activities](#markdown-header-updating-activities)
-* [Deleting Activities](#markdown-header-deleting-activities)
-* [Retrieving Activities](#markdown-header-retrieving-activities)
+* [Definition](#definition)
+* [Creating Activities](#creating-activities)
+* [Updating Activities](#updating-activities)
+* [Deleting Activities](#deleting-activities)
+* [Retrieving Activities](#retrieving-activities)
 
-### Definition:
-Activities are a way to track users actions and reactions on the website. Think of them as history log where is stored who did what, when and where.  
+## Definition
 
-Take a look at activities table:  
+Activities are a way to track users actions and reactions on the website. Think of them as history log where is stored who did what, when and where.
 
-![Activities Table](table_activities.png)  
+Take a look at activities table:
 
-All you really need to provide as information are **user_id** and the **activity** string.  
+![Activities Table](table_activities.png)
 
-### Creating Activities:
-To log a new activity, you have two options (methods):  
+All you really need to provide as information are **user_id** and the **activity** string.
+
+## Creating Activities
+
+To log a new activity, you have two options (methods):
 ```php
-$this->app->activities->create(array()); // MUST be an array.
-$this->app->activities->log_activity($user_id, $activity);
+$this->kbcore->activities->create(array()); // MUST be an array.
+$this->kbcore->activities->log_activity($user_id, $activity);
 // Or you can user the helper:
 log_activity($user_id, $activity);
 ```
-You can find some examples if you take a look at the provided **users** module (**Auth** library) where users interactions with the module are logged. Here is an example of activity log at user's login:  
+You can find some examples if you take a look at the provided **users** module (**Auth** library) where users interactions with the module are logged. Here is an example of activity log at user's login:
 ```php
 // After a successful login:
 log_activity($user_id, 'logged in'); // That's all.
@@ -38,46 +40,47 @@ In my activities table, I will see the following:
 
 | user_id | module | controller | method | activity |
 | -- | -- | -- | -- | -- |
-| 73 | blog | posts | create | 111 |  
+| 73 | blog | posts | create | 111 |
 
-This can be translated as _the user #73 published a new post #111_.  
+This can be translated as _the user #73 published a new post #111_.
 
 Now when another user (i.e **#23**) edits the post (the method is **edit**), at a successful updated, I can log the activity like so:
 ```php
 log_activity(23, 111); // That's all.
 ```
-So in my activities table I would have:  
+So in my activities table I would have:
 
 | user_id | module | controller | method | activity |
 | -- | -- | -- | -- | -- |
-| 23 | blog | posts | edit| 111 |  
+| 23 | blog | posts | edit| 111 |
 
 This can be translated later as : _the user #23 edited the post #111_.
 
-### Updating Activites:
-In fact, because they are automatic, it is better not to update them at all. This way you garanty you don't mess up with what was previously logged.  
+## Updating Activites
+
+In fact, because they are automatic, it is better not to update them at all. This way you garanty you don't mess up with what was previously logged.
 But there are some cases where you want to update them. For example: lets assume you changed the controller's name **posts** of the module **blog** to something else, let's say **blog**. Now you really want to update all of this module's activities **controller** column to use blog instead of posts. This why we have added **update** and **update_by** method (this time with no helpers).
 ```php
 // To update a single activity knowing its ID.
-$this->app->activities->update($id, array $data);
+$this->kbcore->activities->update($id, array $data);
 // Or you can use the helper:
 update_activity($id, array $data);
 
 // To update a single or multiple ones by arbitrary WHERE clause:
-$this->app->activities->update_by(array $where, array $data);
+$this->kbcore->activities->update_by(array $where, array $data);
 // Or you can use the helper:
 update_activity_by(array $where, array $data);
 // Or its alias:
 update_activities(array $where, array $data);
 
 // To update all activities, user $data instead of $where:
-$this->app->activities->update_by(array $data);
+$this->kbcore->activities->update_by(array $data);
 update_activity_by(array $data);
 update_activities(array $data);
 ```
 Let's stick to the example given above and say I want to change the blog controller from **posts** to **blog** for all activities, I can do this:
 ```php
-$this->app->activities->update_by(
+$this->kbcore->activities->update_by(
 	array(	// This is the WHERE clause.
 		'module'     => 'blog',
 		'controller' => 'posts',
@@ -102,18 +105,19 @@ update_activities(
 );
 ```
 
-### Deleting Activities:
-There are two methods and their helpers to delete activities. Here some example to demonstrate them.  
+## Deleting Activities
+
+There are two methods and their helpers to delete activities. Here some example to demonstrate them.
 
 In order to delete a single activity assuming that you know its **ID**:
 ```php
-$this->app->activities->delete($id);
+$this->kbcore->activities->delete($id);
 // Or using the helper:
 delete_activity($id);
 ```
 The method below deletes a single activity by arbitrary _WHERE_ clause. But it is also used to delete multiple activities as well and if used without arguments, it will delete **ALL** activities.
 ```php
-$this->app->activities->delete_by($field, $match);
+$this->kbcore->activities->delete_by($field, $match);
 // Or its helper and alias:
 delete_activity_by($field, $match);
 delete_activities($field, $match);
@@ -129,7 +133,7 @@ delete_activities(array(
 	'module'  => 'blog',
 ));
 
-// Example #3: 
+// Example #3:
 // Delete user #23 activites on modules "blog" and"messages":
 delete_activities(array(
 	'user_id' => 23,
@@ -141,20 +145,21 @@ delete_activities('created_at <', MONTH_IN_SECONDS * 6);
 ```
 **Note**: Because "_delete_activities_" and "_delete_activity_by_" do the same thing, I only used the first one in the examples above.
 
-### Retrieving Activities:
+## Retrieving Activities
+
 Here is how you can retrieve activities:
 ```php
 // If you know the activity's ID:
-$this->app->activities->get($id);
+$this->kbcore->activities->get($id);
 // Or the helper:
 get_activity($id);
 
 // To retrieve single activity by arbitrary WHERE clause.
-$this->app->activities->get_by($field, $match);
+$this->kbcore->activities->get_by($field, $match);
 get_activity($field, $match);
 
 // To retrieve multiple activities by arbitrary WHERE clause.
-$this->app->activities->get_many($field, $match);
+$this->kbcore->activities->get_many($field, $match);
 // Of the helper:
 get_activities($field, $match);
 ```
@@ -162,7 +167,7 @@ Sticking to the blog example and for a better explanation, here are few examples
 ```php
 // Example #1:
 // Retrieve the activity where user#73 created the post#111
-$activty = $this->app->activities->get_by(array(
+$activty = $this->kbcore->activities->get_by(array(
 	'user_id'    => 73,
 	'module'     => 'blog',
 	'controller' => 'posts',
@@ -200,7 +205,7 @@ foreach ($activities as $activity)
 }
 
 // Now that we have users IDs array, let's get users.
-$users = $this->app->users->get_many('id', $users_ids);
+$users = $this->kbcore->users->get_many('id', $users_ids);
 // Or the helper:
 get_users('id', $users_ids);
 ```

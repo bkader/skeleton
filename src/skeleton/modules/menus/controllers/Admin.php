@@ -373,7 +373,6 @@ class Admin extends Admin_Controller
 		// Load jquery UI and prepare sortable list IF there are items.
 		if ($data['items'])
 		{
-			$this->load_jquery_ui();
 			$this->add_sortable_list(
 				'#save-menu',
 				'#sortable',

@@ -627,6 +627,40 @@ if ( ! function_exists('update_object'))
 
 // ------------------------------------------------------------------------
 
+if ( ! function_exists('update_object_by'))
+{
+	/**
+	 * Update a single, all or multiple objects by arbitrary WHERE clause.
+	 * @return 	boolean
+	 */
+	function update_object_by()
+	{
+		return call_user_func_array(
+			array(get_instance()->kbcore->objects, 'update_by'),
+			func_get_args()
+		);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('update_objects'))
+{
+	/**
+	 * Update a single, all or multiple objects by arbitrary WHERE clause.
+	 * @return 	boolean
+	 */
+	function update_objects()
+	{
+		return call_user_func_array(
+			array(get_instance()->kbcore->objects, 'update_by'),
+			func_get_args()
+		);
+	}
+}
+
+// ------------------------------------------------------------------------
+
 if ( ! function_exists('delete_object'))
 {
 	/**

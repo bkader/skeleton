@@ -617,6 +617,40 @@ if ( ! function_exists('update_group'))
 
 // ------------------------------------------------------------------------
 
+if ( ! function_exists('update_group_by'))
+{
+	/**
+	 * Update a single, all or multiple groups by arbitrary WHERE clause.
+	 * @return 	boolean
+	 */
+	function update_group_by()
+	{
+		return call_user_func_array(
+			array(get_instance()->kbcore->groups, 'update_by'),
+			func_get_args()
+		);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('update_groups'))
+{
+	/**
+	 * Update a single, all or multiple groups by arbitrary WHERE clause.
+	 * @return 	boolean
+	 */
+	function update_groups()
+	{
+		return call_user_func_array(
+			array(get_instance()->kbcore->groups, 'update_by'),
+			func_get_args()
+		);
+	}
+}
+
+// ------------------------------------------------------------------------
+
 if ( ! function_exists('delete_group'))
 {
 	/**

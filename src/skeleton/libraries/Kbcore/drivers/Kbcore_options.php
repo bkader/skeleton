@@ -532,7 +532,7 @@ if ( ! function_exists('add_option'))
 	 * @param 	bool 	$required 	Whether to make the field required.
 	 * @return 	bool
 	 */
-	function add_item(
+	function add_option(
 		$name,
 		$value = null,
 		$tab = '',

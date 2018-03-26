@@ -173,7 +173,7 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 		}
 
 		// Make sure the the gender is valid.
-		if (isset($user['gender']) 
+		if (isset($user['gender'])
 			&& ! in_array($user['gender'], array('unspecified', 'male', 'female')))
 		{
 			$user['gender'] = 'unspecified';
@@ -339,7 +339,7 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 		}
 
 		// Make sure the the gender is valid.
-		if (isset($user['gender']) 
+		if (isset($user['gender'])
 			&& ! in_array($user['gender'], array('unspecified', 'male', 'female')))
 		{
 			$user['gender'] = 'unspecified';
@@ -956,7 +956,7 @@ if ( ! function_exists('user_avatar')):
 				$hash = $CI->auth->user()->avatar;
 			}
 			// If the user exists, generate the hash.
-			elseif ($user = $CI->app->users->get_user('id', $id))
+			elseif ($user = $CI->kbcore->users->get_user('id', $id))
 			{
 				$hash = md5($user->email);
 			}
