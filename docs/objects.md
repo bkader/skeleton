@@ -1,24 +1,24 @@
-# Objects
+Objects are one of the three available (*allowed*) entities types. Their data are stored in two (**2**) tables: **entities** and **objects**. Let's see some examples: 
 
-* [What are objects?](#what-are-objects)
-* [Creating Objects](#creating-objects)
-* [Updating Objects](#updating-objects)
-* [Deleting Objects](#deleting-objects)
-* [Retrieving Objects](#retrieving-objects)
-* [Counting Objects](#counting-objects)
-* [IMPORTANT!](#important)
-
-## What are object?
-Objects are one of the three (**3**) available entities types. Every entitiy that is not a user or and group is considered an object. Example:
 * A blog **post** is treated as an object.
 * An uploaded **image** can be stored as an object.
 * Menus **items** are stored as objects... etc.
 
-![Objects Table](table_objects.png)
-
 I let you think of other objects, I just gave you examples :)
 
+## Table Structure
+
+![Objects Table](table_objects.png)
+
+As you can see on the image above, the table contains only three columns:
+
+* **guid**: Which holds objects **ID**s, used as a foreign key to get the rest from **entities** table.
+* **name**: Holds objects names.
+* **description** (*optional*): Holds objects descriptions if you want to.
+* **content** (*optional*): Holds objects content (post content, image details ...).
+
 ## Creating Objects
+
 The same way as creating **users** or **groups**, you can create objects by using the provided **create** method or its helper **add_object**. Example:
 ```php
 /*
@@ -33,7 +33,9 @@ $this->kbcore->objects->create($data);
 // Or you can use the helper:
 add_object($data);
 ```
+
 ## Updating Objects
+
 You can update a single, all or multiple objects depending on the method or function you use. Let me explain in example:
 ```php
 /*
@@ -63,6 +65,7 @@ update_object($id, $data);
 ```
 
 ## Deleting Objects
+
 Part of objects data are stored in **entities** table which has **soft_delete** enabled. It means that they will not be deleted from database but only hidden from access.
 When building your application up, think of what should your featured do, delete or remove.
 
@@ -103,6 +106,7 @@ remove_objects($field, $match);
 ```
 
 ## Retrieveing Objects
+
 Retrieving objects is easy. It can be done using a object's ID for single object retrieving, or arbitrary WHERE clause for a single or multiple objects retrieving. Examples:
 ```php
 // Retrieve a single object by its ID.
@@ -121,11 +125,17 @@ get_objects($field, $match, $limit, $offset);
 $this->kbcore->objects->get_all($limit, $offset);
 get_all_objects($limit, $offset);
 ```
+
 ## Counting Objects
+
 In order to count objects, you can use the **count** method or its helper **count_objects**. They both accept two arguments used to filter objects before returning the count.
 ```php
 $this->kbcore->objects->count($field, $match);
 count_objects($field, $match);
 ```
+
+---  
+
 ## IMPORTANT
-All methods and functions are to be used in controllers. In case you want to use them in libraries, make sure to never use helpers because they will trigger an `undefined property: $kbcore` error.
+
+All methods and functions are to be used in controllers. In case you want to use them in libraries, make sure to never use helpers because they may trigger an `undefined property: $kbcore` error.

@@ -1,0 +1,29 @@
+site_name: CodeIgniter Skeleton
+site_description: A ready-to-use CodeIgniter skeleton with tons of new features.
+site_author: Kader bouyakoub
+site_favicon: favicon.icon
+copyright: Copyright 2017-2018, Kader Bouyakoub (Ianhub™).
+
+repo_url: https://github.com/bkader/skeleton/
+
+pages:
+  - Home: index.md
+  - Installation Instructions: installation.md
+  - CodeIgniter Modifications: modifications.md
+  - Hooks System: hooks.md
+  - Tables and Libraries:
+    - Kbcore: kbcore.md
+    - Entities: entities.md
+    - Users: users.md
+    - Groups: groups.md
+    - Objects: objects.md
+    - Activities: activities.md
+    - Metadata: metadata.md
+    - Options: options.md
+    - Relations: relations.md
+    - Variables: variables.md
+  - Themes Development: themes.md
+  - Plugins Development: plugins.md
+  - Development Logics: development.md
+
+theme: readthedocs

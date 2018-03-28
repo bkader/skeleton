@@ -1,10 +1,15 @@
-# Installing CodeIgniter Skeleton
+# Installation Instructions
 
 The stable branch will always be the **master** branch. So you may want to download it because any other branches will simply be there for development purposes.
 
-## Download
+## Downloading Skeleton
 
-Head to [Github](https://github.com/bkader/skeleton/), [Gitlab](https://gitlab.com/bkader/skeleton/) or [Bitbucket](https://bitbucket.org/bkader/skeleton/) (choose the one you want), then download the **master** branch, or any available release.
+* [CodeIgniter Skeleton v1.1.0](https://github.com/bkader/skeleton/zip/1.1.0)
+* [CodeIgniter Skeleton v1.0.0](https://github.com/bkader/skeleton/zip/1.0.0)
+
+Public Git access is available at [GitHub](https://github.com/bkader/skeleton). Please note that while every effort is made to keep this code base functional, we cannot guarantee the functionality of code taken from the develop branch.
+
+Stable versions are also available via [GitHub Releases](https://github.com/bkader/skeleton/releases).
 
 ## Installation
 
@@ -19,7 +24,7 @@ Note that there are multipe folders and the structure does not have to be respec
 
 Put folders wherever you want as long as -as I said- you set correct paths to them.
 
-## Database
+## Importing Database
 
 If you check inside the **src/mysql_dump** folder, you will see a file called **skeleton.sql**, as you can tell, this is the dump for this tool database. All you have to do is to create a database and import this file. That's all.
 

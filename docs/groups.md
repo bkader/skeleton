@@ -1,24 +1,21 @@
-# Groups
+Groups are one of the three (**3**) available entities types. Every entity that is not a user or an object is considered a group. Groups are everything that **gathers**, for example: 
 
-* [What are groups?](#what-are-groups)
-* [Creating Groups](#creating-groups)
-* [Updating Groups](#updating-groups)
-* [Deleting Groups](#deleting-groups)
-* [Retrieving Groups](#retrieving-groups)
-* [Counting Groups](#counting-groups)
-* [IMPORTANT!](#important)
-
-## What are groups?
-
-Everything that **gathers** is considered a group. For example:
 * A blog **category** is a group of posts.
 * Users groups, are groups! TADA.
 * A **gallery** of images, is a group.
 * A **menu** in this skeleton is a group of links... etc.
 
+I let you think of other groups, I just gave you examples :)
+
+## Table Structure
+
 ![Groups Table](table_groups.png)
 
-I let you think of other groups, I just gave you examples :)
+As you can see on the image above, the table contains only three columns:
+
+* **guid**: Which holds groups **ID**s, used as a foreign key to get the rest from **entities** table.
+* **name**: Holds groups names.
+* **description** (*optional*): Holds groups descriptions if you want to.
 
 ## Creating Groups
 
@@ -36,6 +33,7 @@ $this->kbcore->groups->create($data);
 // Or you can use the helper:
 add_group($data);
 ```
+
 ## Updating Groups
 
 You can update a single or multiple groups depending on the method or function you use. Let me explain in example:
@@ -127,6 +125,7 @@ get_groups($field, $match, $limit, $offset);
 $this->kbcore->groups->get_all($limit, $offset);
 get_all_groups($limit, $offset);
 ```
+
 ## Counting Groups
 
 In order to count groups, you can use the **count** method or its helper **count_groups**. They both accept two arguments used to filter groups before returning the count.
@@ -134,6 +133,9 @@ In order to count groups, you can use the **count** method or its helper **count
 $this->kbcore->groups->count($field, $match);
 count_groups($field, $match);
 ```
+
+---  
+
 ## IMPORTANT
 
-All methods and functions are to be used in controllers. In case you want to use them in libraries, make sure to never use helpers because they will trigger an `undefined property: $kbcore` error.
+All methods and functions are to be used in controllers. In case you want to use them in libraries, make sure to never use helpers because they may trigger an `undefined property: $kbcore` error.

@@ -1,13 +1,12 @@
-
-# Modifications
+# CodeIgniter Modifications
 
 We are following the standard project folder, you might see few available directories: **docs**, **license**, **public**, **src** and **tests**.
 
-## CodeIgniter:
+## Edited Files
 
 Few modifications, enhancement and rewriting have been done to suit the need of the application. These are few to none changes but we have to mention them due to license agreement and so that you know what to do in case of a new CodeIgniter release.
 
-### index.php:
+### index.php
 
 On this file, we have first added the path to **src** folder which starts from line **#92** to line **#102**.
 ```php
@@ -112,7 +111,7 @@ if (file_exists(KBPATH.$directory.'/KB_'.$class.'.php'))
 }
 ```
 
-## Custom Classes:
+## Custom Files
 
 ### Admin_Controller.php
 
