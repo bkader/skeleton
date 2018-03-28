@@ -128,12 +128,13 @@ class Kbcore_options extends CI_Driver implements CRUD_interface
 	/**
 	 * Retrieve a single row by it's primary ID.
 	 * @access 	public
-	 * @param 	mixed 	$id 	The primary key value.
+	 * @param 	mixed 	$id 		The primary key value.
+	 * @param 	bool 	$single 	whether to return the value or the object.
 	 * @return 	object if found, else null
 	 */
-	public function get($id)
+	public function get($id, $single = false)
 	{
-		return $this->get_by('name', $id);
+		return $this->get_by('name', $id, $single);
 	}
 
 	// ------------------------------------------------------------------------
@@ -141,11 +142,12 @@ class Kbcore_options extends CI_Driver implements CRUD_interface
 	/**
 	 * Retrieve a single option by arbitrary WHERE clause.
 	 * @access 	public
-	 * @param 	mixed 	$field 	Column name or associative array.
-	 * @param 	mixed 	$match 	Comparison value.
+	 * @param 	mixed 	$field 		Column name or associative array.
+	 * @param 	mixed 	$match 		Comparison value.
+	 * @param 	bool 	$single 	whether to return the value or the object.
 	 * @return 	object if found, else null.
 	 */
-	public function get_by($field, $match = null)
+	public function get_by($field, $match = null, $single = false)
 	{
 		// Make everything as an array.
 		(is_array($field)) OR $field = array($field => $match);
@@ -177,6 +179,12 @@ class Kbcore_options extends CI_Driver implements CRUD_interface
 
 			// Cache the item for eventual use.
 			$this->cached[$row->name] = $row->value;
+
+			// Return the value only?
+			if ($single === true)
+			{
+				$row = $row->value;
+			}
 		}
 
 		return $row;
@@ -455,9 +463,9 @@ class Kbcore_options extends CI_Driver implements CRUD_interface
 		}
 
 		// Try to get it.
-		if ($item = $this->get($name))
+		if ($item = $this->get_by('name', $name, true))
 		{
-			return $item->value;
+			return $item;
 		}
 
 		// Found in CodeIgniter config?

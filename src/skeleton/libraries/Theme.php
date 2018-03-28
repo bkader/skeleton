@@ -266,7 +266,7 @@ EOT;
 	 * Holds the current page's title.
 	 * @var  string
 	 */
-	private $_title = null;
+	private $_title;
 
 	/**
 	 * Holds the page's title parts separator.
@@ -538,8 +538,6 @@ EOT;
 			'after_styles',
 			'after_theme_setup',
 			'alert_classes',
-			'alert_classes',
-			'alert_template',
 			'alert_template',
 			'before_metadata',
 			'before_scripts',
@@ -1032,7 +1030,7 @@ EOT;
 		// Already set? Return it.
 		if (isset($this->_title))
 		{
-			return apply_filters('the_title', $before.$this->_title.$after);
+			return apply_filters('the_title', $this->_title);
 		}
 
 		// Make sure it's an array.
@@ -4064,16 +4062,6 @@ if ( ! function_exists('theme_get_var'))
 	function theme_get_var($name, $index = null)
 	{
 		return get_instance()->theme->get($name, $index);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('set_assets_cache'))
-{
-	function set_assets_cache($time = 0)
-	{
-		return get_instance()->theme->set_assets_cache($time);
 	}
 }
 
