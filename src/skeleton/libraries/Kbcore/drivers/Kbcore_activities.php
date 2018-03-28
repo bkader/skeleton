@@ -357,6 +357,23 @@ class Kbcore_activities extends CI_Driver implements CRUD_interface
 		));
 	}
 
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Delete all activities of which the entity no longer exist.
+	 * @access 	public
+	 * @param 	none
+	 * @return 	boolean
+	 */
+	public function purge()
+	{
+		$this->ci->db
+			->where_not_in('user_id', $this->_parent->entities->get_all_ids())
+			->delete('activities');
+
+		return ($this->ci->db->affected_rows() > 0);
+	}
+
 }
 
 // --------------------------------------------------------------------
@@ -515,5 +532,19 @@ if ( ! function_exists('delete_activities'))
 	function delete_activities($field = null, $match = null)
 	{
 		return get_instance()->kbcore->activities->delete_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('purge_activities'))
+{
+	/**
+	 * Delete all activities of which the entity no longer exist.
+	 * @return 	boolean
+	 */
+	function purge_activities()
+	{
+		return get_instance()->kbcore->activities->purge();
 	}
 }
