@@ -60,6 +60,10 @@ class Theme
 	 */
 	private $_template_header = <<<EOT
 <!DOCTYPE html>
+<!--
+This website is Powered by: CodeIgniter Skeleton (https://github.com/bkader/skeleton)
+A community-based project originally developed by: Kader Bouyakoub <bkader[at]mail.com>
+-->
 <html{html_class}{language_attributes}>
 <head>
     {charset}
@@ -523,7 +527,7 @@ EOT;
 		$this->ci->benchmark->mark('theme_initialize_end');
 	}
 
-	// ------------------------------------------------------------------------
+	// --------------------------------------------------------------------
 
 	/**
 	 * Remove all filters and actions.
@@ -627,6 +631,8 @@ EOT;
 		return $folders;
 	}
 
+	// --------------------------------------------------------------------
+
 	/**
 	 * Return details about a given theme.
 	 * @access 	private
@@ -698,6 +704,8 @@ EOT;
 		// Replace defaults and return the result.
 		return array_replace($defaults, $manifest);
 	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Returns the theme's details.
@@ -779,6 +787,8 @@ EOT;
 		return realpath(FCPATH."{$this->_themes_folder}/{$uri}");
 	}
 
+	// --------------------------------------------------------------------
+
 	/**
 	 * Returns URI to the folder containing themes.
 	 * @access 	protected
@@ -789,6 +799,8 @@ EOT;
 	{
 		return base_url("{$this->_themes_folder}/{$uri}");
 	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Changes the currently used theme.
@@ -806,6 +818,8 @@ EOT;
 		return $this;
 	}
 
+	// --------------------------------------------------------------------
+
 	/**
 	 * Returns the current theme's name.
 	 * @access 	protected
@@ -815,6 +829,8 @@ EOT;
 	{
 		return $this->_theme;
 	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Returns theme url.
@@ -831,6 +847,8 @@ EOT;
 
 		return base_url("{$this->_themes_folder}/{$this->_theme}/{$uri}");
 	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Returns a path to a folder or file in theme's folder.
@@ -863,6 +881,8 @@ EOT;
 		return base_url("{$this->_uploads_folder}/{$uri}");
 	}
 
+	// --------------------------------------------------------------------
+
 	/**
 	 * Returns the realpath to the uploads folder.
 	 * @access 	protected
@@ -873,6 +893,8 @@ EOT;
 	{
 		return realpath(FCPATH."{$this->_uploads_folder}/{$uri}");
 	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Return a URL to the common folder.
@@ -889,6 +911,8 @@ EOT;
 
 		return base_url("{$this->_common_folder}/{$uri}");
 	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Returns the realpath to the common folder.
@@ -916,6 +940,8 @@ EOT;
 		$this->_layout = $layout;
 		return $this;
 	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Returns the current layout's name.
@@ -945,6 +971,8 @@ EOT;
 		return $this;
 	}
 
+	// --------------------------------------------------------------------
+
 	/**
 	 * Returns the current view's name.
 	 * @access 	protected
@@ -960,6 +988,8 @@ EOT;
 
 		return $this->_view;
 	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Attempt to guess the view file.
@@ -1018,6 +1048,8 @@ EOT;
 		return $this;
 	}
 
+	// --------------------------------------------------------------------
+
 	/**
 	 * Returns the current page's title.
 	 * @access 	protected
@@ -1060,6 +1092,8 @@ EOT;
 		// Return the title.
 		return $before.$this->_title.$after;
 	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Attempt to guess the title if it's not set.
@@ -1122,6 +1156,8 @@ EOT;
 		return $this;
 	}
 
+	// --------------------------------------------------------------------
+
 	/**
 	 * Returns all cached metadata.
 	 * @access 	protected
@@ -1131,6 +1167,8 @@ EOT;
 	{
 		return $this->_metadata;
 	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Takes all site meta tags and prepare the output string.
@@ -1150,6 +1188,8 @@ EOT;
 
 		return $metadata;
 	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Collectes all additional metadata and prepare them for output
@@ -1272,6 +1312,8 @@ EOT;
 		return $this;
 	}
 
+	// --------------------------------------------------------------------
+
 	/**
 	 * Simply remove any added files.
 	 * @access 	public
@@ -1305,6 +1347,8 @@ EOT;
 
 		return $this;
 	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Remplaces any file by another.
@@ -1386,6 +1430,8 @@ EOT;
 		return $this;
 	}
 
+	// --------------------------------------------------------------------
+
 	/**
 	 * Allows user to add inline elements (CSS or JS)
 	 * @access 	public
@@ -1428,6 +1474,8 @@ EOT;
 		return $this->_styles;
 	}
 
+	// --------------------------------------------------------------------
+
 	/**
 	 * Outputs all site stylesheets and inline styes string.
 	 * @return 	string
@@ -1447,6 +1495,8 @@ EOT;
 
 		return $styles;
 	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Collect all additional CSS files and prepare them for output
@@ -1516,6 +1566,8 @@ EOT;
 		return $this->_scripts;
 	}
 
+	// --------------------------------------------------------------------
+
 	/**
 	 * Outputs all script tags and inline scripts.
 	 * @access 	protected
@@ -1536,6 +1588,8 @@ EOT;
 
 		return $scripts;
 	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Collect all additional JS files and prepare them for output
@@ -1753,6 +1807,8 @@ EOT;
 		return $output;
 	}
 
+	// --------------------------------------------------------------------
+
 	/**
 	 * Returns or ouputs the footer file or provided template.
 	 * @access 	protected
@@ -1933,6 +1989,8 @@ EOT;
 		return null;
 	}
 
+	// --------------------------------------------------------------------
+
 	/**
 	 * Returns the array of body classes.
 	 * @access 	protected
@@ -1943,6 +2001,8 @@ EOT;
 	{
 		return $this->_body_classes;
 	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Returns the <meta> charset tag.
@@ -2087,7 +2147,7 @@ EOT;
 		return $this->_theme_language_index;
 	}
 
-	// ------------------------------------------------------------------------
+	// --------------------------------------------------------------------
 
 	/**
 	 * Return the currently used language details.
@@ -2149,6 +2209,8 @@ EOT;
 		return $this->ci->session->set_flashdata('__ci_alert', $this->_messages);
 	}
 
+	// --------------------------------------------------------------------
+
 	/**
 	 * Returns all available alert messages.
 	 * @access 	protected
@@ -2195,6 +2257,8 @@ EOT;
 
 		return $output;
 	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Prints an alert.
@@ -2316,6 +2380,8 @@ EOT;
 
 		$this->ci->output->set_output($output);
 	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Unlike the method above it, this one builts the output and does not
@@ -2575,116 +2641,6 @@ EOT;
 		return $output;
 	}
 
-	// ------------------------------------------------------------------------
-
-	private function _load_asset($file)
-	{
-		// Backup the file for later use.
-		$old_file = $file;
-
-		// Prepare an empty output.
-		$output = '';
-
-		// Make sure it's a full URL.
-		if (filter_var($file, FILTER_VALIDATE_URL) === FALSE)
-		{
-			$file = $this->theme_url($file);
-		}
-
-		// Check if the file exits first.
-		$found = false;
-		$file_headers = get_headers($file);
-		if (stripos($file_headers[0], '200 OK'))
-		{
-			$found = true;
-		}
-
-		// Not found? Return nothing.
-		if ($found === false)
-		{
-			return "/* Missing file: {$old_file} */";
-		}
-
-		// Use cURL if enabled.
-		if (function_exists('curl_init'))
-		{
-			$curl = curl_init();
-			curl_setopt($curl, CURLOPT_URL, $file);
-			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($curl, CURLOPT_HEADER, false);
-			$output .= curl_exec($curl);
-			curl_close($curl);
-		}
-		// Otherwise, simply use file_get_contents.
-		else
-		{
-			$output .= file_get_contents($file);
-		}
-
-		/**
-		 * Remember, we have backed up the file right?
-		 * The reason behind this it to set relative paths inside it.
-		 * For instance, if an image or a fond is used in the CSS file,
-		 * you might see something like this: url('../').
-		 * Here we are simply replacing that relative path and use an
-		 * absolute path so image or font don't get broken.
-		 */
-		if (pathinfo($file, PATHINFO_EXTENSION) === 'css'
-			&& preg_match_all('/url\((["\']?)(.+?)\\1\)/i', $output, $matches, PREG_SET_ORDER))
-		{
-			$search  = array();
-			$replace = array();
-
-			$import_url = str_replace(array('http:', 'https:', basename($file)), '', $file);
-
-			foreach ($matches as $match)
-			{
-				$count = substr_count($match[2], '../');
-				$search[] = str_repeat('../', $count);
-				$temp_import_url = $import_url;
-				for ($i=1; $i <= $count; $i++) {
-					$temp_import_url = str_replace(basename($temp_import_url), '', $temp_import_url);
-				}
-				$replace[] = rtrim($temp_import_url, '/').'/';
-			}
-
-			// Replace everything if the output.
-			$output = str_replace(array_unique($search), array_unique($replace), $output);
-		}
-
-		return $output;
-	}
-
-	private function _compress_css($css = '')
-	{
-		$replace = array(
-			"#/\*.*?\*/#s" => "",  // Strip C style comments.
-			"#\s\s+#"      => " ", // Strip excess whitespace.
-		);
-
-		$search = array_keys($replace);
-
-		$css = preg_replace($search, $replace, $css);
-
-		$replace = array(
-			": "  => ":",
-			"; "  => ";",
-			" {"  => "{",
-			" }"  => "}",
-			", "  => ",",
-			"{ "  => "{",
-			";}"  => "}", // Strip optional semicolons.
-			",\n" => ",", // Don't wrap multiple selectors.
-			"\n}" => "}", // Don't wrap closing braces.
-			"} "  => "}\n", // Put each rule on it's own line.
-		);
-
-		$search = array_keys($replace);
-		$css = str_replace($search, $replace, $css);
-
-		return trim($css);
-	}
-
 	// --------------------------------------------------------------------
 
 	/**
@@ -2793,7 +2749,7 @@ EOT;
 		return $this;
 	}
 
-	// ------------------------------------------------------------------------
+	// --------------------------------------------------------------------
 
 	/**
 	 * Removes files extension
@@ -2834,7 +2790,7 @@ EOT;
 		return $file;
 	}
 
-	// ------------------------------------------------------------------------
+	// --------------------------------------------------------------------
 
 	/**
 	 * Make sure the .htaccess file that denies direct
@@ -2905,10 +2861,13 @@ EOT;
 		$this->_client['version'] = $this->ci->agent->version();
 
 		// Collect accepted languages.
-		$this->_client['languages'] = array_values(array_filter($this->ci->agent->languages(), function($lang)
-		{
-			return strlen($lang) <= 3;
-		}));
+		$this->_client['languages'] = array_values(array_filter(
+			$this->ci->agent->languages(),
+			function($lang)
+			{
+				return strlen($lang) <= 3;
+			}
+		));
 
 		// Set the client used platform (Windows, IOs, Unix ...).
 		$this->_client['platform'] = $this->ci->agent->platform();
@@ -2986,6 +2945,13 @@ if ( ! function_exists('is_module'))
 	 */
 	function is_module($modules = null)
 	{
+		// Make sure the fetch_module exists.
+		if ( ! method_exists(get_instance()->router, 'fetch_module'))
+		{
+			return false;
+		}
+
+		// If no modules provided, we make sure we are on a module.
 		if ($modules === null)
 		{
 			return (get_instance()->theme->module !== null);
@@ -3011,6 +2977,7 @@ if ( ! function_exists('is_controller'))
 {
 	/**
 	 * Checks if the page belongs to a given controller.
+	 * @return 	bool
 	 */
 	function is_controller($controllers = null)
 	{
@@ -3030,6 +2997,7 @@ if ( ! function_exists('is_method'))
 {
 	/**
 	 * Checks if the page belongs to a given method.
+	 * @return 	bool
 	 */
 	function is_method($methods = null)
 	{
@@ -3043,7 +3011,7 @@ if ( ! function_exists('is_method'))
 	}
 }
 
-// ------------------------------------------------------------------------
+// --------------------------------------------------------------------
 
 if ( ! function_exists('is_admin'))
 {
@@ -3065,10 +3033,15 @@ if ( ! function_exists('get_the_module'))
 {
 	/**
 	 * Returns the current module's name.
+	 * @return 	string
 	 */
 	function get_the_module()
 	{
-		return get_instance()->theme->module;
+		$CI =& get_instance();
+
+		return (method_exists($CI->router, 'fetch_module'))
+			? $CI->router->fetch_module()
+			: null;
 	}
 }
 
@@ -3078,10 +3051,11 @@ if ( ! function_exists('the_module'))
 {
 	/**
 	 * Returns the current module's name.
+	 * @return 	void
 	 */
 	function the_module()
 	{
-		echo get_instance()->theme->module;
+		echo get_the_module();
 	}
 }
 
@@ -3091,10 +3065,11 @@ if ( ! function_exists('get_the_controller'))
 {
 	/**
 	 * Returns the current controller's name.
+	 * @return 	string
 	 */
 	function get_the_controller()
 	{
-		return get_instance()->theme->controller;
+		return get_instance()->router->fetch_class();
 	}
 }
 
@@ -3104,10 +3079,11 @@ if ( ! function_exists('the_controller'))
 {
 	/**
 	 * Returns the current controller's name.
+	 * @return 	void
 	 */
 	function the_controller()
 	{
-		echo get_instance()->theme->controller;
+		echo get_the_controller();
 	}
 }
 
@@ -3117,10 +3093,11 @@ if ( ! function_exists('get_the_method'))
 {
 	/**
 	 * Returns the current method's name.
+	 * @return 	string
 	 */
 	function get_the_method()
 	{
-		return get_instance()->theme->method;
+		return get_instance()->router->fetch_method();
 	}
 }
 
@@ -3130,10 +3107,11 @@ if ( ! function_exists('the_method'))
 {
 	/**
 	 * Returns the current method's name.
+	 * @return 	void
 	 */
 	function the_method()
 	{
-		echo get_instance()->theme->method;
+		echo get_the_method();
 	}
 }
 
@@ -3141,6 +3119,11 @@ if ( ! function_exists('the_method'))
 
 if ( ! function_exists('is_layout'))
 {
+	/**
+	 * This function is used to check the current theme's layout.
+	 * @param 	string 	$layout 	The layout to check.
+	 * @return 	bool
+	 */
 	function is_layout($layout = null)
 	{
 		return ($layout == get_instance()->theme->get_layout());
@@ -3442,6 +3425,14 @@ if ( ! function_exists('common_path'))
 
 if ( ! function_exists('assets_url'))
 {
+	/**
+	 * You should use "theme_url" or "common_url" to return
+	 * URLs to your asset files. This function is here only 
+	 * if you want to use a different approach.
+	 * @param 	string 	$file 		The file your want to generate URL to.
+	 * @param 	bool 	$common 	Load it from common or theme folder.
+	 * @return 	string 	The full URL to the file.
+	 */
 	function assets_url($file = null, $common = false)
 	{
 		// If a full link is passed, return it as it is.
@@ -3449,14 +3440,10 @@ if ( ! function_exists('assets_url'))
 		{
 			return $file;
 		}
-		elseif ($common === true)
-		{
-			return get_common_url($file);
-		}
-		else
-		{
-			return get_theme_url($file);
-		}
+
+		return ($common === true)
+			? get_common_url($file)
+			: get_theme_url($file);
 	}
 }
 
@@ -3521,8 +3508,16 @@ if ( ! function_exists('the_title'))
 
 if ( ! function_exists('the_extra_head'))
 {
+	/**
+	 * This function is used to return/output the extra head content
+	 * part. It should be used right before the closing </head> tag.
+	 * @param 	string 	$content 	The content you want to output.
+	 * @param 	bool 	$echo 		Whether to echo or return.
+	 * @return 	string
+	 */
 	function the_extra_head($content = null, $echo = true)
 	{
+		// Should we return it instead?
 		if ($echo === false)
 		{
 			return get_instance()->theme->output_extra_head($content);
@@ -3536,6 +3531,13 @@ if ( ! function_exists('the_extra_head'))
 
 if ( ! function_exists('add_ie9_support'))
 {
+	/**
+	 * This function is used alongside the "extra_head" filter in order
+	 * to add support for old browsers (Internet Explorer)
+	 * @param 	string 	$output 	The extra head content.
+	 * @param 	bool 	$remote 	Whether to load from CDN or use local files.
+	 * @return 	void
+	 */
 	function add_ie9_support(&$output, $remote = true)
 	{
 		$html5shiv = 'https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js';
@@ -3559,6 +3561,11 @@ EOT;
 
 if ( ! function_exists('the_content'))
 {
+	/**
+	 * This function output/echoes the loaded view file content.
+	 * @param 	bool 	$echo 	whether to output or return the content.
+	 * @return 	string
+	 */
 	function the_content($echo = true)
 	{
 		if ($echo === false)
@@ -3574,6 +3581,12 @@ if ( ! function_exists('the_content'))
 
 if ( ! function_exists('the_analytics'))
 {
+	/**
+	 * This function is used to output the full Google Analytics code.
+	 * You may want to use it right before the closing </body> tag.
+	 * @param 	string 	$site_id 	Google Analytics ID.
+	 * @return 	void
+	 */
 	function the_analytics($site_id = null)
 	{
 		echo get_instance()->theme->output_analytics($site_id);
@@ -3584,6 +3597,12 @@ if ( ! function_exists('the_analytics'))
 
 if ( ! function_exists('get_the_analytics'))
 {
+	/**
+	 * This function is similar to the "the_analytics" function, the
+	 * only different is that is returns the code instead of output.
+	 * @param 	string 	$site_id 	Google Analytics ID.
+	 * @return 	string
+	 */
 	function get_the_analytics($site_id = null)
 	{
 		return get_instance()->theme->output_analytics($site_id);
@@ -3594,14 +3613,15 @@ if ( ! function_exists('get_the_analytics'))
 =            METADATA FUNCTIONS            =
 ==========================================*/
 
-if ( ! function_exists('meta_tag')): /**
- * Output a <meta> tag of almost any type.
- * @param   mixed   $name   the meta name or array of meta.
- * @param   string  $content    the meta tag content.
- * @param   string  $type       the type of meta tag.
- * @param   mixed   $attrs      array of string of attributes.
- * @return  string
- */
+if ( ! function_exists('meta_tag')):
+	/**
+	 * Output a <meta> tag of almost any type.
+	 * @param   mixed   $name   the meta name or array of meta.
+	 * @param   string  $content    the meta tag content.
+	 * @param   string  $type       the type of meta tag.
+	 * @param   mixed   $attrs      array of string of attributes.
+	 * @return  string
+	 */
 	function meta_tag($name, $content = null, $type = 'meta', $attrs = array())
 	{
 		// Loop through multiple meta tags
