@@ -272,6 +272,140 @@ class Kbcore_objects extends CI_Driver implements CRUD_interface
 	// ------------------------------------------------------------------------
 
 	/**
+	 * This method is used in order to search objects.
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	array of objects if found, else null.
+	 */
+	public function find($field, $match = null, $limit = 0, $offset = 0)
+	{
+		// Make sure $field is always an array.
+		(is_array($field)) OR $field = array($field => $match);
+		
+		// Create our search query.
+		foreach ($field as $key => $val)
+		{
+			/**
+			 * If we are searching by a field that exists in one of
+			 * the main table: "entities" and "objects".
+			 */
+			if (in_array($key, $this->fields()) 
+				OR in_array($key, $this->_parent->entities->fields()))
+			{
+				// Searching by unique values? Use where instead.
+				if ( ! is_array($val) 
+					&& in_array($key, array('id', 'subtype', 'username', 'guid')))
+				{
+					$this->ci->db->where($key, $val);
+				}
+				// Did we provide a value, not an array?
+				elseif ( ! is_array($val))
+				{
+					// Use "like" or "not like" ?
+					$_method = 'like';
+					if (is_string($val) && strpos($val, '!') === 0)
+					{
+						$_method = 'not_like';
+						$val = str_replace('!', '', $val);
+					}
+
+					// Proceed.
+					$this->ci->db->{$_method}($key, $val, 'both');
+				}
+				// In case of an array:
+				else
+				{
+					/**
+					 * Here we prepare the count so that the first element
+					 * will use "like" and all others will use "or_like".
+					 */
+					$_count = 1;
+
+					// Let's loop through elements:
+					foreach ($val as $_val)
+					{
+						// If we add "!" first, we make sure to use "not".
+						if (is_string($_val) && strpos($_val, '!') === 0)
+						{
+							$_method = ($_count == 1) ? 'not_like' : 'or_not_like';
+
+							// We make sure to remove the "!".
+							$_val = str_replace('!', '', $_val);
+						}
+						// Other wise, use default methods.
+						else
+						{
+							$_method = ($_count == 1) ? 'like' : 'or_like';
+						}
+
+						// Call the method.
+						$this->ci->db->{$_method}($key, $_val);
+
+						// We make sure to increment $_count.
+						$_count++;
+					}
+				}
+			}
+			// We search by metadata.
+			else
+			{
+				// Make sure to join metadata table.
+				$this->ci->db->join('metadata', 'metadata.guid = entities.id');
+
+				// Array ?
+				if (is_array($val))
+				{
+					foreach ($val as $_val)
+					{
+						$_method = 'like';
+						if (is_string($_val) && strpos($_val, '!') === 0)
+						{
+							$_method = 'not_like';
+							$_val = str_replace('!', '', $_val);
+						}
+
+						$this->ci->db->where('metadata.key', $key);
+						$this->ci->db->{$_method}('metadata.value', $_val, 'both');
+					}
+				}
+				// Single argument.
+				else
+				{
+					$_method = 'like';
+					if (is_string($val) && strpos($val, '!') === 0)
+					{
+						$_method = 'not_like';
+						$val = str_replace('!', '', $val);
+					}
+
+					$this->ci->db->where('metadata.key', $key);
+					$this->ci->db->{$_method}('metadata.value', $val, 'both');
+				}
+			}
+		}
+
+		// Is limit provided?
+		if ($limit > 0)
+		{
+			$this->ci->db->limit($limit, $offset);
+		}
+
+		// Proceed to join and get.
+		return $this->ci->db
+			->select('entities.*, objects.*')
+			->distinct()
+			->where('entities.type', 'object')
+			->join('objects', 'objects.guid = entities.id')
+			->get('entities')
+			->result();
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Update a single object.
 	 * @access 	public
 	 * @param 	int 	$id
