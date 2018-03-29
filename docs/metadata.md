@@ -11,7 +11,7 @@ Let's explain the table a bit:
 
 * **id** (*auto*): Auto-incremented metadata IDs.
 * **guid** (*int*): The ID of the entity to which the metadata belongs.
-* **name** (*string*): The metadata key (lowercased string).
+* **key** (*string*): The metadata key (lowercased string).
 * **value** (*mixed*): The metadata value, it can be anything: string, integer, boolean or even arrays and objects.
 
 ## Creating Metadata
