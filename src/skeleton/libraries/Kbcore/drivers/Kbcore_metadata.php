@@ -93,7 +93,7 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 
 		// Check the integrity of of $data.
 		if ( ! isset($data['guid'])
-			OR ( ! isset($data['name']) OR empty($data['name'])))
+			OR ( ! isset($data['key']) OR empty($data['key'])))
 		{
 			return false;
 		}
@@ -275,7 +275,7 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 	 *
 	 * @example:
 	 * $this->kbcore->metadata->update_by(
-	 * 		array('guid' => 1, 'name' => 'var_name'),
+	 * 		array('guid' => 1, 'key' => 'var_name'),
 	 *   	array(
 	 *   		'value'  => 'new_value',
 	 *   		'params' => 'new_params'
@@ -440,7 +440,7 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 			{
 				$data[] = array(
 					'guid'  => $guid,
-					'name'  => $key,
+					'key'   => $key,
 					'value' => $val,
 				);
 			}
@@ -458,27 +458,27 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 	 * Retrieve a single or multiple metadata of the selected entity.
 	 * @access 	public
 	 * @param 	int 	$guid 	The entiti'y id.
-	 * @param 	string 	$name 	The metadata name
+	 * @param 	string 	$key 	The metadata name
 	 * @param 	bool 	$single Whether to return the metadata value.
 	 * @return 	mixed
 	 */
-	public function get_meta($guid, $name = NULL, $single = FALSE)
+	public function get_meta($guid, $key = NULL, $single = FALSE)
 	{
 		// A single metadata to retrieve?
-		if ( ! empty($name))
+		if ( ! empty($key))
 		{
 			// Multiple metadata?
-			if (is_array($name))
+			if (is_array($key))
 			{
 				return $ths->get_many(array(
 					'guid' => $guid,
-					'name' => $name,
+					'key'  => $key,
 				));
 			}
 
 			$meta = $this->get_by(array(
 				'guid' => $guid,
-				'name' => $name,
+				'key'  => $key,
 			));
 
 			// Return the value or the whole object if found.
@@ -594,7 +594,7 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 		{
 			// Get rid of deep nasty array.
 			(is_array($args[0])) && $args = $args[0];
-			$where['name'] = $args;
+			$where['key'] = $args;
 		}
 
 		return $this->delete_by($where);
@@ -642,13 +642,13 @@ if ( ! function_exists('get_meta'))
 	/**
 	 * Retrieve a single or multiple metadata for the selected entity.
 	 * @param 	int 	$guid 	The entity's ID.
-	 * @param 	mixed 	$name 	The metadata name or array.
+	 * @param 	mixed 	$key 	The metadata name or array.
 	 * @param 	bool 	$single Whether to retrieve the value instead of the object.
 	 * @return 	mixed 	depends on the value of the metadata.
 	 */
-	function get_meta($guid, $name = NULL, $single = FALSE)
+	function get_meta($guid, $key = NULL, $single = FALSE)
 	{
-		return get_instance()->kbcore->metadata->get_meta($guid, $name, $single);
+		return get_instance()->kbcore->metadata->get_meta($guid, $key, $single);
 	}
 }
 
@@ -726,12 +726,12 @@ if ( ! function_exists('delete_meta'))
 	/**
 	 * Delete a single or multiple metadata for the selected entity.
 	 * @param 	int 	$guid 	The entity's ID.
-	 * @param 	mixed 	$name 	The meta name or array.
+	 * @param 	mixed 	$key 	The meta name or array.
 	 * @return 	boolean
 	 */
-	function delete_meta($guid, $name = NULL)
+	function delete_meta($guid, $key = NULL)
 	{
-		return get_instance()->kbcore->metadata->delete($guid, $name);
+		return get_instance()->kbcore->metadata->delete($guid, $key);
 	}
 }
 
