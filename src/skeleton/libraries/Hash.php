@@ -38,12 +38,18 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Simple Hashing Library
+ * Hash Class
+ *
+ * Hashes, encrypts/decrypts strings and generates random strings.
  *
  * @package 	CodeIgniter
+ * @subpackage 	Skeleton
  * @category 	Libraries
- * @author 	Kader Bouyakoub <bkader@mail.com>
- * @link 	https://github.com/bkader
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		Version 1.0.0
+ * @version 	1.0.0
  */
 class Hash
 {
