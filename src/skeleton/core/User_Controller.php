@@ -43,9 +43,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * Controllers extending this class require a logged in user.
  *
  * @package 	CodeIgniter
+ * @subpackage 	Skeleton
  * @category 	Core Extension
- * @author 	Kader Bouyakoub <bkader@mail.com>
- * @link 	https://github.com/bkader
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		Version 1.0.0
+ * @version 	1.0.0
  */
 class User_Controller extends KB_Controller
 {
