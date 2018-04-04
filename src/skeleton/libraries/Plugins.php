@@ -92,7 +92,7 @@ class CI_Plugins
 	{
 		if (is_null(self::$_instance))
 		{
-			self::$_instance = new Self;
+			self::$_instance = new self();
 		}
 
 		return self::$_instance;
