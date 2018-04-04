@@ -38,12 +38,16 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * JSOn Helpers.
+ * Functions in this file handle JSON conversions.
  *
  * @package 	CodeIgniter
+ * @subpackage 	Skeleton
  * @category 	Helpers
- * @author 	Kader Bouyakoub <bkader@mail.com>
- * @link 	https://github.com/bkader
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		Version 1.0.0
+ * @version 	1.0.0
  */
 
 if ( ! function_exists('is_json'))

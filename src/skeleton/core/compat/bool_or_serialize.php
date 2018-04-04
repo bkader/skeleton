@@ -38,12 +38,17 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Boolean and Serialization Helpers
+ * Functions in this file use both "str_to_bool.php" and 
+ * "is_serialized.php" functions to format arguments.
  *
  * @package 	CodeIgniter
+ * @subpackage 	Skeleton
  * @category 	Helpers
- * @author 	Kader Bouyakoub <bkader@mail.com>
- * @link 	https://github.com/bkader
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		Version 1.0.0
+ * @version 	1.0.0
  */
 
 if ( ! function_exists('to_bool_or_serialize'))

@@ -38,12 +38,17 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Boolean to String representation and vice versa
+ * Functions in this files handles boolean to string representation
+ * and vice versa.
  *
  * @package 	CodeIgniter
+ * @subpackage 	Skeleton
  * @category 	Helpers
- * @author 	Kader Bouyakoub <bkader@mail.com>
- * @link 	https://github.com/bkader
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		Version 1.0.0
+ * @version 	1.0.0
  */
 
 if ( ! function_exists('str_to_bool'))
