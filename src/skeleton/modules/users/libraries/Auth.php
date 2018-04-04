@@ -85,7 +85,7 @@ class Auth
 	private function _authenticate()
 	{
 		// Let's make sure the cookie is set first.
-		list($user_id, $token, ) = $this->_get_cookie();
+		list($user_id, $token, $random) = $this->_get_cookie();
 		if (empty($user_id) OR empty($token))
 		{
 			return;
@@ -114,7 +114,7 @@ class Auth
 		 * This is useful if the user is disabled, deleted or
 		 * banned  while he/she is logged in, we log him/her out.
 		 */
-		if ($user->enabled < 1)
+		if ($user->enabled < 1 OR $user->deleted > 0)
 		{
 			$this->logout($user_id);
 			return;
@@ -181,10 +181,13 @@ class Auth
 			return false;
 		}
 
-		// The user has been banned/deactivated meanwhile?
-		if ($user->enabled < 1)
+		/**
+		 * This is useful if the user is disabled, deleted or
+		 * banned  while he/she is logged in, we log him/her out.
+		 */
+		if ($user->enabled < 1 OR $user->deleted > 0)
 		{
-			$this->logout();
+			$this->logout($user->id);
 			return false;
 		}
 
