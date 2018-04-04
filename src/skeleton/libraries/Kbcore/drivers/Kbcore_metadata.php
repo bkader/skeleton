@@ -687,6 +687,25 @@ if ( ! function_exists('get_many_meta'))
 
 // ------------------------------------------------------------------------
 
+if ( ! function_exists('metadata_exists'))
+{
+	/**
+	 * Checks the existence of a metadata.
+	 *
+	 * @since 	1.3.0
+	 *
+	 * @param 	int 	$guid 	The entity's ID.
+	 * @param 	string 	$key 	The meta key.
+	 * @return 	bool 	true if the meta exists, else false.
+	 */
+	function metadata_exists($guid, $key)
+	{
+		return (get_meta($guid, $key) !== null);
+	}
+}
+
+// ------------------------------------------------------------------------
+
 if ( ! function_exists('update_meta'))
 {
 	/**
