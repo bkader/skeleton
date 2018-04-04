@@ -239,14 +239,14 @@ class Kbcore_activities extends CI_Driver implements CRUD_interface
 	{
 		// Collect arguments first and make sure there are some.
 		$args = func_get_args();
-		if (empt($args))
+		if (empty($args))
 		{
 			return FALSE;
 		}
 
 		// Data to set is always the last argument.
 		$data = array_pop($args);
-		if ( ! is_array($data) OR empt($data))
+		if ( ! is_array($data) OR empty($data))
 		{
 			return FALSE;
 		}

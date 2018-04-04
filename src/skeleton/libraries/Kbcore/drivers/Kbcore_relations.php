@@ -104,7 +104,7 @@ class Kbcore_relations extends CI_Driver implements CRUD_interface
 	public function create(array $data = array())
 	{
 		// Make sure we have data.
-		if (empt($data))
+		if (empty($data))
 		{
 			return false;
 		}
@@ -122,7 +122,7 @@ class Kbcore_relations extends CI_Driver implements CRUD_interface
 		}
 
 		// Check the integrity of $data.
-		if (empt($data) OR ( ! isset($data['relation']) OR empty($data['relation'])))
+		if (empty($data) OR ( ! isset($data['relation']) OR empty($data['relation'])))
 		{
 			return false;
 		}
@@ -141,7 +141,7 @@ class Kbcore_relations extends CI_Driver implements CRUD_interface
 		// Add the date of creation.
 		(isset($data['created_at'])) OR $data['created_at'] = time();
 
-		$this->ci->db->insert('relations', $dat);
+		$this->ci->db->insert('relations', $data);
 		return $this->ci->db->insert_id();
 	}
 
