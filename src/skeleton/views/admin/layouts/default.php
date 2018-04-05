@@ -1,12 +1,16 @@
 <!-- acp navbar -->
-<nav class="navbar navbar-inverse navbar-fixed-top">
+<nav class="navbar navbar-default navbar-fixed-top">
 	<div class="container-fluid">
 		<div class="navbar-header">
+		<button type="button" class="navbar-toggle sidebar-toggle">
+			<span class="sr-only">Toggle Sidebar</span>
+			<i class="fa fa-toggle-right"></i>
+		</button>
 		<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
 			<span class="sr-only">Toggle navigation</span>
 			<i class="fa fa-bars"></i>
 		</button>
-		<a href="<?php echo admin_url() ?>" class="navbar-brand"><span class="logo"></span> <?php echo get_option('site_name') ?></a>
+		<a href="<?php echo admin_url() ?>" class="navbar-brand"><?php echo get_option('site_name') ?></a>
 		</div><!--/.navbar-header-->
 
 		<div id="navbar" class="navbar-collapse collapse">
@@ -36,31 +40,24 @@
 </nav>
 <!-- /acp navbar -->
 
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-xs-12 col-sm-3 col-md-2 sidebar">
-			<ul class="nav nav-sidebar">
-				<li<?php echo (get_the_module() == null) ? ' class="active"' : '' ?>><?php echo admin_anchor('', lang('dashboard')) ?></li>
-				<!--<li<?php echo is_module('users') ? ' class="active"' : '' ?>><?php echo admin_anchor('users', lang('users')) ?></li>
-				<li<?php echo is_module('themes') ? ' class="active"' : '' ?>><?php echo admin_anchor('themes', lang('themes')) ?></li>
-				<li<?php echo is_module('menus') ? ' class="active"' : '' ?>><?php echo admin_anchor('menus', lang('menus')) ?></li>
-				<li<?php echo is_module('plugins') ? ' class="active"' : '' ?>><?php echo admin_anchor('plugins', lang('plugins')) ?></li>
-				<li<?php echo is_module('settings') ? ' class="active"' : '' ?>><?php echo admin_anchor('settings', lang('settings')) ?></li>-->
+<main class="wrapper" id="wrapper" role="main">
+	<div class="container-fluid">
+		<?php the_content(); ?>
+		<div class="footer">
+			<p class="text-center"><?php echo anchor('', get_option('site_name')) ?>. &copy; Copyright <?php echo date('Y') ?><br><abbr title="Render Time">RT</abbr>: <strong>{elapsed_time}</strong>. <abbr title="Theme Time">TT</abbr>: <strong>{theme_time}</strong><br><?php _e('created_by'); ?> <a href="https://github.com/bkader" target="_blank">Kader Bouyakoub</a></p>
+		</div>
+	</div>
+</main>
 
-				<?php foreach ($admin_menu as $url => $title): ?>
-				<li<?php echo is_module($url) ? ' class="active"' : '' ?>><?php echo admin_anchor($url, $title) ?></li>
-				<?php endforeach; ?>
-			</ul>
-		</div>
-		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-			<?php the_content(); ?>
-			<div class="footer">
-				<hr>
-				<p class="text-center"><?php echo anchor('', get_option('site_name')) ?>. &copy; Copyright <?php echo date('Y') ?>.RT: <strong>{elapsed_time}</strong>. TT: <strong>{theme_time}</strong>.<br ><?php _e('created_by'); ?> <a href="https://github.com/bkader" target="_blank">Kader Bouyakoub</a></p>
-			</div>
-		</div>
-	</div><!--/.row-->
-</div><!--/.container-fluid-->
+<aside class="sidebar" id="sidebar" role="complementay">
+	<ul class="nav nav-sidebar">
+		<li<?php echo (get_the_module() == null) ? ' class="active"' : '' ?>><?php echo admin_anchor('', lang('dashboard')) ?></li>
+		<?php foreach ($admin_menu as $url => $title): ?>
+		<li<?php echo is_module($url) ? ' class="active"' : '' ?>><?php echo admin_anchor($url, $title) ?></li>
+		<?php endforeach; ?>
+	</ul>
+</aside>
+
 <?php the_alert(); ?>
 
 <script type="text/x-handlebars-template" id="tpl-alert">
