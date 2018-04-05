@@ -426,4 +426,271 @@ class Kbcore extends CI_Driver_Library
 		$this->ci->theme->set('site_languages', $langs, true);
 	}
 
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Database WHERE clause generator.
+	 *
+	 * @since 	1.3.0
+	 *
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	object 	it returns the DB object so that the method can be chainable.
+	 */
+	public function where($field = null, $match = null, $limit = 0, $offset = 0)
+	{
+		if ($field !== null)
+		{
+			// Format things first.
+			if (is_array($field))
+			{
+				$limit  = $match;
+				$offset = $limit;
+			}
+			else
+			{
+				$field = array($field => $match);
+			}
+
+			// Let's generate the WHERE clause.
+			foreach ($field as $key => $val)
+			{
+				// We make sure to ignore empty key.
+				if (empty($key) OR is_int($key))
+				{
+					continue;
+				}
+
+				// The default method to call.
+				$method = 'where';
+
+				// In case $val is an array.
+				if (is_array($val))
+				{
+					// The default method to call is "where_in".
+					$method = 'where_in';
+
+					// Should we use the "or_where_not_in"?
+					if (strpos($key, 'or:!') === 0)
+					{
+						$method = 'or_where_not_in';
+						$key    = str_replace('or:!', '', $key);
+					}
+					// Should we use the "or_where_in"?
+					elseif (strpos($key, 'or:') === 0)
+					{
+						$method = 'or_where_in';
+						$key    = str_replace('or:', '', $key);
+					}
+					// Should we use the "where_not_in"?
+					elseif (strpos($key, '!') === 0)
+					{
+						$method = 'where_not_in';
+						$key    = str_replace('!', '', $key);
+					}
+				}
+
+				$this->ci->db->{$method}($key, $val);
+			}
+		}
+
+		if ($limit > 0)
+		{
+			$this->ci->db->limit($limit, $offset);
+		}
+
+		return $this->ci->db;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Database LIKE clause generator.
+	 *
+	 * @since 	1.3.0
+	 *
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @param 	string 	$type 	The type of search: users, groups, objects OR null.
+	 * @return 	object 	it returns the DB object so that the method can be chainable.
+	 */
+	public function find($field, $match = null, $limit = 0, $offset = 0, $type = null)
+	{
+		// Format things first.
+		if (is_array($field))
+		{
+			$limit  = $match;
+			$offset = $limit;
+			$type   = $offset;
+		}
+		else
+		{
+			$field = array($field => $match);
+		}
+
+		/**
+		 * The search is triggered depending of what we are looking for.
+		 * This is useful because sometimes we may want to retrieve entities
+		 * by their metadata. Otherwise, we generate a default LIKE clause.
+		 */
+		switch ($type)
+		{
+			// In case of looking for an entity.
+			case 'users':
+			case 'groups':
+			case 'objects':
+
+				// We make sure to join the required table.
+				$this->ci->load->helper('inflector');
+				$this->ci->db
+					// We select only main tables fields to avoid joining metadata.
+					->select("entities.*, {$type}.*")
+					->distinct()
+					->where('entities.type', singular($type))
+					->join($type, "{$type}.guid = entities.id");
+
+				// The following anchoris  used to avoid multiple join.
+				$metadata_joint = true;
+
+				// Generate the query.
+				$count = 1;
+				foreach ($field as $key => $val)
+				{
+					/**
+					 * If we are searching by a field that exists in one of the main
+					 * tables: entities, users, groups or objects.
+					 */
+					if (in_array($key, $this->{$type}->fields()) 
+						OR in_array($key, $this->entities->fields()))
+					{
+						// Make sure not to search in metadata.
+						$metadata_joint = false;
+
+						if ( ! is_array($val))
+						{
+							$method = ($count == 1) ? 'like' : 'or_like';
+							if (strpos($key, '!') === 0)
+							{
+								$method = ($count == 1) ? 'not_like' : 'or_not_like';
+								$key = str_replace('!', '', $key);
+							}
+
+							$this->ci->db->{$method}($key, $val);
+						}
+						else
+						{
+							foreach ($val as $_val)
+							{
+								$method = 'like';
+								if (strpos($key, '!') === 0)
+								{
+									$method = 'not_like';
+									$key = str_replace('!', '', $key);
+								}
+
+								$this->ci->db->{$method}($key, $val);
+							}
+						}
+
+						$count++;
+					}
+					// Otherwise, we search by metadata.
+					else
+					{
+						// Join metadata table?
+						if ($metadata_joint === true)
+						{
+							$this->ci->db->join('metadata', 'metadata.guid = entities.id');
+
+							// Stop multiple joins.
+							$metadata_joint = false;
+						}
+						
+						if ( ! is_array($val))
+						{
+							$method = ($count == 1) ? 'like' : 'or_like';
+							if (strpos($key, '!') === 0)
+							{
+								$method = ($count == 1) ? 'not_like' : 'or_not_like';
+								$key = str_replace('!', '', $key);
+							}
+
+							$this->ci->db->where('metadata.key', $key);
+							$this->ci->db->{$method}('metadata.value', $val);
+						}
+						else
+						{
+							foreach ($val as $_val)
+							{
+								$method = 'like';
+								if (strpos($key, '!') === 0)
+								{
+									$method = 'not_like';
+									$key = str_replace('!', '', $key);
+								}
+
+								$this->ci->db->where('metadata.key', $key);
+								$this->ci->db->{$method}('metadata.value', $val);
+							}
+						}
+
+						$count++;
+					}
+				}
+
+				break;	// End of case 'users', 'groups', 'objects'.
+			
+			// Generating default LIKE clause.
+			default:
+
+				// Let's now generate the query.
+				$count = 1;
+				foreach ($field as $key => $val)
+				{
+					if ( ! is_array($val))
+					{
+						$method = ($count == 1) ? 'like' : 'or_like';
+						if (strpos($key, '!') === 0)
+						{
+							$method = ($count == 1) ? 'not_like' : 'or_not_like';
+							$key = str_replace('!', '', $key);
+						}
+
+						$this->ci->db->{$method}($key, $val);
+					}
+					else
+					{
+						foreach ($val as $_val)
+						{
+							$method = 'like';
+							if (strpos($key, '!') === 0)
+							{
+								$method = 'not_like';
+								$key = str_replace('!', '', $key);
+							}
+
+							$this->ci->db->{$method}($key, $val);
+						}
+					}
+
+					$count++;
+				}
+
+				break;	// End of "default".
+		}
+
+		// Did we provide a limit?
+		if ($limit > 0)
+		{
+			$this->ci->db->limit($limit, $offset);
+		}
+
+		// Return this so the method can be chainable.
+		return $this->ci->db;
+	}
+
 }
