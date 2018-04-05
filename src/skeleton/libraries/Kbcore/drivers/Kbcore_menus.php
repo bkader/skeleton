@@ -280,7 +280,7 @@ class Kbcore_menus extends CI_Driver
 
 		// If the option does not exist, create it.
 		return $this->_parent->options->create(array(
-			'key'      => $option_name,
+			'name'     => $option_name,
 			'value'    => $locations,
 			'tab'      => 'menus',
 			'required' => 0,
@@ -451,7 +451,7 @@ class Kbcore_menus extends CI_Driver
 		$slug = url_title($name, '-', true);
 
 		// Add the name, slug and description.
-		$data['key']         = $name;
+		$data['name']        = $name;
 		$data['username']    = $slug;
 		$data['description'] = $description;
 
@@ -479,7 +479,7 @@ class Kbcore_menus extends CI_Driver
 		}
 
 		// Prepare $data to update.
-		$data['key'] = $name;
+		$data['name'] = $name;
 
 		/**
 		 * If a new slug is provided and is different from
@@ -701,7 +701,7 @@ class Kbcore_menus extends CI_Driver
 			'parent_id'   => $parent_id,
 			'owner_id'    => $menu_id,
 			'subtype'     => 'menu_item',
-			'key'         => htmlspecialchars($title, ENT_QUOTES, 'UTF-8'),
+			'name'        => htmlspecialchars($title, ENT_QUOTES, 'UTF-8'),
 			'description' => $description,
 			'content'     => $href,
 		);
@@ -752,7 +752,7 @@ class Kbcore_menus extends CI_Driver
 		// The title.
 		if ($title <> $item->title)
 		{
-			$data['key'] = htmlentities($title, ENT_QUOTES, 'UTF-8');
+			$data['name'] = htmlentities($title, ENT_QUOTES, 'UTF-8');
 		}
 
 		// The description.
