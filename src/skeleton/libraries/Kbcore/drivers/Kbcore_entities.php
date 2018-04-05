@@ -69,6 +69,19 @@ class Kbcore_entities extends CI_Driver implements CRUD_interface
 		log_message('info', 'Kbcore_entities Class Initialized');
 	}
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * Generates the SELECT portion of the query
+     *
+     * @since 	1.3.0
+     */
+    public function select($select = '*', $escape = null)
+    {
+    	$this->ci->db->select($select, $escape);
+    	return $this;
+    }
+
 	// ------------------------------------------------------------------------
 
 	/**
@@ -144,19 +157,41 @@ class Kbcore_entities extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Retrieve a single entity by its ID.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Method rewriting for larger use.
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$id 	The entity's ID or username.
 	 * @return 	object if found, else null.
 	 */
 	public function get($id)
 	{
-		return $this->get_by('id', $id);
+		// If getting the entity by ID.
+		if (is_numeric($id))
+		{
+			return $this->get_by('id', $id);
+		}
+
+		// In case of retrieving it with username.
+		if (is_string($id))
+		{
+			return $this->get_by('username', $id);
+		}
+
+		// Otherwise, let the "get_by" method handle the rest
+		return $this->get_by($id);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Retrieve a single entity by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	The method was rewritten to let the parent handle
+	 *         			the WHERE clause and return an KB_Entity object.
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
@@ -164,30 +199,24 @@ class Kbcore_entities extends CI_Driver implements CRUD_interface
 	 */
 	public function get_by($field, $match = null)
 	{
-		// The WHERE clause depends on $field and $match.
-		(is_array($field)) OR $field = array($field => $match);
+		// We start with an empty entity.
+		$entity = false;
 
-		foreach ($field as $key => $val)
-		{
-			if (is_int($key) && is_array($val))
-			{
-				$this->ci->db->where($val);
-			}
-			elseif (is_array($val))
-			{
-				$this->ci->db->where_in($key, $val);
-			}
-			else
-			{
-				$this->ci->db->where($key, $val);
-			}
-		}
-
-		// Order activities and retrieve the last one.
-		return $this->ci->db
+		// Attempt to get the entity from database.
+		$db_entity = $this->_parent
+			->where($field, $match, 1, 0)
 			->order_by('id', 'DESC')
 			->get('entities')
 			->row();
+
+		// If found, we create its object.
+		if ($db_entity)
+		{
+			$entity = new KB_Entity($db_entity);
+		}
+
+		// Return the final result.
+		return $entity;
 	}
 
 	// ------------------------------------------------------------------------
@@ -203,34 +232,25 @@ class Kbcore_entities extends CI_Driver implements CRUD_interface
 	 */
 	public function get_many($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		// Prepare the WHERE clause.
-		if ( ! empty($field))
+		// We start with empty entities.
+		$entities = false;
+
+		// Attempt to get entities from database.
+		$db_entities = $this->_parent
+			->where($field, $match, $limit, $offset)
+			->get('entities')
+			->result();
+
+		// If found any, update $entities object.
+		if ($db_entities)
 		{
-			(is_array($field)) OR $field = array($field => $match);
-			foreach ($field as $key => $val)
+			foreach ($db_entities as $entity)
 			{
-				if (is_int($key) && is_array($val))
-				{
-					$this->ci->db->where($val);
-				}
-				elseif (is_array($val))
-				{
-					$this->ci->db->where_in($key, $val);
-				}
-				else
-				{
-					$this->ci->db->where($key, $val);
-				}
+				$entities[] = new KB_Entity($entity);
 			}
 		}
 
-		// Is limit provided?
-		if ($limit > 0)
-		{
-			$this->ci->db->limit($limit, $offset);
-		}
-
-		return $this->ci->db->get('entities')->result();
+		return $entities;
 	}
 
 	// ------------------------------------------------------------------------
@@ -253,6 +273,9 @@ class Kbcore_entities extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Update a single entity by its ID.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten.
 	 * @access 	public
 	 * @param 	mixed 	$id 	The entity's ID (or username).
 	 * @param 	array 	$data 	The array of data to update.
@@ -260,20 +283,28 @@ class Kbcore_entities extends CI_Driver implements CRUD_interface
 	 */
 	public function update($id, array $data = array())
 	{
-		if ( ! empty($id))
-		{
-			return (is_numeric($id))
-				? $this->update_by(array('id' => $id), $data)
-				: $this->update_by(array('username' => $id), $data);
+		// Updating by id?
+		if (is_numeric($id)) {
+			return $this->update_by(array('id' => $id), $data);
 		}
 
-		return false;
+		// Updating by username?
+		if (is_string($id)) {
+			return $this->update_by(array('username' => $id), $data);
+		}
+
+		// Otherwise, let the "get_by" handle it.
+		return $this->update_by($id, $data);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Update a single, all or multiple entities by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to let the parent handle WHERE clause.
+	 * 
 	 * @access 	public
 	 * @return 	boolean
 	 */
@@ -303,25 +334,18 @@ class Kbcore_entities extends CI_Driver implements CRUD_interface
 		if ( ! empty($args))
 		{
 			(is_array($args[0])) && $args = $args[0];
-			foreach ($args as $key => $val)
-			{
-				if (is_int($key) && is_array($val))
-				{
-					$this->ci->db->where($val);
-				}
-				elseif (is_array($val))
-				{
-					$this->ci->db->where_in($key, $val);
-				}
-				else
-				{
-					$this->ci->db->where($key, $val);
-				}
-			}
+
+			/**
+			 * We let the parent generate the WHERE clause.
+			 *
+			 * @since 	1.3.0
+			 */
+			$this->_parent->where($args);
 		}
 
 		// Proceed to update.
-		return $this->ci->db->update('entities');
+		$this->ci->db->update('entities');
+		return ($this->ci->db->affected_rows() > 0);
 	}
 
 	// ------------------------------------------------------------------------
@@ -330,61 +354,66 @@ class Kbcore_entities extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Soft delete a single entity by its ID.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten.
 	 * @access 	public
 	 * @param 	mixed 	$id 	The entity's ID or username.
 	 * @return 	boolean
 	 */
 	public function delete($id)
 	{
-		if ( ! empty($id))
+		// Deleting by ID?
+		if (is_numeric($id))
 		{
-			// Prepare the column to target.
-			$column = (is_numeric($id)) ? 'id' : 'username';
-			return $this->delete_by($column, $id);
+			return $this->delete_by('id', $id, 1, 0);
 		}
 
-		return false;
+		// Deleting by username?
+		if (is_string($id))
+		{
+			return $this->delete_by('username', $id, 1, 0);
+		}
+
+		// Otherwise, we let the "delete_by" handle the rest.
+		return $this->delete_by($id, null, 1, 0);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Delete a single, all or multiple entities by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to let the parent handle the WHERE clause and
+	 *         			we added the optional limit and offset.
+	 *
 	 * @access 	public
 	 * @param 	mixed 	$field 	This is required to avoid deleting all.
 	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
 	 * @return 	boolean
 	 */
-	public function delete_by($field = null, $match = null)
+	public function delete_by($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		if ( ! empt($field))
+		// Did we provide a limit?
+		if ($limit > 0)
 		{
-			(is_array($field)) OR $field = array($field => $match);
-			foreach ($field as $key => $val)
-			{
-				if (is_int($key) && is_array($val))
-				{
-					$this->ci->db->where($val);
-				}
-				elseif (is_array($val))
-				{
-					$this->ci->db->where_in($key, $val);
-				}
-				else
-				{
-					$this->ci->db->where($key, $val);
-				}
-			}
+			$this->ci->db->limit($limit, $offset);
 		}
 
-		// Process to soft-delete.
-		$this->ci->db
-			->where('deleted', 0)
-			->set('deleted', 1)
-			->set('deleted_at', time())
-			->update('entities');
+		// Let's prepare the WHERE clause.
+		(is_array($field)) OR $field = array($field => $match);
 
-		return ($this->ci->db->affected_rows() > 0);
+		// We make sure to target only undeleted entities.
+		$field['deleted'] = 0;
+
+		// Now we use the "update_by" method.
+		return $this->update_by($field, array(
+			'deleted'    => 1,
+			'deleted_at' => time(),
+		));
 	}
 
 	// ------------------------------------------------------------------------
@@ -393,116 +422,124 @@ class Kbcore_entities extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Completely remove a single entity by its ID.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to use "remove_by" method.
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$id 	The entity's ID or username.
 	 * @return 	boolean
 	 */
 	public function remove($id)
 	{
-		if (empty($id))
+		// Removing by ID?
+		if (is_numeric($id))
 		{
-			return false;
+			return $this->remove_by('id', $id, 1, 0);
 		}
 
-		// Get the entity so we can delete everything related to it.
-		$ent = (is_numeric($id))
-			? $this->get_by('id', $id)
-			: $this->get_by('username', $id);
-
-		// The entity not found?
-		if ( ! $ent)
+		// Removing by username?
+		if (is_string($id))
 		{
-			return false;
+			return $this->remove_by('username', $id, 1, 0);
 		}
 
-		// Get the ID for later use.
-		(is_numeric($id)) OR $id = $ent->id;
-
-		// Attempt to delete the entity.
-		$this->ci->db->delete('entities', array('id' => $id));
-
-		// Not deleted? Nothing to do.
-		if ($this->ci->db->affected_rows() < 1)
-		{
-			return false;
-		}
-
-		// Everything went well, we proceed to remove everything.
-		switch ($ent->type)
-		{
-			/**
-			 * NOTE:
-			 * Because users, objects and groups libraries have their delete
-			 * methods that will call this class methods, the final result
-			 * will be FALSE, because when the entity is removed and we
-			 * target others tables (users, objects and group) to delete rows
-			 * they will return FALSE and rows are not deleted (soft-delete).
-			 * This is why with are using below:
-			 *
-			 * $this->ci->db->delete('users' ...);
-			 * $this->ci->db->delete('object' ...);
-			 * $this->ci->db->delete('groups' ...);
-			 *
-			 * Instead of calling libraries methods.
-			 */
-
-			// In case of a user.
-			case 'user':
-				// Delete all activities.
-				$this->_parent->activities->delete_by('user_id', $id);
-
-				// Remove user from "users" table.
-				$this->ci->db->delete('users', array('guid' => $id));
-				break;
-
-			// In case of a group.
-			case 'group':
-				$this->ci->db->delete('groups', array('guid' => $id));
-				break;
-
-			// In case of an object.
-			case 'object':
-				$this->ci->db->delete('objects', array('guid' => $id));
-				break;
-		}
-
-		// Delete all entities having this entity as parent or owner.
-		$this->remove_by('parent_id', $id);
-		$this->remove_by('owner_id', $id);
-
-		// Delete metadata and variables.
-		$this->_parent->metadata->delete_by('guid', $id);
-		$this->_parent->variables->delete_by('guid', $id);
-
-		// Now delete all relations.
-		$this->_parent->relations->delete_by('guid_from', $id);
-		$this->_parent->relations->delete_by('guid_to', $id);
-
-		return true;
+		// Otherwise, we let the "remove_by" method do the rest.
+		return $this->remove_by($id);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Complete remove a single, all or multiple entities by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to let the parent handle the WHERE clause and 
+	 *         			we added optional limit and offset.
+	 *
 	 * @access 	public
 	 * @param 	mixed 	$field 	This is required to avoid deleting all.
 	 * @param 	mixed 	$match
 	 * @return 	boolean
 	 */
-	public function remove_by($field, $match = null)
+	public function remove_by($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		// Get all entities first.
-		$entities = $this->get_many($field, $match);
+		// Let's first find entities.
+		$entities = $this->get_many($field, $match, $limit, $offset);
 
+		// If no entity is found, nothing to do.
 		if ( ! $entities)
 		{
 			return false;
 		}
 
-		foreach ($entities as $ent)
+		// Let's delete them one by one.
+		foreach ($entities as $e)
 		{
-			$this->remove($ent->id);
+			/**
+			 * To avoid deleting things if a row is not deleted, we track
+			 * the delete status and continue if it's successful.
+			 */
+			$status = false;
+
+			/**
+			 * NOTE:
+			 * Because users, objects and groups have their delete methods
+			 * calling this class method, if we call them, they will get 
+			 * soft deleted only. To override this, we simply use CodeIgniter
+			 * to delete them from database.
+			 */
+			switch ($e->type)
+			{
+				/**
+				 * In case of deleting a user, we make sure to remove data
+				 * from "users" table and all user's "activities" table data.
+				 */
+				case 'user':
+					// Now we remove the user from table.
+					$status = $this->ci->db->delete('users', array('guid' => $e->id));
+					
+					// We delete activities only if the user was deleted.
+					if ($status === true)
+					{
+						$this->_parent->activities->delete_by('user_id', $e->id);
+					}
+					break;
+
+				/**
+				 * In case of deleting a group or an object, we simply delete
+				 * them from their respective tables, unless, you implement
+				 * activities for groups or objects.
+				 */
+				case 'group':
+					$status = $this->ci->db->delete('groups', array('guid' => $e->id));
+					break;
+				case 'object':
+					$status = $this->ci->db->delete('objects', array('guid' => $e->id));
+					break;
+			}
+
+			/**
+			 * Now we check if the process was successful. If it was, we proceed
+			 * with deleting everything related to the entity.
+			 */
+			if ($status === true)
+			{
+				// We delete entities having this one as parent or owner.
+				$this->remove_by('parent_id', $e->id);
+				$this->remove_by('owner_id', $e->id);
+
+				// We remove all entity's meta and variables.
+				$this->_parent->metadata->delete_by('guid', $e->id);
+				$this->_parent->variables->delete_by('guid', $e->id);
+
+				// Now we remove all entity's relations.
+				$this->_parent->relations->delete_by('guid_from', $e->id);
+				$this->_parent->relations->delete_by('guid_to', $e->id);
+
+				// And finally, we remove the entity from "entities" table.
+				$this->ci->db->delete('entities', array('id' => $e->id));
+			}
 		}
 
 		return true;
@@ -512,111 +549,145 @@ class Kbcore_entities extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Restore a previously soft deleted entity by ID or username.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to use "restore_by" method.
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$id 	The entity's ID or username.
 	 * @return 	boolean
 	 */
 	public function restore($id)
 	{
-		return (is_numeric($id))
-			? $this->restore_by('id', $id)
-			: $this->restore_by('username', $id);
+		// Restoring by ID?
+		if (is_numeric($id))
+		{
+			return $this->restore_by('id', $id);
+		}
+
+		// Restoring by username?
+		if (is_string($id))
+		{
+			return $this->restore_by('username', $id);
+		}
+
+		// Otherwise, let the restore by handle the WHERE clause.
+		return $this->restore_by($id);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Restore multiple entities previously soft deleted by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to let the parent handle the WHERE clause and 
+	 *         			we added optional limit and offset.
+	 *
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$param
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
 	 * @return 	boolean
 	 */
-	public function restore_by($field = null, $match = null)
+	public function restore_by($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		// Prepare our WHERE clause.
-		if ( ! empty($field))
+		// Use the limit if provided.
+		if ($limit > 0)
 		{
-			(is_array($field)) OR $field = array($field => $match);
-			foreach ($field as $key => $val)
-			{
-				if (is_int($key) && is_array($val))
-				{
-					$this->ci->db->where($val);
-				}
-				elseif (is_array($val))
-				{
-					$this->ci->db->where_in($key, $val);
-				}
-				else
-				{
-					$this->ci->db->where($key, $val);
-				}
-			}
+			$this->ci->db->limit($limit, $offset);
 		}
 
-		// Proceed to sort delete.
-		$this->ci->db
-			->where('deleted', 1)
-			->set('deleted', 0)
-			->set('deleted_at', 0)
-			->update('entities');
+		// Let's prepare the WHERE clause.
+		(is_array($field)) OR $field = array($field => $match);
 
-		// Return TRUE if there are some affected rows.
-		return ($this->ci->db->affected_rows() > 0);
+		// We make sure to target only deleted entities.
+		$field['deleted >'] = 0;
+
+		// Let's now update entities.
+		return $this->update_by($field, array(
+			'deleted'    => 0,
+			'deleted_at' => 0,
+		));
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Returns an array of stored entities.
+	 *
+	 * @since 	1.3.0
+	 *
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$param
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
 	 * @return 	array
 	 */
-	public function get_all_ids($field = null, $match = null)
+	public function get_ids($field = null, $match = null, $limit = 0, $offset = 0)
 	{
 		// Prepare an empty $ids array.
 		$ids = array();
 
-		// Prepare our WHERE clause.
-		if ( ! empty($field))
-		{
-			(is_array($field)) OR $field = array($field => $match);
-			foreach ($field as $key => $val)
-			{
-				if (is_int($key) && is_array($val))
-				{
-					$this->ci->db->where($val);
-				}
-				elseif (is_array($val))
-				{
-					$this->ci->db->where_in($key, $val);
-				}
-				else
-				{
-					$this->ci->db->where($key, $val);
-				}
-			}
-		}
+		// Let's retrieve entities from database.
+		$entities = $this->select('id')->get_many($field, $match, $limit, $offset);
 
-		// Try to get all entities.
-		$entities = $this->ci->db
-			->select('id')
-			->get_all();
-
-		// If found any, store their IDs.
+		// If we found any, we fill $ids array.
 		if ($entities)
 		{
-			foreach ($entities as $ent)
+			foreach ($entities as $e)
 			{
-				$ids[] = $ent->id;
+				$ids[] = (int) $e->id;
 			}
 		}
 
-		// Return the final result.
+		// We return the final result.
 		return $ids;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns an array of requested entities IDS.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for backward compatibility.
+	 *
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$param
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	array
+	 */
+	public function get_all_ids($field = null, $match = null, $limit = 0, $offset = 0)
+	{
+		return $this->get_ids($field, $match, $limit, $offset);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Counts entities by arbitrary WHERE clause.
+	 *
+	 * @since 	1.3.0
+	 *
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed	 $match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	int
+	 */
+	public function count($field = null, $match = null, $limit = 0, $offset = 0)
+	{
+		$query = $this->_parent
+			->where($field, $match, $limit, $offset)
+			->get('entities');
+
+		return $query->num_rows();
 	}
 
 }
@@ -627,13 +698,19 @@ if ( ! function_exists('get_entities_ids'))
 {
 	/**
 	 * Returns an array of all availables entities.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to match method's structure.
+	 * 
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$param
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
 	 * @return 	array
 	 */
-	function get_entities_ids($field = null, $match = null)
+	function get_entities_ids($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		return get_instance()->kbcore->entities->get_all_ids($field, $match);
+		return get_instance()->kbcore->entities->get_ids($field, $match, $limit, $offset);
 	}
 }
 
@@ -689,13 +766,19 @@ if ( ! function_exists('get_entities'))
 {
 	/**
 	 * Retrieve multiple entities by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to match method's structure.
+	 * 
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
 	 * @return 	array of object if found, else null.
 	 */
-	function get_entities($field = null, $match = null)
+	function get_entities($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		return get_instance()->kbcore->entities->get_many($field, $match);
+		return get_instance()->kbcore->entities->get_many($field, $match, $limit, $offset);
 	}
 }
 
@@ -769,13 +852,19 @@ if ( ! function_exists('delete_entity_by'))
 {
 	/**
 	 * Soft delete a single or multiple entities by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to follow methods structure.
+	 * 
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
 	 * @return 	boolean
 	 */
-	function delete_entity_by($field = null, $match = null)
+	function delete_entity_by($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		return get_instance()->kbcore->entities->delete_by($field, $match);
+		return get_instance()->kbcore->entities->delete_by($field, $match, $limit, $offset);
 	}
 }
 
@@ -785,13 +874,19 @@ if ( ! function_exists('delete_entities'))
 {
 	/**
 	 * Soft delete a single or multiple entities by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to follow methods structure.
+	 * 
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
 	 * @return 	boolean
 	 */
-	function delete_entities($field = null, $match = null)
+	function delete_entities($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		return get_instance()->kbcore->entities->delete_by($field, $match);
+		return get_instance()->kbcore->entities->delete_by($field, $match, $limit, $offset);
 	}
 }
 
@@ -817,13 +912,19 @@ if ( ! function_exists('remove_entity_by'))
 	/**
 	 * Completely remove a single or multiple entities and all what's
 	 * related to them by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to match method's structure.
+	 * 
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
 	 * @return 	boolean
 	 */
-	function remove_entity_by($field = null, $match = null)
+	function remove_entity_by($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		return get_instance()->kbcore->entities->remove_by($field, $match);
+		return get_instance()->kbcore->entities->remove_by($field, $match, $limit, $offset);
 	}
 }
 
@@ -834,13 +935,19 @@ if ( ! function_exists('remove_entities'))
 	/**
 	 * Completely remove a single or multiple entities and all what's
 	 * related to them by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to match method's structure.
+	 * 
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
 	 * @return 	boolean
 	 */
-	function remove_entities($field = null, $match = null)
+	function remove_entities($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		return get_instance()->kbcore->entities->remove_by($field, $match);
+		return get_instance()->kbcore->entities->remove_by($field, $match, $limit, $offset);
 	}
 }
 
@@ -867,14 +974,19 @@ if ( ! function_exists('restore_entity_by'))
 	/**
 	 * Restore a single or multiple entities previously soft deleted
 	 * by arbitrary WHERE clause.
-	 * @access 	public
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to match method's structure.
+	 * 
 	 * @param 	mixed 	$field
-	 * @param 	mixed 	$param
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
 	 * @return 	boolean
 	 */
-	function restore_entity_by($field = null, $match = null)
+	function restore_entity_by($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		return get_instance()->kbcore->entities->restore_by($field, $match);
+		return get_instance()->kbcore->entities->restore_by($field, $match, $limit, $offset);
 	}
 }
 
@@ -885,13 +997,321 @@ if ( ! function_exists('restore_entities'))
 	/**
 	 * Restore a single or multiple entities previously soft deleted
 	 * by arbitrary WHERE clause.
-	 * @access 	public
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to match method's structure.
+	 * 
 	 * @param 	mixed 	$field
-	 * @param 	mixed 	$param
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
 	 * @return 	boolean
 	 */
-	function restore_entities($field = null, $match = null)
+	function restore_entities($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		return get_instance()->kbcore->entities->restore_by($field, $match);
+		return get_instance()->kbcore->entities->restore_by($field, $match, $limit, $offset);
 	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('count_entities'))
+{
+	/**
+	 * Counts entities from database with arbitrary WHERE clause and optional
+	 * limit and offset.
+	 *
+	 * @since 	1.3.0
+	 *
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	int
+	 */
+	function count_entities($field = null, $match = null, $limit = 0, $offset = 0)
+	{
+		return get_instance()->kbcore->entities->count($field, $match, $limit, $offset);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+/**
+ * KB_Entity
+ *
+ * @package 	CodeIgniter
+ * @subpackage 	Skeleton
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		1.3.0
+ */
+class KB_Entity
+{
+	/**
+	 * Entity data container.
+	 * @var 	object
+	 */
+	public $data;
+
+	/**
+	 * The entity's ID.
+	 * @var 	integer
+	 */
+	public $id = 0;
+
+	/**
+	 * Array of data awaiting to be updated.
+	 * @var 	array
+	 */
+	protected $queue = array();
+	
+	/**
+	 * Constructor.
+	 *
+	 * Retrieves the entity data and passes it to KB_Entity::init().
+	 *
+	 * @access 	public
+	 * @param 	mixed	 $id 	Entity's ID, username, object or WHERE clause.
+	 * @return 	void
+	 */
+	public function __construct($id = 0) {
+		// In case we passed an instance of this object.
+		if ($id instanceof KB_Entity) {
+			$this->init($id->data);
+			return;
+		}
+
+		// In case we passed the entity's object.
+		elseif (is_object($id)) {
+			$this->init($id);
+			return;
+		}
+
+		if ($id) {
+			$entity = get_entity($id);
+			if ($entity) {
+				$this->init($entity->data);
+			} else {
+				$this->data = new stdClass();
+			}
+		}
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Sets up object properties.
+	 * @access 	public
+	 * @param 	object
+	 */
+	public function init($entity) {
+		$this->data = $entity;
+		$this->id   = (int) $entity->id;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for checking the existence of a property.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @return 	bool 	true if the property exists, else false.
+	 */
+	public function __isset($key) {
+		// Just make it possible to use ID.
+		if ('ID' == $key) {
+			$key = 'id';
+		}
+
+		// Found in $data container?
+		if (isset($this->data->{$key})) {
+			return true;
+		}
+
+		// Found as object property?
+		if (isset($this->{$key})) {
+			return true;
+		}
+
+		// Check for metadata.
+		return metadata_exists($this->id, $key);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for getting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key to retrieve.
+	 * @return 	mixed 	Depends on the property value.
+	 */
+	public function __get($key) {
+		// We start with an empty value.
+		$value = false;
+
+		// Is if found in $data object?
+		if (isset($this->data->{$key})) {
+			$value = $this->data->{$key};
+		}
+		// Otherwise, let's attempt to get the meta.
+		else {
+			$meta = get_meta($this->id, $key);
+			if ($meta) {
+				$value = $meta->value;
+			}
+		}
+
+		// Then we return the final result.
+		return $value;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for setting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @param 	mixed 	$value 	The property value.
+	 */
+	public function __set($key, $value) {
+		// Just make it possible to use ID.
+		if ('ID' == $key) {
+			$key = 'id';
+		}
+
+		// If found, we make sure to set it.
+		$this->data->{$key} = $value;
+
+		// We enqueue it for later use.
+		$this->queue[$key]  = $value;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for unsetting a property.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 */
+	public function __unset($key) {
+		// Remove it from $data object.
+		if (isset($this->data->{$key})) {
+			unset($this->data->{$key});
+		}
+
+		// We remove it if queued.
+		if (isset($this->queue[$key])) {
+			unset($this->queue[$key]);
+		}
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for checking the existence of an entity in database.
+	 * @access 	public
+	 * @param 	none
+	 * @return 	bool 	true if the entity exists, else false.
+	 */
+	public function exists() {
+		return ( ! empty($this->id));
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for checking the existence of a property.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @return 	bool 	true if the property exists, else false.
+	 */
+	public function has($key) {
+		return $this->__isset($key);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for setting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @param 	string 	$value 	The property value.
+	 * @return 	object 	we return the object to make it chainable.
+	 */
+	public function set($key, $value) {
+		$this->__set($key, $value);
+		return $this;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for getting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @return 	mixed 	Depends on the property's value.
+	 */
+	public function get($key) {
+		return $this->__get($key);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for updating the entity in database.
+	 * @access 	public
+	 * @param 	string 	$key 	The field name.
+	 * @param 	mixed 	$value 	The field value.
+	 * @return 	bool 	true if updated, else false.
+	 */
+	public function update($key, $value) {
+		// Keep the status in order to dequeue the key.
+		$status = update_entity($this->id, array($key => $value));
+
+		if ($status === true && isset($this->queue[$key])) {
+			unset($this->queue[$key]);
+		}
+
+		return $status;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for saving anything changes.
+	 * @access 	public
+	 * @param 	void
+	 * @return 	bool 	true if updated, else false.
+	 */
+	public function save() {
+		// We start if FALSE status.
+		$status = false;
+
+		// If there are enqueued changes, apply them.
+		if ( ! empty($this->queue)) {
+			$status = update_entity($this->id, $this->queue);
+
+			// If the update was successful, we reset $queue array.
+			if ($status === true) {
+				$this->queue = array();
+			}
+		}
+
+		// We return the final status.
+		return $status;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for retrieving the array of data waiting to be saved.
+	 * @access 	public
+	 * @return 	array
+	 */
+	public function dirty() {
+		return $this->queue;
+	}
+
 }
