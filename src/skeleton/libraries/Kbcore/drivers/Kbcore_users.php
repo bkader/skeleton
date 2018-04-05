@@ -593,7 +593,7 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 		}
 
 		// Otherwise, let the "remove_by" method handle the rest.
-		return $this->remove_by($id);
+		return $this->remove_by($id, null, 1, 0);
 	}
 
 	// ------------------------------------------------------------------------
