@@ -208,6 +208,9 @@ class Admin extends Admin_Controller
 	/**
 	 * Edit an existing user.
 	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for less code.
+	 *
 	 * @access 	public
 	 * @return 	void
 	 */
@@ -369,25 +372,31 @@ class Admin extends Admin_Controller
 			// Collect all user details.
 			$user_data = $this->input->post(array_keys($inputs), true);
 
+
 			// Format "enabled" and user's "subtype".
 			$user_data['enabled'] = ($this->input->post('enabled') == '1') ? 1 : 0;
 			$user_data['subtype']   = ($this->input->post('admin') == '1') ? 'administrator' : 'regular';
 
 			/**
 			 * After form submit. We make sure to remove fields that have 
-			 * not been changed: Username, Email address and user's subtype.
+			 * not been changed: Username, Email address, first name, last name
+			 * and user's subtype.
 			 */
-			if ($user_data['username'] == $data['user']->username)
+			$_fields = array(
+				'username',
+				'email',
+				'subtype',
+				'first_name',
+				'last_name',
+				'gender',
+				'enabled',
+			);
+			foreach ($_fields as $_field)
 			{
-				unset($user_data['username']);
-			}
-			if ($user_data['email'] == $data['user']->email)
-			{
-				unset($user_data['email']);
-			}
-			if ($user_data['subtype'] == $data['user']->subtype)
-			{
-				unset($user_data['subtype']);
+				if ($user_data[$_field] == $data['user']->{$_field})
+				{
+					unset($user_data[$_field]);
+				}
 			}
 
 			/**
