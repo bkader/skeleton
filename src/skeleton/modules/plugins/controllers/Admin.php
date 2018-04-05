@@ -60,7 +60,7 @@ class Admin extends Admin_Controller
 		parent::__construct();
 		
 		// Make sure to load plugins admin language file.
-		$this->load->language('plugins/plugins_admin');
+		$this->load->language('plugins/plugins');
 	}
 	/**
 	 * List of available plugins.
@@ -90,7 +90,14 @@ class Admin extends Admin_Controller
 				}
 
 				// Plugin delete button.
-				$plugin['actions'][] = safe_admin_anchor('plugins/delete/'.$plugin['folder'], lang('delete'), 'class="text-danger"');
+				$plugin['actions'][] = safe_admin_anchor(
+					'plugins/delete/'.$plugin['folder'],
+					lang('delete'),
+					array(
+						'class'        => 'text-danger',
+						'data-confirm' => sprintf(lang('plugins_delete_confirm'), $plugin['name']),
+					)
+				);
 			}
 		}
 
