@@ -911,7 +911,12 @@ class KB_Meta
 		$this->id   = (int) $meta->id;
 
 		// Format value.
-		$this->data->value = from_bool_or_serialize($meta->value);
+		if ( ! empty($meta->value)) {
+			$meta->value = from_bool_or_serialize($meta->value);
+		}
+
+		// Apply a filter so that plugins/themes can use it.
+		$this->data->value = apply_filters("pre_meta_{$meta->key}", $meta->value);
 	}
 
 	// ------------------------------------------------------------------------
