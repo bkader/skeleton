@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @version 	1.3.0
  */
 class Kbcore_groups extends CI_Driver implements CRUD_interface
 {
@@ -360,7 +360,7 @@ class Kbcore_groups extends CI_Driver implements CRUD_interface
 	/**
 	 * Update all or multiple groups by arbitrary WHERE clause.
 	 * @access 	public
-	 * @return 	boolean
+	 * @return 	bool
 	 */
 	public function update_by()
 	{
@@ -407,14 +407,14 @@ class Kbcore_groups extends CI_Driver implements CRUD_interface
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Delete a single group by ID or username.
+	 * Delete a single group by ID, username or arbitrary WHERE clause.
 	 *
 	 * @since 	1.0.0
 	 * @since 	1.3.0 	Rewritten for better usage.
 	 * 
 	 * @access 	public
 	 * @param 	mixed 	$id 	Group's ID, username or array of WHERE clause.
-	 * @return 	boolean
+	 * @return 	bool
 	 */
 	public function delete($id)
 	{
@@ -868,7 +868,7 @@ if ( ! function_exists('update_group'))
 	 * Update a single group by ID.
 	 * @param 	int 	$id 	The group's ID.
 	 * @param 	array 	$data 	Array of data to set.
-	 * @return 	boolean
+	 * @return 	bool
 	 */
 	function update_group($id, array $data = array())
 	{
@@ -882,7 +882,7 @@ if ( ! function_exists('update_group_by'))
 {
 	/**
 	 * Update a single, all or multiple groups by arbitrary WHERE clause.
-	 * @return 	boolean
+	 * @return 	bool
 	 */
 	function update_group_by()
 	{
@@ -899,7 +899,7 @@ if ( ! function_exists('update_groups'))
 {
 	/**
 	 * Update a single, all or multiple groups by arbitrary WHERE clause.
-	 * @return 	boolean
+	 * @return 	bool
 	 */
 	function update_groups()
 	{
@@ -917,7 +917,7 @@ if ( ! function_exists('delete_group'))
 	/**
 	 * Delete a single group by ID or username.
 	 * @param 	mixed 	$id 	ID or username.
-	 * @return 	boolean
+	 * @return 	bool
 	 */
 	function delete_group($id)
 	{
@@ -933,7 +933,7 @@ if ( ! function_exists('delete_group_by'))
 	 * Soft delete multiple groups by arbitrary WHERE clause.
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
-	 * @return 	boolean
+	 * @return 	bool
 	 */
 	function delete_group_by($field, $match = null)
 	{
@@ -986,7 +986,7 @@ if ( ! function_exists('remove_group_by'))
 	 * Completely remove multiple groups from database.
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
-	 * @return 	boolean
+	 * @return 	bool
 	 */
 	function remove_group_by($field, $match = null)
 	{
@@ -1002,7 +1002,7 @@ if ( ! function_exists('remove_groups'))
 	 * Completely remove multiple or all groups from database.
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
-	 * @return 	boolean
+	 * @return 	bool
 	 */
 	function remove_groups($field = null, $match = null)
 	{
