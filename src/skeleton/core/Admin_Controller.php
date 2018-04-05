@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @version 	1.3.0
  */
 class Admin_Controller extends User_Controller
 {
@@ -212,6 +212,11 @@ class Admin_Controller extends User_Controller
 
 	/**
 	 * Generates a JQuery content fot draggable items.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Added jquery.touch-punch so that sortable elements
+	 *         			work on mobile devices.
+	 *
 	 * @access 	protected
 	 * @param 	string 	$button 			the button that handles saving.
 	 * @param 	string 	$target 			The element id or class to target.
@@ -279,6 +284,7 @@ EOT;
 		$this->theme
 			->add('css', get_common_url('css/jquery-ui'), 'jquery-ui')
 			->add('js', get_common_url('js/jquery-ui'), 'jquery-ui')
+			->add('js', get_common_url('js/jquery.ui.touch-punch'), 'touch-punch')
 			->add_inline('js', $this->theme->compress_output($script));
 	}
 
