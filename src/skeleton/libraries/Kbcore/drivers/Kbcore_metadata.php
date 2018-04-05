@@ -63,6 +63,41 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 		log_message('info', 'Kbcore_metadata Class Initialized');
 	}
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * Generates the SELECT portion of the query
+     *
+     * @since 	1.3.0
+     */
+    public function select($select = '*', $escape = null)
+    {
+    	$this->ci->db->select($select, $escape);
+    	return $this;
+    }
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Return an array of metadata table fields.
+	 *
+	 * @since 	1.3.0
+	 * 
+	 * @access 	public
+	 * @param 	none
+	 * @return 	array
+	 */
+	public function fields()
+	{
+		if (isset($this->fields))
+		{
+			return $this->fields;
+		}
+
+		$this->fields = $this->ci->db->list_fields('metadata');
+		return $this->fields;
+	}
+
 	// ------------------------------------------------------------------------
 
 	/**
@@ -112,16 +147,24 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Retrieve a single metadata by its ID.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to use the "get_by" method.
+	 * 
 	 * @access 	public
-	 * @param 	int 	$id 	The meta ID.
+	 * @param 	mixed 	$id 	The meta ID or array of WHERE clause.
 	 * @return 	object if found, else null.
 	 */
 	public function get($id)
 	{
-		return $this->ci->db
-			->where('id', $id)
-			->get('metadata')
-			->row();
+		// Getting by ID?
+		if (is_numeric($id))
+		{
+			return $this->get_by('id', $id);
+		}
+
+		// Otherwise, let the "get_by" method handle the rest.
+		return $this->get_by($id);
 	}
 
 	// ------------------------------------------------------------------------
@@ -129,38 +172,34 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 	/**
 	 * Retrieve a single metadata by arbitrary WHERE clause.
 	 * @access 	public
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to let the parent handle WHERE clause and 
+	 *         			create the KB_Meta object.
+	 * 
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
-	 * @return 	object if found, else NULL
+	 * @return 	object if found, else null
 	 */
-	public function get_by($field, $match = NULL)
+	public function get_by($field, $match = null)
 	{
-		(is_array($field)) OR $field = array($field => $match);
+		// We start with an empty meta.
+		$meta = false;
 
-		foreach ($field as $key => $val)
+		// Attempt to get the meta from database.
+		$_meta = $this->_parent
+			->where($field, $match, 1, 0)
+			->order_by('id', 'DESC')
+			->get('metadata')
+			->row();
+
+		// If the meta was found, we create the object.
+		if ($_meta)
 		{
-			if (is_int($key) && is_array($val))
-			{
-				$this->ci->db->where($val);
-			}
-			elseif (is_array($val))
-			{
-				$this->ci->db->where_in($key, $val);
-			}
-			else
-			{
-				$this->ci->db->where($key, $val);
-			}
+			$meta = new KB_Meta($_meta);
 		}
 
-		$meta = $this->ci->db->get('metadata')->row();
-
-		// Found?
-		if ($meta)
-		{
-			$meta->value = from_bool_or_serialize($meta->value);
-		}
-
+		// Return the final result.
 		return $meta;
 	}
 
@@ -169,51 +208,34 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 	/**
 	 * Retrieve multiple metadata by arbitrary WHERE clause.
 	 * @access 	public
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to let the parent handle the WHERE clause
+	 *         			and create KB_Meta objects.
+	 *
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
 	 * @param 	int 	$limit
 	 * @param 	int 	$offset
-	 * @return 	array of objects if found, else NULL
+	 * @return 	array of objects if found, else null
 	 */
-	public function get_many($field = NULL, $match = NULL, $limit = 0, $offset = 0)
+	public function get_many($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		// Argument provided?
-		if ( ! empty($field))
-		{
-			(is_array($field)) OR $field = array($field => $match);
+		// We start with empty $meta.
+		$meta = false;
 
-			foreach ($field as $key => $val)
+		// Attempt to get metadata form database.
+		$_meta = $this->_parent
+			->where($field, $match, $limit, $offset)
+			->get('metadata')
+			->result();
+
+		// If we found any, create their objects.
+		if ($_meta)
+		{
+			foreach ($_meta as $m)
 			{
-				if (is_int($key) && is_array($val))
-				{
-					$this->ci->db->where($val);
-				}
-				elseif (is_array($val))
-				{
-					$this->ci->db->where_in($key, $val);
-				}
-				else
-				{
-					$this->ci->db->where($key, $val);
-				}
-			}
-		}
-
-		// Is there a limit?
-		if ($limit > 0)
-		{
-			$this->ci->db->limit($limit, $offset);
-		}
-
-		// Proceed to retrieving.
-		$meta = $this->ci->db->get('metadata')->result();
-
-		// Found? Format the value.
-		if ($meta)
-		{
-			foreach ($meta as &$_meta)
-			{
-				$_meta->value = from_bool_or_serialize($_meta->value);
+				$meta[] = new KB_Meta($m);
 			}
 		}
 
@@ -239,48 +261,37 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Update a single row by its primary key.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to use "update_by" method.
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$id 	The primary key value.
 	 * @param 	array 	$data 	Array of data to update.
-	 * @return 	boolean
+	 * @return 	bool
 	 */
 	public function update($id, array $data = array())
 	{
-		// Make sure there are some data.
-		if (empty($data))
+		// Are we updating by ID?
+		if (is_numeric($id))
 		{
-			return false;
+			return $this->update_by(array('id' => $id), $data);
 		}
 
-		// Prepare value.
-		if (isset($data['value']))
-		{
-			$data['value'] = to_bool_or_serialize($data['value']);
-		}
-
-		// Proceed to update.
-		$this->ci->db
-			->where('id', $id)
-			->set($data)
-			->update('metadata');
-		return ($this->ci->db->affected_rows() > 0);
+		// Otherwise, let "update_by" handle the rest.
+		return $this->update_by($id, $data);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Update a single or multiple metadata.
-	 * @access 	public
-	 * @return 	boolean
 	 *
-	 * @example:
-	 * $this->kbcore->metadata->update_by(
-	 * 		array('guid' => 1, 'key' => 'var_name'),
-	 *   	array(
-	 *   		'value'  => 'new_value',
-	 *   		'params' => 'new_params'
-	 *   	)
-	 * );
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code readability and performance.
+	 * 
+	 * @access 	public
+	 * @return 	bool 	true if anything updated, else false.
 	 */
 	public function update_by()
 	{
@@ -290,20 +301,17 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 		// If there are not, nothing to do.
 		if (empty($args))
 		{
-			return FALSE;
+			return false;
 		}
 
-		/**
-		 * Data to update is always the last argument
-		 * and it must be an array.
-		 */
+		// Data to update is always the last argument and it must be an array.
 		$data = array_pop($args);
 		if ( ! is_array($data) OR empty($data))
 		{
-			return FALSE;
+			return false;
 		}
 
-		// Prepare the value and params.
+		// We make sure to format "value" if provided.
 		if (isset($data['value']))
 		{
 			$data['value'] = to_bool_or_serialize($data['value']);
@@ -318,24 +326,11 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 			// Get rid of nasty deep array.
 			(is_array($args[0])) && $args = $args[0];
 
-			foreach ($args as $key => $val)
-			{
-				if (is_int($key) && is_array($val))
-				{
-					$this->ci->db->where($val);
-				}
-				elseif (is_array($val))
-				{
-					$this->ci->db->where_in($key, $val);
-				}
-				else
-				{
-					$this->ci->db->where($key, $val);
-				}
-			}
+			// Let the parent handle the WHERE clause.
+			$this->_parent->where($args);
 		}
 
-		// Proceed to update an return TRUE if all went good.
+		// Proceed to update an return true if all went good.
 		$this->ci->db->update('metadata');
 		return ($this->ci->db->affected_rows() > 0);
 	}
@@ -344,51 +339,50 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Delete a single metadata by its primary key.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to use "delete_by" method.
+	 * 
 	 * @access 	public
-	 * @param 	mixed 	$id 	The primary key value.
-	 * @return 	boolean
+	 * @param 	mixed 	$id 	The meta's ID or array of WHERE clause.
+	 * @return 	bool
 	 */
 	public function delete($id)
 	{
-		return $this->delete_by('id', $id);
+		// Are we deleting by ID?
+		if (is_numeric($id))
+		{
+			return $this->delete_by('id', $id, 1, 0);
+		}
+
+		// Otherwise, let "delete_by" handle the rest.
+		return $this->delete_by($id, null, 1, 0);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Delete multiple metadata by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0	Rewritten for better code readability, better performance
+	 *         			and to add optional limit and offset.
+	 *
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
-	 * @return 	boolean
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool 	true if any meta deleted, else false.
 	 */
-	public function delete_by($field = null, $match = null)
+	public function delete_by($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		// Prepare our WHERE clause.
-		if ( ! empty($field))
-		{
-			// Turn things into an array first.
-			(is_array($field)) OR $field = array($field => $match);
+		// Let's attempt to delete metadata.
+		$this->_parent
+			->where($field, $match, $limit, $offset)
+			->delete('metadata');
 
-			foreach ($field as $key => $val)
-			{
-				if (is_int($key) && is_array($val))
-				{
-					$this->ci->db->where($val);
-				}
-				elseif (is_array($val))
-				{
-					$this->ci->db->where_in($key, $val);
-				}
-				else
-				{
-					$this->ci->db->where($key, $val);
-				}
-			}
-		}
-
-		// Proceed to deletion.
-		$this->ci->db->delete('metadata');
+		// Were there any rows deleted?
 		return ($this->ci->db->affected_rows() > 0);
 	}
 
@@ -402,7 +396,7 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 	 * @param 	mixed 	$value
 	 * @return 	bool
 	 */
-	public function add_meta($guid, $meta, $value = NULL)
+	public function add_meta($guid, $meta, $value = null)
 	{
 		// Turn things into an array.
 		(is_array($meta)) OR $meta = array($meta => $value);
@@ -447,9 +441,7 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 		}
 
 		// Proceed only if $data is not empty.
-		return ( ! empty($data))
-			? $this->create($data)
-			: FALSE;
+		return ( ! empty($data)) ? $this->create($data) : false;
 	}
 
 	// ------------------------------------------------------------------------
@@ -457,12 +449,12 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 	/**
 	 * Retrieve a single or multiple metadata of the selected entity.
 	 * @access 	public
-	 * @param 	int 	$guid 	The entiti'y id.
-	 * @param 	string 	$key 	The metadata name
+	 * @param 	int 	$guid 	The entity's id.
+	 * @param 	string 	$key 	The metadata key.
 	 * @param 	bool 	$single Whether to return the metadata value.
 	 * @return 	mixed
 	 */
-	public function get_meta($guid, $key = NULL, $single = FALSE)
+	public function get_meta($guid, $key = null, $single = false)
 	{
 		// A single metadata to retrieve?
 		if ( ! empty($key))
@@ -482,7 +474,7 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 			));
 
 			// Return the value or the whole object if found.
-			return ($meta && $single === TRUE) ? $meta->value : $meta;
+			return ($meta && $single === true) ? $meta->value : $meta;
 		}
 
 		// Multiple metadata.
@@ -493,13 +485,17 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Update a single or multiple metadata.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to remove merging meta with arrays as value.
+	 * 
 	 * @access 	public
 	 * @param 	int 	$guid 	the entity's ID.
 	 * @param 	mixed 	$meta 	string or array of name => value.
 	 * @param 	mixed 	$value
 	 * @return 	bool
 	 */
-	public function update_meta($guid, $meta, $value = NULL)
+	public function update_meta($guid, $meta, $value = null)
 	{
 		// Turn things into an array.
 		(is_array($meta)) OR $meta = array($meta => $value);
@@ -532,7 +528,7 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 			$md = $this->get_meta($guid, $key);
 
 			// Found by same value? Nothing to do.
-			if ($md && from_bool_or_serialize($md->value) === $val)
+			if ($md && $md->value === $val)
 			{
 				continue;
 			}
@@ -540,12 +536,6 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 			// Found by different value? Update it.
 			if ($md)
 			{
-				// Merge array.
-				if (is_array($md->value))
-				{
-					$val = array_merge($md->value, $val);
-				}
-
 				// Proceed to update.
 				$this->update($md->id, array('value' => $val));
 			}
@@ -555,15 +545,19 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 			}
 		}
 
-		return TRUE;
+		return true;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Delete a single or multiple metadata.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code readability and performance.
+	 * 
 	 * @access 	public
-	 * @return 	boolean
+	 * @return 	bool
 	 *
 	 * @example:
 	 * To delete all metadata of an entity, just pass the ID.
@@ -571,30 +565,15 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 	 * To delete multiple one, pass their array as the second parameter or
 	 * you can pass successive names.
 	 */
-	public function delete_meta()
+	public function delete_meta($guid, $key = null)
 	{
-		$args = func_get_args();
-		if (empty($args))
-		{
-			return FALSE;
-		}
+		// Let's prepare the WHERE clause.
+		$where['guid'] = $guid;
 
-		// $guid is always the first element.
-		$guid = array_shift($args);
-		if ( ! is_numeric($guid))
+		// If we passed key(s), add them to where clause.
+		if ($key !== null)
 		{
-			return FALSE;
-		}
-
-		// Prepare WHERE clause.
-		$where = array('guid' => $guid);
-
-		// Are there arguments left?
-		if ( ! empty($args))
-		{
-			// Get rid of deep nasty array.
-			(is_array($args[0])) && $args = $args[0];
-			$where['key'] = $args;
+			$where['key'] = $key;
 		}
 
 		return $this->delete_by($where);
@@ -603,17 +582,49 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 	// ------------------------------------------------------------------------
 
 	/**
-	 * This method deletes all metadata that have to owners.
+	 * Count metadata by arbitrary WHERE clause.
+	 *
+	 * @since 	1.3.0
+	 *
 	 * @access 	public
-	 * @return 	boolean
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	int
 	 */
-	public function purge()
+	public function count($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		$this->ci->db
-			->where_not_in('guid', $this->_parent->entities->get_all_ids())
-			->delete('metadata');
+		// Let's build the query first.
+		$query = $this->_parent
+			->where($field, $match, $limit, $offset)
+			->get('metadata');
 
-		return ($this->ci->db->affected_rows() > 0);
+		// We return the count.
+		return $query->num_rows();
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * This method deletes all metadata that have no owners.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to let the parent handle WHERE clause and
+	 *         			add optional limit and offset.
+	 * 
+	 * @access 	public
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
+	 */
+	public function purge($limit = 0, $offset = 0)
+	{
+		// Let's first retrieve entities IDs.
+		$ids = $this->_parent->entities->get_ids();
+
+		// We now use the "delete_by" method.
+		return $this->delete_by('!guid', $ids, $limit, $offset);
 	}
 
 }
@@ -627,9 +638,9 @@ if ( ! function_exists('add_meta'))
 	 * @param 	int 	$guid 	The entity's ID.
 	 * @param 	mixed 	$meta 	The metadata name or an associative array.
 	 * @param 	mixed 	$value 	The metadata value.
-	 * @return 	boolean
+	 * @return 	bool
 	 */
-	function add_meta($guid, $meta, $value = NULL)
+	function add_meta($guid, $meta, $value = null)
 	{
 		return get_instance()->kbcore->metadata->add_meta($guid, $meta, $value);
 	}
@@ -646,7 +657,7 @@ if ( ! function_exists('get_meta'))
 	 * @param 	bool 	$single Whether to retrieve the value instead of the object.
 	 * @return 	mixed 	depends on the value of the metadata.
 	 */
-	function get_meta($guid, $key = NULL, $single = FALSE)
+	function get_meta($guid, $key = null, $single = false)
 	{
 		return get_instance()->kbcore->metadata->get_meta($guid, $key, $single);
 	}
@@ -660,9 +671,9 @@ if ( ! function_exists('get_meta_by'))
 	 * Retrieve a single metadata by arbitrary WHERE clause.
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
-	 * @return 	object if found, else NULL
+	 * @return 	object if found, else null
 	 */
-	function get_meta_by($field, $match = NULL)
+	function get_meta_by($field, $match = null)
 	{
 		return get_instance()->kbcore->metadata->get_by($field, $match);
 	}
@@ -674,14 +685,20 @@ if ( ! function_exists('get_many_meta'))
 {
 	/**
 	 * Retrieve multiple metadata by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to follow method structure
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
-	 * @return 	array of objects if found, else NULL
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	array of objects if found, else null
 	 */
-	function get_many_meta($field, $match = NULL)
+	function get_many_meta($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		return get_instance()->kbcore->metadata->get_many($field, $match);
+		return get_instance()->kbcore->metadata->get_many($field, $match, $limit, $offset);
 	}
 }
 
@@ -713,9 +730,9 @@ if ( ! function_exists('update_meta'))
 	 * @param 	int 	$guid 	The entity's ID.
 	 * @param 	mixed 	$meta 	The metadata name or associative array.
 	 * @param 	mixed 	$value 	The metadata value.
-	 * @return 	boolean.
+	 * @return 	bool.
 	 */
-	function update_meta($guid, $meta, $value = NULL)
+	function update_meta($guid, $meta, $value = null)
 	{
 		return get_instance()->kbcore->metadata->update($guid, $meta, $value);
 	}
@@ -727,7 +744,7 @@ if ( ! function_exists('update_meta_by'))
 {
 	/**
 	 * Update a single or multiple metadata.
-	 * @return 	boolean
+	 * @return 	bool
 	 */
 	function update_meta_by()
 	{
@@ -746,9 +763,9 @@ if ( ! function_exists('delete_meta'))
 	 * Delete a single or multiple metadata for the selected entity.
 	 * @param 	int 	$guid 	The entity's ID.
 	 * @param 	mixed 	$key 	The meta name or array.
-	 * @return 	boolean
+	 * @return 	bool
 	 */
-	function delete_meta($guid, $key = NULL)
+	function delete_meta($guid, $key = null)
 	{
 		return get_instance()->kbcore->metadata->delete($guid, $key);
 	}
@@ -760,27 +777,343 @@ if ( ! function_exists('delete_meta_by'))
 {
 	/**
 	 * Delete multiple metadata by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to follow method structure.
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
-	 * @return 	boolean
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
 	 */
-	function delete_meta_by($field = null, $match = null)
+	function delete_meta_by($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		return get_instance()->kbcore->metadata->delete_by($field, $match);
+		return get_instance()->kbcore->metadata->delete_by($field, $match, $limit, $offset);
 	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('purge_meta'))
+if ( ! function_exists('count_metadata'))
+{
+	/**
+	 * Count metadata by arbitrary WHERE clause.
+	 *
+	 * @since 	1.3.0
+	 *
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	int
+	 */
+	function count_metadata($field = null, $match = null, $limit = 0, $offset = 0)
+	{
+		return get_instance()->kbcore->metadata->count($field, $match, $limit, $offset);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('purge_metadata'))
 {
 	/**
 	 * Clean up metadata table from meta that have no existing entities.
-	 * @return 	boolean
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to follow method structure
+	 *
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
 	 */
-	function purge_meta()
+	function purge_metadata($limit = 0, $offset = 0)
 	{
-		return get_instance()->kbcore->metadata->purge();
+		return get_instance()->kbcore->metadata->purge($limit, $offset);
 	}
+}
+
+// ------------------------------------------------------------------------
+
+/**
+ * KB_Meta
+ *
+ * @package 	CodeIgniter
+ * @subpackage 	Skeleton
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		1.3.0
+ */
+class KB_Meta
+{
+	/**
+	 * Meta data container.
+	 * @var 	object
+	 */
+	public $data;
+
+	/**
+	 * The meta's ID.
+	 * @var 	integer
+	 */
+	public $id = 0;
+
+	/**
+	 * Array of data awaiting to be updated.
+	 * @var 	array
+	 */
+	protected $queue = array();
+	
+	/**
+	 * Constructor.
+	 *
+	 * Retrieves the meta data and passes it to KB_Meta::init().
+	 *
+	 * @access 	public
+	 * @param 	mixed	 $id 	Meta's ID or WHERE clause.
+	 * @return 	void
+	 */
+	public function __construct($id = 0) {
+		// In case we passed an instance of this object.
+		if ($id instanceof KB_Meta) {
+			$this->init($id->data);
+			return;
+		}
+
+		// In case we passed the entity's object.
+		elseif (is_object($id)) {
+			$this->init($id);
+			return;
+		}
+
+		if ($id) {
+			$meta = get_meta($id);
+			if ($meta) {
+				$this->init($meta->data);
+			} else {
+				$this->data = new stdClass();
+			}
+		}
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Sets up object properties.
+	 * @access 	public
+	 * @param 	object
+	 */
+	public function init($meta) {
+		$this->data = $meta;
+		$this->id   = (int) $meta->id;
+
+		// Format value.
+		$this->data->value = from_bool_or_serialize($meta->value);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for checking the existence of a property.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @return 	bool 	true if the property exists, else false.
+	 */
+	public function __isset($key) {
+		// Just make it possible to use ID.
+		if ('ID' == $key) {
+			$key = 'id';
+		}
+
+		// Found in $data container?
+		if (isset($this->data->{$key})) {
+			return true;
+		}
+
+		// Found as object property?
+		if (isset($this->{$key})) {
+			return true;
+		}
+
+		// Check for metadata.
+		return metadata_exists($this->id, $key);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for getting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key to retrieve.
+	 * @return 	mixed 	Depends on the property value.
+	 */
+	public function __get($key) {
+		// We start with an empty value.
+		$value = false;
+
+		// Is if found in $data object?
+		if (isset($this->data->{$key})) {
+			$value = $this->data->{$key};
+		}
+
+		// Then we return the final result.
+		return $value;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for setting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @param 	mixed 	$value 	The property value.
+	 */
+	public function __set($key, $value) {
+		// Just make it possible to use ID.
+		if ('ID' == $key) {
+			$key = 'id';
+		}
+
+		// If found, we make sure to set it.
+		$this->data->{$key} = $value;
+
+		// We enqueue it for later use.
+		$this->queue[$key]  = $value;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for unsetting a property.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 */
+	public function __unset($key) {
+		// Remove it from $data object.
+		if (isset($this->data->{$key})) {
+			unset($this->data->{$key});
+		}
+
+		// We remove it if queued.
+		if (isset($this->queue[$key])) {
+			unset($this->queue[$key]);
+		}
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for checking the existence of an meta in database.
+	 * @access 	public
+	 * @param 	none
+	 * @return 	bool 	true if the meta exists, else false.
+	 */
+	public function exists() {
+		return ( ! empty($this->id));
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for checking the existence of a property.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @return 	bool 	true if the property exists, else false.
+	 */
+	public function has($key) {
+		return $this->__isset($key);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for setting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @param 	string 	$value 	The property value.
+	 * @return 	object 	we return the object to make it chainable.
+	 */
+	public function set($key, $value) {
+		$this->__set($key, $value);
+		return $this;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for getting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @return 	mixed 	Depends on the property's value.
+	 */
+	public function get($key) {
+		return $this->__get($key);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for updating the meta in database.
+	 * @access 	public
+	 * @param 	string 	$key 	The field name.
+	 * @param 	mixed 	$value 	The field value.
+	 * @return 	bool 	true if updated, else false.
+	 */
+	public function update($key, $value) {
+		// Keep the status in order to dequeue the key.
+		$status = update_meta_by(
+			array('id' => $this->id),
+			array($key => $value)
+		);
+
+		if ($status === true && isset($this->queue[$key])) {
+			unset($this->queue[$key]);
+		}
+
+		return $status;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for saving anything changes.
+	 * @access 	public
+	 * @param 	void
+	 * @return 	bool 	true if updated, else false.
+	 */
+	public function save() {
+		// We start if false status.
+		$status = false;
+
+		// If there are enqueued changes, apply them.
+		if ( ! empty($this->queue)) {
+			$status = update_meta_by(
+				array('id' => $this->id),
+				array($key => $value)
+			);
+
+			// If the update was successful, we reset $queue array.
+			if ($status === true) {
+				$this->queue = array();
+			}
+		}
+
+		// We return the final status.
+		return $status;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for retrieving the array of data waiting to be saved.
+	 * @access 	public
+	 * @return 	array
+	 */
+	public function dirty() {
+		return $this->queue;
+	}
+
 }
