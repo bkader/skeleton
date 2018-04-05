@@ -77,7 +77,7 @@ class Kbcore_relations extends CI_Driver implements CRUD_interface
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Return an array of groups table fields.
+	 * Return an array of relations table fields.
 	 * @access 	public
 	 * @param 	none
 	 * @return 	array
@@ -89,7 +89,7 @@ class Kbcore_relations extends CI_Driver implements CRUD_interface
 			return $this->fields;
 		}
 
-		$this->fields = $this->ci->db->list_fields('groups');
+		$this->fields = $this->ci->db->list_fields('relations');
 		return $this->fields;
 	}
 
@@ -97,6 +97,11 @@ class Kbcore_relations extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Create a single or multiple relations
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten so that it returns the relation's ID if it
+	 *         			exists instead of false.
+	 *
 	 * @access 	public
 	 * @param 	array 	$data 	Array of data to insert.
 	 * @return 	the new row ID if found, else false.
@@ -135,7 +140,7 @@ class Kbcore_relations extends CI_Driver implements CRUD_interface
 		));
 		if ($found)
 		{
-			return false;
+			return $found->id;
 		}
 
 		// Add the date of creation.
@@ -149,63 +154,74 @@ class Kbcore_relations extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Retrieve a single relation by its ID.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to user "get_by" method and remove the 
+	 *         			$single argument.
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$id 		The relation's ID.
-	 * @param 	bool 	$single 	Whether to return the relation.
 	 * @return 	object if found, else null
 	 */
-	public function get($id, $single = false)
+	public function get($id)
 	{
-		return $this->get_by('id', $id, $single);
+		// Getting by ID?
+		if (is_numeric($id))
+		{
+			return $this->get_by('id', $id);
+		}
+
+		// Otherwise, let "get_by" method handle the rest.
+		return $this->get_by($id);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Retrieve a single relation by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code readability and performance,
+	 *         			to remove $single argument and let the parent handle
+	 *         			generating the WHERE clause.
+	 *
 	 * @access 	public
 	 * @param 	mixed 	$field 	Column name or associative array.
 	 * @param 	mixed 	$match 	Comparison value.
-	 * @param 	bool 	$single 	Whether to return the relation.
 	 * @return 	object if found, else null.
 	 */
-	public function get_by($field, $match = null, $single = false)
+	public function get_by($field, $match = null)
 	{
-		(is_array($field)) OR $field = array($field => $match);
-		foreach ($field as $key => $val)
-		{
-			if (is_int($key) && is_array($val))
-			{
-				$this->ci->db->where($val);
-			}
-			elseif (is_array($val))
-			{
-				$this->ci->db->where_in($key, $val);
-			}
-			else
-			{
-				$this->ci->db->where($key, $val);
-			}
-		}
+		// We start with an empty $relation.
+		$relation = false;
 
-		$relation = $this->ci->db
+		// Attempt to get relation from database.
+		$db_relation = $this->_parent
+			->where($field, $match, 1, 0)
 			->order_by('id', 'DESC')
-			->limit(1)
 			->get('relations')
 			->row();
 
-		if ($relation)
+		// If found, we create its object.
+		if ($db_relation)
 		{
-			return ($single === true) ? $relation->relation: $relation;
+			$relation = new KB_Relation($db_relation);
 		}
 
-		return null;
+		// Return the final result.
+		return $relation;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Retrieve multiple relations by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code readability and performance
+	 *         			and to let the parent handle generating the WHERE clause,
+	 *         			then create KB_Relation objects if found any.
+	 *
 	 * @access 	public
 	 * @param 	mixed 	$field 	Column name or associative array.
 	 * @param 	mixed 	$match 	Comparison value.
@@ -215,35 +231,26 @@ class Kbcore_relations extends CI_Driver implements CRUD_interface
 	 */
 	public function get_many($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		// Prepare the WHERE clause.
-		if ( ! empty($field))
+		// We start with empty $relations.
+		$relations = false;
+
+		// Attempt to get relations from database.
+		$db_relations = $this->_parent
+			->where($field, $match, $limit, $offset)
+			->get('relations')
+			->result();
+
+		// If found any, create their objects.
+		if ($db_relations)
 		{
-			(is_array($field)) OR $field = array($field => $match);
-			foreach ($field as $key => $val)
+			foreach ($db_relations as $relation)
 			{
-				if (is_int($key) && is_array($val))
-				{
-					$this->ci->db->where($val);
-				}
-				elseif (is_array($val))
-				{
-					$this->ci->db->where_in($key, $val);
-				}
-				else
-				{
-					$this->ci->db->where($key, $val);
-				}
+				$relations[] = new KB_Relation($relation);
 			}
 		}
 
-		// Is limit provided?
-		if ($limit > 0)
-		{
-			$this->ci->db->limit($limit, $offset);
-		}
-
-		// Proceed to join and get.
-		return $this->ci->db->get('relations')->result();
+		// Return the final result.
+		return $relations;
 	}
 
 	// ------------------------------------------------------------------------
@@ -264,6 +271,10 @@ class Kbcore_relations extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Update a single relation by its primary key.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Update for better usage.
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$id 	The primary key value.
 	 * @param 	array 	$data 	Array of data to update.
@@ -271,13 +282,24 @@ class Kbcore_relations extends CI_Driver implements CRUD_interface
 	 */
 	public function update($id, array $data = array())
 	{
-		return $this->update_by(array('id' => $id), $data);
+		// Updating by ID?
+		if (is_numeric($id))
+		{
+			return $this->update_by(array('id' => $id), $data);
+		}
+
+		// Otherwise, let "update_by" handle the rest.
+		return $this->update_by($id, $data);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Update a single, all or multiple relations by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to let the parent handle WHERE clause.
+	 * 
 	 * @access 	public
 	 * @return 	boolean
 	 */
@@ -297,25 +319,16 @@ class Kbcore_relations extends CI_Driver implements CRUD_interface
 			return false;
 		}
 
+		// Prepare out update query.
+		$this->ci->db->set($data);
+
 		// Get groups
 		if ( ! empty($args))
 		{
 			(is_array($args[0])) && $args = $args[0];
-			foreach ($args as $key => $val)
-			{
-				if (is_int($key) && is_array($val))
-				{
-					$this->ci->db->where($val);
-				}
-				elseif (is_array($val))
-				{
-					$this->ci->db->where_in($key, $val);
-				}
-				else
-				{
-					$this->ci->db->where($key, $val);
-				}
-			}
+
+			// Generate where clause.
+			$this->_parent->where($args);
 		}
 
 		// Proceed to update.
@@ -327,51 +340,51 @@ class Kbcore_relations extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Delete a single relation by its primary key.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better usage.
+	 * 
 	 * @access 	public
-	 * @param 	mixed 	$id 	The primary key value.
+	 * @param 	mixed 	$id 	The relation's ID or array of WHERE clause..
 	 * @return 	boolean
 	 */
 	public function delete($id)
 	{
-		return $this->delete_by('id', $id);
+		// Deleting by ID?
+		if (is_numeric($id))
+		{
+			return $this->delete_by('id', $id);
+		}
+
+		// Otherwise, let "delete_by" method handle the rest.
+		return $this->delete_by($id);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Delete a single, all or multiple relations by arbitrary WHER clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code readability and performace,
+	 *         			to add optional limit and offset and let the parent
+	 *         			handle generating the WHERE clause.
+	 *
 	 * @access 	public
 	 * @param 	mixed 	$field 	Column name or associative array.
 	 * @param 	mixed 	$match 	Comparison value.
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
 	 * @return 	boolean
 	 */
-	public function delete_by($field = null, $match = null)
+	public function delete_by($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		// Prepare our WHERE clause.
-		if ( ! empty($field))
-		{
-			// Turn things into an array first.
-			(is_array($field)) OR $field = array($field => $match);
+		// Let's attempt to delete relations.
+		$this->_parent
+			->where($field, $match, $limit, $offset)
+			->delete('relations');
 
-			foreach ($field as $key => $val)
-			{
-				if (is_int($key) && is_array($val))
-				{
-					$this->ci->db->where($val);
-				}
-				elseif (is_array($val))
-				{
-					$this->ci->db->where_in($key, $val);
-				}
-				else
-				{
-					$this->ci->db->where($key, $val);
-				}
-			}
-		}
-
-		// Proceed to deletion.
-		$this->ci->db->delete('relations');
+		// Return true if some rows were affected.
 		return ($this->ci->db->affected_rows() > 0);
 	}
 
@@ -379,37 +392,51 @@ class Kbcore_relations extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Count relations.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code readability and performance,
+	 *         			add optional limit and offset and let the parent handle
+	 *         			generating the WHERE clause.
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
 	 * @return 	int
 	 */
-	public function count($field = null, $match = null)
+	public function count($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		// Prepare where clause.
-		if ( ! empty($field))
-		{
-			(is_array($field)) OR $field = array($field => $match);
-			foreach ($field as $key => $val)
-			{
-				if (is_int($key) && is_array($val))
-				{
-					$this->ci->db->where($val);
-				}
-				elseif (is_array($val))
-				{
-					$this->ci->db->where_in($key, $val);
-				}
-				else
-				{
-					$this->ci->db->where($key, $val);
-				}
-			}
-		}
+		// Let's run the query.
+		$query = $this->_parent
+			->where($field, $match, $limit, $offset)
+			->get('relations');
 
-		$rows = $this->ci->db->get('relations');
+		// Return relations count.
+		return $query->num_rows();
+	}
 
-		return $rows->num_rows();
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Delete all relations of which entities no longer exist.
+	 *
+	 * @since 	1.3.0
+	 *
+	 * @access 	public
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
+	 */
+	public function purge($limit = 0, $offset = 0)
+	{
+		// we first get entities IDs.
+		$ids = $this->_parent->entities->get_ids();
+
+		// Now we use the "delete_by" method.
+		return $this->delete_by(array(
+			'!guid_from' => $ids,
+			'!guid_to'   => $ids,
+		));
 	}
 
 }
@@ -612,4 +639,287 @@ if ( ! function_exists('count_relations'))
 	{
 		return get_instance()->kbcore->relations->count($field, $match);
 	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('purge_relations'))
+{
+	/**
+	 * Delete relations of which entities no longer exist.
+	 *
+	 * @since 	1.3.0
+	 *
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
+	 */
+	function purge_relations($limit = 0, $offset = 0)
+	{
+		return get_instance()->kbcore->relations->purge($limit, $offset);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+/**
+ * KB_Relation
+ *
+ * @package 	CodeIgniter
+ * @subpackage 	Skeleton
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		1.3.0
+ */
+class KB_Relation
+{
+	/**
+	 * Relation data container.
+	 * @var 	object
+	 */
+	public $data;
+
+	/**
+	 * The relation's ID.
+	 * @var 	integer
+	 */
+	public $id = 0;
+
+	/**
+	 * Array of data awaiting to be updated.
+	 * @var 	array
+	 */
+	protected $queue = array();
+	
+	/**
+	 * Constructor.
+	 *
+	 * Retrieves the relation data and passes it to KB_Relation::init().
+	 *
+	 * @access 	public
+	 * @param 	mixed	 $id 	User's ID, username, object or WHERE clause.
+	 * @return 	void
+	 */
+	public function __construct($id = 0) {
+		// In case we passed an instance of this object.
+		if ($id instanceof KB_Relation) {
+			$this->init($id->data);
+			return;
+		}
+
+		// In case we passed the entity's object.
+		elseif (is_object($id)) {
+			$this->init($id);
+			return;
+		}
+
+		if ($id) {
+			$relation = get_relation($id);
+			if ($relation) {
+				$this->init($relation->data);
+			} else {
+				$this->data = new stdClass();
+			}
+		}
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Sets up object properties.
+	 * @access 	public
+	 * @param 	object
+	 */
+	public function init($relation) {
+		$this->data = $relation;
+		$this->id   = (int) $relation->id;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for checking the existence of a property.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @return 	bool 	true if the property exists, else false.
+	 */
+	public function __isset($key) {
+		// Just make it possible to use ID.
+		if ('ID' == $key) {
+			$key = 'id';
+		}
+
+		// Return true if found in $data or object properties.
+		return (isset($this->data->{$key}) OR isset($this->{$key}));
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for getting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key to retrieve.
+	 * @return 	mixed 	Depends on the property value.
+	 */
+	public function __get($key) {
+		// We start with an empty value.
+		$value = false;
+
+		// Is if found in $data object?
+		if (isset($this->data->{$key})) {
+			$value = $this->data->{$key};
+		}
+
+		// Then we return the final result.
+		return $value;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for setting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @param 	mixed 	$value 	The property value.
+	 */
+	public function __set($key, $value) {
+		// Just make it possible to use ID.
+		if ('ID' == $key) {
+			$key = 'id';
+		}
+
+		// If found, we make sure to set it.
+		$this->data->{$key} = $value;
+
+		// We enqueue it for later use.
+		$this->queue[$key]  = $value;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for unsetting a property.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 */
+	public function __unset($key) {
+		// Remove it from $data object.
+		if (isset($this->data->{$key})) {
+			unset($this->data->{$key});
+		}
+
+		// We remove it if queued.
+		if (isset($this->queue[$key])) {
+			unset($this->queue[$key]);
+		}
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for checking the existence of an user in database.
+	 * @access 	public
+	 * @param 	none
+	 * @return 	bool 	true if the user exists, else false.
+	 */
+	public function exists() {
+		return ( ! empty($this->id));
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for checking the existence of a property.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @return 	bool 	true if the property exists, else false.
+	 */
+	public function has($key) {
+		return $this->__isset($key);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for setting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @param 	string 	$value 	The property value.
+	 * @return 	object 	we return the object to make it chainable.
+	 */
+	public function set($key, $value) {
+		$this->__set($key, $value);
+		return $this;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for getting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @return 	mixed 	Depends on the property's value.
+	 */
+	public function get($key) {
+		return $this->__get($key);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for updating the user in database.
+	 * @access 	public
+	 * @param 	string 	$key 	The field name.
+	 * @param 	mixed 	$value 	The field value.
+	 * @return 	bool 	true if updated, else false.
+	 */
+	public function update($key, $value) {
+		// Keep the status in order to dequeue the key.
+		$status = update_relation($this->id, array($key => $value));
+
+		if ($status === true && isset($this->queue[$key])) {
+			unset($this->queue[$key]);
+		}
+
+		return $status;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for saving anything changes.
+	 * @access 	public
+	 * @param 	void
+	 * @return 	bool 	true if updated, else false.
+	 */
+	public function save() {
+		// We start if FALSE status.
+		$status = false;
+
+		// If there are enqueued changes, apply them.
+		if ( ! empty($this->queue)) {
+			$status = update_relation($this->id, $this->queue);
+
+			// If the update was successful, we reset $queue array.
+			if ($status === true) {
+				$this->queue = array();
+			}
+		}
+
+		// We return the final status.
+		return $status;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for retrieving the array of data waiting to be saved.
+	 * @access 	public
+	 * @return 	array
+	 */
+	public function dirty() {
+		return $this->queue;
+	}
+
 }
