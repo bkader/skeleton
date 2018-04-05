@@ -1,0 +1,13 @@
+.alert {
+    position: fixed;
+    width: 50%;
+    left: 50%;
+    margin-left: -25%;
+    top: 6px;
+    z-index: 1052;
+
+    &:empty {
+        /* Make alert invisible if empty. */
+        display: none;
+    }
+}

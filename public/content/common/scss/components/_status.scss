@@ -1,0 +1,17 @@
+.status {
+    font-family: $font__ruda;
+
+    .panel-heading {
+        margin-bottom: 5px;
+
+        .panel-title {
+            font-size: 75px;
+            color: #fff;
+            font-family: $font__oswald;
+            font-weight: 700;
+            letter-spacing: -0.8px;
+            line-height: 45px;
+            padding-top: 20px;
+        }
+    }
+}

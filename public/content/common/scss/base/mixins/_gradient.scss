@@ -1,0 +1,31 @@
+// Gradient background.
+
+@mixin gradient($start-color, $end-color, $orientation: "vertical", $start-percent: 0%, $end-percent: 100%) {
+	background: $start-color;
+
+	// Vertical orientation.
+	@if $orientation == "diagonal" {
+		background: $start-color;
+		background: -moz-linear-gradient(-45deg, $start-color $start-percent, $end-color $end-percent);
+		background: -webkit-linear-gradient(-45deg, $start-color $start-percent, $end-color $end-percent);
+		background: linear-gradient(135deg, $start-color $start-percent, $end-color $end-percent);
+		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#{$start-color}", endColorstr="#{$end-color}",GradientType=1 );
+	} @else if $orientation == "horizontal" {
+		background: $start-color;
+		background: -moz-linear-gradient(left, $start-color $start-percent, $end-color $end-percent);
+		background: -webkit-linear-gradient(left, $start-color $start-percent, $end-color $end-percent);
+		background: linear-gradient(to right, $start-color $start-percent, $end-color $end-percent);
+		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#{$start-color}", endColorstr="#{$end-color}",GradientType=1 );
+	} @else if $orientation == "radial" {
+		background: $start-color;
+		background: -moz-radial-gradient(center, ellipse cover, $start-color $start-percent, $end-color $end-percent);
+		background: -webkit-radial-gradient(center, ellipse cover, $start-color $start-percent, $end-color $end-percent);
+		background: radial-gradient(ellipse at center, $start-color $start-percent, $end-color $end-percent);
+		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#{$start-color}", endColorstr="#{$end-color}",GradientType=1 );
+	} @else {
+		background: -moz-linear-gradient(top, $start-color $start-percent, $end-color $end-percent);
+		background: -webkit-linear-gradient(top, $start-color $start-percent, $end-color $end-percent);
+		background: linear-gradient(to bottom, $start-color $start-percent, $end-color $end-percent);
+		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#{$start-color}", endColorstr="#{$end-color}",GradientType=0 );
+	}
+}

@@ -1,0 +1,58 @@
+// Font-face
+
+// String replacement.
+@function str-replace($string, $search, $replace: '') {
+	$index: str-index($string, $search);
+
+	@if $index {
+		@return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+	}
+
+	@return $string;
+}
+
+// Font face generator.
+@mixin font-face($name, $file, $weight: 400, $style: normal, $modern: true) {
+	@font-face {
+		font-family: quote($name);
+		font-weight: $weight;
+		font-style: $style;
+
+		$local1: "";
+		$local2: "";
+
+		// Adding locals.
+		@if $weight == "bold" or $weight == 700 {
+			$local1: "#{$name} Bold";
+			$local2: "#{$name}-Bold";
+			@if $style == "italic" {
+				$local1: "#{$local1} Italic";
+				$local2: "#{$local2}-Italic";
+			}
+		} @else {
+			@if $style == "italic" {
+				$local1: "#{$name} Italic";
+				$local2: "#{$name}-Italic";
+			} @else {
+				$local1: "#{$name} Regular";
+				$local2: "#{$name}-Regular";
+			}
+		}
+
+		@if $modern == true {
+			src: local($local1), local(str-replace($local2, " ", '')),
+				url($file + ".woff2") format("woff2"),
+				url($file + ".woff") format("woff");
+		} @else {
+			src: local($local1), local(str-replace($local2, " ", '')),
+				url($file + ".eot?#iefix") format("embedded-opentype"),
+				url($file + ".woff2") format("woff2"),
+				url($file + ".woff") format("woff"),
+				url($file + ".ttf") format("truetype"),
+				url($file + ".svg#" + str-replace($name, " ", "")) format("svg");
+		}
+	}
+}
+@mixin font-face-ext($name, $file, $weight: 400, $style: normal) {
+	@include font-face($name, $file, $weight, $style, "true");
+}

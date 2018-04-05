@@ -1,0 +1,15 @@
+.wrapper {
+    position: relative;
+
+	@include screen-sm { padding-left: $sidebar__width; }
+
+    .page-header { margin: 0 0 $gutters; padding: 0; }
+
+    .footer {
+        @include absolute(top 100% left 0 right 0);
+        margin-top: 15px;
+        padding: 20px;
+
+        @include screen-sm { left: $sidebar__width; }
+    }
+}

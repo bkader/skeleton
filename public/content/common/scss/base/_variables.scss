@@ -1,0 +1,117 @@
+// --------------------------------------------------------------
+// Site variables.
+// --------------------------------------------------------------
+
+// --------------------------------------------------------------
+// Different colors.
+// --------------------------------------------------------------
+$color__black: #1b1c1d;
+$color__blue: #2185d0;
+$color__brown: #a5673f;
+$color__green: #21ba45;
+$color__grey: #767676;
+$color__olive: #b5cc18;
+$color__orange: #f2711c;
+$color__pink: #e03997;
+$color__purple: #a333c8;
+$color__red: #db2828;
+$color__teal: #00b5ad;
+$color__violet: #6435c9;
+$color__yellow: #fbbd08;
+
+$color__primary: $color__blue;
+$color__success: $color__green;
+$color__warning: $color__yellow;
+$color__danger: $color__red;
+
+// --------------------------------------------------------------
+// Different background colors.
+// --------------------------------------------------------------
+$color__background-body: #eceff4;
+
+// --------------------------------------------------------------
+// Social network colors.
+// --------------------------------------------------------------
+$color__facebook: #3b5998;
+$color__google: #eb4026;
+$color__linkedin: #0077b5;
+$color__pinterest: #ca212a;
+$color__twitter: #00aced;
+
+$color__list: (
+    "black": $color__black,
+    "blue": $color__blue,
+    "brown": $color__brown,
+    "green": $color__green,
+    "grey": $color__grey,
+    "olive": $color__olive,
+    "orange": $color__orange,
+    "pink": $color__pink,
+    "purple": $color__purple,
+    "red": $color__red,
+    "teal": $color__teal,
+    "violet": $color__violet,
+    "yellow": $color__yellow,
+    "primary": $color__primary,
+    "success": $color__success,
+    "warning": $color__warning,
+    "danger": $color__danger,
+    "facebook": $color__facebook,
+    "google": $color__google,
+    "linkedin": $color__linkedin,
+    "pinterest": $color__pinterest,
+    "twitter": $color__twitter
+);
+
+// --------------------------------------------------------------
+// Different text colors.
+// --------------------------------------------------------------
+$color__text-screen: #21759b;
+$color__text-input: #666;
+$color__text-input-focus: #111;
+$color__text-main: #414141;
+$color__text-light: #636363;
+
+// --------------------------------------------------------------
+// Different border colors.
+// --------------------------------------------------------------
+$color__border-button: #ccc #ccc #bbb;
+$color__border-button-hover: #ccc #bbb #aaa;
+$color__border-button-focus: #aaa #bbb #bbb;
+$color__border-input: #ccc;
+$color__border-abbr: #666;
+
+// --------------------------------------------------------------
+// Font families.
+// --------------------------------------------------------------
+$font__base: "Fira Sans", Helvetica, Arial, sans-serif;
+$font__oswald: "Oswald", "Fira Sans", sans-serif;
+$font__ruda: "Ruda", "Fira Sans", sans-serif;
+$font__code: Monaco, Consolas, monospace;
+$font__pre: Courier, monospace;
+$font__line-height-body: 1.5;
+$font__line-height-pre: 1.6;
+
+// --------------------------------------------------------------
+// Header variables.
+// --------------------------------------------------------------
+$header__height: 50px;
+$header__background: $color__blue;
+$header__z-index: 1050;
+
+// --------------------------------------------------------------
+// Container sizes.
+// --------------------------------------------------------------
+$size__container-sm: 750px;
+$size__container-md: 970px;
+$size__container-lg: 1170px;
+
+// --------------------------------------------------------------
+// Gutters and Sidebar variables.
+// --------------------------------------------------------------
+$gutters: 15px;
+$sidebar__width: 225px;
+$sidebar__paddings: $gutters;
+$sidebar__background: darken($header__background, 35%);
+$sidebar__link: lighten($color__grey, 45%);
+$sidebar__link-hover: lighten($color__grey, 65%);

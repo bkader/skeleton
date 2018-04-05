@@ -1,0 +1,48 @@
+// Media Queries.
+
+// Display breakpoints.
+$screen-xs: 480px;
+$screen-sm: 768px;
+$screen-md: 992px;
+$screen-lg: 1200px;
+
+@mixin screen-xs {
+	@media screen and (min-width: $screen-xs) {
+		@content;
+	}
+}
+@mixin screen-max-xs {
+	@media screen and (max-width: $screen-xs) {
+		@content;
+	}
+}
+@mixin screen-sm {
+	@media screen and (min-width: $screen-sm) {
+		@content;
+	}
+}
+@mixin screen-max-sm {
+	@media screen and (max-width: $screen-sm) {
+		@content;
+	}
+}
+@mixin screen-md {
+	@media screen and (min-width: $screen-md) {
+		@content;
+	}
+}
+@mixin screen-max-md {
+	@media screen and (max-width: $screen-md) {
+		@content;
+	}
+}
+@mixin screen-lg {
+	@media screen and (min-width: $screen-lg) {
+		@content;
+	}
+}
+@mixin screen-max-lg {
+	@media screen and (max-width: $screen-lg) {
+		@content;
+	}
+}

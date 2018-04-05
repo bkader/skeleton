@@ -1,0 +1,12 @@
+// Visibility
+@mixin invisible {
+	visibility: hidden;
+}
+@mixin hidden {
+	display: none;
+	visibility: hidden;
+}
+@mixin visible($display: "block") {
+	display: unquote($display);
+	visibility: visible;
+}

@@ -1,6 +1,12 @@
 (function($) {
     "use strict";
 
+    // Sidebar toggle.
+    jQuery(document).on("click", ".sidebar-toggle", function (e) {
+        e.preventDefault();
+        jQuery("#sidebar").toggleClass("open");
+    });
+
     $(document).ready(function() {
 
         // $('.sortable').sortable();

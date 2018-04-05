@@ -1,0 +1,36 @@
+.sidebar {
+	@include fixed(top $header__height right 0 bottom 0);
+	@include transform(translateX(100%));
+	@include transition(transform 0.15s ease-in-out);
+	background-color: $sidebar__background;
+	width: $sidebar__width;
+	overflow-y: auto;
+	padding: $gutters 0;
+
+	&.open {@include transform(translateX(0));}
+
+	@include screen-sm {
+		@include fixed(top $header__height left 0 bottom 0 right auto);
+		@include transform(translateX(0));
+		padding: 0;
+	}
+
+	.nav-sidebar > li {
+		> a {
+			color: $sidebar__link;
+
+			@include hover-focus-active {
+				background-color: darken($sidebar__background, 5%);
+				color: $sidebar__link-hover;
+			}
+		}
+
+		&.active > a,
+		&.active > a:focus,
+		&.active > a:hover {
+			background-color: darken($sidebar__background, 5%);
+			color: $sidebar__link-hover;
+			cursor: default;
+		}
+	}
+}

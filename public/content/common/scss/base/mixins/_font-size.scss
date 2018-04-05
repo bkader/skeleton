@@ -1,0 +1,6 @@
+// Font size wit REM.
+
+@mixin font-size($size, $base: 16) {
+	font-size: #{$size}px; // Fall-back for old browsers.
+	font-size: ($size / 16) * 1rem;
+}

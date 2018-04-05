@@ -1,0 +1,21 @@
+// Grid system.
+
+$columns: 12;	// Columns per row.
+$page-gutter: 100%/($columns + 2);
+$column: 100%/($columns);
+$gutter: 1.5rem;
+
+// This is useful to create rows.
+%row {
+	@include flexbox;
+	@include flex-wrap(wrap);
+	margin-left: $page-gutter;
+	margin-right: $page-gutter;
+}
+
+// This mixin sets an element size.
+@mixin col($span: $columns) {
+	@include box-sizing(border-box);
+	padding: 0 $gutter/2;
+	width: $column * $span;
+}

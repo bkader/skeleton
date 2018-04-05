@@ -1,0 +1,70 @@
+.text-small {
+    font-size: 0.83em;
+}
+.text-normal {
+    font-weight: normal;
+}
+@each $color in $color__list {
+
+    @if nth($color, 1) != 'default' {
+        .text-#{nth($color, 1)} {
+            color: #{nth($color, 2)};
+        }
+    }
+
+    .bg-#{nth($color, 1)},
+    .btn-#{nth($color, 1)} {
+        background-color: #{nth($color, 2)};
+
+        @if nth($color, 1) == 'default' {
+            color: #444;
+        } @else {
+            color: #fff;
+        }
+
+        &:hover,
+        &:active,
+        &:focus {
+            background-color: darken(nth($color, 2), 10%);
+            @if nth($color, 1) != 'default' {
+                color: #fff;
+            }
+        }
+    }
+
+    .panel-#{nth($color, 1)} {
+        border-color: #{nth($color, 2)};
+    }
+    .status.panel-#{nth($color, 1)} > .panel-heading {
+        background-color: #{nth($color, 2)};
+    }
+}
+
+/* Helpers */
+.m0 {margin:0!important}
+.m5 {margin:5px!important}
+.m10 {margin:10px!important}
+.m15 {margin:15px!important}
+.mt0 {margin-top:0!important}
+.mt5 {margin-top:5px!important}
+.mt10 {margin-top:10px!important}
+.mt15 {margin-top:15px!important}
+.mb0 {margin-bottom:0!important}
+.mb5 {margin-bottom:5px!important}
+.mb10 {margin-bottom:10px!important}
+.mb15 {margin-bottom:15px!important}
+.ml0 {margin-left:0!important}
+.ml5 {margin-left:5px!important}
+.ml10 {margin-left:10px!important}
+.ml15 {margin-left:15px!important}
+.mr0 {margin-right:0!important}
+.mr5 {margin-right:5px!important}
+.mr10 {margin-right:10px!important}
+.mr15 {margin-right:15px!important}
+
+.txof {
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

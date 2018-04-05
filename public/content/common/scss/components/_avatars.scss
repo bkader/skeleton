@@ -1,0 +1,30 @@
+.avatar-male,
+.avatar-female {
+    background-color   : #d1d1d1;
+    background-position: center center;
+    background-repeat  : no-repeat;
+    display            : inline-block;
+    height             : 225px;
+    width              : 225px;
+}
+
+.avatar-male {
+    background-image: url(../img/profile-m.jpg);
+}
+.avatar-female {
+    background-image: url(../img/profile-f.jpg);
+}
+
+.fa-unspecified:before {
+    content: "\f128";
+}
+
+.fa-male,
+.fa-female,
+.fa-unspecified {
+    width     : 18px;
+    text-align: left;
+}
+
+.fa-male {color: #69a0ff}
+.fa-female {color: #ff69b4}

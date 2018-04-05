@@ -1,0 +1,8 @@
+// Opacity with IE compatibility
+
+@mixin opacity($opacity) {
+	opacity: $opacity;
+	// We calculate IE alpha and add the styling.
+	$opacity-ie: $opacity * 100;
+	filter: alpha(opacity = $opacity-ie);
+}

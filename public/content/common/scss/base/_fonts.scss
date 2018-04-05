@@ -1,0 +1,17 @@
+// Oswald
+@include font-face("Oswald", "../fonts/oswald-regular", 400);
+@include font-face("Oswald", "../fonts/oswald-bold", 700);
+
+// Ruda font
+@include font-face("Ruda", "../fonts/ruda-regular", 400);
+@include font-face("Ruda", "../fonts/ruda-bold", 700);
+
+// Fira Sans font.
+@include font-face("Fira Sans", "../fonts/fira-sans-regular", 400);
+@include font-face("Fira Sans", "../fonts/fira-sans-italic", 400, italic);
+@include font-face("Fira Sans", "../fonts/fira-sans-bold", 700);
+@include font-face("Fira Sans", "../fonts/fira-sans-bold-italic", 700, italic);
+
+// Droid Arabic Kufi
+@include font-face("Droid Arabic Kufi", "../fonts/droid-arabic-kufi-regular", 400);
+@include font-face("Droid Arabic Kufi", "../fonts/droid-arabic-kufi-bold", 700);
