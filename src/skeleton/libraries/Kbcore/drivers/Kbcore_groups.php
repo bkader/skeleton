@@ -147,8 +147,12 @@ class Kbcore_groups extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Retrieve a single group by ID or username.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code readability and performance.
+	 * 
 	 * @access 	public
-	 * @param 	mixed 	$id 	The group's ID or username.
+	 * @param 	mixed 	$id 	The group's ID username or array of WHERE clause.
 	 * @return 	object if found, else null.
 	 */
 	public function get($id)
@@ -156,16 +160,16 @@ class Kbcore_groups extends CI_Driver implements CRUD_interface
 		// Getting by ID?
 		if (is_numeric($id))
 		{
-			return $this->get_by('entities.id', $id);
+			return $this->get_by('id', $id);
 		}
 
 		// Retrieve by username.
 		if (is_string($id))
 		{
-			return $this->get_by('entities.username', $id);
+			return $this->get_by('username', $id);
 		}
 
-		// Fall-back to get_by method.
+		// Otherwise, let the "get_by" method handle the rest.
 		return $this->get_by($id);
 	}
 
@@ -173,6 +177,10 @@ class Kbcore_groups extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Retrieve a single group by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten the let the parent handle WHERE clause.
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
@@ -180,37 +188,39 @@ class Kbcore_groups extends CI_Driver implements CRUD_interface
 	 */
 	public function get_by($field, $match = null)
 	{
-		// The WHERE clause depends on $field and $match.
-		(is_array($field)) OR $field = array($field => $match);
+		// We start with an empty group.
+		$group = false;
 
-		foreach ($field as $key => $val)
-		{
-			if (is_int($key) && is_array($val))
-			{
-				$this->ci->db->where($val);
-			}
-			elseif (is_array($val))
-			{
-				$this->ci->db->where_in($key, $val);
-			}
-			else
-			{
-				$this->ci->db->where($key, $val);
-			}
-		}
-
-		// Proceed to join and get.
-		return $this->ci->db
+		// We make sure to join "groups" table first.
+		$this->ci->db
 			->where('entities.type', 'group')
-			->join('groups', 'groups.guid = entities.id')
+			->join('groups', 'groups.guid = entities.id');
+
+		// Attempt to get the group from database.
+		$db_group = $this->_parent
+			->where($field, $match, 1, 0)
+			->order_by('entities.id', 'DESC')
 			->get('entities')
 			->row();
+
+		// If found, we create its object.
+		if ($db_group)
+		{
+			$group = new KB_Group($db_group);
+		}
+
+		// Return the final result.
+		return $group;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Retrieve multiple groups by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to let the parent handle WHERE clause.
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
@@ -220,39 +230,31 @@ class Kbcore_groups extends CI_Driver implements CRUD_interface
 	 */
 	public function get_many($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		// Prepare the WHERE clause.
-		if ( ! empty($field))
+		// We start with empty groups.
+		$groups = false;
+
+		// We make sure to select groups and join their table.
+		$this->ci->db
+			->where('entities.type', 'group')
+			->join('groups', 'groups.guid = entities.id');
+
+		// Attempt to retrieve groups from database.
+		$db_groups = $this->_parent
+			->where($field, $match, $limit, $offset)
+			->get('entities')
+			->result();
+
+		// If found any, create their objects.
+		if ($db_groups)
 		{
-			(is_array($field)) OR $field = array($field => $match);
-			foreach ($field as $key => $val)
+			foreach ($db_groups as $db_group)
 			{
-				if (is_int($key) && is_array($val))
-				{
-					$this->ci->db->where($val);
-				}
-				elseif (is_array($val))
-				{
-					$this->ci->db->where_in($key, $val);
-				}
-				else
-				{
-					$this->ci->db->where($key, $val);
-				}
+				$groups[] = new KB_Group($db_group);
 			}
 		}
 
-		// Is limit provided?
-		if ($limit > 0)
-		{
-			$this->ci->db->limit($limit, $offset);
-		}
-
-		// Proceed to join and get.
-		return $this->ci->db
-			->where('entities.type', 'group')
-			->join('groups', 'groups.guid = entities.id')
-			->get('entities')
-			->result();
+		// Return the final result.
+		return $groups;
 	}
 
 	// ------------------------------------------------------------------------
@@ -273,6 +275,10 @@ class Kbcore_groups extends CI_Driver implements CRUD_interface
 
 	/**
 	 * This method is used in order to search groups.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to let the parent handle WHERE clause.
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
@@ -282,131 +288,35 @@ class Kbcore_groups extends CI_Driver implements CRUD_interface
 	 */
 	public function find($field, $match = null, $limit = 0, $offset = 0)
 	{
-		// Make sure $field is always an array.
-		(is_array($field)) OR $field = array($field => $match);
-		
-		// Create our search query.
-		foreach ($field as $key => $val)
-		{
-			/**
-			 * If we are searching by a field that exists in one of
-			 * the main table: "entities" and "groups".
-			 */
-			if (in_array($key, $this->fields()) 
-				OR in_array($key, $this->_parent->entities->fields()))
-			{
-				// Searching by unique values? Use where instead.
-				if ( ! is_array($val) 
-					&& in_array($key, array('id', 'subtype', 'username', 'guid')))
-				{
-					$this->ci->db->where($key, $val);
-				}
-				// Did we provide a value, not an array?
-				elseif ( ! is_array($val))
-				{
-					// Use "like" or "not like" ?
-					$_method = 'like';
-					if (is_string($val) && strpos($val, '!') === 0)
-					{
-						$_method = 'not_like';
-						$val = str_replace('!', '', $val);
-					}
+		// We start with a empty $groups.
+		$groups = false;
 
-					// Proceed.
-					$this->ci->db->{$_method}($key, $val, 'both');
-				}
-				// In case of an array:
-				else
-				{
-					/**
-					 * Here we prepare the count so that the first element
-					 * will use "like" and all others will use "or_like".
-					 */
-					$_count = 1;
-
-					// Let's loop through elements:
-					foreach ($val as $_val)
-					{
-						// If we add "!" first, we make sure to use "not".
-						if (is_string($_val) && strpos($_val, '!') === 0)
-						{
-							$_method = ($_count == 1) ? 'not_like' : 'or_not_like';
-
-							// We make sure to remove the "!".
-							$_val = str_replace('!', '', $_val);
-						}
-						// Other wise, use default methods.
-						else
-						{
-							$_method = ($_count == 1) ? 'like' : 'or_like';
-						}
-
-						// Call the method.
-						$this->ci->db->{$_method}($key, $_val);
-
-						// We make sure to increment $_count.
-						$_count++;
-					}
-				}
-			}
-			// We search by metadata.
-			else
-			{
-				// Make sure to join metadata table.
-				$this->ci->db->join('metadata', 'metadata.guid = entities.id');
-
-				// Array ?
-				if (is_array($val))
-				{
-					foreach ($val as $_val)
-					{
-						$_method = 'like';
-						if (is_string($_val) && strpos($_val, '!') === 0)
-						{
-							$_method = 'not_like';
-							$_val = str_replace('!', '', $_val);
-						}
-
-						$this->ci->db->where('metadata.key', $key);
-						$this->ci->db->{$_method}('metadata.value', $_val, 'both');
-					}
-				}
-				// Single argument.
-				else
-				{
-					$_method = 'like';
-					if (is_string($val) && strpos($val, '!') === 0)
-					{
-						$_method = 'not_like';
-						$val = str_replace('!', '', $val);
-					}
-
-					$this->ci->db->where('metadata.key', $key);
-					$this->ci->db->{$_method}('metadata.value', $val, 'both');
-				}
-			}
-		}
-
-		// Is limit provided?
-		if ($limit > 0)
-		{
-			$this->ci->db->limit($limit, $offset);
-		}
-
-		// Proceed to join and get.
-		return $this->ci->db
-			->select('entities.*, groups.*')
-			->distinct()
-			->where('entities.type', 'group')
-			->join('groups', 'groups.guid = entities.id')
+		// Attempt to find groups.
+		$db_groups = $this->_parent
+			->find($field, $match, $limit, $offset, 'groups')
 			->get('entities')
 			->result();
+
+		// If we find any, we create their objects.
+		if ($db_groups)
+		{
+			foreach ($db_groups as $db_group)
+			{
+				$groups[] = new KB_Group($db_group);
+			}
+		}
+
+		return $groups;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Update a single group.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Fixing type where we were using inexistent model.
+	 * 
 	 * @access 	public
 	 * @param 	int 	$id
 	 * @param 	array 	$data
@@ -430,7 +340,8 @@ class Kbcore_groups extends CI_Driver implements CRUD_interface
 		}
 
 		// Update groups table.
-		if ( ! empty($group) && ! $this->ci->bkader_groups_m->update($id, $group))
+		if ( ! empty($group) 
+			&& ! $this->ci->db->update('groups', array('id' => $id), $group))
 		{
 			return false;
 		}
@@ -497,171 +408,320 @@ class Kbcore_groups extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Delete a single group by ID or username.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better usage.
 	 * @access 	public
-	 * @param 	mixed 	$id
+	 * @param 	mixed 	$id 	Group's ID, username or array of WHERE clause.
 	 * @return 	boolean
 	 */
 	public function delete($id)
 	{
-		return $this->_parent->entities->delete($id);
+		// Deleting by ID?
+		if (is_numeric($id))
+		{
+			return $this->delete_by('id', $id, 1, 0);
+		}
+
+		// Deleting by username?
+		if (is_string($id))
+		{
+			return $this->delete_by('username', $id, 1, 0);
+		}
+
+		// Otherwise, let the "delete_by" method handle the rest.
+		return $this->delete_by($id, null, 1, 0);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Delete multiple groups by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code and performance and to 
+	 *         			add optional limit and offset.
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
-	 * @return 	boolean
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
 	 */
-	public function delete_by($field = null, $match = null)
+	public function delete_by($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		// See if groups exist.
-		$groups = $this->get_many($field, $match);
+		// Let's find users first.
+		$groups = $this->get_many($field, $match, $limit, $offset);
 
-		// If there are any, we collect their IDs to send only one request.
-		if ($groups)
+		// If no group found, nothing to do.
+		if ( ! $groups)
 		{
-			$ids = array();
-			foreach ($groups as $group)
-			{
-				$ids[] = $group->id;
-			}
-
-			return $this->_parent->entities->delete_by('id', $ids);
+			return false;
 		}
 
-		return false;
+		// Let's prepare groups IDS.
+		$ids = array();
+		foreach ($groups as $group)
+		{
+			$ids[] = $group->id;
+		}
+
+		// Double check that we have IDs.
+		if (empty($ids))
+		{
+			return false;
+		}
+
+		return $this->_parent->entities->delete_by('id', $ids);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Completely remove a single group by ID or username.
+	 * Completely remove a single group by ID, username or arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to use "remove_by" method.
+	 * 
 	 * @access 	public
-	 * @param 	mixed 	$id
-	 * @return 	boolean
+	 * @param 	mixed 	$id 	Group's ID, username or array of WHERE clause
+	 * @return 	bool
 	 */
 	public function remove($id)
 	{
-		return $this->_parent->entities->remove($id);
+		// Removing by ID?
+		if (is_numeric($id))
+		{
+			return $this->remove_by('id', $id, 1, 0);
+		}
+
+		// Removing by username?
+		if (is_string($id))
+		{
+			return $this->remove_by('username', $id, 1, 0);
+		}
+
+		// Otherwise, let the "remove_by" method handle the rest.
+		return $this->remove_by($id);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Completely remove multiple groups by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better performance and to add optional
+	 *         			limit and offset.
+	 *
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
-	 * @return 	boolean
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
 	 */
-	public function remove_by($field = null, $match = null)
+	public function remove_by($field = null, $match = null, $limit = 0, $offset = 0)
 	{
 		// See if groups exist.
-		$groups = $this->get_many($field, $match);
+		$groups = $this->get_many($field, $match, $limit, $offset);
 
-		// If there are any, we collect their IDs to send only one request.
-		if ($groups)
+		// If not groups found, nothing to do.
+		if ( ! $groups)
 		{
-			$ids = array();
-			foreach ($groups as $group)
-			{
-				$ids[] = $group->id;
-			}
-
-			return $this->_parent->entities->remove_by('id', $ids);
+			return false;
 		}
 
-		return false;
+		// Collect groups IDs.
+		$ids = array();
+		foreach ($groups as $group)
+		{
+			$ids[] = $group->id;
+		}
+
+		// Double check users IDs.
+		if (empty($ids))
+		{
+			return false;
+		}
+
+		return $this->_parent->entities->remove_by('id', $ids);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Restore a previously soft-deleted group.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to use "restore_by" method.
+	 * 
 	 * @access 	public
-	 * @param 	int 	$id 	The group's ID.
-	 * @return 	boolean
+	 * @param 	mixed 	$id 	The user's ID, username or WHERE clause.
+	 * @return 	bool
 	 */
 	public function restore($id)
 	{
-		return $this->_parent->entities->restore($id);
+		// Restoring by ID?
+		if (is_numeric($id))
+		{
+			return $this->restore_by('id', $id, 1, 0);
+		}
+
+		// Restoring by username?
+		if (is_string($id))
+		{
+			return $this->restore_by('username', $id, 1, 0);
+		}
+
+		// Otherwise, let the "restore_by" method handle the rest.
+		return $this->restore_by($id);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Restore multiple or all soft-deleted groups.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better performance and to add optional
+	 *         			limit and offset.
+	 *
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
-	 * @return 	boolean
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
 	 */
-	public function restore_by($field = null, $match = null)
+	public function restore_by($field = null, $match = null, $limit = 0, $offset = 0)
 	{
 		// Collect groups.
-		$groups = $this->get_many($field, $match);
+		$groups = $this->get_many($field, $match, $limit, $offset);
 
-		if ($groups)
+		// If not groups found, nothing to do.
+		if (empty($groups))
 		{
-			$ids = array();
-			foreach ($groups as $group)
-			{
-				if ($group->deleted > 0)
-				{
-					$ids[] = $group->id;
-				}
-			}
-
-			// Restore groups in IDS.
-			return ( ! empty($ids))
-				? $this->_parent->entities->restore_by('id', $ids)
-				: false;
+			return false;
 		}
 
-		return false;
+		// Collect groups IDs.
+		$ids = array();
+		foreach ($groups as $group)
+		{
+			$ids[] = $group->id;
+		}
+
+		// Double check users IDs.
+		if (empty($ids))
+		{
+			return false;
+		}
+
+		return $this->_parent->entities->restore_by('id', $ids);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Count all groups.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code readability and performance
+	 *         			and to add optional limit and offset
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
 	 * @return 	int
 	 */
-	public function count($field = null, $match = null)
+	public function count($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		// Prepare where clause.
-		if ( ! empty($field))
-		{
-			(is_array($field)) OR $field = array($field => $match);
-			foreach ($field as $key => $val)
-			{
-				if (is_int($key) && is_array($val))
-				{
-					$this->ci->db->where($val);
-				}
-				elseif (is_array($val))
-				{
-					$this->ci->db->where_in($key, $val);
-				}
-				else
-				{
-					$this->ci->db->where($key, $val);
-				}
-			}
-		}
-
-		$rows = $this->ci->db
+		// We make sure to select only groups and join their table.
+		$this->ci->db
 			->where('entities.type', 'group')
-			->join('groups', 'groups.guid = entities.id')
+			->join('groups', 'groups.guid = entities.id');
+
+		// We run the query now.
+		$query = $this->_parent
+			->where($field, $match, $limit, $offset)
 			->get('entities');
 
-		return $rows->num_rows();
+		// We return the count.
+		return $query->num_rows();
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Deletes groups that have no existing records in "entities".
+	 *
+	 * @since 	1.3.0
+	 *
+	 * @access 	public
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
+	 */
+	public function purge($limit = 0, $offset = 0)
+	{
+		// We get existing groups IDs.
+		$entities_ids = $this->_parent->entities->get_ids('type', 'group');
+
+		// Let's see if there are groups.
+		$groups = $this->ci->db
+			->where_not_in('guid', $entities_ids)
+			->get('groups')
+			->result();
+
+		// No groups found? Nothing to do.
+		if ( ! $groups)
+		{
+			return false;
+		}
+
+		// Collect groups ids.
+		$ids = array();
+		foreach ($groups as $group)
+		{
+			$ids[] = $group->id;
+		}
+
+		// Double check $ids array.
+		if (empty($ids))
+		{
+			return false;
+		}
+
+		// We delete groups.
+		$this->ci->db
+			->where_in('guid', $ids)
+			->delete('groups');
+
+		// Hold the status for later use.
+		$status = ($this->ci->db->affected_rows() > 0);
+
+		// Deleted? Remove everything related to them.
+		if ($status === true)
+		{
+			// Remove any groups or objects owned by groups.
+			$this->_parent->entities->remove_by('parent_id', $ids);
+			$this->_parent->entities->remove_by('owner_id', $ids);
+
+			// Delete all groups metadata and variables.
+			$this->_parent->metadata->delete_by('guid', $ids);
+			$this->_parent->variables->delete_by('guid', $ids);
+
+			// Delete all groups relations.
+			$this->_parent->relations->delete_by('guid_from', $ids);
+			$this->_parent->relations->delete_by('guid_to', $ids);
+		}
+
+		// Return the process status.
+		return $status;
 	}
 
 	// ------------------------------------------------------------------------
@@ -730,6 +790,72 @@ if ( ! function_exists('add_group'))
 	function add_group(array $data = array())
 	{
 		return get_instance()->kbcore->groups->create($data);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_group'))
+{
+	/**
+	 * Retrieve a single group by ID, username or arbitrary WHERE clause.
+	 * @param 	mixed 	$id
+	 * @return 	object if found, else null.
+	 */
+	function get_group($id)
+	{
+		return get_instance()->kbcore->groups->get($id);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_group_by'))
+{
+	/**
+	 * Retrieve a single group by arbitrary WHERE clause.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	object if found, else null.
+	 */
+	function get_group_by($field, $match = null)
+	{
+		return get_instance()->kbcore->groups->get_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_groups'))
+{
+	/**
+	 * Retrieve multiple groups by arbitrary WHERE clause.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	array of objects if found, else null.
+	 */
+	function get_groups($field = null, $match = null, $limit = 0, $offset = 0)
+	{
+		return get_instance()->kbcore->groups->get_many($field, $match, $limit, $offset);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_all_groups'))
+{
+	/**
+	 * Retrieve all groups with optional limit and offset.
+	 * @access 	public
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	array of objects.
+	 */
+	function get_all_groups($limit = 0, $offset = 0)
+	{
+		return get_instance()->kbcore->groups->get_all($limit, $offset);
 	}
 }
 
@@ -820,13 +946,19 @@ if ( ! function_exists('delete_groups'))
 {
 	/**
 	 * Soft delete multiple or all groups by arbitrary WHERE clause.
+	 * 
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to follow method structure.
+	 * 
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
-	 * @return 	boolean
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
 	 */
-	function delete_groups($field = null, $match = null)
+	function delete_groups($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		return get_instance()->kbcore->groups->delete_by($field, $match);
+		return get_instance()->kbcore->groups->delete_by($field, $match, $limit, $offset);
 	}
 }
 
@@ -836,8 +968,8 @@ if ( ! function_exists('remove_group'))
 {
 	/**
 	 * Completely remove a group from database.
-	 * @param 	int 	$id 	The group's ID or username.
-	 * @return 	boolean
+	 * @param 	mixed 	$id 	The group's ID, username or WhERE clause.
+	 * @return 	bool
 	 */
 	function remove_group($id)
 	{
@@ -884,8 +1016,8 @@ if ( ! function_exists('restore_group'))
 	/**
 	 * Restore a previously soft-deleted group.
 	 * @access 	public
-	 * @param 	int 	$id 	The group's ID.
-	 * @return 	boolean
+	 * @param 	mixed 	$id 	The group's ID, username or WHERE clause.
+	 * @return 	bool
 	 */
 	function restore_group($id)
 	{
@@ -898,15 +1030,21 @@ if ( ! function_exists('restore_group'))
 if ( ! function_exists('restore_group_by'))
 {
 	/**
-	 * Restore multiple soft-deleted groups.
+	 * Restore multiple or all soft-deleted groups.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to follow method structure
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
-	 * @return 	boolean
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
 	 */
-	function restore_group_by($field, $match = null)
+	function restore_group_by($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		return get_instance()->kbcore->groups->restore_by($field, $match);
+		return get_instance()->kbcore->groups->restore_by($field, $match, $limit, $offset);
 	}
 }
 
@@ -916,14 +1054,20 @@ if ( ! function_exists('restore_groups'))
 {
 	/**
 	 * Restore multiple or all soft-deleted groups.
+	 * 
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to follow method structure
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
-	 * @return 	boolean
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
 	 */
-	function restore_groups($field, $match = null)
+	function restore_groups($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		return get_instance()->kbcore->groups->restore_by($field, $match);
+		return get_instance()->kbcore->groups->restore_by($field, $match, $limit, $offset);
 	}
 }
 
@@ -933,79 +1077,318 @@ if ( ! function_exists('count_groups'))
 {
 	/**
 	 * Count all groups on database with arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to follow method structure.
+	 * 
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
 	 * @return 	int
 	 */
-	function count_groups($field = null, $match = null)
+	function count_groups($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		return get_instance()->kbcore->groups->count($field, $match);
+		return get_instance()->kbcore->groups->count($field, $match, $limit, $offset);
 	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('get_group'))
+if ( ! function_exists('purge_groups'))
 {
 	/**
-	 * Retrieve a single group by ID, groupname, email or arbitrary
-	 * WHERE clause if $id an array.
-	 * @param 	mixed 	$id
-	 * @return 	object if found, else null.
-	 */
-	function get_group($id)
-	{
-		return get_instance()->kbcore->groups->get($id);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('get_group_by'))
-{
-	/**
-	 * Retrieve a single group by arbitrary WHERE clause.
-	 * @param 	mixed 	$field
-	 * @param 	mixed 	$match
-	 * @return 	object if found, else null.
-	 */
-	function get_group_by($field, $match = null)
-	{
-		return get_instance()->kbcore->groups->get_by($field, $match);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('get_groups'))
-{
-	/**
-	 * Retrieve multiple groups by arbitrary WHERE clause.
-	 * @param 	mixed 	$field
-	 * @param 	mixed 	$match
+	 * Delete groups that has no records in "entities" table.
+	 *
+	 * @since 	1.3.0
+	 *
 	 * @param 	int 	$limit
 	 * @param 	int 	$offset
-	 * @return 	array of objects if found, else null.
+	 * @return 	bool
 	 */
-	function get_groups($field = null, $match = null, $limit = 0, $offset = 0)
+	function purge_groups($limit = 0, $offset = 0)
 	{
-		return get_instance()->kbcore->groups->get_many($field, $match, $limit, $offset);
+		return get_instance()->kbcore->groups->purge($limit, $offset);
 	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('get_all_groups'))
+/**
+ * KB_Group
+ *
+ * @package 	CodeIgniter
+ * @subpackage 	Skeleton
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		1.3.0
+ */
+class KB_Group
 {
 	/**
-	 * Retrieve all groups with optional limit and offset.
+	 * Group data container.
+	 * @var 	object
+	 */
+	public $data;
+
+	/**
+	 * The group's ID.
+	 * @var 	integer
+	 */
+	public $id = 0;
+
+	/**
+	 * Array of data awaiting to be updated.
+	 * @var 	array
+	 */
+	protected $queue = array();
+	
+	/**
+	 * Constructor.
+	 *
+	 * Retrieves the group data and passes it to KB_Group::init().
+	 *
 	 * @access 	public
-	 * @param 	int 	$limit
-	 * @param 	int 	$offset
-	 * @return 	array of objects.
+	 * @param 	mixed	 $id 	Group's ID, username, object or WHERE clause.
+	 * @return 	void
 	 */
-	function get_all_groups($limit = 0, $offset = 0)
-	{
-		return get_instance()->kbcore->groups->get_all($limit, $offset);
+	public function __construct($id = 0) {
+		// In case we passed an instance of this object.
+		if ($id instanceof KB_Group) {
+			$this->init($id->data);
+			return;
+		}
+
+		// In case we passed the entity's object.
+		elseif (is_object($id)) {
+			$this->init($id);
+			return;
+		}
+
+		if ($id) {
+			$group = get_group($id);
+			if ($group) {
+				$this->init($group->data);
+			} else {
+				$this->data = new stdClass();
+			}
+		}
 	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Sets up object properties.
+	 * @access 	public
+	 * @param 	object
+	 */
+	public function init($group) {
+		$this->data = $group;
+		$this->id   = (int) $group->id;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for checking the existence of a property.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @return 	bool 	true if the property exists, else false.
+	 */
+	public function __isset($key) {
+		// Just make it possible to use ID.
+		if ('ID' == $key) {
+			$key = 'id';
+		}
+
+		// Found in $data container?
+		if (isset($this->data->{$key})) {
+			return true;
+		}
+
+		// Found as object property?
+		if (isset($this->{$key})) {
+			return true;
+		}
+
+		// Check for metadata.
+		return metadata_exists($this->id, $key);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for getting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key to retrieve.
+	 * @return 	mixed 	Depends on the property value.
+	 */
+	public function __get($key) {
+		// We start with an empty value.
+		$value = false;
+
+		// Is if found in $data object?
+		if (isset($this->data->{$key})) {
+			$value = $this->data->{$key};
+		}
+		// Otherwise, let's attempt to get the meta.
+		else {
+			$meta = get_meta($this->id, $key);
+			if ($meta) {
+				$value = $meta->value;
+			}
+		}
+
+		// Then we return the final result.
+		return $value;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for setting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @param 	mixed 	$value 	The property value.
+	 */
+	public function __set($key, $value) {
+		// Just make it possible to use ID.
+		if ('ID' == $key) {
+			$key = 'id';
+		}
+
+		// If found, we make sure to set it.
+		$this->data->{$key} = $value;
+
+		// We enqueue it for later use.
+		$this->queue[$key]  = $value;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for unsetting a property.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 */
+	public function __unset($key) {
+		// Remove it from $data object.
+		if (isset($this->data->{$key})) {
+			unset($this->data->{$key});
+		}
+
+		// We remove it if queued.
+		if (isset($this->queue[$key])) {
+			unset($this->queue[$key]);
+		}
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for checking the existence of an group in database.
+	 * @access 	public
+	 * @param 	none
+	 * @return 	bool 	true if the group exists, else false.
+	 */
+	public function exists() {
+		return ( ! empty($this->id));
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for checking the existence of a property.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @return 	bool 	true if the property exists, else false.
+	 */
+	public function has($key) {
+		return $this->__isset($key);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for setting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @param 	string 	$value 	The property value.
+	 * @return 	object 	we return the object to make it chainable.
+	 */
+	public function set($key, $value) {
+		$this->__set($key, $value);
+		return $this;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for getting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @return 	mixed 	Depends on the property's value.
+	 */
+	public function get($key) {
+		return $this->__get($key);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for updating the group in database.
+	 * @access 	public
+	 * @param 	string 	$key 	The field name.
+	 * @param 	mixed 	$value 	The field value.
+	 * @return 	bool 	true if updated, else false.
+	 */
+	public function update($key, $value) {
+		// Keep the status in order to dequeue the key.
+		$status = update_group($this->id, array($key => $value));
+
+		if ($status === true && isset($this->queue[$key])) {
+			unset($this->queue[$key]);
+		}
+
+		return $status;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for saving anything changes.
+	 * @access 	public
+	 * @param 	void
+	 * @return 	bool 	true if updated, else false.
+	 */
+	public function save() {
+		// We start if FALSE status.
+		$status = false;
+
+		// If there are enqueued changes, apply them.
+		if ( ! empty($this->queue)) {
+			$status = update_group($this->id, $this->queue);
+
+			// If the update was successful, we reset $queue array.
+			if ($status === true) {
+				$this->queue = array();
+			}
+		}
+
+		// We return the final status.
+		return $status;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for retrieving the array of data waiting to be saved.
+	 * @access 	public
+	 * @return 	array
+	 */
+	public function dirty() {
+		return $this->queue;
+	}
+
 }
