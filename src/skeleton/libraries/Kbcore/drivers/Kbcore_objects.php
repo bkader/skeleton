@@ -341,7 +341,7 @@ class Kbcore_objects extends CI_Driver implements CRUD_interface
 
 		// Update objects table.
 		if ( ! empty($object) 
-			&& ! $this->ci->db->update('objects', $object, array('id' => $id)))
+			&& ! $this->ci->db->update('objects', $object, array('guid' => $id)))
 		{
 			return false;
 		}

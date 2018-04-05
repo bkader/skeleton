@@ -341,7 +341,7 @@ class Kbcore_groups extends CI_Driver implements CRUD_interface
 
 		// Update groups table.
 		if ( ! empty($group) 
-			&& ! $this->ci->db->update('groups', $group, array('id' => $id)))
+			&& ! $this->ci->db->update('groups', $group, array('guid' => $id)))
 		{
 			return false;
 		}
