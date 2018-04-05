@@ -411,6 +411,7 @@ class Kbcore_groups extends CI_Driver implements CRUD_interface
 	 *
 	 * @since 	1.0.0
 	 * @since 	1.3.0 	Rewritten for better usage.
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$id 	Group's ID, username or array of WHERE clause.
 	 * @return 	boolean
