@@ -69,6 +69,7 @@ $lang['plugins_deactivate_error']   = 'Unable to deactivate plugin.';
 
 $lang['plugins_delete_success'] = 'Plugin successfully deleted.';
 $lang['plugins_delete_error']   = 'Unable to delete plugin.';
+$lang['plugins_delete_confirm']   = 'Are you sure you want to delete %s at its data?';
 
 $lang['plugin_settings_success'] = 'Plugin settings successfully updated.';
 $lang['plugin_settings_error']   = 'Unable to update plugin settings.';
