@@ -49,24 +49,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @version 	1.3.0
  */
 class Admin extends Admin_Controller
 {
-	/**
-	 * Class constructor.
-	 * @return 	void
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-
-		// Load users admin language.
-		$this->load->language('users/users_admin');
-	}
-
-	// ------------------------------------------------------------------------
-
 	/**
 	 * List all site users.
 	 * @access 	public

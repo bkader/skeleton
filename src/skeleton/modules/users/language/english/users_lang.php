@@ -97,7 +97,7 @@ $lang['location'] = 'Location';
 // ------------------------------------------------------------------------
 // Registration page.
 // ------------------------------------------------------------------------
-$lang['us_register_title'] = 'Register';
+$lang['us_register_title']   = 'Register';
 $lang['us_register_heading'] = 'Create Account';
 
 $lang['us_register_success'] = 'Account successfully created. You may now login.';
@@ -114,7 +114,7 @@ $lang['us_activate_success']     = 'Account successfully activated. You may now 
 // ------------------------------------------------------------------------
 // Resend activation link.
 // ------------------------------------------------------------------------
-$lang['us_resend_title'] = 'Resend Activation Link';
+$lang['us_resend_title']   = 'Resend Activation Link';
 $lang['us_resend_heading'] = 'Resend Link';
 
 $lang['us_resend_notice']  = 'Enter your username or email address and we will send you a link to activate your account.';
@@ -165,3 +165,54 @@ $lang['us_restore_notice']  = 'Enter your username/email address and password to
 $lang['us_restore_deleted'] = 'Only deleted accounts can be restored.';
 $lang['us_restore_error']   = 'Unable to restore account.';
 $lang['us_restore_success'] = 'Account successfully restored. Welcome back!';
+
+// ========================================================================
+// Dashboard lines.
+// ========================================================================
+
+$lang['users'] = 'Users';
+$lang['user']  = 'User';
+
+// Main dashboard heading.
+$lang['us_manage_users'] = 'Manage Users';
+
+// Users actions.
+$lang['add_user']        = 'Add User';
+$lang['edit_user']       = 'Edit User';
+$lang['delete_user']     = 'Delete User';
+$lang['activate_user']   = 'Activate User';
+$lang['deactivate_user'] = 'Deactivate User';
+
+// Users roles.
+$lang['role']  = 'Role';
+$lang['roles'] = 'Roles';
+
+$lang['regular']       = 'Regular';
+$lang['premium']       = 'Premium';
+$lang['author']        = 'Author';
+$lang['editor']        = 'Editor';
+$lang['admin']         = 'Admin';
+$lang['administrator'] = 'Administrator';
+
+// Users statuses.
+$lang['active']   = 'Active';
+$lang['inactive'] = 'Inactive';
+
+// Confirmation messages.
+$lang['us_admin_activate_confirm']   = 'Are you sure you want to activate this user?';
+$lang['us_admin_deactivate_confirm'] = 'Are you sure you want to deactivate this user?';
+$lang['us_admin_delete_confirm']     = 'Are you sure you want to delete this user?';
+
+// Success messages.
+$lang['us_admin_add_success']        = 'User successfully created.';
+$lang['us_admin_edit_success']       = 'User successfully updated.';
+$lang['us_admin_activate_success']   = 'User successfully activated.';
+$lang['us_admin_deactivate_success'] = 'User successfully deactivated.';
+$lang['us_admin_delete_success']     = 'User successfully deleted.';
+
+// Error messages.
+$lang['us_admin_add_error']        = 'Unable to create user.';
+$lang['us_admin_edit_error']       = 'Unable to update user.';
+$lang['us_admin_activate_error']   = 'Unable to activate user.';
+$lang['us_admin_deactivate_error'] = 'Unable to deactivate user.';
+$lang['us_admin_delete_error']     = 'Unable to delete user.';
