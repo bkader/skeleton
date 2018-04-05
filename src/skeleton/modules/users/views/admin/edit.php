@@ -35,7 +35,6 @@
  * @link 		https://github.com/bkader
  * @since 		Version 1.0.0
  */
-
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
@@ -48,11 +47,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @version 	1.3.0
  */
-?><h2 class="page-header"><?php _e('edit_user') ?>: <?php echo $user->username; ?> <?php echo admin_anchor('users', lang('us_manage_users'), 'class="btn btn-primary btn-sm pull-right"') ?></h2>
+?><h2 class="page-header clearfix"><?php _e('edit_user') ?>: <?php echo $user->username; ?> <?php echo admin_anchor('users', lang('us_manage_users'), 'class="btn btn-primary btn-sm pull-right"') ?></h2>
 <div class="row">
-	<div class="col-md-4 col-md-offset-4">
+	<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<?php echo form_open('admin/users/edit/'.$user->id, 'role="form"', $hidden) ?>
@@ -76,6 +75,3 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		</div>
 	</div>
 </div>
-<?php
-/* End of file edit.php */
-/* Location: ./content/modules/users/views/admin/edit.php */
