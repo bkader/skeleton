@@ -63,22 +63,61 @@ class Kbcore_activities extends CI_Driver implements CRUD_interface
 		log_message('info', 'Kbcore_activities Class Initialized');
 	}
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * Generates the SELECT portion of the query
+     *
+     * @since 	1.3.0
+     */
+    public function select($select = '*', $escape = null)
+    {
+    	$this->ci->db->select($select, $escape);
+    	return $this;
+    }
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Return an array of activities table fields.
+	 *
+	 * @since 	1.3.0
+	 * 
+	 * @access 	public
+	 * @param 	none
+	 * @return 	array
+	 */
+	public function fields()
+	{
+		if (isset($this->fields))
+		{
+			return $this->fields;
+		}
+
+		$this->fields = $this->ci->db->list_fields('activities');
+		return $this->fields;
+	}
+
 	// ------------------------------------------------------------------------
 	// CRUD Interface.
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Create a new activity log.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to make sure we are using HMVC.
+	 * 
 	 * @access 	public
 	 * @param 	array 	$data 	Array of data to insert.
-	 * @return 	int 	The new activity ID if created, else FALSE.
+	 * @return 	int 	The new activity ID if created, else false.
 	 */
 	public function create(array $data = array())
 	{
 		// Without $data, nothing to do.
 		if (empty($data))
 		{
-			return FALSE;
+			return false;
 		}
 
 		// Multiple activities?
@@ -94,7 +133,12 @@ class Kbcore_activities extends CI_Driver implements CRUD_interface
 		}
 
 		// Let's complete some data.
-		(isset($data['module']))     OR $data['module']     = $this->ci->router->fetch_module();
+		if ( ! isset($data['module']))
+		{
+			$data['module'] = (method_exists($this->ci->router, 'fetch_module'))
+				? $this->ci->router->fetch_module()
+				: null;
+		}
 		(isset($data['controller'])) OR $data['controller'] = $this->ci->router->fetch_class();
 		(isset($data['method']))     OR $data['method']     = $this->ci->router->fetch_method();
 		(isset($data['created_at'])) OR $data['created_at'] = time();
@@ -109,95 +153,99 @@ class Kbcore_activities extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Retrieve a single activity by its ID.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to use "get_by" method.
+	 * 
 	 * @access 	public
 	 * @param 	int 	$id 	The activity's ID.
-	 * @return 	object if found, else NULL.
+	 * @return 	object if found, else null.
 	 */
 	public function get($id)
 	{
-		return $this->get_by('id', $id);
+		// Getting by id?
+		if (is_numeric($id))
+		{
+			return $this->get_by('id', $id);
+		}
+
+		// Otherwise, let "get_by" method handle the rest.
+		return $this->get_by($id);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Retrieve a single activity by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code readability and performance.
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$field 	Column name or associative array.
-	 * @param 	mixed 	$match 	Comparison value, array or NULL.
-	 * @return 	object if found, else NULL.
+	 * @param 	mixed 	$match 	Comparison value, array or null.
+	 * @return 	object if found, else null.
 	 */
-	public function get_by($field, $match = NULL)
+	public function get_by($field, $match = null)
 	{
-		// The WHERE clause depends on $field and $match.
-		(is_array($field)) OR $field = array($field => $match);
+		// We start with an emoty $activity.
+		$activity = false;
 
-		foreach ($field as $key => $val)
-		{
-			if (is_int($key) && is_array($val))
-			{
-				$this->ci->db->where($val);
-			}
-			elseif (is_array($val))
-			{
-				$this->ci->db->where_in($key, $val);
-			}
-			else
-			{
-				$this->ci->db->where($key, $val);
-			}
-		}
-
-		// Order activities and retrieve the last one.
-		return $this->ci->db
+		// Attempt to get the entity from database.
+		$db_activity = $this->_parent
+			->where($field, $match, 1, 0)
 			->order_by('id', 'DESC')
 			->get('activities')
 			->row();
+
+		// If found, we create its object.
+		if ($db_activity)
+		{
+			$activity = new KB_Activity($db_activity);
+		}
+
+		// Return the final result.
+		return $activity;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Retrieve multiple activities by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code readability and performance
+	 *         			and of let the parent handle the WHERE clause.
+	 *
 	 * @access 	public
 	 * @param 	mixed 	$field 	Column name or associative array.
-	 * @param 	mixed 	$match 	Comparison value, array or NULL.
+	 * @param 	mixed 	$match 	Comparison value, array or null.
 	 * @param 	int 	$limit 	Limit to use for getting records.
 	 * @param 	int 	$offset Database offset.
-	 * @return 	array of objects if found, else NULL.
+	 * @return 	array of objects if found, else null.
 	 */
-	public function get_many($field = NULL, $match = NULL, $limit = 0, $offset = 0)
+	public function get_many($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		// Prepare where clause.
-		if ( ! empty($field))
-		{
-			// Turn things into an array.
-			(is_array($field)) OR $field = array($field => $match);
+		// We start with an empty $activities.
+		$activities = false;
 
-			foreach ($field as $key => $val)
+		// Attempt to get activities from database.
+		$db_activities = $this->_parent
+			->where($field, $match, $limit, $offset)
+			->get('activities')
+			->result();
+
+		// If we found any, create their objects.
+		if ($db_activities)
+		{
+			foreach ($db_activities as $db_activity)
 			{
-				if (is_int($key) && is_array($val))
-				{
-					$this->ci->db->where($val);
-				}
-				elseif (is_array($val))
-				{
-					$this->ci->db->where_in($key, $val);
-				}
-				else
-				{
-					$this->ci->db->where($key, $val);
-				}
+				$activities[] = new KB_Activity($db_activity);
 			}
 		}
 
-		// If there a limit?
-		if ($limit > 0)
-		{
-			$this->ci->db->limit($limit, $offset);
-		}
-
-		return $this->ci->db->get('activities')->result();
+		// Return the final result
+		return $activities;
 	}
 
 	// ------------------------------------------------------------------------
@@ -218,22 +266,37 @@ class Kbcore_activities extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Update a single entity by it's ID.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better usage.
+	 * 
 	 * @access 	public
-	 * @param 	int 	$id 	The activity's ID.
+	 * @param 	mixed 	$id 	The activity's ID or array of WHERE clause.
 	 * @param 	array 	$data 	Array of data to update.
-	 * @return 	boolean
+	 * @return 	bool
 	 */
 	public function update($id, array $data = array())
 	{
-		return $this->update_by(array('id', $id), $data);
+		// Updating by ID?
+		if (is_numeric($id))
+		{
+			return $this->update_by(array('id' => $id), $data);
+		}
+
+		// Otherwise, let "update_by" handle the rest.
+		return $this->update_by($id, $data);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Update a single or multiple activities by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten the let the parent handle WHERE clause.
+	 * 
 	 * @access 	public
-	 * @return 	boolean
+	 * @return 	bool
 	 */
 	public function update_by()
 	{
@@ -241,14 +304,14 @@ class Kbcore_activities extends CI_Driver implements CRUD_interface
 		$args = func_get_args();
 		if (empty($args))
 		{
-			return FALSE;
+			return false;
 		}
 
 		// Data to set is always the last argument.
 		$data = array_pop($args);
 		if ( ! is_array($data) OR empty($data))
 		{
-			return FALSE;
+			return false;
 		}
 
 		// Start updating/
@@ -260,21 +323,8 @@ class Kbcore_activities extends CI_Driver implements CRUD_interface
 			// Get rid of nasty deep array.
 			(is_array($args[0])) && $args = $args[0];
 
-			foreach ($args as $key => $val)
-			{
-				if (is_int($key) && is_array($val))
-				{
-					$this->ci->db->where($val);
-				}
-				elseif (is_array($val))
-				{
-					$this->ci->db->where_in($key, $val);
-				}
-				else
-				{
-					$this->ci->db->where($key, $val);
-				}
-			}
+			// Let the parent generate the WHERE clause.
+			$this->_parent->where($args);
 		}
 
 		// Proceed to update.
@@ -286,50 +336,51 @@ class Kbcore_activities extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Delete a single activity by its ID.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to use "delete_by" method.
+	 * 
 	 * @access 	public
-	 * @param 	int 	$id 	The activity's ID.
-	 * @return 	boolean
+	 * @param 	mixed 	$id 	The activity's ID or array of WHERE clause.
+	 * @return 	bool
 	 */
 	public function delete($id)
 	{
-		return $this->delete_by('id', $id);
+		// Deleting by ID?
+		if (is_numeric($id))
+		{
+			return $this->delete_by('id', $id, 1, 0);
+		}
+
+		// Otherwise, let "delete_by" handle the rest.
+		return $this->delete_by($id, null, 1, 0);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Delete multiple activities by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code readability and performance,
+	 *         			add optional limit and offset and let the parent handle
+	 *         			generating the WHERE clause.
+	 *
 	 * @access 	public
 	 * @param 	mixed 	$field 	Column name or associative array.
-	 * @param 	mixed 	$match 	Comparison value, array or NULL.
-	 * @return 	boolean
+	 * @param 	mixed 	$match 	Comparison value, array or null.
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool 	true if any records deleted, else false.
 	 */
-	public function delete_by($field = null, $match = null)
+	public function delete_by($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		if ( ! empty($field))
-		{
-			// Turn things into an array.
-			(is_array($field)) OR $field = array($field => $match);
+		// Let's delete.
+		$this->_parent
+			->where($field, $match, $limit, $offset)
+			->delete('activities');
 
-			foreach ($field as $key => $val)
-			{
-				if (is_int($key) && is_array($val))
-				{
-					$this->ci->db->where($val);
-				}
-				elseif (is_array($val))
-				{
-					$this->ci->db->where_in($key, $val);
-				}
-				else
-				{
-					$this->ci->db->where($key, $val);
-				}
-			}
-		}
-
-		// Proceed to deletion.
-		$this->ci->db->delete('activities');
+		// See if there are affected rows.
 		return ($this->ci->db->affected_rows() > 0);
 	}
 
@@ -348,7 +399,7 @@ class Kbcore_activities extends CI_Driver implements CRUD_interface
 		// Both user's ID and activity are required.
 		if (empty($user_id) OR empty($activity))
 		{
-			return FALSE;
+			return false;
 		}
 
 		return $this->create(array(
@@ -361,14 +412,24 @@ class Kbcore_activities extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Delete all activities of which the entity no longer exist.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code readability and performance,
+	 *         			and add optional limit and offset.
+	 *
 	 * @access 	public
-	 * @param 	none
-	 * @return 	boolean
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
 	 */
-	public function purge()
+	public function purge($limit = 0, $offset = 0)
 	{
-		$this->ci->db
-			->where_not_in('user_id', $this->_parent->entities->get_all_ids())
+		// Get only users IDS.
+		$ids = $this->_parent->entities->get_ids('type', 'user');
+
+		// Let's delete.
+		$this->_parent
+			->where('!user_id', $ids, $limit, $offset)
 			->delete('activities');
 
 		return ($this->ci->db->affected_rows() > 0);
@@ -400,8 +461,8 @@ if ( ! function_exists('get_activity'))
 	 * Retrieve a single activity by its ID or arbitrary WHERE clause.
 	 * @access 	public
 	 * @param 	mixed 	$field 	ID, column name or associative array.
-	 * @param 	mixed 	$match 	Comparison value, array or NULL.
-	 * @return 	object if found, else NULL.
+	 * @param 	mixed 	$match 	Comparison value, array or null.
+	 * @return 	object if found, else null.
 	 */
 	function get_activity($field, $match = null)
 	{
@@ -424,8 +485,8 @@ if ( ! function_exists('get_activities'))
 	 * retrieve all activities if no arguments passed.
 	 * @access 	public
 	 * @param 	mixed 	$field 	Column name or associative array.
-	 * @param 	mixed 	$match 	Comparison value, array or NULL.
-	 * @return 	array of objects if found, else NULL.
+	 * @param 	mixed 	$match 	Comparison value, array or null.
+	 * @return 	array of objects if found, else null.
 	 */
 	function get_activities($field = null, $match = null, $limit = 0, $offset = 0)
 	{
@@ -441,7 +502,7 @@ if ( ! function_exists('update_activity'))
 	 * Update a single activity by its ID.
 	 * @param 	int 	$id 	The activity's ID.
 	 * @param 	array 	$data 	Array of data to update.
-	 * @return 	boolean
+	 * @return 	bool
 	 */
 	function update_activity($id, array $data = array())
 	{
@@ -456,7 +517,7 @@ if ( ! function_exists('update_activity_by'))
 	/**
 	 * Update a single activity, multiple activities by arbitrary WHERE 
 	 * clause, or even update all activities.
-	 * @return 	boolean
+	 * @return 	bool
 	 */
 	function update_activity_by()
 	{
@@ -474,7 +535,7 @@ if ( ! function_exists('update_activities'))
 	/**
 	 * Update a single activity, multiple activities by arbitrary WHERE 
 	 * clause, or even update all activities.
-	 * @return 	boolean
+	 * @return 	bool
 	 */
 	function update_activities()
 	{
@@ -493,7 +554,7 @@ if ( ! function_exists('delete_activity'))
 	 * Delete a single activity by its ID.
 	 * @access 	public
 	 * @param 	int 	$id 	The activity's ID.
-	 * @return 	boolean
+	 * @return 	bool
 	 */
 	function delete_activity($id)
 	{
@@ -508,13 +569,19 @@ if ( ! function_exists('delete_activity_by'))
 	/**
 	 * Delete a single activity, multiple activities by arbitrary WHERE
 	 * clause or even delete all activities.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to follow method structure.
+	 * 
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
-	 * @return 	boolean
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
 	 */
-	function delete_activity_by($field = null, $match = null)
+	function delete_activity_by($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		return get_instance()->kbcore->activities->delete_by($field, $match);
+		return get_instance()->kbcore->activities->delete_by($field, $match, $limit, $offset);
 	}
 }
 
@@ -525,13 +592,18 @@ if ( ! function_exists('delete_activities'))
 	/**
 	 * Delete a single activity, multiple activities by arbitrary WHERE
 	 * clause or even delete all activities.
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to follow method structure.
+	 * 
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
-	 * @return 	boolean
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
 	 */
-	function delete_activities($field = null, $match = null)
+	function delete_activities($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		return get_instance()->kbcore->activities->delete_by($field, $match);
+		return get_instance()->kbcore->activities->delete_by($field, $match, $limit, $offset);
 	}
 }
 
@@ -541,10 +613,280 @@ if ( ! function_exists('purge_activities'))
 {
 	/**
 	 * Delete all activities of which the entity no longer exist.
-	 * @return 	boolean
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to follow method structuer.
+	 *
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
 	 */
-	function purge_activities()
+	function purge_activities($limit = 0, $offset = 0)
 	{
-		return get_instance()->kbcore->activities->purge();
+		return get_instance()->kbcore->activities->purge($limit, $offset);
 	}
+}
+
+// ------------------------------------------------------------------------
+
+/**
+ * KB_Activity
+ *
+ * @package 	CodeIgniter
+ * @subpackage 	Skeleton
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		1.3.0
+ */
+class KB_Activity
+{
+	/**
+	 * Activity data container.
+	 * @var 	object
+	 */
+	public $data;
+
+	/**
+	 * The activity's ID.
+	 * @var 	integer
+	 */
+	public $id = 0;
+
+	/**
+	 * Array of data awaiting to be updated.
+	 * @var 	array
+	 */
+	protected $queue = array();
+	
+	/**
+	 * Constructor.
+	 *
+	 * Retrieves the activity data and passes it to KB_Activity::init().
+	 *
+	 * @access 	public
+	 * @param 	mixed	 $id 	Activity's ID, activityname, object or WHERE clause.
+	 * @return 	void
+	 */
+	public function __construct($id = 0) {
+		// In case we passed an instance of this object.
+		if ($id instanceof KB_Activity) {
+			$this->init($id->data);
+			return;
+		}
+
+		// In case we passed the entity's object.
+		elseif (is_object($id)) {
+			$this->init($id);
+			return;
+		}
+
+		if ($id) {
+			$activity = get_activity($id);
+			if ($activity) {
+				$this->init($activity->data);
+			} else {
+				$this->data = new stdClass();
+			}
+		}
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Sets up object properties.
+	 * @access 	public
+	 * @param 	object
+	 */
+	public function init($activity) {
+		$this->data = $activity;
+		$this->id   = (int) $activity->id;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for checking the existence of a property.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @return 	bool 	true if the property exists, else false.
+	 */
+	public function __isset($key) {
+		// Just make it possible to use ID.
+		if ('ID' == $key) {
+			$key = 'id';
+		}
+
+		// Return true only if found in $data or this object.
+		return (isset($this->data->{$key}) OR isset($this->{$key}));
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for getting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key to retrieve.
+	 * @return 	mixed 	Depends on the property value.
+	 */
+	public function __get($key) {
+		// We start with an empty value.
+		$value = false;
+
+		// Is if found in $data object?
+		if (isset($this->data->{$key})) {
+			$value = $this->data->{$key};
+		}
+
+		// Then we return the final result.
+		return $value;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for setting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @param 	mixed 	$value 	The property value.
+	 */
+	public function __set($key, $value) {
+		// Just make it possible to use ID.
+		if ('ID' == $key) {
+			$key = 'id';
+		}
+
+		// If found, we make sure to set it.
+		$this->data->{$key} = $value;
+
+		// We enqueue it for later use.
+		$this->queue[$key]  = $value;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for unsetting a property.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 */
+	public function __unset($key) {
+		// Remove it from $data object.
+		if (isset($this->data->{$key})) {
+			unset($this->data->{$key});
+		}
+
+		// We remove it if queued.
+		if (isset($this->queue[$key])) {
+			unset($this->queue[$key]);
+		}
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for checking the existence of an activity in database.
+	 * @access 	public
+	 * @param 	none
+	 * @return 	bool 	true if the activity exists, else false.
+	 */
+	public function exists() {
+		return ( ! empty($this->id));
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for checking the existence of a property.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @return 	bool 	true if the property exists, else false.
+	 */
+	public function has($key) {
+		return $this->__isset($key);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for setting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @param 	string 	$value 	The property value.
+	 * @return 	object 	we return the object to make it chainable.
+	 */
+	public function set($key, $value) {
+		$this->__set($key, $value);
+		return $this;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for getting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @return 	mixed 	Depends on the property's value.
+	 */
+	public function get($key) {
+		return $this->__get($key);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for updating the activity in database.
+	 * @access 	public
+	 * @param 	string 	$key 	The field name.
+	 * @param 	mixed 	$value 	The field value.
+	 * @return 	bool 	true if updated, else false.
+	 */
+	public function update($key, $value) {
+		// Keep the status in order to dequeue the key.
+		$status = update_activity($this->id, array($key => $value));
+
+		if ($status === true && isset($this->queue[$key])) {
+			unset($this->queue[$key]);
+		}
+
+		return $status;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for saving anything changes.
+	 * @access 	public
+	 * @param 	void
+	 * @return 	bool 	true if updated, else false.
+	 */
+	public function save() {
+		// We start if FALSE status.
+		$status = false;
+
+		// If there are enqueued changes, apply them.
+		if ( ! empty($this->queue)) {
+			$status = update_activity($this->id, $this->queue);
+
+			// If the update was successful, we reset $queue array.
+			if ($status === true) {
+				$this->queue = array();
+			}
+		}
+
+		// We return the final status.
+		return $status;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for retrieving the array of data waiting to be saved.
+	 * @access 	public
+	 * @return 	array
+	 */
+	public function dirty() {
+		return $this->queue;
+	}
+
 }
