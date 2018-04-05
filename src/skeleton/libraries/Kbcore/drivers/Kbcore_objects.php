@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @version 	1.3.0
  */
 class Kbcore_objects extends CI_Driver implements CRUD_interface
 {
@@ -147,8 +147,12 @@ class Kbcore_objects extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Retrieve a single object by ID or username.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code readability and performance.
+	 * 
 	 * @access 	public
-	 * @param 	mixed 	$id 	The object's ID or username.
+	 * @param 	mixed 	$id 	The object's ID username or array of WHERE clause.
 	 * @return 	object if found, else null.
 	 */
 	public function get($id)
@@ -156,16 +160,16 @@ class Kbcore_objects extends CI_Driver implements CRUD_interface
 		// Getting by ID?
 		if (is_numeric($id))
 		{
-			return $this->get_by('entities.id', $id);
+			return $this->get_by('id', $id);
 		}
 
 		// Retrieve by username.
 		if (is_string($id))
 		{
-			return $this->get_by('entities.username', $id);
+			return $this->get_by('username', $id);
 		}
 
-		// Fall-back to get_by method.
+		// Otherwise, let the "get_by" method handle the rest.
 		return $this->get_by($id);
 	}
 
@@ -173,6 +177,10 @@ class Kbcore_objects extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Retrieve a single object by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten the let the parent handle WHERE clause.
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
@@ -180,37 +188,39 @@ class Kbcore_objects extends CI_Driver implements CRUD_interface
 	 */
 	public function get_by($field, $match = null)
 	{
-		// The WHERE clause depends on $field and $match.
-		(is_array($field)) OR $field = array($field => $match);
+		// We start with an empty object.
+		$object = false;
 
-		foreach ($field as $key => $val)
-		{
-			if (is_int($key) && is_array($val))
-			{
-				$this->ci->db->where($val);
-			}
-			elseif (is_array($val))
-			{
-				$this->ci->db->where_in($key, $val);
-			}
-			else
-			{
-				$this->ci->db->where($key, $val);
-			}
-		}
-
-		// Proceed to join and get.
-		return $this->ci->db
+		// We make sure to join "objects" table first.
+		$this->ci->db
 			->where('entities.type', 'object')
-			->join('objects', 'objects.guid = entities.id')
+			->join('objects', 'objects.guid = entities.id');
+
+		// Attempt to get the object from database.
+		$db_object = $this->_parent
+			->where($field, $match, 1, 0)
+			->order_by('entities.id', 'DESC')
 			->get('entities')
 			->row();
+
+		// If found, we create its object.
+		if ($db_object)
+		{
+			$object = new KB_Group($db_object);
+		}
+
+		// Return the final result.
+		return $object;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Retrieve multiple objects by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to let the parent handle WHERE clause.
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
@@ -220,39 +230,31 @@ class Kbcore_objects extends CI_Driver implements CRUD_interface
 	 */
 	public function get_many($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		// Prepare the WHERE clause.
-		if ( ! empty($field))
+		// We start with empty objects.
+		$objects = false;
+
+		// We make sure to select objects and join their table.
+		$this->ci->db
+			->where('entities.type', 'object')
+			->join('objects', 'objects.guid = entities.id');
+
+		// Attempt to retrieve objects from database.
+		$db_objects = $this->_parent
+			->where($field, $match, $limit, $offset)
+			->get('entities')
+			->result();
+
+		// If found any, create their objects.
+		if ($db_objects)
 		{
-			(is_array($field)) OR $field = array($field => $match);
-			foreach ($field as $key => $val)
+			foreach ($db_objects as $db_object)
 			{
-				if (is_int($key) && is_array($val))
-				{
-					$this->ci->db->where($val);
-				}
-				elseif (is_array($val))
-				{
-					$this->ci->db->where_in($key, $val);
-				}
-				else
-				{
-					$this->ci->db->where($key, $val);
-				}
+				$objects[] = new KB_Object($db_object);
 			}
 		}
 
-		// Is limit provided?
-		if ($limit > 0)
-		{
-			$this->ci->db->limit($limit, $offset);
-		}
-
-		// Proceed to join and get.
-		return $this->ci->db
-			->where('entities.type', 'object')
-			->join('objects', 'objects.guid = entities.id')
-			->get('entities')
-			->result();
+		// Return the final result.
+		return $objects;
 	}
 
 	// ------------------------------------------------------------------------
@@ -273,6 +275,10 @@ class Kbcore_objects extends CI_Driver implements CRUD_interface
 
 	/**
 	 * This method is used in order to search objects.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to let the parent handle WHERE clause.
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
@@ -282,131 +288,35 @@ class Kbcore_objects extends CI_Driver implements CRUD_interface
 	 */
 	public function find($field, $match = null, $limit = 0, $offset = 0)
 	{
-		// Make sure $field is always an array.
-		(is_array($field)) OR $field = array($field => $match);
-		
-		// Create our search query.
-		foreach ($field as $key => $val)
-		{
-			/**
-			 * If we are searching by a field that exists in one of
-			 * the main table: "entities" and "objects".
-			 */
-			if (in_array($key, $this->fields()) 
-				OR in_array($key, $this->_parent->entities->fields()))
-			{
-				// Searching by unique values? Use where instead.
-				if ( ! is_array($val) 
-					&& in_array($key, array('id', 'subtype', 'username', 'guid')))
-				{
-					$this->ci->db->where($key, $val);
-				}
-				// Did we provide a value, not an array?
-				elseif ( ! is_array($val))
-				{
-					// Use "like" or "not like" ?
-					$_method = 'like';
-					if (is_string($val) && strpos($val, '!') === 0)
-					{
-						$_method = 'not_like';
-						$val = str_replace('!', '', $val);
-					}
+		// We start with a empty $objects.
+		$objects = false;
 
-					// Proceed.
-					$this->ci->db->{$_method}($key, $val, 'both');
-				}
-				// In case of an array:
-				else
-				{
-					/**
-					 * Here we prepare the count so that the first element
-					 * will use "like" and all others will use "or_like".
-					 */
-					$_count = 1;
-
-					// Let's loop through elements:
-					foreach ($val as $_val)
-					{
-						// If we add "!" first, we make sure to use "not".
-						if (is_string($_val) && strpos($_val, '!') === 0)
-						{
-							$_method = ($_count == 1) ? 'not_like' : 'or_not_like';
-
-							// We make sure to remove the "!".
-							$_val = str_replace('!', '', $_val);
-						}
-						// Other wise, use default methods.
-						else
-						{
-							$_method = ($_count == 1) ? 'like' : 'or_like';
-						}
-
-						// Call the method.
-						$this->ci->db->{$_method}($key, $_val);
-
-						// We make sure to increment $_count.
-						$_count++;
-					}
-				}
-			}
-			// We search by metadata.
-			else
-			{
-				// Make sure to join metadata table.
-				$this->ci->db->join('metadata', 'metadata.guid = entities.id');
-
-				// Array ?
-				if (is_array($val))
-				{
-					foreach ($val as $_val)
-					{
-						$_method = 'like';
-						if (is_string($_val) && strpos($_val, '!') === 0)
-						{
-							$_method = 'not_like';
-							$_val = str_replace('!', '', $_val);
-						}
-
-						$this->ci->db->where('metadata.key', $key);
-						$this->ci->db->{$_method}('metadata.value', $_val, 'both');
-					}
-				}
-				// Single argument.
-				else
-				{
-					$_method = 'like';
-					if (is_string($val) && strpos($val, '!') === 0)
-					{
-						$_method = 'not_like';
-						$val = str_replace('!', '', $val);
-					}
-
-					$this->ci->db->where('metadata.key', $key);
-					$this->ci->db->{$_method}('metadata.value', $val, 'both');
-				}
-			}
-		}
-
-		// Is limit provided?
-		if ($limit > 0)
-		{
-			$this->ci->db->limit($limit, $offset);
-		}
-
-		// Proceed to join and get.
-		return $this->ci->db
-			->select('entities.*, objects.*')
-			->distinct()
-			->where('entities.type', 'object')
-			->join('objects', 'objects.guid = entities.id')
+		// Attempt to find objects.
+		$db_objects = $this->_parent
+			->find($field, $match, $limit, $offset, 'objects')
 			->get('entities')
 			->result();
+
+		// If we find any, we create their objects.
+		if ($db_objects)
+		{
+			foreach ($db_objects as $db_object)
+			{
+				$objects[] = new KB_Object($db_object);
+			}
+		}
+
+		return $objects;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Update a single object.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Fixing type where we were using inexistent model.
+	 * 
 	 * @access 	public
 	 * @param 	int 	$id
 	 * @param 	array 	$data
@@ -420,7 +330,6 @@ class Kbcore_objects extends CI_Driver implements CRUD_interface
 			return false;
 		}
 
-
 		// Split data.
 		list($entity, $object, $meta) = $this->_split_data($data);
 
@@ -431,17 +340,10 @@ class Kbcore_objects extends CI_Driver implements CRUD_interface
 		}
 
 		// Update objects table.
-		if ( ! empty($object))
+		if ( ! empty($object) 
+			&& ! $this->ci->db->update('objects', array('id' => $id), $object))
 		{
-			$this->ci->db
-				->where('guid', $id)
-				->set($object)
-				->update('objects');
-
-			if ($this->ci->db->affected_rows() <= 0)
-			{
-				return false;
-			}
+			return false;
 		}
 
 		// If there are any metadata to update.
@@ -458,7 +360,7 @@ class Kbcore_objects extends CI_Driver implements CRUD_interface
 	/**
 	 * Update all or multiple objects by arbitrary WHERE clause.
 	 * @access 	public
-	 * @return 	boolean
+	 * @return 	bool
 	 */
 	public function update_by()
 	{
@@ -475,7 +377,6 @@ class Kbcore_objects extends CI_Driver implements CRUD_interface
 		{
 			return false;
 		}
-
 
 		// Get objects
 		if ( ! empty($args))
@@ -506,172 +407,322 @@ class Kbcore_objects extends CI_Driver implements CRUD_interface
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Delete a single object by ID or username.
+	 * Delete a single object by ID, username or arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better usage.
+	 * 
 	 * @access 	public
-	 * @param 	mixed 	$id
-	 * @return 	boolean
+	 * @param 	mixed 	$id 	Object's ID, username or array of WHERE clause.
+	 * @return 	bool
 	 */
 	public function delete($id)
 	{
-		return $this->_parent->entities->delete($id);
+		// Deleting by ID?
+		if (is_numeric($id))
+		{
+			return $this->delete_by('id', $id, 1, 0);
+		}
+
+		// Deleting by username?
+		if (is_string($id))
+		{
+			return $this->delete_by('username', $id, 1, 0);
+		}
+
+		// Otherwise, let the "delete_by" method handle the rest.
+		return $this->delete_by($id, null, 1, 0);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Delete multiple objects by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code and performance and to 
+	 *         			add optional limit and offset.
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
-	 * @return 	boolean
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
 	 */
-	public function delete_by($field = null, $match = null)
+	public function delete_by($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		// See if objects exist.
-		$objects = $this->get_many($field, $match);
+		// Let's find users first.
+		$objects = $this->get_many($field, $match, $limit, $offset);
 
-		// If there are any, we collect their IDs to send only one request.
-		if ($objects)
+		// If no object found, nothing to do.
+		if ( ! $objects)
 		{
-			$ids = array();
-			foreach ($objects as $object)
-			{
-				$ids[] = $object->id;
-			}
-
-			return $this->_parent->entities->delete_by('id', $ids);
+			return false;
 		}
 
-		return false;
+		// Let's prepare objects IDS.
+		$ids = array();
+		foreach ($objects as $object)
+		{
+			$ids[] = $object->id;
+		}
+
+		// Double check that we have IDs.
+		if (empty($ids))
+		{
+			return false;
+		}
+
+		return $this->_parent->entities->delete_by('id', $ids);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Completely remove a single object by ID or username.
+	 * Completely remove a single object by ID, username or arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to use "remove_by" method.
+	 * 
 	 * @access 	public
-	 * @param 	mixed 	$id
-	 * @return 	boolean
+	 * @param 	mixed 	$id 	Object's ID, username or array of WHERE clause
+	 * @return 	bool
 	 */
 	public function remove($id)
 	{
-		return $this->remove_by('id', $id);
+		// Removing by ID?
+		if (is_numeric($id))
+		{
+			return $this->remove_by('id', $id, 1, 0);
+		}
+
+		// Removing by username?
+		if (is_string($id))
+		{
+			return $this->remove_by('username', $id, 1, 0);
+		}
+
+		// Otherwise, let the "remove_by" method handle the rest.
+		return $this->remove_by($id, null, 1, 0);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Completely remove multiple objects by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better performance and to add optional
+	 *         			limit and offset.
+	 *
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
-	 * @return 	boolean
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
 	 */
-	public function remove_by($field = null, $match = null)
+	public function remove_by($field = null, $match = null, $limit = 0, $offset = 0)
 	{
 		// See if objects exist.
-		$objects = $this->get_many($field, $match);
+		$objects = $this->get_many($field, $match, $limit, $offset);
 
-		// If there are any, we collect their IDs to send only one request.
-		if ($objects)
+		// If not objects found, nothing to do.
+		if ( ! $objects)
 		{
-			$ids = array();
-			foreach ($objects as $object)
-			{
-				$ids[] = $object->id;
-			}
-
-			return $this->_parent->entities->remove_by('id', $ids);
+			return false;
 		}
 
-		return false;
+		// Collect objects IDs.
+		$ids = array();
+		foreach ($objects as $object)
+		{
+			$ids[] = $object->id;
+		}
+
+		// Double check users IDs.
+		if (empty($ids))
+		{
+			return false;
+		}
+
+		return $this->_parent->entities->remove_by('id', $ids);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Restore a previously soft-deleted object.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to use "restore_by" method.
+	 * 
 	 * @access 	public
-	 * @param 	int 	$id 	The object's ID.
-	 * @return 	boolean
+	 * @param 	mixed 	$id 	The user's ID, username or WHERE clause.
+	 * @return 	bool
 	 */
 	public function restore($id)
 	{
-		return $this->_parent->entities->restore($id);
+		// Restoring by ID?
+		if (is_numeric($id))
+		{
+			return $this->restore_by('id', $id, 1, 0);
+		}
+
+		// Restoring by username?
+		if (is_string($id))
+		{
+			return $this->restore_by('username', $id, 1, 0);
+		}
+
+		// Otherwise, let the "restore_by" method handle the rest.
+		return $this->restore_by($id);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Restore multiple or all soft-deleted objects.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better performance and to add optional
+	 *         			limit and offset.
+	 *
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
-	 * @return 	boolean
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
 	 */
-	public function restore_by($field = null, $match = null)
+	public function restore_by($field = null, $match = null, $limit = 0, $offset = 0)
 	{
 		// Collect objects.
-		$objects = $this->get_many($field, $match);
+		$objects = $this->get_many($field, $match, $limit, $offset);
 
-		if ($objects)
+		// If not objects found, nothing to do.
+		if (empty($objects))
 		{
-			$ids = array();
-			foreach ($objects as $object)
-			{
-				if ($object->deleted > 0)
-				{
-					$ids[] = $object->id;
-				}
-			}
-
-			// Restore objects in IDS.
-			return ( ! empty($ids))
-				? $this->_parent->entities->restore_by('id', $ids)
-				: false;
+			return false;
 		}
 
-		return false;
+		// Collect objects IDs.
+		$ids = array();
+		foreach ($objects as $object)
+		{
+			$ids[] = $object->id;
+		}
+
+		// Double check users IDs.
+		if (empty($ids))
+		{
+			return false;
+		}
+
+		return $this->_parent->entities->restore_by('id', $ids);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Count all objects.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code readability and performance
+	 *         			and to add optional limit and offset
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
 	 * @return 	int
 	 */
-	public function count($field = null, $match = null)
+	public function count($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		// Prepare where clause.
-		if ( ! empty($field))
-		{
-			(is_array($field)) OR $field = array($field => $match);
-			foreach ($field as $key => $val)
-			{
-				if (is_int($key) && is_array($val))
-				{
-					$this->ci->db->where($val);
-				}
-				elseif (is_array($val))
-				{
-					$this->ci->db->where_in($key, $val);
-				}
-				else
-				{
-					$this->ci->db->where($key, $val);
-				}
-			}
-		}
-
-		$rows = $this->ci->db
+		// We make sure to select only objects and join their table.
+		$this->ci->db
 			->where('entities.type', 'object')
-			->join('objects', 'objects.guid = entities.id')
+			->join('objects', 'objects.guid = entities.id');
+
+		// We run the query now.
+		$query = $this->_parent
+			->where($field, $match, $limit, $offset)
 			->get('entities');
 
-		return $rows->num_rows();
+		// We return the count.
+		return $query->num_rows();
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Deletes objects that have no existing records in "entities".
+	 *
+	 * @since 	1.3.0
+	 *
+	 * @access 	public
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
+	 */
+	public function purge($limit = 0, $offset = 0)
+	{
+		// We get existing objects IDs.
+		$entities_ids = $this->_parent->entities->get_ids('type', 'object');
+
+		// Let's see if there are objects.
+		$objects = $this->ci->db
+			->where_not_in('guid', $entities_ids)
+			->get('objects')
+			->result();
+
+		// No objects found? Nothing to do.
+		if ( ! $objects)
+		{
+			return false;
+		}
+
+		// Collect objects ids.
+		$ids = array();
+		foreach ($objects as $object)
+		{
+			$ids[] = $object->id;
+		}
+
+		// Double check $ids array.
+		if (empty($ids))
+		{
+			return false;
+		}
+
+		// We delete objects.
+		$this->ci->db
+			->where_in('guid', $ids)
+			->delete('objects');
+
+		// Hold the status for later use.
+		$status = ($this->ci->db->affected_rows() > 0);
+
+		// Deleted? Remove everything related to them.
+		if ($status === true)
+		{
+			// Remove any objects or objects owned by objects.
+			$this->_parent->entities->remove_by('parent_id', $ids);
+			$this->_parent->entities->remove_by('owner_id', $ids);
+
+			// Delete all objects metadata and variables.
+			$this->_parent->metadata->delete_by('guid', $ids);
+			$this->_parent->variables->delete_by('guid', $ids);
+
+			// Delete all objects relations.
+			$this->_parent->relations->delete_by('guid_from', $ids);
+			$this->_parent->relations->delete_by('guid_to', $ids);
+		}
+
+		// Return the process status.
+		return $status;
 	}
 
 	// ------------------------------------------------------------------------
@@ -698,7 +749,7 @@ class Kbcore_objects extends CI_Driver implements CRUD_interface
 			{
 				$_data[0][$key] = $val;
 			}
-			// Groups table.
+			// Objects table.
 			elseif (in_array($key, $this->fields()))
 			{
 				$_data[1][$key] = $val;
@@ -745,221 +796,10 @@ if ( ! function_exists('add_object'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('update_object'))
-{
-	/**
-	 * Update a single object by ID.
-	 * @param 	int 	$id 	The object's ID.
-	 * @param 	array 	$data 	Array of data to set.
-	 * @return 	boolean
-	 */
-	function update_object($id, array $data = array())
-	{
-		return get_instance()->kbcore->objects->update($id, $data);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('update_object_by'))
-{
-	/**
-	 * Update a single, all or multiple objects by arbitrary WHERE clause.
-	 * @return 	boolean
-	 */
-	function update_object_by()
-	{
-		return call_user_func_array(
-			array(get_instance()->kbcore->objects, 'update_by'),
-			func_get_args()
-		);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('update_objects'))
-{
-	/**
-	 * Update a single, all or multiple objects by arbitrary WHERE clause.
-	 * @return 	boolean
-	 */
-	function update_objects()
-	{
-		return call_user_func_array(
-			array(get_instance()->kbcore->objects, 'update_by'),
-			func_get_args()
-		);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('delete_object'))
-{
-	/**
-	 * Delete a single object by ID or username.
-	 * @param 	mixed 	$id 	ID or username.
-	 * @return 	boolean
-	 */
-	function delete_object($id)
-	{
-		return get_instance()->kbcore->objects->delete($id);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('delete_object_by'))
-{
-	/**
-	 * Soft delete multiple objects by arbitrary WHERE clause.
-	 * @param 	mixed 	$field
-	 * @param 	mixed 	$match
-	 * @return 	boolean
-	 */
-	function delete_object_by($field, $match = null)
-	{
-		return get_instance()->kbcore->objects->delete_by($field, $match);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('delete_objects'))
-{
-	/**
-	 * Soft delete multiple or all objects by arbitrary WHERE clause.
-	 * @param 	mixed 	$field
-	 * @param 	mixed 	$match
-	 * @return 	boolean
-	 */
-	function delete_objects($field = null, $match = null)
-	{
-		return get_instance()->kbcore->objects->delete_by($field, $match);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('remove_object'))
-{
-	/**
-	 * Completely remove a object from database.
-	 * @param 	int 	$id 	The object's ID or username.
-	 * @return 	boolean
-	 */
-	function remove_object($id)
-	{
-		return get_instance()->kbcore->objects->remove($id);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('remove_object_by'))
-{
-	/**
-	 * Completely remove multiple objects from database.
-	 * @param 	mixed 	$field
-	 * @param 	mixed 	$match
-	 * @return 	boolean
-	 */
-	function remove_object_by($field, $match = null)
-	{
-		return get_instance()->kbcore->objects->remove_by($field, $match);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('remove_objects'))
-{
-	/**
-	 * Completely remove multiple or all objects from database.
-	 * @param 	mixed 	$field
-	 * @param 	mixed 	$match
-	 * @return 	boolean
-	 */
-	function remove_objects($field = null, $match = null)
-	{
-		return get_instance()->kbcore->objects->remove_by($field, $match);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('restore_object'))
-{
-	/**
-	 * Restore a previously soft-deleted object.
-	 * @access 	public
-	 * @param 	int 	$id 	The object's ID.
-	 * @return 	boolean
-	 */
-	function restore_object($id)
-	{
-		return get_instance()->kbcore->objects->restore($id);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('restore_object_by'))
-{
-	/**
-	 * Restore multiple soft-deleted objects.
-	 * @access 	public
-	 * @param 	mixed 	$field
-	 * @param 	mixed 	$match
-	 * @return 	boolean
-	 */
-	function restore_object_by($field, $match = null)
-	{
-		return get_instance()->kbcore->objects->restore_by($field, $match);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('restore_objects'))
-{
-	/**
-	 * Restore multiple or all soft-deleted objects.
-	 * @access 	public
-	 * @param 	mixed 	$field
-	 * @param 	mixed 	$match
-	 * @return 	boolean
-	 */
-	function restore_objects($field, $match = null)
-	{
-		return get_instance()->kbcore->objects->restore_by($field, $match);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('count_objects'))
-{
-	/**
-	 * Count all objects on database with arbitrary WHERE clause.
-	 * @param 	mixed 	$field
-	 * @param 	mixed 	$match
-	 * @return 	int
-	 */
-	function count_objects($field = null, $match = null)
-	{
-		return get_instance()->kbcore->objects->count($field, $match);
-	}
-}
-
-// ------------------------------------------------------------------------
-
 if ( ! function_exists('get_object'))
 {
 	/**
-	 * Retrieve a single object by ID, objectname, email or arbitrary
-	 * WHERE clause if $id an array.
+	 * Retrieve a single object by ID, username or arbitrary WHERE clause.
 	 * @param 	mixed 	$id
 	 * @return 	object if found, else null.
 	 */
@@ -1018,4 +858,538 @@ if ( ! function_exists('get_all_objects'))
 	{
 		return get_instance()->kbcore->objects->get_all($limit, $offset);
 	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('update_object'))
+{
+	/**
+	 * Update a single object by ID.
+	 * @param 	int 	$id 	The object's ID.
+	 * @param 	array 	$data 	Array of data to set.
+	 * @return 	bool
+	 */
+	function update_object($id, array $data = array())
+	{
+		return get_instance()->kbcore->objects->update($id, $data);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('update_object_by'))
+{
+	/**
+	 * Update a single, all or multiple objects by arbitrary WHERE clause.
+	 * @return 	bool
+	 */
+	function update_object_by()
+	{
+		return call_user_func_array(
+			array(get_instance()->kbcore->objects, 'update_by'),
+			func_get_args()
+		);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('update_objects'))
+{
+	/**
+	 * Update a single, all or multiple objects by arbitrary WHERE clause.
+	 * @return 	bool
+	 */
+	function update_objects()
+	{
+		return call_user_func_array(
+			array(get_instance()->kbcore->objects, 'update_by'),
+			func_get_args()
+		);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('delete_object'))
+{
+	/**
+	 * Delete a single object by ID or username.
+	 * @param 	mixed 	$id 	ID or username.
+	 * @return 	bool
+	 */
+	function delete_object($id)
+	{
+		return get_instance()->kbcore->objects->delete($id);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('delete_object_by'))
+{
+	/**
+	 * Soft delete multiple objects by arbitrary WHERE clause.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	bool
+	 */
+	function delete_object_by($field, $match = null)
+	{
+		return get_instance()->kbcore->objects->delete_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('delete_objects'))
+{
+	/**
+	 * Soft delete multiple or all objects by arbitrary WHERE clause.
+	 * 
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to follow method structure.
+	 * 
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
+	 */
+	function delete_objects($field = null, $match = null, $limit = 0, $offset = 0)
+	{
+		return get_instance()->kbcore->objects->delete_by($field, $match, $limit, $offset);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('remove_object'))
+{
+	/**
+	 * Completely remove a object from database.
+	 * @param 	mixed 	$id 	The object's ID, username or WhERE clause.
+	 * @return 	bool
+	 */
+	function remove_object($id)
+	{
+		return get_instance()->kbcore->objects->remove($id);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('remove_object_by'))
+{
+	/**
+	 * Completely remove multiple objects from database.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	bool
+	 */
+	function remove_object_by($field, $match = null)
+	{
+		return get_instance()->kbcore->objects->remove_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('remove_objects'))
+{
+	/**
+	 * Completely remove multiple or all objects from database.
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @return 	bool
+	 */
+	function remove_objects($field = null, $match = null)
+	{
+		return get_instance()->kbcore->objects->remove_by($field, $match);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('restore_object'))
+{
+	/**
+	 * Restore a previously soft-deleted object.
+	 * @access 	public
+	 * @param 	mixed 	$id 	The object's ID, username or WHERE clause.
+	 * @return 	bool
+	 */
+	function restore_object($id)
+	{
+		return get_instance()->kbcore->objects->restore($id);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('restore_object_by'))
+{
+	/**
+	 * Restore multiple or all soft-deleted objects.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to follow method structure
+	 * 
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
+	 */
+	function restore_object_by($field = null, $match = null, $limit = 0, $offset = 0)
+	{
+		return get_instance()->kbcore->objects->restore_by($field, $match, $limit, $offset);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('restore_objects'))
+{
+	/**
+	 * Restore multiple or all soft-deleted objects.
+	 * 
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to follow method structure
+	 * 
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
+	 */
+	function restore_objects($field = null, $match = null, $limit = 0, $offset = 0)
+	{
+		return get_instance()->kbcore->objects->restore_by($field, $match, $limit, $offset);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('count_objects'))
+{
+	/**
+	 * Count all objects on database with arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to follow method structure.
+	 * 
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	int
+	 */
+	function count_objects($field = null, $match = null, $limit = 0, $offset = 0)
+	{
+		return get_instance()->kbcore->objects->count($field, $match, $limit, $offset);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('purge_objects'))
+{
+	/**
+	 * Delete objects that has no records in "entities" table.
+	 *
+	 * @since 	1.3.0
+	 *
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
+	 */
+	function purge_objects($limit = 0, $offset = 0)
+	{
+		return get_instance()->kbcore->objects->purge($limit, $offset);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+/**
+ * KB_Object
+ *
+ * @package 	CodeIgniter
+ * @subpackage 	Skeleton
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		1.3.0
+ */
+class KB_Object
+{
+	/**
+	 * Object data container.
+	 * @var 	object
+	 */
+	public $data;
+
+	/**
+	 * The object's ID.
+	 * @var 	integer
+	 */
+	public $id = 0;
+
+	/**
+	 * Array of data awaiting to be updated.
+	 * @var 	array
+	 */
+	protected $queue = array();
+	
+	/**
+	 * Constructor.
+	 *
+	 * Retrieves the object data and passes it to KB_Object::init().
+	 *
+	 * @access 	public
+	 * @param 	mixed	 $id 	Object's ID, username, object or WHERE clause.
+	 * @return 	void
+	 */
+	public function __construct($id = 0) {
+		// In case we passed an instance of this object.
+		if ($id instanceof KB_Object) {
+			$this->init($id->data);
+			return;
+		}
+
+		// In case we passed the entity's object.
+		elseif (is_object($id)) {
+			$this->init($id);
+			return;
+		}
+
+		if ($id) {
+			$object = get_object($id);
+			if ($object) {
+				$this->init($object->data);
+			} else {
+				$this->data = new stdClass();
+			}
+		}
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Sets up object properties.
+	 * @access 	public
+	 * @param 	object
+	 */
+	public function init($object) {
+		$this->data = $object;
+		$this->id   = (int) $object->id;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for checking the existence of a property.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @return 	bool 	true if the property exists, else false.
+	 */
+	public function __isset($key) {
+		// Just make it possible to use ID.
+		if ('ID' == $key) {
+			$key = 'id';
+		}
+
+		// Found in $data container?
+		if (isset($this->data->{$key})) {
+			return true;
+		}
+
+		// Found as object property?
+		if (isset($this->{$key})) {
+			return true;
+		}
+
+		// Check for metadata.
+		return metadata_exists($this->id, $key);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for getting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key to retrieve.
+	 * @return 	mixed 	Depends on the property value.
+	 */
+	public function __get($key) {
+		// We start with an empty value.
+		$value = false;
+
+		// Is if found in $data object?
+		if (isset($this->data->{$key})) {
+			$value = $this->data->{$key};
+		}
+		// Otherwise, let's attempt to get the meta.
+		else {
+			$meta = get_meta($this->id, $key);
+			if ($meta) {
+				$value = $meta->value;
+			}
+		}
+
+		// Then we return the final result.
+		return $value;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for setting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @param 	mixed 	$value 	The property value.
+	 */
+	public function __set($key, $value) {
+		// Just make it possible to use ID.
+		if ('ID' == $key) {
+			$key = 'id';
+		}
+
+		// If found, we make sure to set it.
+		$this->data->{$key} = $value;
+
+		// We enqueue it for later use.
+		$this->queue[$key]  = $value;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for unsetting a property.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 */
+	public function __unset($key) {
+		// Remove it from $data object.
+		if (isset($this->data->{$key})) {
+			unset($this->data->{$key});
+		}
+
+		// We remove it if queued.
+		if (isset($this->queue[$key])) {
+			unset($this->queue[$key]);
+		}
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for checking the existence of an object in database.
+	 * @access 	public
+	 * @param 	none
+	 * @return 	bool 	true if the object exists, else false.
+	 */
+	public function exists() {
+		return ( ! empty($this->id));
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for checking the existence of a property.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @return 	bool 	true if the property exists, else false.
+	 */
+	public function has($key) {
+		return $this->__isset($key);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for setting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @param 	string 	$value 	The property value.
+	 * @return 	object 	we return the object to make it chainable.
+	 */
+	public function set($key, $value) {
+		$this->__set($key, $value);
+		return $this;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for getting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @return 	mixed 	Depends on the property's value.
+	 */
+	public function get($key) {
+		return $this->__get($key);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for updating the object in database.
+	 * @access 	public
+	 * @param 	string 	$key 	The field name.
+	 * @param 	mixed 	$value 	The field value.
+	 * @return 	bool 	true if updated, else false.
+	 */
+	public function update($key, $value) {
+		// Keep the status in order to dequeue the key.
+		$status = update_object($this->id, array($key => $value));
+
+		if ($status === true && isset($this->queue[$key])) {
+			unset($this->queue[$key]);
+		}
+
+		return $status;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for saving anything changes.
+	 * @access 	public
+	 * @param 	void
+	 * @return 	bool 	true if updated, else false.
+	 */
+	public function save() {
+		// We start if FALSE status.
+		$status = false;
+
+		// If there are enqueued changes, apply them.
+		if ( ! empty($this->queue)) {
+			$status = update_object($this->id, $this->queue);
+
+			// If the update was successful, we reset $queue array.
+			if ($status === true) {
+				$this->queue = array();
+			}
+		}
+
+		// We return the final status.
+		return $status;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for retrieving the array of data waiting to be saved.
+	 * @access 	public
+	 * @return 	array
+	 */
+	public function dirty() {
+		return $this->queue;
+	}
+
 }
