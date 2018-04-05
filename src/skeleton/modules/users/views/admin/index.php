@@ -76,11 +76,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 						<td class="text-right">
 							<a class="btn btn-default btn-xs" target="_blank" href="<?php echo site_url($user->username) ?>" title="<?php _e('view_profile') ?>"><i class="fa fa-eye"></i></a>&nbsp;
 							<a class="btn btn-primary btn-xs" href="<?php echo admin_url('users/edit/'.$user->id) ?>" title="<?php _e('edit_user') ?>"><i class="fa fa-edit"></i></a>&nbsp;
-							<a class="btn btn-danger btn-xs" href="#" rel="async" ajaxify="<?php echo safe_ajax_url('users/delete/'.$user->id) ?>" title="<?php _e('delete_user') ?>"><i class="fa fa-times"></i></a>&nbsp;
+							<a href="<?php echo safe_admin_url('users/delete/'.$user->id); ?>" data-confirm="<?php _e('us_admin_delete_confirm'); ?>" class="btn btn-danger btn-xs" title="<?php _e('delete_user'); ?>"><i class="fa fa-times"></i></a>&nbsp;
 						<?php if ($user->enabled == 0): ?>
-							<a class="btn btn-success btn-xs" href="#" rel="async" ajaxify="<?php echo safe_ajax_url('users/activate/'.$user->id) ?>" data-action="activate" data-id="<?php echo $user->id; ?>" title="<?php _e('activate') ?>"><i class="fa fa-unlock-alt"></i></a>
+							<a href="<?php echo safe_admin_url('users/activate/'.$user->id); ?>" data-confirm="<?php _e('us_admin_activate_confirm'); ?>" class="btn btn-success btn-xs" title="<?php _e('activate'); ?>"><i class="fa fa-unlock-alt"></i></a>
 						<?php else: ?>
-							<a class="btn btn-warning btn-xs" href="#" rel="async" ajaxify="<?php echo safe_ajax_url('users/deactivate/'.$user->id) ?>" data-action="deactivate" data-confirm="Do you really?" title="<?php _e('deactivate') ?>"><i class="fa fa-lock"></i></a>
+							<a href="<?php echo safe_admin_url('users/deactivate/'.$user->id); ?>" data-confirm="<?php _e('us_admin_deactivate_confirm'); ?>" class="btn btn-warning btn-xs" title="<?php _e('deactivate'); ?>"><i class="fa fa-lock"></i></a>
 						<?php endif; ?>
 						</td>
 					</tr>

@@ -7,10 +7,27 @@
         jQuery("#sidebar").toggleClass("open");
     });
 
-    $(document).ready(function() {
+    // Links or buttons with confirmation.
+    jQuery(document).on("click", "[data-confirm]", function (e) {
+        e.preventDefault();
+        var that = jQuery(this),
+            href = that.attr("href"),
+            message = that.attr("data-confirm");
 
-        // $('.sortable').sortable();
-        // $('.sortable').disableSelection();
+        bootbox.confirm({
+            size: "small",
+            message: message,
+            callback: function(result) {
+                bootbox.hideAll();
+                if (result === true && href.length) {
+                    window.location.href = href;
+                }
+            }
+        });
+        return false;
+    });
+
+    $(document).ready(function() {
 
         // Some Toastr options.
         toastr.options = {
