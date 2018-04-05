@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @version 	1.3.0
  */
 class Kbcore_options extends CI_Driver implements CRUD_interface
 {
@@ -127,73 +127,69 @@ class Kbcore_options extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Retrieve a single row by it's primary ID.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Remove $single argument and use "get_by" method.
+	 * 
 	 * @access 	public
-	 * @param 	mixed 	$id 		The primary key value.
-	 * @param 	bool 	$single 	whether to return the value or the object.
+	 * @param 	mixed 	$name 		The primary key value.
 	 * @return 	object if found, else null
 	 */
-	public function get($id, $single = false)
+	public function get($name)
 	{
-		return $this->get_by('name', $id, $single);
+		// Getting by ID?
+		if (is_string($name))
+		{
+			return $this->get_by('name', $name);
+		}
+
+		// Otherwise, let the "get_by" method handle the rest.
+		return $this->get_by($name);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Retrieve a single option by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Remove $single argument and let parent handle WHERE clause.
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$field 		Column name or associative array.
 	 * @param 	mixed 	$match 		Comparison value.
-	 * @param 	bool 	$single 	whether to return the value or the object.
 	 * @return 	object if found, else null.
 	 */
-	public function get_by($field, $match = null, $single = false)
+	public function get_by($field, $match = null)
 	{
-		// Make everything as an array.
-		(is_array($field)) OR $field = array($field => $match);
+		// We start with an empty $option.
+		$option = false;
 
-		foreach ($field as $key => $val)
+		// Attempt to get the option from database.
+		$db_option = $this->_parent
+			->where($field, $match, 1, 0)
+			->get('options')
+			->row();
+
+		// If found, we create its object.
+		if ($db_option)
 		{
-			if (is_int($key) && is_array($val))
-			{
-				$this->ci->db->where($val);
-			}
-			elseif (is_array($val))
-			{
-				$this->ci->db->where_in($key, $val);
-			}
-			else
-			{
-				$this->ci->db->where($key, $val);
-			}
+			$option = new KB_Option($db_option);
 		}
 
-		$row = $this->ci->db->get('options')->row();
-
-		// If the row is found, format it.
-		if ($row)
-		{
-			// Prepare the "value" and "options".
-			$row->value = from_bool_or_serialize($row->value);
-			(empty($row->options)) OR $row->options = from_bool_or_serialize($row->options);
-
-			// Cache the item for eventual use.
-			$this->cached[$row->name] = $row->value;
-
-			// Return the value only?
-			if ($single === true)
-			{
-				$row = $row->value;
-			}
-		}
-
-		return $row;
+		// Return the final result.
+		return $option;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Retrieve multiple options by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to let parent handle WHERE clause and create
+	 *         			objects for each found option.
+	 *
 	 * @access 	public
 	 * @param 	mixed 	$field 	Column name or associative array.
 	 * @param 	mixed 	$match 	Comparison value.
@@ -203,52 +199,26 @@ class Kbcore_options extends CI_Driver implements CRUD_interface
 	 */
 	public function get_many($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		// Prepare WHERE clause.
-		if ( ! empty($field))
-		{
-			(is_array($field)) OR $field = array($field => $match);
+		// Start with empty $options.
+		$options = false;
 
-			foreach ($field as $key => $val)
+		// Attempt to get options from database.
+		$db_options = $this->_parent
+			->where($field, $match, $limit, $offset)
+			->get('options')
+			->result();
+
+		// If found any, create their objects.
+		if ($db_options)
+		{
+			foreach ($db_options as $db_option)
 			{
-				if (is_int($key) && is_array($val))
-				{
-					$this->ci->db->where($val);
-				}
-				elseif (is_array($val))
-				{
-					$this->ci->db->where_in($key, $val);
-				}
-				else
-				{
-					$this->ci->db->where($key, $val);
-				}
-			}
-		}
-
-		// Apply limits?
-		if ($limit > 0)
-		{
-			$this->ci->db->limit($limit, $offset);
-		}
-
-		// Attempt to retrieve all options.
-		$rows = $this->ci->db->get('options')->result();
-
-		// If we found any, format their values and options columns
-		if ($rows)
-		{
-			foreach ($rows as &$row)
-			{
-				$row->value = from_bool_or_serialize($row->value);
-				$row->options = from_bool_or_serialize($row->options);
-
-				// Cache items for eventual use.
-				$this->cached[$row->name] = $row->value;
+				$options[] = new KB_Option($db_option);
 			}
 		}
 
 		// Return the final result.
-		return $rows;
+		return $options;
 	}
 
 	// ------------------------------------------------------------------------
@@ -269,22 +239,36 @@ class Kbcore_options extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Update a single options by its name.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better usage.
+	 * 
 	 * @access 	public
-	 * @param 	mixed 	$id 	The option's name.
+	 * @param 	mixed 	$name 	The option's name or array of WHERE clause.
 	 * @param 	array 	$data 	Array of data to update.
-	 * @return 	boolean
+	 * @return 	bool
 	 */
-	public function update($id, array $data = array())
+	public function update($name, array $data = array())
 	{
-		return $this->update_by(array('name' => $id), $data);
+		// updating by name?
+		if (is_string($name))
+		{
+			return $this->update_by(array('name' => $name), $data);
+		}
+
+		// Otherwise, let the "update_by" handle the rest.
+		return $this->update_by($name, $data);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Update a single, all or multiple options by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to let the parent handle WHERE clause.
 	 * @access 	public
-	 * @return 	boolean
+	 * @return 	bool
 	 */
 	public function update_by()
 	{
@@ -319,76 +303,58 @@ class Kbcore_options extends CI_Driver implements CRUD_interface
 		if ( ! empty($args))
 		{
 			(is_array($args[0])) && $args = $args[0];
-			foreach ($args as $key => $val)
-			{
-				if (is_int($key) && is_array($val))
-				{
-					$this->ci->db->where($val);
-				}
-				elseif (is_array($val))
-				{
-					$this->ci->db->where_in($key, $val);
-				}
-				else
-				{
-					$this->ci->db->where($key, $val);
-				}
-			}
+			$this->_parent->where($args);
 		}
 
 		// Proceed to update and return the status.
-		$this->ci->db->update('options');
-		return ($this->ci->db->affected_rows() > 0);
+		return $this->ci->db->update('options');
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Delete a single option by its name.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better usage.
 	 * @access 	public
-	 * @param 	mixed 	$id 	The option's name.
-	 * @return 	boolean
+	 * @param 	mixed 	$name 	The option's name or array of WHERE clause.
+	 * @return 	bool
 	 */
-	public function delete($id)
+	public function delete($name)
 	{
-		return $this->delete_by('name', $id);
+		// Deleting by name?
+		if (is_string($name))
+		{
+			return $this->delete_by('name', $name);
+		}
+
+		// Otherwise, let the "dlete_by" handle the rest.
+		return $this->delete_by($name);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Delete a single, all or multiple options by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to let the parent handle the WHERE clause, and
+	 *         			add optional limit and offset.
+	 *
 	 * @access 	public
 	 * @param 	mixed 	$field 	Column name or associative array.
 	 * @param 	mixed 	$match 	Comparison value.
-	 * @return 	boolean
+	 * @return 	bool
 	 */
-	public function delete_by($field = null, $match = null)
+	public function delete_by($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		// Prepare WHERE clause.
-		if ( ! empty($field))
-		{
-			(is_array($field)) OR $field = array($field => $match);
+		// Delete them.
+		$this->_parent
+			->where($field, $match, $limit, $offset)
+			->delete('options');
 
-			foreach ($field as $key => $val)
-			{
-				if (is_int($key) && is_array($val))
-				{
-					$this->ci->db->where($val);
-				}
-				elseif (is_array($val))
-				{
-					$this->ci->db->where_in($key, $val);
-				}
-				else
-				{
-					$this->ci->db->where($key, $val);
-				}
-			}
-		}
-
-		// Proceed to delete.
-		$this->ci->db->delete('options');
+		// Return true if some rows were deleted.
 		return ($this->ci->db->affected_rows() > 0);
 	}
 
@@ -463,9 +429,11 @@ class Kbcore_options extends CI_Driver implements CRUD_interface
 		}
 
 		// Try to get it.
-		if ($item = $this->get_by('name', $name, true))
+		if ($item = $this->get_by('name', $name))
 		{
-			return $item;
+			// Cached it first.
+			$this->cached[$name] = $item->value;
+			return $item->value;
 		}
 
 		// Found in CodeIgniter config?
@@ -589,13 +557,19 @@ if ( ! function_exists('delete_option_by'))
 {
 	/**
 	 * Delete a single or multiple options by arbitrary WHERE clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to follow method structure.
+	 * 
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
-	 * @return 	boolean
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
 	 */
-	function delete_option_by($field, $match = null)
+	function delete_option_by($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		return get_instance()->kbcore->options->delete_by($field, $match);
+		return get_instance()->kbcore->options->delete_by($field, $match, $limit, $offset);
 	}
 }
 
@@ -603,9 +577,300 @@ if ( ! function_exists('delete_option_by'))
 
 if ( ! function_exists('delete_options'))
 {
-	// Alias of the function above.
-	function delete_options($field, $match = null)
+	/**
+	 * Delete a single or multiple options by arbitrary WHERE clause.
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to follow method structure.
+	 * 
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	bool
+	 */
+	function delete_options($field = null, $match = null, $limit = 0, $offset = 0)
 	{
-		return get_instance()->kbcore->options->delete_by($field, $match);
+		return get_instance()->kbcore->options->delete_by($field, $match, $limit, $offset);
 	}
+}
+
+// ------------------------------------------------------------------------
+
+/**
+ * KB_Option
+ *
+ * @package 	CodeIgniter
+ * @subpackage 	Skeleton
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		1.3.0
+ */
+class KB_Option
+{
+	/**
+	 * Option data container.
+	 * @var 	object
+	 */
+	public $data;
+
+	/**
+	 * The option's name.
+	 * @var 	integer
+	 */
+	public $name = false;
+
+	/**
+	 * Array of data awaiting to be updated.
+	 * @var 	array
+	 */
+	protected $queue = array();
+	
+	/**
+	 * Constructor.
+	 *
+	 * Retrieves the option data and passes it to KB_Option::init().
+	 *
+	 * @access 	public
+	 * @param 	mixed	 $name 	Option's name or WHERE clause.
+	 * @return 	void
+	 */
+	public function __construct($name = 0) {
+		// In case we passed an instance of this object.
+		if ($name instanceof KB_Option) {
+			$this->init($name->data);
+			return;
+		}
+
+		// In case we passed the entity's object.
+		elseif (is_object($name)) {
+			$this->init($name);
+			return;
+		}
+
+		if ($name) {
+			$option = get_instance()->kbcore->options->get($name);
+			if ($option) {
+				$this->init($option->data);
+			} else {
+				$this->data = new stdClass();
+			}
+		}
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Sets up object properties.
+	 * @access 	public
+	 * @param 	object
+	 */
+	public function init($option) {
+		$this->data = $option;
+		$this->name = $option->name;
+
+		// Format value and options.
+		if ( ! empty($option->value)) {
+			$option->value = from_bool_or_serialize($option->value);
+		}
+		if ( ! empty($option->options)) {
+			$option->options = from_bool_or_serialize($option->options);
+		}
+
+		// Apply filters to value and options.
+		$this->data->value   = apply_filters("option_value_{$this->name}", $option->value);
+		$this->data->options = apply_filters("option_options_{$this->name}", $option->options);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for checking the existence of a property.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @return 	bool 	true if the property exists, else false.
+	 */
+	public function __isset($key) {
+		// Just make it possible to use ID.
+		if ('ID' == $key OR 'id' == $key) {
+			$key = 'name';
+		}
+
+		// Found in $data container or as this object property?
+		return (isset($this->data->{$key}) OR isset($this->{$key}));
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for getting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key to retrieve.
+	 * @return 	mixed 	Depends on the property value.
+	 */
+	public function __get($key) {
+		// Format the key.
+		if ('ID' == $key OR 'id' == $key) {
+			$key = 'name';
+		}
+
+		// We start with an empty value.
+		$value = false;
+
+		// Is if found in $data object?
+		if (isset($this->data->{$key})) {
+			$value = $this->data->{$key};
+		}
+
+		// Then we return the final result.
+		return $value;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for setting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @param 	mixed 	$value 	The property value.
+	 */
+	public function __set($key, $value) {
+		// Just make it possible to use ID.
+		if ('ID' == $key OR 'id' == $key) {
+			$key = 'name';
+		}
+
+		// If found, we make sure to set it.
+		$this->data->{$key} = $value;
+
+		// We enqueue it for later use.
+		$this->queue[$key]  = $value;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Magic method for unsetting a property.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 */
+	public function __unset($key) {
+		// Remove it from $data object.
+		if (isset($this->data->{$key})) {
+			unset($this->data->{$key});
+		}
+
+		// We remove it if queued.
+		if (isset($this->queue[$key])) {
+			unset($this->queue[$key]);
+		}
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for checking the existence of an option in database.
+	 * @access 	public
+	 * @param 	none
+	 * @return 	bool 	true if the option exists, else false.
+	 */
+	public function exists() {
+		return ( ! empty($this->name));
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for checking the existence of a property.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @return 	bool 	true if the property exists, else false.
+	 */
+	public function has($key) {
+		return $this->__isset($key);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for setting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @param 	string 	$value 	The property value.
+	 * @return 	object 	we return the object to make it chainable.
+	 */
+	public function set($key, $value) {
+		$this->__set($key, $value);
+		return $this;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for getting a property value.
+	 * @access 	public
+	 * @param 	string 	$key 	The property key.
+	 * @return 	mixed 	Depends on the property's value.
+	 */
+	public function get($key) {
+		return $this->__get($key);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for updating the option in database.
+	 * @access 	public
+	 * @param 	string 	$key 	The field name.
+	 * @param 	mixed 	$value 	The field value.
+	 * @return 	bool 	true if updated, else false.
+	 */
+	public function update($key, $value) {
+		// Keep the status in order to dequeue the key.
+		$status = get_instance()->kbcore->options->update($this->name, array($key => $value));
+
+		if ($status === true && isset($this->queue[$key])) {
+			unset($this->queue[$key]);
+		}
+
+		return $status;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for saving anything changes.
+	 * @access 	public
+	 * @param 	void
+	 * @return 	bool 	true if updated, else false.
+	 */
+	public function save() {
+		// We start if false status.
+		$status = false;
+
+		// If there are enqueued changes, apply them.
+		if ( ! empty($this->queue)) {
+			$status = get_instance()->kbcore->options->update($this->name, $this->queue);
+
+			// If the update was successful, we reset $queue array.
+			if ($status === true) {
+				$this->queue = array();
+			}
+		}
+
+		// We return the final status.
+		return $status;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for retrieving the array of data waiting to be saved.
+	 * @access 	public
+	 * @return 	array
+	 */
+	public function dirty() {
+		return $this->queue;
+	}
+
 }
