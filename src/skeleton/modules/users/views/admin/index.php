@@ -68,7 +68,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			<?php foreach ($users as $user): ?>
 					<tr id="row-<?php echo $user->id; ?>">
 						<td><?php echo $user->id ?></td>
-						<td><i class="fa fa-<?php echo $user->gender ?>" title="<?php _e($user->gender) ?>"></i> <?php echo $user->first_name, ' ', $user->last_name ?></td>
+						<td><i class="fa fa-<?php echo $user->gender ?>" title="<?php _e($user->gender) ?>"></i> <?php echo $user->full_name ?></td>
 						<td><?php echo anchor($user->username, $user->username, 'target="_blank"') ?></td>
 						<td><?php echo $user->email ?></td>
 						<td><?php _e($user->subtype) ?></td>

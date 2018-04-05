@@ -196,11 +196,6 @@ class Auth
 
 		// Everthing went right, cache the user.
 		$this->user         = $user;
-		$this->user->id     = (int) $this->user->id;
-		$this->user->avatar = md5($this->user->email);
-		$this->user->admin  = ($this->user->subtype === 'administrator');
-		$this->user->full_name = ucwords($this->user->first_name.' '.$this->user->last_name);
-
 		return $this->user;
 
 	}
