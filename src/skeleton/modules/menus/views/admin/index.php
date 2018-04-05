@@ -18,7 +18,8 @@
 				</tr>
 			</thead>
 			<tbody>
-		<?php foreach ($menus as $menu): ?>
+		<?php if ($menus): ?>
+			<?php foreach ($menus as $menu): ?>
 				<tr id="menu-<?php echo $menu->id; ?>">
 					<td><?php echo $menu->name ?></td>
 					<td><?php echo $menu->slug ?></td>
@@ -30,7 +31,8 @@
 						<a class="btn btn-danger btn-xs" href="#" data-confirm="<?php printf(line('are_you_sure'), line('delete_menu')) ?>" data-href="<?php echo safe_admin_url('menus/delete/menu/'.$menu->id) ?>" title="<?php _e('delete_menu') ?>"><i class="fa fa-times"></i></a>
 					</td>
 				</tr>
-		<?php endforeach; ?>
+			<?php endforeach; ?>
+		<?php endif; ?>
 			</tbody>
 		</table>
 	</div><!--/.panel-body-->
