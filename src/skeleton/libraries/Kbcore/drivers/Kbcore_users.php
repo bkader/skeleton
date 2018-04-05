@@ -1261,7 +1261,7 @@ if ( ! function_exists('user_avatar')):
 				$hash = $CI->auth->user()->avatar;
 			}
 			// If the user exists, generate the hash.
-			elseif ($user = $CI->kbcore->users->get_user('id', $id))
+			elseif (false !== $user = $CI->kbcore->users->get_by('id', $id))
 			{
 				/**
 				 * Removing double hashing as the user already has avatar set.
@@ -1379,6 +1379,21 @@ class KB_User
 	public function init($user) {
 		$this->data = $user;
 		$this->id   = (int) $user->id;
+
+		// We add user avatar.
+		if ( ! isset($user->avatar)) {
+			$this->data->avatar = md5($user->email);
+		}
+
+		// Whether the user is an admin or not.
+		if ( ! isset($user->admin)) {
+			$this->data->admin = ($user->subtype === 'administrator');
+		}
+
+		// Add user's full name.
+		if ( ! isset($user->full_name)) {
+			$this->data->full_name = ucwords($user->first_name.' '.$user->last_name);
+		}
 	}
 
 	// ------------------------------------------------------------------------
