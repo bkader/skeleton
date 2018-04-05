@@ -576,7 +576,7 @@ class Kbcore_groups extends CI_Driver implements CRUD_interface
 		}
 
 		// Otherwise, let the "restore_by" method handle the rest.
-		return $this->restore_by($id);
+		return $this->restore_by($id, null, 1, 0);
 	}
 
 	// ------------------------------------------------------------------------
