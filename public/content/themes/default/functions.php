@@ -218,9 +218,23 @@ endif; // End of class Default_theme.
 // Initialize class.
 $default_theme = new Default_theme();
 
-// ------------------------------------------------------------------------
-
-
+/**
+ * The CodeIgniter Skeleton comes with a copyright added to your final
+ * HTML output. We really appreciate the fact that you keep it, it is a
+ * way to say "Oh yeah, another person using my project.".
+ * If you want to remove it, and you have the right to do it, the filter
+ * below show you how to do it.
+ */
+/*
+add_filter('skeleton_copyright', 'remove_skeleton_copyright');
+if ( ! function_exists('remove_skeleton_copyright'))
+{
+	function remove_skeleton_copyright($copyright)
+	{
+		return '';
+	}
+}
+*/
 
 // ------------------------------------------------------------------------
 

@@ -55,15 +55,21 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class Theme
 {
 	/**
+	 * CodeIgniter Skeleton copyright.
+	 * @var string
+	 */
+	private $_skeleton_copyright = <<<EOT
+\n<!--
+This website is proudly powered by: CodeIgniter Skeleton (https://github.com/bkader/skeleton)
+A project developed and maintained by: Kader Bouyakoub (https://github.com/bkader)
+-->
+EOT;
+	/**
 	 * Header template
 	 * @var string
 	 */
 	private $_template_header = <<<EOT
-<!DOCTYPE html>
-<!--
-This website is Powered by: CodeIgniter Skeleton (https://github.com/bkader/skeleton)
-A community-based project originally developed by: Kader Bouyakoub <bkader[at]mail.com>
--->
+<!DOCTYPE html>{skeleton_copyright}
 <html{html_class}{language_attributes}>
 <head>
     {charset}
@@ -1766,6 +1772,9 @@ EOT;
 		 */
 		else
 		{
+			// Skeleton Copyright.
+			$replace['skeleton_copyright'] = apply_filters('skeleton_copyright', $this->_skeleton_copyright);
+
 			// Base url
 			$replace['base_url'] = base_url();
 
