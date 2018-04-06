@@ -75,18 +75,6 @@ class KB_Controller extends CI_Controller
 	protected $data = array();
 
 	/**
-	 * Array of StyleSheets to load.
-	 * @var array
-	 */
-	protected $styles = array();
-
-	/**
-	 * Array of JavaScripts to load.
-	 * @var array
-	 */
-	protected $scripts = array();
-
-	/**
 	 * Array of method that accept only AJAX requests.
 	 * @var array
 	 */
