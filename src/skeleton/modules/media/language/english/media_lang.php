@@ -47,22 +47,38 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @version 	1.3.0
  */
 
 $lang['media'] = 'Media';
 $lang['library'] = 'Library';
 
+// Media page heading.
 $lang['media_library'] = 'Media Library';
 
-$lang['media_upload'] = 'Media successfully uploaded.';
+// Drop zone tip.
 $lang['drop_media'] = 'Drag and drop files here.';
 
-// Alerts.
-$lang['media_delete_alert'] = "You are about to permanently delete this item from your site.<br>This action cannot be undone.<br>'Cancel' to stop, 'OK' to delete.";
+// Media details.
+$lang['media_details']     = 'Attachment Details';
+$lang['media_dimensions']  = 'Dimensions';
+$lang['media_file_name']   = 'File Name';
+$lang['media_file_size']   = 'File Size';
+$lang['media_file_type']   = 'File Type';
+$lang['media_created_at'] = 'Uploaded On';
 
+// Copy media link to clipboard.
+$lang['media_copy_clipboard'] = 'Copy to clipboard: Ctrl+C';
+
+// Success messages.
+$lang['media_upload_success'] = 'Media successfully uploaded.';
 $lang['media_delete_success'] = 'Media item successfully deleted.';
-$lang['media_delete_error']   = 'Unable to delete media item.';
-
 $lang['media_update_success'] = 'Media item successfully updated.';
+
+// Error messages.
+$lang['media_upload_error'] = 'Unable to upload media.';
+$lang['media_delete_error'] = 'Unable to delete media item.';
 $lang['media_update_error'] = 'Unable to update media item.';
+
+// Confirmation messages.
+$lang['media_delete_confirm'] = "You are about to permanently delete this item from your site.\nThis action cannot be undone.\n'Cancel' to stop, 'OK' to delete.";
