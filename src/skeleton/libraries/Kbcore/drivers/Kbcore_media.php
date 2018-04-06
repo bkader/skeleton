@@ -160,7 +160,7 @@ class Kbcore_media extends CI_Driver implements CRUD_interface
 	 */
 	public function update($id, array $data = array())
 	{
-		return $this->_parent->objects->update_by(array('id' => $id,'subtype' => 'attachment'), $data);
+		return $this->_parent->objects->update($id, $data);
 	}
 
 	// ------------------------------------------------------------------------
