@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @version 	1.3.0
  */
 class Admin extends Admin_Controller
 {
@@ -63,22 +63,24 @@ class Admin extends Admin_Controller
 		array_unshift(
 			$this->ajax_methods,
 			'create',
-			'show',
 			'update',
 			'delete'
 		);
 		parent::__construct();
 
 		// Make sure to load media library.
-		$this->load->language('media/media_admin');
-
-		$this->theme->add('js', get_common_url('js/media'), 'media');
+		$this->load->language('media/media');
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * List site's uploaded media.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to make it possible to show single item with
+	 *         			get parameter "item".
+	 *
 	 * @access 	public
 	 * @param 	none
 	 * @return 	void
@@ -88,13 +90,34 @@ class Admin extends Admin_Controller
 		// Make sure to load Dropzone CSS and JS files.
 		$this->theme
 			->add('css', get_common_url('css/dropzone'), 'dropzone')
-			->add('js', get_common_url('js/dropzone'), 'dropzone');
+			->add('js', get_common_url('js/dropzone'), 'dropzone')
+			->add('js', get_common_url('js/media'), 'media');
 
 		// Prepare form validation.
 		$this->prep_form();
 
 		// Load all media from database.
 		$data['media'] = $this->kbcore->media->get_all();
+
+		// In case of viewing a single item.
+		$item = null;
+		$item_id = $this->input->get('item', true);
+		if (null !== $item_id 
+			&& false !== $db_item = $this->kbcore->media->get($item_id))
+		{
+			$item = $db_item;
+
+			// Cache details to reduce DB access.
+			$item->details = $item->media_meta;
+
+			$item->created_at = date('Y/m/d H:i', $item->created_at);
+
+			$this->load->helper('number');
+			$item->file_size = byte_format($item->details['file_size'] * 1024, 2);
+		}
+
+		// Pass the item to view.
+		$data['item'] = $item;
 
 		// Set page title and load view.
 		$this->theme
@@ -103,38 +126,19 @@ class Admin extends Admin_Controller
 	}
 
 	// ------------------------------------------------------------------------
-
-	public function create_new()
-	{}
-
-	// ------------------------------------------------------------------------
-
-	public function edit($id = 0)
-	{
-		echo "edit media #{$id}";
-	}
-
-	// ------------------------------------------------------------------------
-
-	public function show($id = 0)
-	{
-		$media = $this->kbcore->media->get($id);
-		if ( ! $media)
-		{
-			return;
-		}
-
-		$media->created_at = date('Y/m/d', $media->created_at);
-		$media->details = $this->kbcore->metadata->get_meta($id, 'media_meta')->value;
-
-		$this->response->header = 200;
-		$this->response->message = json_encode($media);
-	}
-
-	// ------------------------------------------------------------------------
 	// AJAX Methods.
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Handles media upload operation.
+	 *
+	 * @since 	1.0.0
+	 * TODO: Still under development.
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
 	public function create()
 	{
 		// Make sure to create the upload folder if not found.
@@ -190,6 +194,7 @@ class Admin extends Admin_Controller
 			if ( ! $media_id)
 			{
 				$this->response->header = 500;
+				$this->response->message = lang('media_upload_error');
 				return;
 			}
 
@@ -240,24 +245,20 @@ class Admin extends Admin_Controller
 						$status = $this->image_lib->resize();
 
 						// Let's crop it now.
-						// $this->image_lib->clear();
+						$this->image_lib->clear();
 
-						// $config2['image_library']  = 'gd2';
-						// $config2['source_image']   = $config['new_image'];
-						// $config2['width']          = $details['width'];
-						// $config2['height']         = $details['height'];
-						// $config2['maintain_ratio'] = false;
+						$config2['image_library']  = 'gd2';
+						$config2['source_image']   = $config['new_image'];
+						$config2['width']          = $details['width'];
+						$config2['height']         = $details['height'];
+						$config2['maintain_ratio'] = false;
 
-						// $config2['x_axis'] = ($config['width'] > $config['height'])
-						// 	? (($config['width'] - $details['width']) / 2)
-						// 	: 0;
-						// $config2['y_axis'] = ($config['height'] > $details['width'])
-						// 	? (($config['height'] - $details['height']) / 2)
-						// 	: 0;
+						$config2['x_axis'] = ($config['width'] > $config['height']) ? (($config['width'] - $details['width']) / 2) : 0;
+						$config2['y_axis'] = ($config['height'] > $details['width']) ? (($config['height'] - $details['height']) / 2) : 0;
 
-						// $this->image_lib->initialize($config2);
+						$this->image_lib->initialize($config2);
 
-						// $status = $this->image_lib->crop();
+						$status = $this->image_lib->crop();
 					}
 					else
 					{
@@ -275,7 +276,7 @@ class Admin extends Admin_Controller
 					if ($status === true)
 					{
 						$media_sizes[$name] = array(
-							'file'      => $data['raw_name'].$config['thumb_marker'].$data['file_ext'],
+							'file'      => $data['raw_name'].'-'.$details['width'].'x'.$details['height'].$data['file_ext'],
 							'width'     => $details['width'],
 							'height'    => $details['height'],
 							'file_mime' => $data['file_type'],
@@ -285,45 +286,50 @@ class Admin extends Admin_Controller
 
 				if ( ! empty($media_sizes))
 				{
-					$this->kbcore->metadata->update_meta(
-						$media_id,
-						'media_meta',
-						array('sizes' => $media_sizes)
-					);
+					$media_meta = $media['media_meta'];
+					$media_meta['sizes'] = $media_sizes;
+					$this->kbcore->metadata->update_meta($media_id, 'media_meta', $media_meta);
 				}
 			}
 
 			// Simple message that's is return to use.
 			$this->response->header  = 200;
-			$this->response->message = lang('media_upload');
+			$this->response->message = lang('media_upload_success');
 		}
 	}
 
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Update a single media details.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to use POST method instead of PUT.
+	 * 
+	 * @access 	public
+	 * @param 	int 	$id 	The media ID.
+	 * @return 	void
+	 */
 	public function update($id)
 	{
-		$_put = file_get_contents('php://input');
-		$temp_data = $data = array();
-		parse_str($_put, $temp_data);
+		// we collect data first.
+		$data = $this->input->post(null, true);
 
-		$this->load->helper('security');
-		foreach ($temp_data as $key => $val)
+		// We make sure at least the name is provided.
+		if (empty($data['name']))
 		{
-			$data[$key] = xss_clean($temp_data[$key][0]['value']);
-		}
-
-		if (empty($data))
-		{
+			$this->response->header = 406;
+			$this->response->message = lang('media_update_error');
 			return;
 		}
 
 		// Try to update.
-		if ($this->kbcore->media->update($id, $data))
+		if (false !== $this->kbcore->media->update($id, $data))
 		{
 			$this->response->header = 200;
 			$this->response->message = lang('media_update_success');
 		}
+		// Error updating?
 		else
 		{
 			$this->response->header = 500;
@@ -333,24 +339,26 @@ class Admin extends Admin_Controller
 
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Delete a single media item.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code readability and performance.
+	 * 
+	 * @access 	public
+	 * @param 	int 	$id 	The media ID.
+	 * @return 	void
+	 */
+
 	public function delete($id = 0)
 	{
-		if ( ! is_numeric($id) OR $id <= 0)
-		{
-			return;
-		}
-
-		// Make sure the file exists.
+		// We get the media from database.
 		$media = $this->kbcore->media->get($id);
-		if ( ! $media)
-		{
-			// $this->response->header = 400;
-			return;
-		}
 
-		// Proceed to remove from database.
-		if ($this->kbcore->media->delete($id))
+		// If found and successfully deleted from database.
+		if ($media && false !== $this->kbcore->media->delete($id))
 		{
+			// We set response preferences.
 			$this->response->header = 200;
 			$this->response->message = lang('media_delete_success');
 
@@ -360,6 +368,7 @@ class Admin extends Admin_Controller
 				glob(FCPATH.'content/uploads/'.date('Y/m/', $media->created_at).$media->content.'*.*')
 			);
 		}
+		// Otherwise, set error message.
 		else
 		{
 			$this->response->header = 500;
