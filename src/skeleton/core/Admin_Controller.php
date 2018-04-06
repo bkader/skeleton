@@ -155,7 +155,7 @@ class Admin_Controller extends User_Controller
 				'lang'      => $this->lang->languages($this->session->language),
 			);
 			$output .= "\t<script>var config = ".json_encode($config).";</script>\n";
-			// add_ie9_support($output, (ENVIRONMENT === 'production'));
+			add_ie9_support($output, (ENVIRONMENT === 'production'));
 			return $output;
 		});
 	}
@@ -233,45 +233,29 @@ class Admin_Controller extends User_Controller
 			return;
 		}
 
-		// If the message is set, we add it.
-		if ( ! empty($success_message))
-		{
-			$success_message = $this->theme->print_alert($success_message, 'success', true);
-		}
-		if ( ! empty($error_message))
-		{
-			$error_message = $this->theme->print_alert($error_message, 'error', true);
-		}
-
 		// Prepare the script to output.
 		$script =<<<EOT
 \n\t<script>
 	var data = data || [];
-	\$('{$target}').sortable({
+	jQuery('{$target}').sortable({
 		axis: 'y',
 		update: function (event, ui) {
-			data = \$(this).sortable('serialize');
+			data = jQuery(this).sortable('serialize');
 		}
 	});
-	\$(document).on('click', '{$button}', function(e) {
+	jQuery(document).on('click', '{$button}', function(e) {
 		e.preventDefault();
 		if (data.length) {
-			\$.ajax({
+			jQuery.ajax({
 				data: data,
 				type: 'POST',
 				url: '{$url}',
 				success: function(response) {
-					response = \$.parseJSON(response);
+					response = jQuery.parseJSON(response);
 					if (response.status == true) {
-						\$({$success_message}).appendTo('body');
-						\$('.alert-dismissable').fadeTo(2000, 500).slideUp(500, function() {
-							\$(this).alert('close');
-						});
+						toastr.success('{$success_message}');
 					} else {
-						\$({$error_message}).appendTo('body');
-						\$('.alert-dismissable').fadeTo(2000, 500).slideUp(500, function() {
-							\$(this).alert('close');
-						});
+						toastr.error('{$error_message}');
 					}
 				}
 			});
