@@ -206,7 +206,7 @@ class Kbcore_objects extends CI_Driver implements CRUD_interface
 		// If found, we create its object.
 		if ($db_object)
 		{
-			$object = new KB_Group($db_object);
+			$object = new KB_Object($db_object);
 		}
 
 		// Return the final result.
