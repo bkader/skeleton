@@ -111,7 +111,7 @@
     // ========================================================
     // When the DOM is ready.
     // ========================================================
-    $(document).ready(function () {
+    jQuery(document).ready(function () {
 
         // Configure toastr.
         toastr.options = {
@@ -129,12 +129,12 @@
             toastr.options.rtl = true;
         }
 
-        $(".alert-dismissable").fadeTo(2000, 500).slideUp(500, function () {
-            $(this).alert("close");
+        jQuery(".alert-dismissable").fadeTo(2000, 500).slideUp(500, function () {
+            jQuery(this).alert("close");
         });
 
         // Initialize Bootstrap tooltip.
-        $("[data-toggle=tooltip]").tooltip();
+        jQuery("[data-toggle=tooltip]").tooltip();
 
     });
 })(jQuery);
