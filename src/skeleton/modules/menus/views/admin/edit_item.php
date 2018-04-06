@@ -61,13 +61,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 					<div class="form-group<?php echo form_error('name') ? ' has-error' : ''; ?>">
 						<label for="name" class="sr-only"><?php _e('item_title'); ?></label>
-						<?php echo print_input($title, array('class' => 'form-control', 'value' => htmlspecialchars_decode($item->title), 'autofocus' => 'autofocus')); ?>
+						<?php echo print_input($title, array('class' => 'form-control', 'value' => htmlspecialchars_decode($item->name), 'autofocus' => 'autofocus')); ?>
 						<?php echo form_error('name', '<p class="help-block">', '</p>') ?: '<p class="help-block">'.lang('item_title_tip').'</p>' ?>
 					</div>
 
 					<div class="form-group<?php echo form_error('href') ? ' has-error' : ''; ?>">
 						<label for="href" class="sr-only"><?php _e('item_title'); ?></label>
-						<?php echo print_input($href, array('class' => 'form-control', 'value' => $item->href)); ?>
+						<?php echo print_input($href, array('class' => 'form-control', 'value' => $item->content)); ?>
 						<?php echo form_error('href', '<p class="help-block">', '</p>') ?: '<p class="help-block">'.lang('item_href_tip').'</p>' ?>
 					</div>
 
@@ -100,7 +100,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					</div>
 
 					<button type="submit" class="btn btn-primary btn-sm pull-right"><?php _e('save_item'); ?></button>
-					<?php echo anchor('admin/menus/items/'.$item->menu_id, lang('cancel'), 'class="btn btn-default btn-sm"'); ?>
+					<?php echo anchor('admin/menus/items/'.$item->owner_id, lang('cancel'), 'class="btn btn-default btn-sm"'); ?>
 
 				<?php echo form_close(); ?>
 			</div>

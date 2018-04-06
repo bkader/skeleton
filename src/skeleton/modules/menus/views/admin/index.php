@@ -72,13 +72,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			<?php foreach ($menus as $menu): ?>
 				<tr id="menu-<?php echo $menu->id; ?>">
 					<td><?php echo $menu->name ?></td>
-					<td><?php echo $menu->slug ?></td>
+					<td><?php echo $menu->username ?></td>
 					<td><?php echo $menu->description ?></td>
 					<td><?php echo $menu->location_name ?></td>
 					<td class="text-right">
 						<a class="btn btn-default btn-xs" href="<?php echo admin_url('menus/edit/menu/'.$menu->id) ?>" title="<?php _e('edit_menu') ?>"><i class="fa fa-edit"></i></a>&nbsp;
 						<a class="btn btn-primary btn-xs" href="<?php echo admin_url('menus/items/'.$menu->id) ?>" title="<?php _e('menu_items') ?>"><i class="fa fa-list-ul"></i></a>&nbsp;
-						<a class="btn btn-danger btn-xs" href="#" data-confirm="<?php printf(line('are_you_sure'), line('delete_menu')) ?>" data-href="<?php echo safe_admin_url('menus/delete/menu/'.$menu->id) ?>" title="<?php _e('delete_menu') ?>"><i class="fa fa-times"></i></a>
+						<a class="btn btn-danger btn-xs delete-menu" href="#" data-menu-id="<?php echo $menu->id; ?>" data-href="<?php echo safe_admin_url('menus/delete/menu/'.$menu->id) ?>" data-alert="<?php _e('delete_menu_confirm'); ?>" title="<?php _e('delete_menu') ?>"><i class="fa fa-times"></i></a>
 					</td>
 				</tr>
 			<?php endforeach; ?>

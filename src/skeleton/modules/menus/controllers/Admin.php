@@ -53,14 +53,20 @@ class Admin extends Admin_Controller
 {
 	/**
 	 * Class constructor.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Added AJAX methods and changes language file name.
+	 * 
 	 * @return 	void
 	 */
 	public function __construct()
 	{
+		// Add AJAX methods.
+		array_unshift($this->ajax_methods, 'delete', 'update_order');
 		parent::__construct();
 
 		// Make sure to load menus language file.
-		$this->load->language('menus/menus_admin');
+		$this->load->language('menus/menus');
 	}
 
 	// ------------------------------------------------------------------------
@@ -87,6 +93,10 @@ class Admin extends Admin_Controller
 
 	/**
 	 * Add a new menu.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Put back CSRF checker.
+	 * 
 	 * @access 	public
 	 * @return  void
 	 */
@@ -102,6 +112,7 @@ class Admin extends Admin_Controller
 		// Store form in flashdata to retrieve in case of an error.
 		$name        = '';
 		$description = '';
+		
 		if ($this->session->flashdata('form'))
 		{
 			extract($this->session->flashdata('form'));
@@ -132,16 +143,16 @@ class Admin extends Admin_Controller
 		else
 		{
 			// Check CSRF.
-			// if ( ! $this->check_csrf())
-			// {
-			// 	// Store the details in session.
-			// 	$this->session->set_flashdata('form', $this->input->post());
+			if ( ! $this->check_csrf())
+			{
+				// Store the details in session.
+				$this->session->set_flashdata('form', $this->input->post());
 
-			// 	// Set alert and redirect back.
-			// 	set_alert(lang('error_csrf'), 'error');
-			// 	redirect('admin/menus/add', 'refresh');
-			// 	exit;
-			// }
+				// Set alert and redirect back.
+				set_alert(lang('error_csrf'), 'error');
+				redirect('admin/menus/add', 'refresh');
+				exit;
+			}
 
 			// Proceed
 			$status = $this->kbcore->menus->add_menu(
@@ -172,6 +183,10 @@ class Admin extends Admin_Controller
 
 	/**
 	 * Edit action handler.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code.
+	 * 
 	 * @access 	public
 	 * @param 	string 	$target 	menu or item.
 	 * @param 	int 	$id
@@ -179,169 +194,17 @@ class Admin extends Admin_Controller
 	 */
 	public function edit($target, $id = 0)
 	{
-		// Make sure only available option are set.
-		if ( ! in_array($target, array('menu', 'item')))
-		{
-			show_404();
+		switch ($target) {
+			case 'menu':
+				return $this->_edit_menu($id);
+				break;
+			case 'item':
+				return $this->_edit_item($id);
+				break;
 		}
 
-		// Make sure the method exists.
-		if (method_exists($this, "_edit_{$target}"))
-		{
-			return $this->{"_edit_{$target}"}($id);
-		}
-
+		// Otherwise, nothing!
 		show_404();
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Edit an existing menu.
-	 * @access 	public
-	 * @param 	int 	$id 	The menu's ID.
-	 * @return  void
-	 */
-	public function _edit_menu($id = 0)
-	{
-		// Get the menu from database.
-		$data['menu'] = $this->kbcore->menus->get_menu($id);
-		// Make sure the menu exists.
-		if ( ! $data['menu'])
-		{
-			set_alert(lang('edit_menu_no_menu'), 'error');
-			redirect('admin/menus');
-			exit;
-		}
-
-		// Prepare validation rules.
-		$rules = array(
-			array(	'field' => 'name',
-					'label' => 'lang:menu_name',
-					'rules' => 'required'),
-		);
-
-		// The user changed the slug?
-		if ($this->input->post('slug')
-			&& $this->input->post('slug') <> $data['menu']->slug) {
-			$rules[] = array(
-				'field' => 'slug',
-				'label' => 'lang:menu_slug',
-				'rules' => 'required|is_unique[entities.username]'
-			);
-		}
-
-		// Prepare form validation and rules.
-		$this->prep_form($rules);
-
-		// Before the form is processed.
-		if ($this->form_validation->run() == false)
-		{
-			// Prepare form fields.
-			$data['name'] = array_merge(
-				$this->config->item('name', 'inputs'),
-				array('value' => set_value('name', $data['menu']->name))
-			);
-			$data['slug'] = array_merge(
-				$this->config->item('slug', 'inputs'),
-				array('value' => set_value('slug', $data['menu']->slug))
-			);
-			$data['description'] = array_merge(
-				$this->config->item('description', 'inputs'),
-				array('value' => set_value('description', $data['menu']->description))
-			);
-
-			// Add CSRF security layer.
-			$data['hidden'] = $this->create_csrf();
-
-			// Set page title and render view.
-			$this->theme
-				->set_title(lang('edit_menu'), $data['menu']->name)
-				->set_view('admin/edit_menu')
-				->render($data);
-		}
-		// After the form is processed.
-		else
-		{
-			// Check CSRF.
-			if ( ! $this->check_csrf())
-			{
-				// Store the details in session.
-				$this->session->set_flashdata('form', $this->input->post());
-
-				// Set alert and redirect back.
-				set_alert(lang('error_csrf'), 'error');
-				redirect('admin/menus/add', 'refresh');
-				exit;
-			}
-
-			// Proceed
-			$status = $this->kbcore->menus->update_menu(
-				$id,
-				$this->input->post('name', true),
-				$this->input->post('slug', true),
-				$this->input->post('description', true)
-			);
-
-			// Did not pass?
-			if ($status === false)
-			{
-				// Store the details in session.
-				$this->session->set_flashdata('form', $data);
-
-				// Set alert and redirect back.
-				set_alert(lang('edit_menu_error'), 'error');
-				redirect('admin/menus/edit/'.$id, 'refresh');
-				exit;
-			}
-
-			// Set alert and redirect to menus list.
-			set_alert(lang('edit_menu_success'), 'success');
-			redirect('admin/menus', 'refresh');
-			exit;
-		}
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Delete an existing menu. This will remove all it's items from database
-	 * as well.
-	 * @access 	public
-	 * @param 	int 	$id 	the menu's ID.
-	 * @return 	void
-	 */
-	public function delete($target, $id)
-	{
-		if ((empty($target) OR ! in_array($target, array('menu', 'item')))
-			OR empty($id))
-		{
-			redirect('admin/menus');
-			exit;
-		}
-
-		// Check URL token.
-		if ( ! check_safe_url())
-		{
-			set_alert(lang('error_safe_url'), 'error');
-			redirect('admin/menus');
-			exit;
-		}
-
-		// Process status.
-		$status = $this->kbcore->menus->{"delete_{$target}"}($id);
-
-		if ($status === true)
-		{
-			set_alert(lang("delete_{$target}_success"), 'success');
-		}
-		else
-		{
-			set_alert(lang("delete_{$target}_error"), 'error');
-		}
-
-		redirect($this->agent->referrer());
-		exit;
 	}
 
 	// ------------------------------------------------------------------------
@@ -354,10 +217,6 @@ class Admin extends Admin_Controller
 	 */
 	public function items($id = 0)
 	{
-		// $ord = $this->kbcore->menus->items_order($id, array(20, 22, 23, 21));
-		// echo print_d($ord);
-		// exit;
-
 		// Get the menu from database and make sure it exists.
 		$data['menu'] = $this->kbcore->menus->get_menu($id);
 		if ( ! $data['menu'])
@@ -421,13 +280,13 @@ class Admin extends Admin_Controller
 		else
 		{
 			// Check CSRF.
-			// if ( ! $this->check_csrf())
-			// {
-			// 	// Set alert and redirect back.
-			// 	set_alert(lang('error_csrf'), 'error');
-			// 	redirect('admin/menus/items/'.$id, 'refresh');
-			// 	exit;
-			// }
+			if ( ! $this->check_csrf())
+			{
+				// Set alert and redirect back.
+				set_alert(lang('error_csrf'), 'error');
+				redirect('admin/menus/items/'.$id, 'refresh');
+				exit;
+			}
 
 			// Let's collect attributes first.
 			$attrs = $this->input->post('attrs', true);
@@ -438,7 +297,7 @@ class Admin extends Admin_Controller
 
 			// Proceed.
 			$status = $this->kbcore->menus->add_item(
-				$id,
+				$data['menu']->id,
 				$this->input->post('name', true),
 				$this->input->post('href', true),
 				$this->input->post('description', true),
@@ -463,12 +322,250 @@ class Admin extends Admin_Controller
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Edit menus locations.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Added CSRF security check.
+	 * 
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
+	public function locations()
+	{
+		// Get all locations and menus.
+		$data['locations'] = $this->kbcore->menus->get_locations();
+		$data['menus']     = $this->kbcore->menus->get_menus();
+
+		// Prepare form validation and rules.
+		$this->prep_form(array(array(
+			'field' => 'menu_location[]',
+			'label' => 'lang:menu_location',
+			'rules' => 'required',
+		)));
+
+
+		// Before the form is processed.
+		if ($this->form_validation->run() == false)
+		{
+			// Add CSRF security.
+			$data['hidden'] = $this->create_csrf();
+
+			// Set page title and render view.
+			$this->theme
+				->set_title(lang('manage_locations'))
+				->render($data);
+		}
+		// After the form is processed.
+		else
+		{
+			// Check CSRF.
+			if ( ! $this->check_csrf())
+			{
+				// Set alert and redirect back.
+				set_alert(lang('error_csrf'), 'error');
+				redirect('admin/menus/locations', 'refresh');
+				exit;
+			}
+
+			// Collect data.
+			$data = $this->input->post('menu_location', true);
+
+			// Try to update menus locations.
+			if (true === $this->kbcore->menus->set_location_menu($data))
+			{
+				set_alert(lang('menu_location_success'), 'success');
+			}
+			else
+			{
+				set_alert(lang('menu_location_error'), 'error');
+			}
+
+			redirect('admin/menus/locations', 'refresh');
+			exit;
+		}
+	}
+
+	// ------------------------------------------------------------------------
+	// Ajax Methods.
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Delete action handle.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to do the same as "edit" method.
+	 * 
+	 * @access 	public
+	 * @param 	string 	$target 	menu or item.
+	 * @param 	int 	$id
+	 * @return 	void
+	 */
+	public function delete($target, $id = 0)
+	{
+		switch ($target) {
+			case 'menu':
+				return $this->_delete_menu($id);
+				break;
+			case 'item':
+				return $this->_delete_item($id);
+				break;
+		}
+
+		// Return nothing.
+		return;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * AJAX menu items order.
+	 * @access 	public
+	 * @param 	int 	$id 	The menu's ID.
+	 * @return 	void
+	 */
+	public function update_order($id = 0)
+	{
+		// Process status.
+		$status['status'] = false;
+
+		// Make sure the menu exists.
+		if ( ! $this->kbcore->menus->get_menu($id))
+		{
+			echo json_encode($status);
+			die();
+		}
+
+		// Attempt to update order.
+		if ($this->kbcore->menus->items_order($id, $this->input->post(null, true)))
+		{
+			$status['status'] = true;
+		}
+
+		// Return the process status.
+		echo json_encode($status);
+		die();
+	}
+
+	// ------------------------------------------------------------------------
+	// Private Methods
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Edit an existing menu.
+	 * @access 	public
+	 * @param 	int 	$id 	The menu's ID.
+	 * @return  void
+	 */
+	private function _edit_menu($id = 0)
+	{
+		// Get the menu from database.
+		$data['menu'] = $this->kbcore->menus->get_menu($id);
+		// Make sure the menu exists.
+		if ( ! $data['menu'])
+		{
+			set_alert(lang('edit_menu_no_menu'), 'error');
+			redirect('admin/menus');
+			exit;
+		}
+
+		// Prepare validation rules.
+		$rules = array(
+			array(	'field' => 'name',
+					'label' => 'lang:menu_name',
+					'rules' => 'required'),
+		);
+
+		// The user changed the slug?
+		if ($this->input->post('username')
+			&& $this->input->post('username') <> $data['menu']->username) {
+			$rules[] = array(
+				'field' => 'username',
+				'label' => 'lang:menu_slug',
+				'rules' => 'required|is_unique[entities.username]'
+			);
+		}
+
+		// Prepare form validation and rules.
+		$this->prep_form($rules);
+
+		// Before the form is processed.
+		if ($this->form_validation->run() == false)
+		{
+			// Prepare form fields.
+			$data['name'] = array_merge(
+				$this->config->item('name', 'inputs'),
+				array('value' => set_value('name', $data['menu']->name))
+			);
+			$data['username'] = array_merge(
+				$this->config->item('username', 'inputs'),
+				array('value' => set_value('username', $data['menu']->username))
+			);
+			$data['description'] = array_merge(
+				$this->config->item('description', 'inputs'),
+				array('value' => set_value('description', $data['menu']->description))
+			);
+
+			// Add CSRF security layer.
+			$data['hidden'] = $this->create_csrf();
+
+			// Set page title and render view.
+			$this->theme
+				->set_title(lang('edit_menu'), $data['menu']->name)
+				->set_view('admin/edit_menu')
+				->render($data);
+		}
+		// After the form is processed.
+		else
+		{
+			// Check CSRF.
+			if ( ! $this->check_csrf())
+			{
+				// Store the details in session.
+				$this->session->set_flashdata('form', $this->input->post());
+
+				// Set alert and redirect back.
+				set_alert(lang('error_csrf'), 'error');
+				redirect('admin/menus/add', 'refresh');
+				exit;
+			}
+
+			// Proceed
+			$status = $this->kbcore->menus->update_menu(
+				$id,
+				$this->input->post('name', true),
+				$this->input->post('description', true),
+				$this->input->post('username', true)
+			);
+
+			// Did not pass?
+			if ($status === false)
+			{
+				// Store the details in session.
+				$this->session->set_flashdata('form', $data);
+
+				// Set alert and redirect back.
+				set_alert(lang('edit_menu_error'), 'error');
+				redirect('admin/menus/edit/'.$id, 'refresh');
+				exit;
+			}
+
+			// Set alert and redirect to menus list.
+			set_alert(lang('edit_menu_success'), 'success');
+			redirect('admin/menus', 'refresh');
+			exit;
+		}
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Edit an existing menu item.
 	 * @access 	public
 	 * @param 	int 	$id 	The menu item's ID.
 	 * @return  void
 	 */
-	public function _edit_item($id = 0)
+	private function _edit_item($id = 0)
 	{
 		// Get the menu from database.
 		$data['item'] = $this->kbcore->menus->get_item($id);
@@ -524,16 +621,13 @@ class Admin extends Admin_Controller
 		else
 		{
 			// Check CSRF.
-			// if ( ! $this->check_csrf())
-			// {
-			// 	// Store the details in session.
-			// 	$this->session->set_flashdata('form', $this->input->post());
-
-			// 	// Set alert and redirect back.
-			// 	set_alert(lang('error_csrf'), 'error');
-			// 	redirect('admin/menus/items/'.$data['item']->menu_id, 'refresh');
-			// 	exit;
-			// }
+			if ( ! $this->check_csrf())
+			{
+				// Set alert and redirect back.
+				set_alert(lang('error_csrf'), 'error');
+				redirect('admin/menus/items/'.$data['item']->owner_id, 'refresh');
+				exit;
+			}
 
 			// Let's collect attributes first.
 			$attrs = $this->input->post('attrs', true);
@@ -562,7 +656,7 @@ class Admin extends Admin_Controller
 
 			// Set alert and redirect to menus list.
 			set_alert(lang('edit_item_success'), 'success');
-			redirect('admin/menus/items/'.$data['item']->menu_id, 'refresh');
+			redirect('admin/menus/items/'.$data['item']->owner_id, 'refresh');
 			exit;
 		}
 	}
@@ -570,95 +664,52 @@ class Admin extends Admin_Controller
 	// ------------------------------------------------------------------------
 
 	/**
-	 * AJAX menu items order.
-	 * @access 	public
-	 * @param 	int 	$id 	The menu's ID.
+	 * Method for deleting a menu with AJAX request.
+	 *
+	 * @since 	1.3.0
+	 *
+	 * @access 	private
+	 * @param 	mixed 	$id 	The menu's ID or slug.
 	 * @return 	void
 	 */
-	public function update_order($id = 0)
+	private function _delete_menu($id)
 	{
-		// It must be an AJAX request.
-		if ( ! $this->input->is_ajax_request())
+		// Attempt to delete the menu.
+		if (true === $this->kbcore->menus->delete_menu($id))
 		{
-			redirect('admin/menus/items/'.$id);
-			exit;
+			$this->response->header = 200;
+			$this->response->message = 'Fuckit';
 		}
-
-		// Process status.
-		$status['status'] = false;
-
-		// Make sure the menu exists.
-		if ( ! $this->kbcore->menus->get_menu($id))
-		{
-			echo json_encode($status);
-			die();
-		}
-
-		// Attempt to update order.
-		if ($this->kbcore->menus->items_order($id, $this->input->post(null, true)))
-		{
-			$status['status'] = true;
-		}
-
-		// Return the process status.
-		echo json_encode($status);
-		die();
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Edit menus locations.
-	 * @access 	public
-	 * @param 	none
-	 * @return 	void
-	 */
-	public function locations()
-	{
-		// Get all locations and menus.
-		$data['locations'] = $this->kbcore->menus->get_locations();
-		$data['menus']     = $this->kbcore->menus->get_menus();
-
-		// Prepare form validation and rules.
-		$this->prep_form(array(array(
-			'field' => 'menu_location[]',
-			'label' => 'lang:menu_location',
-			'rules' => 'required',
-		)));
-
-
-		// Before the form is processed.
-		if ($this->form_validation->run() == false)
-		{
-			// Add CSRF security.
-			$data['hidden'] = null; //$this->create_csrf();
-
-			// Set page title and render view.
-			$this->theme
-				->set_title(lang('manage_locations'))
-				->render($data);
-		}
-		// After the form is processed.
 		else
 		{
-			// Collect data.
-			$data = $this->input->post('menu_location', true);
+			$this->response->header = 406;
+			$this->response->message = 'Fuckit';
+		}
+	}
 
-			// Try to update menus locations.
-			$status = $this->kbcore->menus->set_menu_location($data);
+	// ------------------------------------------------------------------------
 
-			// Set alert message depending on the status.
-			if ($status === true)
-			{
-				set_alert(lang('menu_location_success'), 'success');
-			}
-			else
-			{
-				set_alert(lang('menu_location_error'), 'error');
-			}
-
-			redirect('admin/menus/locations', 'refresh');
-			exit;
+	/**
+	 * Method for deleting a menu item.
+	 *
+	 * @since 	1.3.0
+	 *
+	 * @access 	private
+	 * @param 	int 	$id 	The item's ID.
+	 * @return 	void
+	 */
+	private function _delete_item($id)
+	{
+		// Attempt to delete the menu.
+		if (true === $this->kbcore->menus->delete_item($id))
+		{
+			$this->response->header = 200;
+			$this->response->message = 'Fuckit';
+		}
+		else
+		{
+			$this->response->header = 406;
+			$this->response->message = 'Fuckit';
 		}
 	}
 

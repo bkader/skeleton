@@ -54,7 +54,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	<?php echo admin_anchor('menus', lang('manage_menus'), 'class="btn btn-default btn-sm pull-right"'); ?>
 </h3>
 <div class="row">
-	<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
+	<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
 		<div class="panel panel-default">
 			<div class="panel-body">
 <?php if (count($locations) > 0): ?>
@@ -70,7 +70,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 							<select name="menu_location[<?php echo $slug; ?>]" id="location-<?php echo $slug; ?>" class="form-control input-sm">
 								<option value="0"><?php _e('select_menu'); ?></option>
 							<?php foreach ($menus as $menu): ?>
-								<option value="<?php echo $menu->id; ?>"<?php if ($menu->location === $slug): ?> selected="selected"<?php endif; ?>><?php echo $menu->name; ?></option>
+								<option value="<?php echo $menu->id; ?>"<?php if ($menu->menu_location === $slug): ?> selected="selected"<?php endif; ?>><?php echo $menu->name; ?></option>
 							<?php endforeach; unset($menu); ?>
 							</select>
 						</div>

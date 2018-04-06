@@ -65,10 +65,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 						<?php echo form_error('name', '<p class="help-block">', '</p>') ?: '<p class="help-block">'.lang('menu_name_tip').'</p>' ?>
 					</div>
 
-					<div class="form-group<?php echo (form_error('slug')) ? ' has-error' : ''; ?>">
-						<label for="slug"><?php _e('menu_slug'); ?></label>
-						<?php echo print_input($slug, array('class' => 'form-control', 'autofocus' => 'autofocus')); ?>
-						<?php echo form_error('slug', '<p class="help-block">', '</p>') ?: '<p class="help-block">'.lang('menu_slug_tip').'</p>' ?>
+					<div class="form-group<?php echo (form_error('username')) ? ' has-error' : ''; ?>">
+						<label for="username"><?php _e('menu_slug'); ?></label>
+						<?php echo print_input($username, array('class' => 'form-control', 'autofocus' => 'autofocus')); ?>
+						<?php echo form_error('username', '<p class="help-block">', '</p>') ?: '<p class="help-block">'.lang('menu_slug_tip').'</p>' ?>
 					</div>
 
 					<div class="form-group<?php echo (form_error('menu_description')) ? ' has-error' : ''; ?>">

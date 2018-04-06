@@ -61,6 +61,54 @@
     });
 
     // ========================================================
+    // Menu Manage Action.
+    // ========================================================
+
+    // Delete a menu.
+    jQuery(document).on("click", ".delete-menu", function (e) {
+        e.preventDefault();
+        var that = jQuery(this),
+            id = that.attr("data-menu-id"),
+            href = that.attr("data-href"),
+            message = that.attr("data-alert") || "Are you sure?";
+
+        if (confirm(message)) {
+            jQuery.get(href, function (response, textStatus) {
+                if (textStatus == "success") {
+                    toastr.success(response);
+                    jQuery("#menu-" + id).fadeOut(function() {
+                        jQuery(this).remove();
+                    });
+                } else {
+                    toastr.error(response);
+                }
+            }, 'json');
+        }
+    });
+
+    // Delete a menu item.
+    jQuery(document).on("click", ".delete-menu-item", function (e) {
+        e.preventDefault();
+        var that = jQuery(this),
+            id = that.attr("data-item-id"),
+            href = that.attr("data-href"),
+            message = that.attr("data-alert") || "Are you sure?";
+
+        if (confirm(message)) {
+            jQuery.get(href, function (response, textStatus) {
+                if (textStatus == "success") {
+                    toastr.success(response);
+                    jQuery("#item-" + id).fadeOut(function() {
+                        jQuery(this).remove();
+                    });
+                } else {
+                    toastr.error(response);
+                }
+            }, 'json');
+        }
+    });
+
+    // ========================================================
     // When the DOM is ready.
     // ========================================================
     $(document).ready(function () {

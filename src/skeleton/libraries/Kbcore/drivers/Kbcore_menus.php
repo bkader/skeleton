@@ -38,7 +38,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Kbcore_menu Class
+ * Kbcore_menus Class
  *
  * Handles operations done on site navigations and menus.
  *
@@ -47,9 +47,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @category 	Libraries
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
- * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @version 	1.3.0
  */
 class Kbcore_menus extends CI_Driver
 {
@@ -57,73 +57,51 @@ class Kbcore_menus extends CI_Driver
 	 * Holds the current front-end theme.
 	 * @var string
 	 */
-	private $_theme;
+	protected $_theme;
 
 	/**
-	 * Holds the front-end theme language index.
+	 * Holds the current front-end theme language index.
 	 * @var string
 	 */
-	private $_theme_domain;
+	protected $_theme_domain;
 
 	/**
-	 * Cache all current front-end's menus locations.
+	 * Cache all current front-end menus locations to reduce DB access.
 	 * @var array
 	 */
-	private $_locations;
+	protected $_locations;
 
 	/**
 	 * Holds cached menus to reduce DB access.
 	 * @var array
 	 */
-	private $_menus;
+	protected $_menus;
 
 	/**
-	 * Array of relationship between locations and themes.
+	 * Array of relations between relations and menus.
 	 * @var array
 	 */
-	private $_locations_menus;
+	protected $_locations_menus;
 
 	/**
-	 * Holds an array of cached menus items to reduce DB access.
+	 * Cached menus items to reduce DB access.
 	 * @var array
 	 */
-	private $_items;
+	protected $_items;
 
 	/**
-	 * Cache relations between menus and items.
+	 * Cached relations between menus and items.
 	 * @var array
 	 */
-	private $_relations;
+	protected $_menus_items;
 
 	/**
-	 * Array of menu columns to select when getting
-	 * menus from database.
-	 */
-	private $_menu_columns = array(
-		'entities.id',
-		'entities.username AS slug',
-		'entities.privacy',
-		'groups.name',
-		'groups.description',
-	);
-
-	/**
-	 * Array of items columns to select when getting
-	 * menus items from database.
-	 * @var array
-	 */
-	private $_item_columns = array(
-		'entities.id',
-		'entities.parent_id',
-		'entities.owner_id AS menu_id',
-		'objects.name AS title',
-		'objects.description',
-		'objects.content AS href',
-	);
-
-	/**
-	 * Initialize class to make helpers available to application.
-	 * @access 	protected
+	 * Initialize class so that helpers would be available.
+	 *
+	 * @since 	1.0.0
+	 *
+	 * @access 	public
+	 * @param 	none
 	 * @return 	void
 	 */
 	public function initialize()
@@ -134,9 +112,9 @@ class Kbcore_menus extends CI_Driver
 		log_message('info', 'Kbcore_menus Class Initialized');
 	}
 
-	// --------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 	// Theme Methods.
-	// --------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
 	/**
 	 * Return the currently active menu.
@@ -158,277 +136,311 @@ class Kbcore_menus extends CI_Driver
 		// Return the cached version.
 		return $this->_theme;
 	}
-
 	// --------------------------------------------------------------------
 
 	/**
 	 * Returns the current theme's language index.
-	 * For internal use only, never publicly accessible.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better performance.
+	 * 
 	 * @access 	private
+	 * @return 	string 	The language index if found, else null.
 	 */
 	private function _theme_domain()
 	{
-		if (isset($this->_theme_domain))
+		/**
+		 * If the theme domain was not previously cached, we make sure to 
+		 * cache it to avoid calling the Theme library next time.
+		 */
+		if ( ! isset($this->_theme_domain))
 		{
-			return $this->_theme_domain;
+			$this->_theme_domain = $this->ci->theme->theme_domain();
 		}
 
-		$this->_theme_domain = $this->ci->theme->theme_domain();
+		// Return the cached version.
 		return $this->_theme_domain;
 	}
 
-	// --------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 	// Locations Methods.
-	// --------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
 	/**
 	 * Add a single or multiple menus locations for the current theme.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better performance.
+	 * 
 	 * @access 	public
-	 * @param 	string 	$location 		the location slug.
+	 * @param 	string 	$slug 			the location slug.
 	 * @param 	string 	$description 	The location's description or name.
-	 * @return 	object
+	 * @return 	bool 	true if locations were updated, else false.
 	 */
-	public function add_location($location, $description = null)
+	public function add_location($slug, $description = null)
 	{
-		// Add multiple locations?
-		if (is_array($location))
+		// Make it possible to add multiple locations.
+		(is_array($slug)) OR $slug = array($slug => $description);
+
+		// Array of locations to add.
+		$locations = array();
+
+		// We loop through all locations and add them.
+		foreach ($slug as $key => $val)
 		{
-			$locations = array();
-
-			foreach ($location as $key => $val)
+			// This line makes it possible to add location with only slug.
+			if (is_int($key) && is_string($val))
 			{
-				if (is_int($key))
-				{
-					$locations[$val] = $description;
-				}
-				else
-				{
-					$locations[$key] = $val;
-				}
+				$locations[$val] = htmlentities($description, ENT_QUOTES, 'UTF-8');
 			}
-
-			if ($locations <> $this->_locations())
+			else
 			{
-				$this->_set_locations($locations);
+				$locations[$key] = htmlentities($val, ENT_QUOTES, 'UTF-8');
 			}
-
-			return $this;
 		}
 
-		// Add a single location.
-
-		// Add it if it does not exists!
-		$locations = $this->_locations();
-		if ( ! isset($locations[$location]))
-		{
-			$locations[$location] = htmlentities($description, ENT_QUOTES, 'UTF-8');
-			$this->_set_locations($locations);
-		}
-
-		return $this;
+		/**
+		 * We now update locations only if provided ones are different
+		 * from already stored locations.
+		 */
+		return ( ! empty($locations) && $locations <> $this->_get_locations())
+			? $this->_set_locations($locations)
+			: false;
 	}
 
-	// --------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
 	/**
-	 * Delete a menu location for the current theme.
+	 * Retrieve a single location name.
+	 *
+	 * @since 	1.3.0
+	 *
 	 * @access 	public
-	 * @param 	string 	$location 	location identifier.
-	 * @return 	object
+	 * @param 	string 	$slug 	The location's slug.
+	 * @return 	string
 	 */
-	public function delete_location($location)
+	public function get_location($slug)
 	{
-		// Get all locations first.
-		$locations = $this->_locations();
-
-		// The location exists?
-		if (isset($locations[$location]))
-		{
-			// Unset it and update locations.
-			unset($locations[$location]);
-			$this->_set_locations($locations);
-		}
-
-		return $this;
+		// Use "get_locations" method.
+		$locations = $this->get_locations();
+		return (isset($locations[$slug])) ? $locations[$slug] : null;
 	}
 
-	// --------------------------------------------------------------------
-
-	/**
-	 * Update locations for the current theme.
-	 * For internal use only, never accessible.
-	 * @access 	private
-	 * @param 	array 	$locations
-	 * @return 	object
-	 */
-	private function _set_locations($locations = array())
-	{
-		// Prepare the option's name.
-		$option_name = 'theme_menus_'.$this->_theme();
-
-		// Try to get the option from database.
-		$option = $this->_parent->options->get($option_name);
-
-		// Update cached locations.
-		$this->_locations = $locations;
-
-		// If locations are already stored, update them.
-		if ($option)
-		{
-			return $this->_parent->options->set_item($option_name, $locations);
-		}
-
-		// If the option does not exist, create it.
-		return $this->_parent->options->create(array(
-			'name'     => $option_name,
-			'value'    => $locations,
-			'tab'      => 'menus',
-			'required' => 0,
-		));
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Retrieve registered locations.
-	 * For internal use only, not publicly accessible.
-	 * @access 	private
-	 * @return 	array
-	 */
-	private function _locations()
-	{
-		// Already cached? Return them.
-		if (isset($this->_locations))
-		{
-			return $this->_locations;
-		}
-
-		// Get locations from database and cache them to reduce DB access.
-		$this->_locations = $this->_parent->options->item(
-			'theme_menus_'.$this->_theme(),
-			array()
-		);
-		return $this->_locations;
-	}
-
-	// --------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
 	/**
 	 * Return the current theme's menus location.
+	 * This method is called only of dashboard menus section so that locations
+	 * names can be translated.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code.
+	 * 
 	 * @access 	public
 	 * @return 	array
 	 */
 	public function get_locations()
 	{
-		// Get the locations first.
-		$locations = $this->_locations();
+		// Get stored locations.
+		$locations = $this->_get_locations();
 
-		// Loop through locations and see if they need to be translated.
-		foreach ($locations as $slug => &$location)
+		// Let's see if locations names need to be translated.
+		foreach ($locations as $slug => &$name)
 		{
-			if (sscanf($location, 'lang:%s', $translated) === 1)
+			if (sscanf($name, 'lang:%s', $translated) === 1)
 			{
-				$location = $this->ci->lang->line($translated, $this->_theme_domain());
+				$name = $this->ci->lang->line($translated, $this->_theme_domain());
 			}
 		}
 
-		// Return the result.
+		// We return the final result.
 		return $locations;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Retrieve all menus assigned to the select location.
+	 * Delete a menu location for the current theme.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code.
+	 * 
 	 * @access 	public
-	 * @param 	string 	$location 	The location's slug.
-	 * @return 	array 	array of menu if found, else empty array
+	 * @param 	string 	$slug 	The location's slug.
+	 * @return 	bool 	true if the location was deleted, else false.
 	 */
-	public function get_location_menu($location)
+	public function delete_location($slug)
 	{
-		// Prepare menu id.
-		$menu_id = 0;
+		// Let's retrieve stored locations first.
+		$locations = $this->_get_locations();
 
-		// Already cached? Return it.
-		if (isset($this->_locations_menus[$location]))
+		// We remove the location only if found.
+		if (isset($locations[$slug]))
 		{
-			$menu_id = $this->_locations_menus[$location];
-		}
-		// Not cached? Get it from databaes.
-		else
-		{
-			$meta = $this->_parent->metadata->get_by(array(
-				'key'   => 'menu_location',
-				'value' => $location,
-			));
-
-			// Found? Cache it to reduce DB access.
-			if ($meta && $menu = $this->get_menu($meta->guid))
-			{
-				$menu_id = $meta->guid;
-
-				// Cache the result.
-				$this->_locations_menus[$location] = $menu_id;
-			}
-
-			return ($meta) ? $this->get_menu($meta->guid) : null;
+			// Unset it then update record.
+			unset($locations[$slug]);
+			return $this->_set_locations($locations);
 		}
 
-		return $this->get_menu($menu_id);
+		return false;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Assign a location to the selected menu.
+	 * Retrieve the menu assigned to the selected location.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Only one menu allowed per location.
+	 *
 	 * @access 	public
-	 * @param 	mixed 	$location 	location slug or array.
-	 * @param 	int|null $menu_id 	the menu's id or null if location is an array.
-	 * @return 	bool.
+	 * @param 	string 	$slug 	The location's slug.
+	 * @return 	object 	The menu's object if found, else null.
 	 */
-	public function set_menu_location($location, $menu_id = null)
+	public function get_location_menu($slug)
 	{
-		// Multiple locations and menus?
-		if (is_array($location))
+		// We start with an empty $owner_id.
+		$owner_id = 0;
+
+		// Was the menu already cached? Use its ID.
+		if (isset($this->_locations_menus[$slug]))
 		{
-			// $location = array_unique($location);
-			foreach ($location as $_location => $_menu_id)
+			$owner_id = $this->_locations_menus[$slug];
+		}
+		// Otherwise, get it from database.
+		else
+		{
+			$meta = $this->_parent->metadata->get_by(array(
+				'key'   => 'menu_location',
+				'value' => $slug,
+			));
+
+			// The meta is found? Use it.
+			if ($meta)
 			{
-				$this->set_menu_location($_location, $_menu_id);
+				$owner_id = $meta->guid;
+
+				// Cache it to reduce DB access.
+				$this->_locations_menus[$slug] = $owner_id;
+			}
+		}
+
+		// Now we attempt to get the menu.
+		return $this->get_menu($owner_id);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Assign location to the selected menu.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code readability and performance.
+	 *
+	 * @access 	public
+	 * @param 	mixed 	$slug 			Location's slug or associative array.
+	 * @param 	int 	$menu_it 	The menu's ID to which we assign the location.
+	 * @return 	bool 	true if everything goes well, else false.
+	 */
+	public function set_location_menu($slug, $owner_id = 0)
+	{
+		// Turn everything into an array.
+		(is_array($slug)) OR $slug = array($slug => $owner_id);
+
+		// We get stored locations first.
+		$db_locations = $this->_get_locations();
+
+		// We loop through all elements and set them.
+		foreach ($slug as $location => $menu_id)
+		{
+			// The location cannot be found? Ignore it.
+			if ( ! isset($db_locations[$location]))
+			{
+				continue;
 			}
 
-			return true;
+			/**
+			 * If $owner_id is set to 0, we make sure to remove the location
+			 * from any existing menu.
+			 */
+			if ($menu_id == 0)
+			{
+				$this->_parent->metadata->update_by(
+					array('key' => 'menu_location', 'value' => $menu_id),
+					array('value' => null)
+				);
+			}
+			// Otherwise, we update/create the meta.
+			else
+			{
+				$this->_parent->metadata->update_meta($menu_id, 'menu_location', $location);
+			}
 		}
 
-		// TODO:
-		// This was removed because it was causing menus
-		// not to be removed.
-		// Make sure the menu exists.
-		// if ( ! $this->get_menu($menu_id))
-		// {
-		// 	return false;
-		// }
+		return true;
+	}
 
-		// Make sure the location exists.
-		$locations = $this->_locations();
-		if ( ! isset($locations[$location]))
-		{
-			return false;
-		}
+	// ------------------------------------------------------------------------
 
-		// If $menu_id is set to 0, we remove location from all menus.
-		if ($menu_id == 0)
+	/**
+	 * Retrieve registered locations.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code.
+	 * 
+	 * @access 	private
+	 * @return 	array
+	 */
+	private function _get_locations()
+	{
+		/**
+		 * If locations are not already cached, we make sure to get them,
+		 * cache them then return them.
+		 */
+		if ( ! isset($this->_locations))
 		{
-			return $this->_parent->metadata->update_by(
-				array(
-					'key'   => 'menu_location',
-					'value' => $location,
-				),
-				array('value' => null)
+			$this->_locations = $this->_parent->options->item(
+				'theme_menus_'.$this->_theme(),
+				array() // Default value if not found.
 			);
 		}
 
-		return $this->_parent->metadata->update_meta($menu_id, 'menu_location', $location);
+		// Return the cached version.
+		return $this->_locations;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Update locations for the current theme.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code.
+	 * 
+	 * @access 	private
+	 * @param 	array 	$locations
+	 * @return 	object
+	 */
+	private function _set_locations($locations = array())
+	{
+		// We update cached locations.
+		$this->_locations = $locations;
+
+		// Prepare the option's name.
+		$option_name = 'theme_menus_'.$this->_theme;
+
+		// Get the options from database.
+		$option = $this->_parent->options->get($option_name);
+
+		// If the location option is found, we update it only.
+		if ($option)
+		{
+			$option->value = $this->_locations;
+			return $option->save();
+		}
+
+		// Otherwise, we create it.
+		return $this->_parent->options->add_item($option_name, $this->_locations, 'menus', false);
 	}
 
 	// ------------------------------------------------------------------------
@@ -436,241 +448,242 @@ class Kbcore_menus extends CI_Driver
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Create a new menu.
+	 * Method for creating a new menu.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code and to add the $slug option.
+	 *
 	 * @access 	public
-	 * @param 	string 	$name 			The menu's name.
+	 * @param 	string 	$name 	The menu's name.
 	 * @param 	string 	$description 	The menu's description.
-	 * @return 	int 	the menu's id if created, else false.
+	 * @param 	string 	$slug 	The menu's slug.
+	 * @return 	mixed 	the menu ID if created, else false.
 	 */
-	public function add_menu($name, $description = null)
+	public function add_menu($name, $description = null, $slug = null)
 	{
-		// Let's prepare $data to be inserted.
-		$data['subtype'] = 'menu';
+		// We make sure the slug is provided.
+		($slug === null) && $slug = $name;
 
-		// Let's generate the slug.
-		$slug = url_title($name, '-', true);
-
-		// Add the name, slug and description.
-		$data['name']        = $name;
-		$data['username']    = $slug;
-		$data['description'] = $description;
-
-		return $this->_parent->groups->create($data);
+		// We create the menu.
+		return $this->_parent->groups->create(array(
+			'subtype'     => 'menu',
+			'username'    => url_title($slug, '-', true),
+			'name'        => $name,
+			'description' => $description,
+		));
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Update an existing menu by its id.
+	 * Update an existing menu.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten because Kbcore_groups was updated.
+	 *
 	 * @access 	public
-	 * @param 	int 	$id 	the menu's id.
-	 * @param 	string 	$name 	the menu's new name.
-	 * @param 	string 	$slug 	the menu's new slug.
-	 * @param 	string 	$description the menu's description.
-	 * @return 	boolean
+	 * @param 	mixed 	$id 	The menu's ID or slug.
+	 * @param 	string 	$name 	The menu's name.
+	 * @param 	string 	$name 	The menu's description.
+	 * @param 	string 	$name 	The menu's slug.
+	 * @return 	bool 	true if the menu is updated, else false
 	 */
-	public function update_menu($id, $name, $slug = null, $description = null)
+	public function update_menu($id, $name, $description = null, $slug = null)
 	{
-		// Make sure the menu exists first.
+		// We make sure the menu exists first.
 		$menu = $this->get_menu($id);
 		if ( ! $menu)
 		{
 			return false;
 		}
 
-		// Prepare $data to update.
-		$data['name'] = $name;
+		// We update the name.
+		$menu->name = $name;
 
 		/**
-		 * If a new slug is provided and is different from
-		 * the menu's actual slug, we add it.
+		 * If we provided a new slug for the menu, we make sure that
+		 * it is different from the current one and also that it 
+		 * is not used by another entity.
 		 */
-		if ( ! empty($slug) && $slug !== $menu->slug)
+		if ($slug && $slug <> $menu->username && false === $this->get_menu($slug))
 		{
-			$data['username'] = $slug;
+			$menu->username = $slug;
 		}
 
-		// Add the description if any.
-		(empty($description)) OR $data['description'] = $description;
+		// If we provided a description, use it.
+		(null !== $description) && $menu->description = $description;
 
-		// Attempt to update the menu.
-		return $this->_parent->groups->update($id, $data);
+		// We update the menu.
+		return $menu->save();
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Delete the selected menu.
+	 * Delete the selected menu and all its data and items.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten because entities library was updated.
+	 *
 	 * @access 	public
-	 * @param 	int 	$id 	the menu's id.
-	 * @return 	boolean
+	 * @param 	mixed 	$id 	The menu's ID, slug or array of WHERE clause.
+	 * @return 	bool
 	 */
 	public function delete_menu($id)
 	{
-		// Process status.
-		$status = false;
+		// We make sure to remove only a menu.
+		$where['type']    = 'group';
+		$where['subtype'] = 'menu';
 
-		// The menu does not exist?
-		if ( ! $this->get_menu($id))
-		{
-			return $status;
-		}
+		// What column to use?
+		$column = (is_numeric($id)) ? 'id' : 'username';
+		$where[$column] = $id;
 
-		// Proceed
-		$status = $this->_parent->entities->remove($id);
-
-		// Deleted? Remove all items as well.
-		if ($status === true)
-		{
-			$this->_delete_menu_items($id);
-		}
-
-		return $status;
+		/**
+		 * Because we have rewritten the entities library to remove all
+		 * entity's related data, all lines are unnecessary, so we only
+		 * call the "remove_by" method.
+		 */
+		return $this->_parent->entities->remove_by($where);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Retrieve a single menu by its id or slug.
+	 * Retrieve a single menu by its ID or slug.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code readability and performance.
+	 *
 	 * @access 	public
-	 * @param 	mixed 	$id 	id or slug.
-	 * @return 	object if found, else null.
+	 * @param 	mixed 	$id 	The menu's ID or slug.
+	 * @return 	mixed 	menu's object if found, else false.
 	 */
 	public function get_menu($id)
 	{
-		// Empty menu to start.
-		$menu = null;
+		// We start with an empty $menu.
+		$menu = false;
 
-		// Already cached? Get it.
-		if (isset($this->_menus[$id]))
+		// Do we have already cached menus? We look for it there.
+		if (isset($this->_menus))
 		{
-			// By ID?
+			// Are we getting by ID?
 			if (is_numeric($id) && isset($this->_menus[$id]))
 			{
 				$menu = $this->_menus[$id];
-				$menu->cached = true;
 			}
-			// By slug?
+			// Otherwise, we look for it by its slug.
 			else
 			{
-				foreach ($this->_menus as &$menu)
+				foreach ($this->_menus as $_id => &$menu)
 				{
-					if ($menu->slug === $id)
+					if ($menu->username == $id)
 					{
-						$menu->cached = true;
+						$menu = $this->_menus[$_id];
 						break;
 					}
 				}
 			}
 		}
-		// Not cached? Get it from database
-		else
+
+		// If we have no menus cached, or the menu was not found, we get it.
+		if (false === $menu)
 		{
-			// Prepare the search criteria.
-			$where['entities.type']    = 'group';
-			$where['entities.subtype'] = 'menu';
+			// We prepare our WHER clause.
+			$where['subtype'] = 'menu';
+			$column           = (is_numeric($id)) ? 'id' : 'username';
+			$where[$column]   = $id;
 
-			// In case of using an id.
-			if (is_numeric($id))
-			{
-				$where['entities.id'] = $id;
-			}
-			// By slug?
-			else
-			{
-				$where['entities.username'] = $id;
-			}
+			// We attempt to get the menu from database.
+			$db_menu = $this->_parent->groups->get_by($where);
 
-			// Attempt to get the menu from database.
-			$menu = $this->ci->db
-				->select($this->_menu_columns)
-				->where($where)
-				->join('groups', 'groups.guid = entities.id')
-				->get('entities')
-				->row();
-
-			// If the menu was found, add location and location's name.
-			if ($menu)
+			// If the menu was found, we add the location's name.
+			if ($db_menu)
 			{
-				// Get all locations to user their name and slug.
+				// We assign $db_menu to $menu.
+				$menu = $db_menu;
+
+				// Get our available locations and their names.
 				$locations = $this->get_locations();
-
-
-				// $menu->location = $this->_parent->metadata->get_meta($menu->id, 'menu_location', true);
-				$menu->location      = $this->_get_menu_location($menu->id);
 				$menu->location_name = null;
-
-				// Get the name of the location.
-				if ($menu->location && isset($locations[$menu->location]))
+				if ($menu->menu_location && isset($locations[$menu->menu_location]))
 				{
-					$menu->location_name = $locations[$menu->location];
+					$menu->location_name = $locations[$menu->menu_location];
 				}
 
-				// Cache the menu to reduce DB access.
-				$this->_menus[$id] = $menu;
+				// We make sure to cache the menu to reduce DB access.
+				$this->_menus[$menu->id] = $menu;
 			}
 		}
 
-		// Return the menu.
+		// Return the final result.
 		return $menu;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Returns the selected menu location if found.
-	 * @access 	private
-	 * @param 	int 	$menu_id
-	 * @return 	string 	if found, else null.
-	 */
-	private function _get_menu_location($menu_id = 0)
-	{
-		return $this->_parent->metadata->get_meta($menu_id, 'menu_location', true);
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Retrieve all site's menus.
+	 * Retrieves all menus stored in database.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code readability and performance.
+	 *
 	 * @access 	public
-	 * @return 	array of objects.
+	 * @param 	none
+	 * @return 	array
 	 */
 	public function get_menus()
 	{
-		// Already cached? Return theme.
-		if (isset($this->_menus))
+		// We start with an empty $menus.
+		$menus = array();
+
+		// We count menus for comparison purpose.
+		$menus_count = $this->_parent->entities->count(array(
+			'type'    => 'group',
+			'subtype' => 'menu',
+		));
+
+		/**
+		 * If there were some menus cached, we make sure that the count
+		 * is identical to $menus_count to return them, this means that 
+		 * they were all cached. Otherwise, we get all menus from database
+		 * then cache them form later use.
+		 */
+		if (isset($this->_menus) && count($this->_menus) === $menus_count)
 		{
-			return $this->_menus;
+			$menus = $this->_menus;
 		}
-
-		// Try to get menus from database.
-		$menus = $this->_parent->groups
-			->select($this->_menu_columns)
-			->get_many('entities.subtype', 'menu');
-
-		// If there are any menus, get their location.
-		if ($menus)
+		else
 		{
-			// Get all locations to user their name and slug.
-			$locations = $this->get_locations();
+			// Get menus from database.
+			$db_menus = $this->_parent->groups->get_many('subtype', 'menu');
 
-			// Loop through menus and add location's name and slug.
-			foreach ($menus as $menu)
+			// Did we find any?
+			if ($db_menus)
 			{
-				$menu->location = $this->_parent->metadata->get_meta($menu->id, 'menu_location', true);
-				$menu->location_name = null;
-				if ($menu->location && isset($locations[$menu->location]))
+				// Assign them to $menus.
+				$menus = $db_menus;
+
+				// Get our available locations and their names.
+				$locations = $this->get_locations();
+
+				// We add locations names.
+				foreach ($menus as $id => &$menu)
 				{
-					$menu->location_name = $locations[$menu->location];
+					$menu->location_name = null;
+					if ($menu->menu_location && isset($locations[$menu->menu_location]))
+					{
+						$menu->location_name = $locations[$menu->menu_location];
+					}
+
+					// We make sure to cache the menu to reduce DB access.
+					$this->_menus[$menu->id] = $menu;
 				}
 			}
 		}
 
-		// Cache menus to reduce DB access.
-		$this->_menus = $menus;
-
-		// $menus = array();
-		return $this->_menus;
+		// We return the final result.
+		return $menus;
 	}
 
 	// ------------------------------------------------------------------------
@@ -679,320 +692,324 @@ class Kbcore_menus extends CI_Driver
 
 	/**
 	 * Add a new item to the selected menu.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code readability and performance.
+	 *
 	 * @access 	public
-	 * @param 	int 	$menu_id 	the menu's id.
-	 * @param 	string 	$title 		the item' title.
-	 * @param 	string 	$href 		the item's URL.
-	 * @param 	string 	$description the item's description.
-	 * @param 	array 	$attrs 		array of additional attributes.
-	 * @param 	int  	$parent_id 	the parent's ID.
-	 * @return 	int 	the item's id if created, else false.
+	 * @param 	int 	$owner_id 		The menu's ID or username.
+	 * @param 	string 	$name 			The item's name.
+	 * @param 	string 	$href 			The item's URL.
+	 * @param 	string 	$description 	The item's description.
+	 * @param 	array 	$attrs 			Array of additional item attributes.
+	 * @param 	array 	$parent_id 		The item's parent used to build multilevel menus.
+	 * @return 	int 	The new item's id if created, else false.
 	 */
-	public function add_item($menu_id, $title, $href = '#', $description = null, $attrs = array(), $parent_id = 0)
+	public function add_item($owner_id, $name, $href = '#', $description = null, $attrs = array(), $parent_id = 0)
 	{
-		// Make sure the menu exists.
-		if ( ! $this->get_menu($menu_id) OR empty($title))
+		// We make sure the menu exists and $name is provided.
+		$menu = $this->get_menu($owner_id);
+		if (false === $menu OR empty($name))
 		{
 			return false;
 		}
 
-		// Prepare data to insert.
-		$data = array(
+		// We make sure $owner_id is numeric.
+		(is_numeric($owner_id)) OR $owner_id = $menu->id;
+
+		// We make sure to format attributes and order.
+		return $this->_parent->objects->create(array(
 			'parent_id'   => $parent_id,
-			'owner_id'    => $menu_id,
+			'owner_id'    => $owner_id,
 			'subtype'     => 'menu_item',
-			'name'        => htmlspecialchars($title, ENT_QUOTES, 'UTF-8'),
+			'name'        => htmlspecialchars($name, ENT_QUOTES, 'UTF-8'),
 			'description' => $description,
 			'content'     => $href,
-		);
-
-		// Try to create the item.
-		$item_id = $this->_parent->objects->create($data);
-
-		// If the item was created, add attributes.
-		if ($item_id > 0)
-		{
-			$this->_parent->metadata->add_meta($item_id, array(
-				'attributes' => $attrs,
-				'order'      => count($this->get_menu_items($menu_id)),
-			));
-		}
-
-		// Return the item id.
-		return $item_id;
+			'attributes'  => $attrs,
+			'order'       => $this->count_menu_items($owner_id),
+		));
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Update an existing menu item.
+	 * Update a single item details.
+	 *
+	 * @since 	1.0.0
+	 *
 	 * @access 	public
-	 * @param 	int 	$id 	the item's id.
-	 * @param 	string 	$title 		the item' title.
-	 * @param 	string 	$href 		the item's URL.
-	 * @param 	string 	$description the item's description.
-	 * @param 	array 	$attrs 		array of additional attributes.
-	 * @return 	int 	the item's id if created, else false.
+	 * @param 	int 	$id 			The item's ID.
+	 * @param 	string 	$name 			The item's name (title).
+	 * @param 	string 	$href 			The item's URL (content).
+	 * @param 	string 	$description 	The item's description.
+	 * @param 	array 	$attrs 			The item's extra attributes.
+	 * @return 	bool 	true if the item was updated, else false.
 	 */
-	public function update_item($id, $title, $href = '#', $description = null, $attrs = array())
+	public function update_item($id, $name, $href = '#', $description = null, $attrs = array())
 	{
-		// Make sure the item exists.
+		// We get the item and make sure it exists.
 		$item = $this->get_item($id);
 		if ( ! $item)
 		{
 			return false;
 		}
 
-		/**
-		 * Prepare the update array and add
-		 * elements only if they are different.
-		 */
-		$data = array();
+		// We update things only if changed.
+		($name <> $item->name) && $item->name = $name;
+		($description <> $item->description) && $item->description = $description;
+		($href <> $item->content) && $item->content = $href;
 
-		// The title.
-		if ($title <> $item->title)
-		{
-			$data['name'] = htmlentities($title, ENT_QUOTES, 'UTF-8');
-		}
+		// We update attributes now.
+		$item->attributes = $attrs;
 
-		// The description.
-		if ($description <> $item->description)
-		{
-			$data['description'] = htmlentities($description, ENT_QUOTES, 'UTF-8');
-		}
-
-		// The URL.
-		if ($href <> $item->href)
-		{
-			$data['content'] = htmlentities($href, ENT_QUOTES, 'UTF-8');
-		}
-
-		/**
-		 * We add attributes to $data array because objects
-		 * library will split it anyways
-		 */
-		$data['attributes'] = $attrs;
-
-		/**
-		 * If the update $data is empty, nothing to do
-		 * concerning the menu item, so we set $status to true.
-		 * Otherwise, the status will be the update process status.
-		 */
-		return (empty($data))
-			? true
-			: $this->_parent->objects->update($id, $data);
+		// We proceed.
+		return $item->save();
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Delete an existing item.
+	 * Delete an existing menu item from database.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten to avoid doing bad things if wrong ID is passed.
+	 *
 	 * @access 	public
-	 * @param 	int 	$id 	the item's id.
-	 * @return 	boolean
+	 * @param 	int 	$id 	The item's ID.
+	 * @return 	bool 	true if the item was remove, else false.
 	 */
 	public function delete_item($id)
 	{
-		return $this->_parent->entities->remove($id);
+		return $this->_parent->entities->remove_by(array(
+			'id'      => $id,
+			'type'    => 'object',
+			'subtype' => 'menu_item',
+		));
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Retrieve a single item by it's id.
+	 * Retrieve a single menu item by its ID.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code readability and performance.
+	 *
 	 * @access 	public
-	 * @param 	int 	$id 	the item's id.
-	 * @return 	object if found, else null.
+	 * @param 	int 	$id 	The item's ID.
+	 * @return 	object 	the item's object if found, else false.
 	 */
 	public function get_item($id)
 	{
-		// Already cached? Return it.
-		if (isset($this->_items[$id]))
+		// We start with empty $item.
+		$item = false;
+
+		// Found in cached items?
+		if (is_numeric($id) && isset($this->_items[$id]))
 		{
 			$item = $this->_items[$id];
-			$item->cached = true;
 		}
-		// Not cached?
+		// Not cached? Get it from database.
 		else
 		{
-			// Try to get it from database.
-			$item = $this->_parent->objects
-				->select($this->_item_columns)
-				->get_by(array(
-					'entities.id'      => $id,
-					'entities.subtype' => 'menu_item',
-				));
+			$db_item = $this->_parent->objects->get_by(array(
+				'id' => $id,
+				'subtype' => 'menu_item',
+			));
 
-			// Found? Get attributes and order.
-			if ($item)
+			// Found?
+			if ($db_item)
 			{
-				$item->order      = abs($this->_parent->metadata->get_meta($id, 'order', true));
-				$item->attributes = $this->_parent->metadata->get_meta($id, 'attributes', true);
+				// Assign it to $item.
+				$item = $db_item;
 
-				// Cache it to reduce DB access.
-				$this->_items[$id] = $item;
+				// Add item order.
+				$item->order = $db_item->order;
+				$item->attributes = $db_item->attributes;
+
+				// We cache the item to reduce DB access.
+				$this->_items[$db_item->id] = $item;
 			}
 		}
 
+		// Return the final result.
 		return $item;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Retrieve all registered menu items from database.
+	 * Method for retrieving all menu items from database.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code readability and performance.
+	 *
 	 * @access 	public
-	 * @return 	array of object if found, else empty array.
+	 * @param 	none
+	 * @return 	array
 	 */
 	public function get_items()
 	{
-		// Array of cached items IDs and menu items.
+		// We prepare the array of cached items and items to return.
 		$cached_ids = array();
 		$items      = array();
 
-		// Area there any items cached?
+		// Do we have items cached? Get them first.
 		if (isset($this->_items))
 		{
 			$cached_ids = array_keys($this->_items);
-			$items      = array_values($this->_items);
-
-			// Set items as cached.
-			array_walk($items, function($item) {
-				$item->cached = true;
-			});
+			$items      = array_value($this->_items);
 		}
 
-		// Get the rest from database.
-
-		// No items cached?
-		if (empty($cached_ids))
+		// We prepare our WHERE clause.
+		$where['subtype'] = 'menu_item';
+		if ( ! empty($cached_ids))
 		{
-			$db_items = $this->_parent->objects
-				->select($this->_item_columns)
-				->get_many('subtype', 'menu_item');
+			$where['!id'] = $cached_ids;
 		}
-		// If there are cached items, exclude them.
-		else
-		{
-			$db_items = $this->_parent->objects
-				->select($this->_item_columns)
-				->where_not_in('id', $cached_ids)
-				->get_many('subtype', 'menu_item');
-		}
+		
+		// We now get the rest from database.
+		$db_items = $this->_parent->objects->get_many($where);
 
-		// Found? Get attributes and order.
+		// Did we find any?
 		if ($db_items)
 		{
-			foreach ($db_items as &$item)
+			foreach ($db_items as $item)
 			{
-				$item->order      = abs($this->_parent->metadata->get_meta($item->id, 'order', true));
-				$item->attributes = $this->_parent->metadata->get_meta($item->id, 'attributes', true);
+				// Temporary item so we can add order an attributes.
+				$_item             = $item;
+				$_item->order      = $item->order;
+				$_item->attributes = $item->attributes;
 
-				// Cache items to reduce DB access.
-				$this->_items[$item->id] = $item;
+				// Add it to items array.
+				$items[]           = $item;
+
+				// We make sure to cache it to reduce DB access.
+				$this->_items[$item->id] = $_item;
 			}
-
-			// Merge everything.
-			$items = array_merge($items, $db_items);
 		}
 
-		// Sort elements
-		if ($items)
+		// We we have any items, we make sure to sort them.
+		if ( ! empty($items))
 		{
 			usort($items, array($this, '_sort_items'));
 		}
 
+		// We return the final result.
 		return $items;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Retrieve all items listed under the selected menu's id OR slug.
+	 * Method for retrieving items listed under the selected menu.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Rewritten for better code readability and performance.
+	 *
 	 * @access 	public
-	 * @param 	mixed 	$id 	The menu's id or slug.
-	 * @return 	array of objects if found, else empty array.
+	 * @param 	mixed 	$id 	The menu's ID or slug.
+	 * @return 	array
 	 */
 	public function get_menu_items($id)
 	{
-		// Get the menu and make sure it exists.
+		// We start with empty $items array.
+		$items = array();
+
+		// We make sure the menu exists.
 		$menu = $this->get_menu($id);
-		if ( ! $menu)
+		if (false === $menu)
 		{
-			return array();
+			return $items;
 		}
+
+		// We make sure $id is numeric.
 		(is_numeric($id)) OR $id = $menu->id;
 
-		// Array of cached items.
+		// Maybe some items are cached, so we check them.
 		$cached_ids = array();
-		$items      = array();
-
-		// Are there any elements cached?
 		if (isset($this->_items))
 		{
-			foreach ($this->_items as $_item)
+			foreach ($this->_items as $cached_id => &$cached_item)
 			{
-				if ($_item->menu_id == $id)
+				if ($cached_item->owner_id == $id)
 				{
-					$cached_ids[]  = $_item->id;
-					$_item->cached = true;
-					$items[]       = $_item;
+					$cached_ids[]        = $cached_id;
+					$items[]             = $cached_item;
 				}
 			}
 		}
 
-		// Get the rest from database.
-		if (empty($cached_ids))
-		{
-			$db_items = $this->_parent->objects
-				->select($this->_item_columns)
-				->get_many(array(
-					'entities.owner_id' => $id,
-					'entities.subtype' => 'menu_item',
-				));
-		}
-		else
-		{
-			$db_items = $this->ci->db
-				->select($this->_item_columns)
-				->join('objects', 'objects.guid = entities.id')
-				->where('entities.type', 'object')
-				->where('entities.subtype', 'menu_item')
-				->where_not_in('entities.id', $cached_ids)
-				->get('entities')
-				->result();
-		}
+		// We prepare our WHERE clause to retrieve the rest from database.
+		$where['owner_id'] = $id;
+		$where['subtype']  = 'menu_item';
+		(empty($cached_ids)) OR $where['!id'] = $cached_ids;
 
-		// Found? Get attributes and order.
+		// Attempt to get items from database.
+		$db_items = $this->_parent->objects->get_many($where);
+
+		// Did we find any?
 		if ($db_items)
 		{
-			foreach ($db_items as &$item)
+			foreach ($db_items as $db_item)
 			{
-				$item->order      = abs($this->_parent->metadata->get_meta($item->id, 'order', true));
-				$item->attributes = $this->_parent->metadata->get_meta($item->id, 'attributes', true);
+				// Temporary so we can edit it.
+				$item             = $db_item;
+				$item->order      = $db_item->order;
+				$item->attributes = $db_item->attributes;
 
-				// Cache items to reduce DB access.
-				$this->_items[$item->id] = $item;
+				// Add the item to items array.
+				$items[] = $item;
+
+				// We make sure to cache it to reduce DB access.
+				$this->_items[$db_item->id] = $item;
 			}
-
-			// Merge everything.
-			$items = array_merge($items, $db_items);
 		}
 
-		// Sort elements
-		if ($items)
+		// We make sure to order items if we found any.
+		if ( ! empty($items))
 		{
 			usort($items, array($this, '_sort_items'));
 		}
 
-		// Return the result.
+		// Return the final result.
 		return $items;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for counting menus items.
+	 *
+	 * @since 	1.3.0
+	 * 
+	 * @access 	public
+	 * @param 	int 	$id 	The menu's ID or username.
+	 * @return 	int
+	 */
+	public function count_menu_items($id)
+	{
+		// Are we counting by the menu's username?
+		if ( ! is_numeric($id) && false !== $menu = $this->get_menu($id))
+		{
+			$id = $menu->id;
+		}
+
+		// Return items count.
+		return $this->_parent->objects->count(array(
+			'owner_id' => $id,
+			'subtype'  => 'menu_item',
+		));
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Update items order for the given menu.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	Kept for backward compatibility.
+	 * 
 	 * @access 	public
 	 * @param 	int 	$id 	the menu's 	id.
 	 * @param 	array 	$items 	array of item's IDs.
@@ -1000,25 +1017,38 @@ class Kbcore_menus extends CI_Driver
 	 */
 	public function items_order($id, array $items = array())
 	{
-		// Get the menu.
-		$menu = $this->get_menu($id);
+		return $this->order_menu_items($id, $items);
+	}
 
-		// Make sure the menu exists and $items are provided.
-		if ( ! $menu OR empty($items))
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Update items order for the selected menu.
+	 *
+	 * @since 	1.3.0 	Created for better function name.
+	 *
+	 * @access 	public
+	 * @param 	mixed 	$id 	The menu's ID or username.
+	 * @param 	array 	$items 	Array of items IDs.
+	 * @return 	bool 	true if everything goes well, else false.
+	 */
+	public function order_menu_items($id, array $items = array())
+	{
+		// If the menu does not exists, or we provide no items, nothing to do.
+		$menu = $this->get_menu($id);
+		if (false === $menu OR empty($items))
 		{
 			return false;
 		}
 
-		// We start at 0.
-		$i = 0;
+		// We make sure $id is numeric.
+		(is_numeric($id)) OR $id = $menu->id;
 
-		// Loop through items and update their order.
+		// We start ordering.
+		$i = 0;
 		foreach ($items['item'] as $item_id)
 		{
-			/**
-			 * We try to update menu item' order! If it fails, we
-			 * return FALSE right away.
-			 */
+			// If any of the items was not updated, we stop the script.
 			if ( ! $this->_parent->metadata->update_meta($item_id, 'order', $i))
 			{
 				return false;
@@ -1028,33 +1058,17 @@ class Kbcore_menus extends CI_Driver
 			$i++;
 		}
 
-		// Everything went well?
 		return true;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Delete all the selected menu items.
-	 * @param 	int 	$id 	the menus id.
-	 * @return 	boolean
-	 */
-	private function _delete_menu_items($id)
-	{
-		// Get menu items.
-		return $this->_parent->entities
-			->remove_by(array(
-				'owner_id' => $id,
-				'type'     => 'object',
-				'subtype'  => 'menu_item',
-			));
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Order items by 'order' column.
-	 * @access 	private
+	 * Method for sorting items by their order.
+	 *
+	 * @since 	1.0.0
+	 *
+	 * @access 	public
 	 * @param 	object 	$a
 	 * @param 	object 	$b
 	 * @return 	int
@@ -1065,8 +1079,19 @@ class Kbcore_menus extends CI_Driver
 	}
 
 	// ------------------------------------------------------------------------
-	// Menu Builder Methods.
+	// Utilities.
 	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for building a menu by its ID, slug or location.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.0 	updated because of some code refactoring.
+	 *
+	 * @access 	public
+	 * @param 	array 	$args 	Arguments used to build the menu.
+	 * @return 	string 	The fully built menu if found, else null.
+	 */
 
 	public function build_menu(array $args = array())
 	{
@@ -1074,20 +1099,16 @@ class Kbcore_menus extends CI_Driver
 		$defaults = array(
 			// Location.
 			'location' => null,
-
 			// Menu.
 			'menu'      => null,
 			'menu_tag'  => 'ul',
 			'menu_attr' => array(),
-
 			// Container.
 			'container'      => 'div',
 			'container_attr' => array(),
-
 			// Text before and after the link markup.
 			'before' => null,
 			'after'  => null,
-
 			// Anchor class and text before and after the link text.
 			'link_before'      => null,
 			'link_after'       => null,
@@ -1109,12 +1130,16 @@ class Kbcore_menus extends CI_Driver
 		{
 			return null;
 		}
-
-		// Attempt to get the menu.
-		$menu = $this->get_menu($menu);
-
-		// If not found, try with the location.
-		($menu) OR $menu = $this->get_location_menu($location);
+		// Only location is provided?
+		elseif (empty($menu))
+		{
+			$menu = $this->get_location_menu($location);
+		}
+		// Otherwise, get the menu.
+		else
+		{
+			$menu = $this->get_menu($menu);
+		}
 
 		// No menu found? Nothing to do.
 		if ( ! $menu)
@@ -1124,37 +1149,38 @@ class Kbcore_menus extends CI_Driver
 
 		// Retrieve menus items.
 		$items = $this->get_menu_items($menu->id);
-
+		
 		// If there are no items, nothing to do.
 		if ( ! $items)
 		{
 			return null;
 		}
-
+		
 		// Start generating our output.
 		$output = '%s';
-
+		
 		// Add menu ID and class if not already added.
-		(empty($menu_attr['id'])) && $menu_attr['id'] = 'menu-'.$menu->slug;
-		$menu_class = "menu-{$menu->id} menu-{$menu->slug}";
+		(empty($menu_attr['id'])) && $menu_attr['id'] = 'menu-'.$menu->username;
+		$menu_class = "menu-{$menu->id} menu-{$menu->username}";
 		(isset($menu_attr['class'])) && $menu_class .= ' '.$menu_attr['class'];
 		$menu_attr['class'] = $menu_class;
-
+		
 		// Container.
 		$container_allowed_tags = apply_filters('menu_container_allowed_tags', array('div', 'nav'));
+		
 		if (isset($container) && in_array($container, $container_allowed_tags))
 		{
 			$container_attr['aria-label'] = $menu->name;
 			$container_attr['class'] = (isset($container_attr['class']))
-				? "menu-container menu-container-{$menu->id} menu-{$menu->slug}-container ".$container_attr['class']
-				: "menu-container menu-container-{$menu->id} menu-{$menu->slug}-container";
+				? "menu-container menu-container-{$menu->id} menu-{$menu->username}-container ".$container_attr['class']
+				: "menu-container menu-container-{$menu->id} menu-{$menu->username}-container";
 			$output = html_tag($container, $container_attr, '%s');
 		}
 		else
 		{
 			$menu_attr['aria-label'] = $menu->name;
 		}
-
+		
 		// Menu.
 		$menu_allowed_tags = apply_filters('menu_allowed_tags', array('div', 'ul'));
 		$menu_tag = ( ! empty($menu_tag) && in_array($menu_tag, $menu_allowed_tags))
@@ -1162,39 +1188,40 @@ class Kbcore_menus extends CI_Driver
 			: 'ul';
 
 		$output = sprintf($output, html_tag($menu_tag, $menu_attr, '%s'));
-
+		
 		// Before anchor.
 		if ($menu_tag === 'ul')
 		{
 			$before = ( ! isset($before)) ? '<li>' : $before;
 			$after  = ( ! isset($after)) ? '</li>' : $after;
 		}
-
+		
 		(is_array($link_attr)) OR $link_attr = (array) $link_attr;
-
+		
 		// Build menu items.
 		$items_output = '';
+		
 		foreach ($items as $item)
 		{
 			// Add the link location to attributes.
-			$item_attr['href'] = (filter_var($item->href, FILTER_VALIDATE_URL) === false)
-				? site_url($item->href)
-				: $item->href;
-
+			$item_attr['href'] = (filter_var($item->content, FILTER_VALIDATE_URL) === false)
+				? site_url($item->content)
+				: $item->content;
+			
 			// Generate item class to be targeted.
 			$item_attr['class'] = 'menu-item menu-item-'.$item->id;
-
+			
 			// If there is any extra class, append it.
 			if (isset($link_attr['class']))
 			{
 				$item_attr['class'] .= ' '.$link_attr['class'];
 				unset($link_attr['class']);
 			}
-
+			
 			// Make sure to add the item id as well so we can target
 			// it on the front-end.
 			$item_attr['id'] = 'menu-item-'.$item->id;
-
+			
 			// There are attributes stored in database? Add them.
 			if ( ! empty($item->attributes))
 			{
@@ -1202,59 +1229,64 @@ class Kbcore_menus extends CI_Driver
 				if (isset($item->attributes['class']))
 				{
 					$item_attr['class'] .= ' '.$item->attributes['class'];
-					unset($item->attributes['class']);
 				}
-
+			
 				// Merge all attributes together.
 				$item_attr = array_merge($item_attr, $link_attr, $item->attributes);
 			}
-
+			
 			// Add to output.
-			$items_output .= $before.html_tag('a', $item_attr, $link_before.htmlspecialchars_decode($item->title).$link_after).$after;
+			$items_output .= $before.html_tag('a', $item_attr, $link_before.htmlspecialchars_decode($item->name).$link_after).$after;
 		}
-
+		
 		// Prepare the final output then return it.
 		$output = sprintf($output, $items_output);
 		return $output;
 	}
-
 }
 
-// --------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// List of helpers.
+// ------------------------------------------------------------------------
 
 if ( ! function_exists('register_menu'))
 {
 	/**
-	 * Add a single or multiple menus locations for the current theme.
-	 * @access 	public
-	 * @param 	string 	$location 		the location slug.
-	 * @param 	string 	$description 	The location's description or name.
+	 * Function for adding a single or multiple menus locations for the
+	 * currently used theme.
+	 *
+	 * @since 	1.0.0
+	 *
+	 * @param 	mixed 	$slug 		Location slug or associative array.
+	 * @param 	string 	$description 	The location's description.
 	 * @return 	object
 	 */
-	function register_menu($location, $description = null)
+	function register_menu($slug, $description = null)
 	{
-		return get_instance()->kbcore->menus->add_location($location, $description);
-	}
-}
-
-// --------------------------------------------------------------------
-
-if ( ! function_exists('unregister_menu'))
-{
-	/**
-	 * Delete a menu location for the current theme.
-	 * @access 	public
-	 * @param 	string 	$location 	location identifier.
-	 * @return 	object
-	 */
-	function unregister_menu($location)
-	{
-		return get_instance()->kbcore->menus->delete_location($location);
+		return get_instance()->kbcore->menus->add_location($slug, $description);
 	}
 }
 
 // ------------------------------------------------------------------------
 
+if ( ! function_exists('unregister_menu'))
+{
+	/**
+	 * Function for unregistering a previously added menu location.
+	 *
+	 * @since 	1.0.0
+	 *
+	 * @param 	string 	$slug 	The location's slug.
+	 * @return 	object
+	 */
+	function unregister_menu($slug)
+	{
+		return get_instance()->kbcore->menus->delete_location($slug);
+	}
+}
+
+// ------------------------------------------------------------------------
+// 
 if ( ! function_exists('has_menu'))
 {
 	/**
@@ -1267,9 +1299,7 @@ if ( ! function_exists('has_menu'))
 		return ( ! empty(get_instance()->kbcore->menus->get_location_menu($location)));
 	}
 }
-
 // --------------------------------------------------------------------
-
 if ( ! function_exists('build_menu'))
 {
 	/**

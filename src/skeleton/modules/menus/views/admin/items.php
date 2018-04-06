@@ -74,11 +74,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 						<tbody id="sortable">
 					<?php foreach ($items as $item): ?>
 							<tr id="item-<?php echo $item->id; ?>">
-								<td><?php echo htmlspecialchars_decode($item->title) ?><br><small><em><?php echo anchor($item->href, null, 'target="_blank"') ?></em></small></td>
+								<td><?php echo htmlspecialchars_decode($item->name) ?><br><small><em><?php echo anchor($item->content, null, 'target="_blank"') ?></em></small></td>
 								<td><?php echo $item->description ?></td>
 								<td class="text-right">
-									<a class="btn btn-default btn-xs" href="<?php echo admin_url('menus/edit/item/'.$item->id) ?>" title="<?php _e('edit_menu') ?>"><i class="fa fa-edit"></i></a>&nbsp;
-									<a class="btn btn-danger btn-xs" href="#" data-confirm="<?php printf(line('are_you_sure'), line('delete_item')) ?>" data-href="<?php echo safe_admin_url('menus/delete/item/'.$item->id) ?>" title="<?php _e('delete_item') ?>"><i class="fa fa-times"></i></a>
+									<a class="btn btn-default btn-xs" href="<?php echo admin_url('menus/edit/item/'.$item->id) ?>" title="<?php _e('edit_menu') ?>"><i class="fa fa-edit"></i></a>&nbsp;<a class="btn btn-danger btn-xs delete-menu-item" href="#" data-item-id="<?php echo $item->id; ?>" data-href="<?php echo safe_admin_url('menus/delete/item/'.$item->id) ?>" data-alert="<?php _e('delete_item_confirm'); ?>" title="<?php _e('delete_item') ?>"><i class="fa fa-times"></i></a>
 								</td>
 							</tr>
 					<?php endforeach; ?>
