@@ -262,24 +262,12 @@ class Auth
 		// Fires before processing.
 		do_action_ref_array('user_login', array(&$identity, &$password));
 
-		$selects = array(
-			'entities.id',
-			'entities.subtype',
-			'entities.username',
-			'entities.language',
-			'entities.enabled',
-			'entities.deleted',
-			'users.email',
-			'users.password',
-		);
-
 		// What type of login to use?
 		switch ($this->kbcore->options->item('login_type', 'both'))
 		{
 			// Get the user by username.
 			case 'username':
 				$user = $this->kbcore->users
-					->select($selects)
 					->get_by('entities.username', $identity);
 				if ( ! $user)
 				{
@@ -291,7 +279,6 @@ class Auth
 			// Get user by email address.
 			case 'email':
 				$user = $this->kbcore->users
-					->select($selects)
 					->get_by('users.email', $identity);
 				if ( ! $user)
 				{
@@ -304,7 +291,6 @@ class Auth
 			case 'both':
 			default:
 				$user = $this->kbcore->users
-					->select($selects)
 					->get($identity);
 
 				if ( ! $user)
