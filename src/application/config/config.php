@@ -587,19 +587,34 @@ $config['modules_locations'] = array(
 | the selected class in available folders.
 |
 */
-function __autoload($class)
+
+if ( ! function_exists('kb_class_loader'))
 {
-	// Make sure we are not calling core class first.
-	if (strpos($class, 'CI_') !== 0)
+	/**
+	 * Skeleton class loader.
+	 *
+	 * @since 	1.3.3
+	 *
+	 * @param 	string 	$class 	The class to load.
+	 * @return 	void
+	 */
+	function kb_class_loader($class)
 	{
-		// Priority is to application/core.
-		if (is_file(APPPATH.'core/'.$class.'.php'))
+		// Make sure we are not calling core class first.
+		if (strpos($class, 'CI_') !== 0)
 		{
-			include_once(APPPATH.'core/'.$class.'.php');
-		}
-		elseif (is_file(KBPATH.'core/'.$class.'.php'))
-		{
-			include_once(KBPATH.'core/'.$class.'.php');
+			// Priority is to application/core.
+			if (is_file(APPPATH.'core/'.$class.'.php'))
+			{
+				include_once(APPPATH.'core/'.$class.'.php');
+			}
+			elseif (is_file(KBPATH.'core/'.$class.'.php'))
+			{
+				include_once(KBPATH.'core/'.$class.'.php');
+			}
 		}
 	}
+
+	// We register the function as __autoload.
+	spl_autoload_register('kb_class_loader');
 }
