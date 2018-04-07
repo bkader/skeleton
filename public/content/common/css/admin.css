@@ -1,5 +1,5 @@
 /*!
- * Skeleton Dashboard - v1.3.0 (https://github.com/bkader/skeleton)
+ * Skeleton Dashboard - v1.3.2 (https://github.com/bkader/skeleton)
  * Copyright 2018 Kader Bouyakoub (https://github.com/bkader)
  * Licensed under MIT (https://github.com/bkader/skeleton/blob/develop/LICENSE.md)
  */
@@ -50,18 +50,6 @@
   font-weight: 700;
   font-style: italic;
   src: local("Fira Sans Bold Italic"), local("FiraSans-Bold-Italic"), url("../fonts/fira-sans-bold-italic.woff2") format("woff2"), url("../fonts/fira-sans-bold-italic.woff") format("woff");
-}
-@font-face {
-  font-family: "Droid Arabic Kufi";
-  font-weight: 400;
-  font-style: normal;
-  src: local("Droid Arabic Kufi Regular"), local("DroidArabicKufi-Regular"), url("../fonts/droid-arabic-kufi-regular.woff2") format("woff2"), url("../fonts/droid-arabic-kufi-regular.woff") format("woff");
-}
-@font-face {
-  font-family: "Droid Arabic Kufi";
-  font-weight: 700;
-  font-style: normal;
-  src: local("Droid Arabic Kufi Bold"), local("DroidArabicKufi-Bold"), url("../fonts/droid-arabic-kufi-bold.woff2") format("woff2"), url("../fonts/droid-arabic-kufi-bold.woff") format("woff");
 }
 body,
 button,
@@ -223,11 +211,6 @@ body {
 .wrapper {
   position: relative;
 }
-@media screen and (min-width: 768px) {
-  .wrapper {
-    padding-left: 225px;
-  }
-}
 .wrapper .page-header {
   margin: 0 0 15px;
   padding: 0;
@@ -241,6 +224,9 @@ body {
   padding: 20px;
 }
 @media screen and (min-width: 768px) {
+  .wrapper {
+    padding-left: 225px;
+  }
   .wrapper .footer {
     left: 225px;
   }

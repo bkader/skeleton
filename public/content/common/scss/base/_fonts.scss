@@ -11,7 +11,3 @@
 @include font-face("Fira Sans", "../fonts/fira-sans-italic", 400, italic);
 @include font-face("Fira Sans", "../fonts/fira-sans-bold", 700);
 @include font-face("Fira Sans", "../fonts/fira-sans-bold-italic", 700, italic);
-
-// Droid Arabic Kufi
-@include font-face("Droid Arabic Kufi", "../fonts/droid-arabic-kufi-regular", 400);
-@include font-face("Droid Arabic Kufi", "../fonts/droid-arabic-kufi-bold", 700);
