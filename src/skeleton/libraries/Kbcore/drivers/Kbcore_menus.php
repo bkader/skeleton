@@ -577,11 +577,11 @@ class Kbcore_menus extends CI_Driver
 			// Otherwise, we look for it by its slug.
 			else
 			{
-				foreach ($this->_menus as $_id => &$menu)
+				foreach ($this->_menus as $_id => $_menu)
 				{
-					if ($menu->username == $id)
+					if ($_menu->username == $id)
 					{
-						$menu = $this->_menus[$_id];
+						$menu = $_menu;
 						break;
 					}
 				}
