@@ -112,10 +112,7 @@ class Kbcore extends CI_Driver_Library
 		$DB =& $this->ci->db;
 
 		// Store language in session.
-		if ( ! $this->ci->session->language)
-		{
-			$this->_set_language();
-		}
+		$this->_set_language();
 
 		// Make sure to load the URL helper.
 		$this->ci->load->helper('url');
@@ -355,19 +352,34 @@ class Kbcore extends CI_Driver_Library
 
 	/**
 	 * Make sure to store language in session.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Rewritten to fix issue with languages list when only
+	 *         			a single language is available.
+	 *
 	 * @access 	private
 	 * @param 	none
 	 * @return 	void
 	 */
 	private function _set_language()
 	{
-		// Hold the default language.
-		$default = $this->ci->config->item('language');
-
 		// Site available languages.
 		$site_languages = $this->ci->config->item('languages');
 
-		// All languages to details to search in.
+		/**
+		 * If the language is already stored in session and available, 
+		 * nothing to do. Otherwise, proceed to set the session key.
+		 */
+		if ($this->ci->session->language 
+			&& in_array($this->ci->session->language, $site_languages))
+		{
+			return;
+		}
+		
+		// Hold the default language.
+		$default = $this->ci->config->item('language');
+
+		// All languages with details to search in.
 		$languages = $this->ci->lang->languages();
 
 		// Attempt to detect user's language.
