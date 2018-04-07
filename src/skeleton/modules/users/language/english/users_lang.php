@@ -130,6 +130,7 @@ $lang['us_login_heading'] = 'Member Login';
 $lang['remember_me']      = 'Remember me';
 
 $lang['us_wrong_credentials'] = 'Invalid username/email address and/or password.';
+$lang['us_account_missing']  = 'This user does not exist.';
 $lang['us_account_disabled']  = 'You account is not yet active. Use the link that was sent to you or %s to receive a new one.';
 $lang['us_account_banned']    = 'This user is banned from the site.';
 $lang['us_account_deleted']   = 'Your account has been deleted but not yet removed from database. %s if you wish to restore it.';
