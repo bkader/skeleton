@@ -1316,6 +1316,14 @@ if ( ! function_exists('user_avatar')):
 		else
 		{
 			$avatar_url = get_upload_url("avatars/{$avatar}");
+			if (is_array($attrs))
+			{
+				$attrs['width'] = $attrs['height'] = $size;
+			}
+			else
+			{
+				$attrs .= ' width="'.$size.'" height="'.$size.'"';
+			}
 		}
 
 		// Another security layer is to load theme library if the function
