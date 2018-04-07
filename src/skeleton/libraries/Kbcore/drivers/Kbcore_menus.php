@@ -327,7 +327,7 @@ class Kbcore_menus extends CI_Driver
 		}
 
 		// Now we attempt to get the menu.
-		return $this->get_menu($owner_id);
+		return ($owner_id > 0) ? $this->get_menu($owner_id) : false;
 	}
 
 	// ------------------------------------------------------------------------
@@ -1144,7 +1144,7 @@ class Kbcore_menus extends CI_Driver
 		}
 
 		// No menu found? Nothing to do.
-		if ( ! $menu)
+		if (false === $menu)
 		{
 			return null;
 		}
