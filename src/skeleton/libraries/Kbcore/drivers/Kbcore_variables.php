@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.3.0
+ * @version 	1.3.3
  */
 class Kbcore_variables extends CI_Driver implements CRUD_interface
 {
@@ -982,6 +982,20 @@ class KB_Variable
 	 */
 	public function has($key) {
 		return $this->__isset($key);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns an array representation of this object data.
+	 *
+	 * @since 	1.3.3
+	 *
+	 * @access 	public
+	 * @return 	array
+	 */
+	public function to_array() {
+		return get_object_vars($this->data);
 	}
 
 	// ------------------------------------------------------------------------
