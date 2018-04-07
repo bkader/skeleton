@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @version 	1.3.2
  */
 class Admin extends Admin_Controller
 {
@@ -146,12 +146,12 @@ class Admin extends Admin_Controller
 		else
 		{
 			// Check CSRF.
-			// if ( ! $this->check_csrf())
-			// {
-			// 	set_alert(lang('error_csrf'), 'error');
-			// 	redirect('admin/settings/users', 'refresh');
-			// 	exit;
-			// }
+			if ( ! $this->check_csrf())
+			{
+				set_alert(lang('error_csrf'), 'error');
+				redirect('admin/settings/users', 'refresh');
+				exit;
+			}
 
 			$settings = $this->input->post(array(
 				'allow_registration',

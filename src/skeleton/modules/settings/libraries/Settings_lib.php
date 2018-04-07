@@ -66,6 +66,9 @@ class Settings_lib
 
 		// Make sure to load settings language file.
 		$this->ci->load->language('settings/settings');
+
+		// We purge old email codes when this library is called.
+		$this->purge_email_codes();
 	}
 
 	// ------------------------------------------------------------------------
@@ -120,18 +123,27 @@ class Settings_lib
 			return false;
 		}
 
+		// We make sure to the user exists.
+		$user = $this->ci->kbcore->users->get($id);
+		if (false === $user)
+		{
+			set_alert(lang('us_account_missing'), 'error');
+			return false;
+		}
+
 		/**
 		 * If the user uses the same password, nothing to do. We 
 		 * simply tell him that he changed it.
 		 */
-		if (password_verify($password, $this->ci->auth->user()->password))
+		if (password_verify($password, $user->password))
 		{
 			set_alert(lang('set_password_success'), 'success');
 			return true;
 		}
 
 		// Proceed to password change.
-		$status = $this->ci->kbcore->users->update($id, array('password' => $password));
+		$user->password = $password;
+		$status = $user->save();
 
 		// Successfully changed?
 		if ($status === true)
@@ -271,8 +283,17 @@ class Settings_lib
 			return false;
 		}
 
+		// We make sure the user exists.
+		$user = $this->ci->kbcore->users->get($var->guid);
+		if (false === $user)
+		{
+			set_alert(lang('us_account_missing'), 'error');
+			return false;
+		}
+
 		// Change user's email address.
-		$status = (bool) $this->ci->kbcore->users->update($var->guid, array('email' => $var->params));
+		$user->email = $var->params;
+		$status = $user->save();
 
 		// Updated?
 		if ($status === true)
