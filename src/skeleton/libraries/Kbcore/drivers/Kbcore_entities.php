@@ -268,6 +268,44 @@ class Kbcore_entities extends CI_Driver implements CRUD_interface
 	}
 
 	// ------------------------------------------------------------------------
+
+	/**
+	 * This method is used in order to search entities table.
+	 *
+	 * @since 	1.3.2
+	 *
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	mixed 	array of objects if found any, else false.
+	 */
+	public function find($field, $match = null, $limit = 0, $offset = 0)
+	{
+		// We start with empty entities
+		$entities = false;
+
+		// Attempt to find entities.
+		$db_entities = $this->_parent
+			->find($field, $match, $limit, $offset)
+			->get('entities')
+			->result();
+
+		// If we found any, we create their objects.
+		if ($db_entities)
+		{
+			foreach ($db_entities as $db_entity)
+			{
+				$entities[] = new KB_Entity($db_entity);
+			}
+		}
+
+		// Return the final result.
+		return $entities;
+	}
+
+	// ------------------------------------------------------------------------
 	// Update Entities.
 	// ------------------------------------------------------------------------
 
@@ -779,6 +817,27 @@ if ( ! function_exists('get_entities'))
 	function get_entities($field = null, $match = null, $limit = 0, $offset = 0)
 	{
 		return get_instance()->kbcore->entities->get_many($field, $match, $limit, $offset);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('find_entities'))
+{
+	/**
+	 * This function is used in order to search entities.
+	 *
+	 * @since 	1.3.2
+	 * 
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	array of entities if found, else null.
+	 */
+	function find_entities($field, $match = null, $limit = 0, $offset = 0)
+	{
+		return get_instance()->kbcore->entities->find($field, $match, $limit, $offset);
 	}
 }
 
