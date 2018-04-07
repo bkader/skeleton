@@ -1,4 +1,4 @@
-/*!
+/*
  * The MIT License
  * Copyright (c) 2012 Matias Meno <m@tias.me>
  */
@@ -258,7 +258,7 @@
   margin: 2em 0;
 }
 
-.dz-preview {
+.dropzone .dz-preview {
   position: relative;
   display: inline-block;
   vertical-align: top;
@@ -266,29 +266,29 @@
   min-height: 100px;
 }
 
-.dz-preview:hover {
+.dropzone .dz-preview:hover {
   z-index: 1000;
 }
 
-.dz-preview:hover .dz-details {
+.dropzone .dz-preview:hover .dz-details {
   opacity: 1;
 }
 
-.dz-preview.dz-file-preview .dz-image {
+.dropzone .dz-preview.dz-file-preview .dz-image {
   border-radius: 20px;
   background: #999;
   background: linear-gradient(to bottom, #eee, #ddd);
 }
 
-.dz-preview.dz-file-preview .dz-details {
+.dropzone .dz-preview.dz-file-preview .dz-details {
   opacity: 1;
 }
 
-.dz-preview.dz-image-preview {
+.dropzone .dz-preview.dz-image-preview {
   background: white;
 }
 
-.dz-preview.dz-image-preview .dz-details {
+.dropzone .dz-preview.dz-image-preview .dz-details {
   -webkit-transition: opacity 0.2s linear;
   -moz-transition: opacity 0.2s linear;
   -ms-transition: opacity 0.2s linear;
@@ -296,7 +296,7 @@
   transition: opacity 0.2s linear;
 }
 
-.dz-preview .dz-remove {
+.dropzone .dz-preview .dz-remove {
   font-size: 14px;
   text-align: center;
   display: block;
@@ -304,15 +304,15 @@
   border: none;
 }
 
-.dz-preview .dz-remove:hover {
+.dropzone .dz-preview .dz-remove:hover {
   text-decoration: underline;
 }
 
-.dz-preview:hover .dz-details {
+.dropzone .dz-preview:hover .dz-details {
   opacity: 1;
 }
 
-.dz-preview .dz-details {
+.dropzone .dz-preview .dz-details {
   z-index: 20;
   position: absolute;
   top: 0;
@@ -327,37 +327,37 @@
   line-height: 150%;
 }
 
-.dz-preview .dz-details .dz-size {
+.dropzone .dz-preview .dz-details .dz-size {
   margin-bottom: 1em;
   font-size: 16px;
 }
 
-.dz-preview .dz-details .dz-filename {
+.dropzone .dz-preview .dz-details .dz-filename {
   white-space: nowrap;
 }
 
-.dz-preview .dz-details .dz-filename:hover span {
+.dropzone .dz-preview .dz-details .dz-filename:hover span {
   border: 1px solid rgba(200, 200, 200, 0.8);
   background-color: rgba(255, 255, 255, 0.8);
 }
 
-.dz-preview .dz-details .dz-filename:not(:hover) {
+.dropzone .dz-preview .dz-details .dz-filename:not(:hover) {
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.dz-preview .dz-details .dz-filename:not(:hover) span {
+.dropzone .dz-preview .dz-details .dz-filename:not(:hover) span {
   border: 1px solid transparent;
 }
 
-.dz-preview .dz-details .dz-filename span,
-.dz-preview .dz-details .dz-size span {
+.dropzone .dz-preview .dz-details .dz-filename span,
+.dropzone .dz-preview .dz-details .dz-size span {
   background-color: rgba(255, 255, 255, 0.4);
   padding: 0 0.4em;
   border-radius: 3px;
 }
 
-.dz-preview:hover .dz-image img {
+.dropzone .dz-preview:hover .dz-image img {
   -webkit-transform: scale(1.05, 1.05);
   -moz-transform: scale(1.05, 1.05);
   -ms-transform: scale(1.05, 1.05);
@@ -367,7 +367,7 @@
   filter: blur(8px);
 }
 
-.dz-preview .dz-image {
+.dropzone .dz-preview .dz-image {
   border-radius: 20px;
   overflow: hidden;
   width: 120px;
@@ -377,11 +377,11 @@
   z-index: 10;
 }
 
-.dz-preview .dz-image img {
+.dropzone .dz-preview .dz-image img {
   display: block;
 }
 
-.dz-preview.dz-success .dz-success-mark {
+.dropzone .dz-preview.dz-success .dz-success-mark {
   -webkit-animation: passing-through 3s cubic-bezier(0.77, 0, 0.175, 1);
   -moz-animation: passing-through 3s cubic-bezier(0.77, 0, 0.175, 1);
   -ms-animation: passing-through 3s cubic-bezier(0.77, 0, 0.175, 1);
@@ -389,7 +389,7 @@
   animation: passing-through 3s cubic-bezier(0.77, 0, 0.175, 1);
 }
 
-.dz-preview.dz-error .dz-error-mark {
+.dropzone .dz-preview.dz-error .dz-error-mark {
   opacity: 1;
   -webkit-animation: slide-in 3s cubic-bezier(0.77, 0, 0.175, 1);
   -moz-animation: slide-in 3s cubic-bezier(0.77, 0, 0.175, 1);
@@ -398,8 +398,8 @@
   animation: slide-in 3s cubic-bezier(0.77, 0, 0.175, 1);
 }
 
-.dz-preview .dz-success-mark,
-.dz-preview .dz-error-mark {
+.dropzone .dz-preview .dz-success-mark,
+.dropzone .dz-preview .dz-error-mark {
   pointer-events: none;
   opacity: 0;
   z-index: 500;
@@ -411,14 +411,14 @@
   margin-top: -27px;
 }
 
-.dz-preview .dz-success-mark svg,
-.dz-preview .dz-error-mark svg {
+.dropzone .dz-preview .dz-success-mark svg,
+.dropzone .dz-preview .dz-error-mark svg {
   display: block;
   width: 54px;
   height: 54px;
 }
 
-.dz-preview.dz-processing .dz-progress {
+.dropzone .dz-preview.dz-processing .dz-progress {
   opacity: 1;
   -webkit-transition: all 0.2s linear;
   -moz-transition: all 0.2s linear;
@@ -427,7 +427,7 @@
   transition: all 0.2s linear;
 }
 
-.dz-preview.dz-complete .dz-progress {
+.dropzone .dz-preview.dz-complete .dz-progress {
   opacity: 0;
   -webkit-transition: opacity 0.4s ease-in;
   -moz-transition: opacity 0.4s ease-in;
@@ -436,7 +436,7 @@
   transition: opacity 0.4s ease-in;
 }
 
-.dz-preview:not(.dz-processing) .dz-progress {
+.dropzone .dz-preview:not(.dz-processing) .dz-progress {
   -webkit-animation: pulse 6s ease infinite;
   -moz-animation: pulse 6s ease infinite;
   -ms-animation: pulse 6s ease infinite;
@@ -444,7 +444,7 @@
   animation: pulse 6s ease infinite;
 }
 
-.dz-preview .dz-progress {
+.dropzone .dz-preview .dz-progress {
   opacity: 1;
   z-index: 1000;
   pointer-events: none;
@@ -461,7 +461,7 @@
   overflow: hidden;
 }
 
-.dz-preview .dz-progress .dz-upload {
+.dropzone .dz-preview .dz-progress .dz-upload {
   background: #333;
   background: linear-gradient(to bottom, #666, #444);
   position: absolute;
@@ -476,16 +476,16 @@
   transition: width 300ms ease-in-out;
 }
 
-.dz-preview.dz-error .dz-error-message {
+.dropzone .dz-preview.dz-error .dz-error-message {
   display: block;
 }
 
-.dz-preview.dz-error:hover .dz-error-message {
+.dropzone .dz-preview.dz-error:hover .dz-error-message {
   opacity: 1;
   pointer-events: auto;
 }
 
-.dz-preview .dz-error-message {
+.dropzone .dz-preview .dz-error-message {
   pointer-events: none;
   z-index: 1000;
   position: absolute;
@@ -508,7 +508,7 @@
   color: white;
 }
 
-.dz-preview .dz-error-message:after {
+.dropzone .dz-preview .dz-error-message:after {
   content: '';
   position: absolute;
   top: -6px;
