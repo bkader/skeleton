@@ -510,6 +510,7 @@ class Kbcore extends CI_Driver_Library
 	 * Database LIKE clause generator.
 	 *
 	 * @since 	1.3.0
+	 * @since 	1.3.2 	The metadata column "key" was renamed back to "name".
 	 *
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
@@ -619,7 +620,7 @@ class Kbcore extends CI_Driver_Library
 								$key = str_replace('!', '', $key);
 							}
 
-							$this->ci->db->where('metadata.key', $key);
+							$this->ci->db->where('metadata.name', $key);
 							$this->ci->db->{$method}('metadata.value', $val);
 						}
 						else
@@ -633,7 +634,7 @@ class Kbcore extends CI_Driver_Library
 									$key = str_replace('!', '', $key);
 								}
 
-								$this->ci->db->where('metadata.key', $key);
+								$this->ci->db->where('metadata.name', $key);
 								$this->ci->db->{$method}('metadata.value', $val);
 							}
 						}
