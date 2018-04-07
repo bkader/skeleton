@@ -50,7 +50,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @version 	1.3.2
  */
 class Settings extends User_Controller
 {
@@ -246,9 +246,6 @@ class Settings extends User_Controller
 	 */
 	public function email()
 	{
-		// Simple clean of old email requests.
-		$this->settings->purge_email_codes();
-
 		// Prepare form validation.
 		$this->prep_form(array(
 			// New email field.
@@ -358,7 +355,7 @@ class Settings extends User_Controller
 
 		// Collect data first.
 		$user_id = (int) $this->input->post('user_id', true);
-		$use_gravatar = ($this->input->post('use_gravatar') == '1');
+		$use_gravatar = ($this->input->post('gravatar') == '1');
 
 		// Make sure the user is updating his/her avatar.
 		if ($user_id !== $this->c_user->id)

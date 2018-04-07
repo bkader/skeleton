@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @version 	1.3.2
  */
 class Process extends KB_Controller
 {
@@ -85,9 +85,6 @@ class Process extends KB_Controller
 	 */
 	public function email($code = null)
 	{
-		// Purge old email codes first.
-		$this->settings->purge_email_codes();
-
 		// Update the email address then redirect.
 		$this->settings->change_email($code);
 		redirect('settings/email');

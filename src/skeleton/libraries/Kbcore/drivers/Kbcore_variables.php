@@ -228,6 +228,44 @@ class Kbcore_variables extends CI_Driver implements CRUD_interface
 	// ------------------------------------------------------------------------
 
 	/**
+	 * This method is used in order to search variables table.
+	 *
+	 * @since 	1.3.2
+	 *
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	mixed 	array of objects if found any, else false.
+	 */
+	public function find($field, $match = null, $limit = 0, $offset = 0)
+	{
+		// We start with empty variables
+		$variables = false;
+
+		// Attempt to find variables.
+		$db_variables = $this->_parent
+			->find($field, $match, $limit, $offset)
+			->get('variables')
+			->result();
+
+		// If we found any, we create their objects.
+		if ($db_variables)
+		{
+			foreach ($db_variables as $db_variable)
+			{
+				$variables[] = new KB_Variable($db_variable);
+			}
+		}
+
+		// Return the final result.
+		return $variables;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Update a single variable by its primary key.
 	 *
 	 * @since 	1.0.0
@@ -679,6 +717,27 @@ if ( ! function_exists('get_vars'))
 	function get_vars($field = null, $match = null, $limit = 0, $offset = 0)
 	{
 		return get_instance()->kbcore->variables->get_many($field, $match, $limit, $offset);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('find_variables'))
+{
+	/**
+	 * This function is used in order to search variables.
+	 *
+	 * @since 	1.3.2
+	 * 
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	array of variables if found, else null.
+	 */
+	function find_variables($field, $match = null, $limit = 0, $offset = 0)
+	{
+		return get_instance()->kbcore->variables->find($field, $match, $limit, $offset);
 	}
 }
 

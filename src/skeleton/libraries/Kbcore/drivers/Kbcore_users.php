@@ -959,6 +959,27 @@ if ( ! function_exists('get_all_users'))
 
 // ------------------------------------------------------------------------
 
+if ( ! function_exists('find_users'))
+{
+	/**
+	 * This function is used in order to search users.
+	 *
+	 * @since 	1.3.2
+	 * 
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	array of objects if found, else null.
+	 */
+	function find_users($field, $match = null, $limit = 0, $offset = 0)
+	{
+		return get_instance()->kbcore->users->find($field, $match, $limit, $offset);
+	}
+}
+
+// ------------------------------------------------------------------------
+
 if ( ! function_exists('update_user'))
 {
 	/**
@@ -1295,6 +1316,14 @@ if ( ! function_exists('user_avatar')):
 		else
 		{
 			$avatar_url = get_upload_url("avatars/{$avatar}");
+			if (is_array($attrs))
+			{
+				$attrs['width'] = $attrs['height'] = $size;
+			}
+			else
+			{
+				$attrs .= ' width="'.$size.'" height="'.$size.'"';
+			}
 		}
 
 		// Another security layer is to load theme library if the function

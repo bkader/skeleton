@@ -270,6 +270,44 @@ class Kbcore_relations extends CI_Driver implements CRUD_interface
 	// ------------------------------------------------------------------------
 
 	/**
+	 * This method is used in order to search relations table.
+	 *
+	 * @since 	1.3.2
+	 *
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	mixed 	array of objects if found any, else false.
+	 */
+	public function find($field, $match = null, $limit = 0, $offset = 0)
+	{
+		// We start with empty relations
+		$relations = false;
+
+		// Attempt to find relations.
+		$db_relations = $this->_parent
+			->find($field, $match, $limit, $offset)
+			->get('relations')
+			->result();
+
+		// If we found any, we create their objects.
+		if ($db_relations)
+		{
+			foreach ($db_relations as $db_relation)
+			{
+				$relations[] = new KB_Relation($db_relation);
+			}
+		}
+
+		// Return the final result.
+		return $relations;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Update a single relation by its primary key.
 	 *
 	 * @since 	1.0.0
@@ -525,6 +563,27 @@ if ( ! function_exists('get_all_relations'))
 	function get_all_relations($limit = 0, $offset = 0)
 	{
 		return get_instance()->kbcore->relations->get_all($limit, $offset);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('find_relations'))
+{
+	/**
+	 * This function is used in order to search relations.
+	 *
+	 * @since 	1.3.2
+	 * 
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	array of relations if found, else null.
+	 */
+	function find_relations($field, $match = null, $limit = 0, $offset = 0)
+	{
+		return get_instance()->kbcore->relations->find($field, $match, $limit, $offset);
 	}
 }
 

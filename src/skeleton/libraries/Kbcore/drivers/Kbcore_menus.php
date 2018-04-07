@@ -292,6 +292,7 @@ class Kbcore_menus extends CI_Driver
 	 *
 	 * @since 	1.0.0
 	 * @since 	1.3.0 	Only one menu allowed per location.
+	 * @since 	1.3.2 	The metadata column "key" was renamed back to "name".
 	 *
 	 * @access 	public
 	 * @param 	string 	$slug 	The location's slug.
@@ -311,7 +312,7 @@ class Kbcore_menus extends CI_Driver
 		else
 		{
 			$meta = $this->_parent->metadata->get_by(array(
-				'key'   => 'menu_location',
+				'name'  => 'menu_location',
 				'value' => $slug,
 			));
 
@@ -326,7 +327,7 @@ class Kbcore_menus extends CI_Driver
 		}
 
 		// Now we attempt to get the menu.
-		return $this->get_menu($owner_id);
+		return ($owner_id > 0) ? $this->get_menu($owner_id) : false;
 	}
 
 	// ------------------------------------------------------------------------
@@ -336,6 +337,7 @@ class Kbcore_menus extends CI_Driver
 	 *
 	 * @since 	1.0.0
 	 * @since 	1.3.0 	Rewritten for better code readability and performance.
+	 * @since 	1.3.2 	The metadata column "key" was renamed back to "name".
 	 *
 	 * @access 	public
 	 * @param 	mixed 	$slug 			Location's slug or associative array.
@@ -366,7 +368,7 @@ class Kbcore_menus extends CI_Driver
 			if ($menu_id == 0)
 			{
 				$this->_parent->metadata->update_by(
-					array('key' => 'menu_location', 'value' => $menu_id),
+					array('name' => 'menu_location', 'value' => $menu_id),
 					array('value' => null)
 				);
 			}
@@ -1142,7 +1144,7 @@ class Kbcore_menus extends CI_Driver
 		}
 
 		// No menu found? Nothing to do.
-		if ( ! $menu)
+		if (false === $menu)
 		{
 			return null;
 		}

@@ -83,10 +83,10 @@ DROP TABLE IF EXISTS `metadata`;
 CREATE TABLE `metadata` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `guid` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `key` varchar(100) NOT NULL DEFAULT '',
+  `name` varchar(100) NOT NULL DEFAULT '',
   `value` longtext,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_values` (`guid`,`key`)
+  UNIQUE KEY `unique_values` (`guid`,`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------

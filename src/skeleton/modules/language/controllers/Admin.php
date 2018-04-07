@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @version 	1.3.2
  */
 class Admin extends Admin_Controller
 {
@@ -60,7 +60,7 @@ class Admin extends Admin_Controller
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->language('language/language_admin');
+		$this->load->language('language/language');
 	}
 
 	/**
@@ -85,19 +85,18 @@ class Admin extends Admin_Controller
 		 * it to available if found. This way we avoid installing languages
 		 * that are not really available.
 		 */
-		// foreach ($data['languages'] as $folder => &$lang)
-		// {
-		// 	$lang['available'] = false;
-		// 	if (is_dir(APPPATH.'language/'.$folder) OR is_dir(KBPATH.'language/'.$folder))
-		// 	{
-		// 		$lang['available'] = true;
-		// 	}
-		// 	else
-		// 	{
-		// 		$lang['available'] = false;
-		// 	}
-		// }
-
+		foreach ($data['languages'] as $folder => &$lang)
+		{
+			$lang['available'] = false;
+			if (is_dir(APPPATH.'language/'.$folder) && is_dir(KBPATH.'language/'.$folder))
+			{
+				$lang['available'] = true;
+			}
+			else
+			{
+				$lang['available'] = false;
+			}
+		}
 
 		// Set page title and render view.
 		$this->theme

@@ -265,6 +265,44 @@ class Kbcore_activities extends CI_Driver implements CRUD_interface
 	// ------------------------------------------------------------------------
 
 	/**
+	 * This method is used in order to search activities table.
+	 *
+	 * @since 	1.3.2
+	 *
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	mixed 	array of objects if found any, else false.
+	 */
+	public function find($field, $match = null, $limit = 0, $offset = 0)
+	{
+		// We start with empty activities
+		$activities = false;
+
+		// Attempt to find activities.
+		$db_activities = $this->_parent
+			->find($field, $match, $limit, $offset)
+			->get('activities')
+			->result();
+
+		// If we found any, we create their objects.
+		if ($db_activities)
+		{
+			foreach ($db_activities as $db_activity)
+			{
+				$activities[] = new KB_Activity($db_activity);
+			}
+		}
+
+		// Return the final result.
+		return $activities;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Update a single entity by it's ID.
 	 *
 	 * @since 	1.0.0
@@ -491,6 +529,27 @@ if ( ! function_exists('get_activities'))
 	function get_activities($field = null, $match = null, $limit = 0, $offset = 0)
 	{
 		return get_instance()->kbcore->activities->get_many($field, $match, $limit, $offset);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('find_activities'))
+{
+	/**
+	 * This function is used in order to search activities.
+	 *
+	 * @since 	1.3.2
+	 * 
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	array of activities if found, else null.
+	 */
+	function find_activities($field, $match = null, $limit = 0, $offset = 0)
+	{
+		return get_instance()->kbcore->activities->find($field, $match, $limit, $offset);
 	}
 }
 

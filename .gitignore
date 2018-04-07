@@ -16,6 +16,9 @@ src/application/logs/*
 src/application/config/encryption_key.php
 src/application/config/*/encryption_key.php
 
+# Ignore test controller.
+src/application/controllers/Test.php
+
 # keep all .htaccess, .gitkeep and index.html
 !**/.htaccess
 !**/.gitkeep

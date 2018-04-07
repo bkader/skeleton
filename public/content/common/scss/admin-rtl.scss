@@ -1,75 +1,59 @@
 /*!
- * Skeleton Dashboard Style (RTL) v1.0.0
- * Copyright 2017-present Kader Bouyakoub.
+ * Skeleton Dashboard - v1.3.2 (https://github.com/bkader/skeleton)
+ * Copyright 2018 Kader Bouyakoub (https://github.com/bkader)
+ * Licensed under MIT (https://github.com/bkader/skeleton/blob/develop/LICENSE.md)
  */
+@import "base/variables";
+@import "base/mixins";
 
-@import "_variables.scss";
+// Add Arabic fonts.
 
-body {
-    font-family: 'Droid Arabic Kufi', Tahoma, sans-serif;
-    font-weight: normal;
-}
+// Droid Arabic Kufi
+@include font-face("Droid Arabic Kufi", "../fonts/droid-arabic-kufi-regular", 400);
+@include font-face("Droid Arabic Kufi", "../fonts/droid-arabic-kufi-bold", 700);
+
+// Dubai
+@include font-face("Dubai", "../fonts/dubai-regular", 400);
+@include font-face("Dubai", "../fonts/dubai-bold", 700);
+
+// Change site's font family.
+body { font-family: $font__droid; }
+
+// Change headings font family.
+h1, h2, h3, h4, h5, h6 { font-family: $font__dubai; }
 
 .form-control,
 input,
 textarea {
-    font-family: 'Droid Arabic Kufi', sans-serif;
+    font-family: $font__droid;
 }
 
-
-.logo {
-    margin-left: 6px;
-    margin-right: 0;
+.navbar-brand::before {
+    margin-right: 0!important;
+    margin-left: $gutters;
 }
 
-.navbar-fixed-top {
-    @media screen and (min-width: $break-small) {
-        /* Navbar header */
-        .navbar-header {
-            margin-left: 0;
-            margin-right: -15px;
-
-            .navbar-brand {
-                margin-right: 0;
-            }
-        }
-    }
-}
-
-.sidebar {
-    @media (min-width: 768px) {
-        right       : 0;
-        left        : auto;
-        border-right: none;
-        border-left : 1px solid #ddd;
-    }
-
-    /* Sidebar navigation */
-    .nav-sidebar {
-        margin-right: -21px; /* 20px padding + 1px border */
-        margin-bottom: 20px;
-        margin-left: -20px;
-
-        > li {
-            > a {
-                padding-right: 20px;
-                padding-left: 20px;
-            }
-        }
-    }
-}
-
-
+// User menu.
 .user-menu {
-    border-right: 1px solid #fff;
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: none;
+    border-right: 1px solid darken($header__background, 5%);
 
     img {
-        margin-left: 12px;
-        margin-top: -2px;
+        margin-right: $gutters / 2;
+        margin-left: 0;
     }
 }
 
-.status {
-    font-family: 'Droid Arabic Kufi', sans-serif;
+// Page wrapper.
+.wrapper {
+    @include screen-sm {
+        padding-right: $sidebar__width;
+        padding-left: 0;
+
+        // Change footer position.
+        .footer { left: 0; right: $sidebar__width; }
+    }
 }
+
+// Change dashboard statuses font.
+.status { font-family: $font__droid; }

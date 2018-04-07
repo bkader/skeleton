@@ -47,10 +47,31 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @version 	1.3.2
  */
 class Language extends KB_Controller
 {
+	/**
+	 * Array of method that accept only AJAX requests.
+	 * @var array
+	 */
+	protected $ajax_methods = array('line');
+
+	/**
+	 * Class constructor.
+	 *
+	 * @since 	1.3.2
+	 *
+	 * @access 	public
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->load->language('language/language');
+	}
+
+	// ------------------------------------------------------------------------
+
 	/**
 	 * Switch site language.
 	 * @access 	public
@@ -83,20 +104,34 @@ class Language extends KB_Controller
 
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Method for getting language lines using AJAX.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.2 	Rewritten so it can be used.
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	string
+	 */
 	public function line()
 	{
+		// Should we load a file?
+		if ($file = $this->input->post('file'))
+		{
+			$this->load->language($file);
+		}
+
+		// We make sure a line is requested.
 		$line = $this->input->post('line');
 		if (empty($line))
 		{
 			return;
 		}
 
-		$file = $this->input->post('file');
-		(empty($file)) OR $this->load->language($file);
-
-		echo 'fuck';
-		die();
-		die($this->lang->line($line));
+		// We set status code and translate the line.
+		$this->response->header = 200;
+		$this->response->message = $this->lang->line($line);
 	}
 
 }

@@ -862,6 +862,27 @@ if ( ! function_exists('get_all_objects'))
 
 // ------------------------------------------------------------------------
 
+if ( ! function_exists('find_objects'))
+{
+	/**
+	 * This function is used in order to search objects.
+	 *
+	 * @since 	1.3.2
+	 * 
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	array of objects if found, else null.
+	 */
+	function find_objects($field, $match = null, $limit = 0, $offset = 0)
+	{
+		return get_instance()->kbcore->objects->find($field, $match, $limit, $offset);
+	}
+}
+
+// ------------------------------------------------------------------------
+
 if ( ! function_exists('update_object'))
 {
 	/**

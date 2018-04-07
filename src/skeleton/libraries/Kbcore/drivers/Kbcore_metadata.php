@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.3.0
+ * @version 	1.3.2
  */
 class Kbcore_metadata extends CI_Driver implements CRUD_interface
 {
@@ -102,6 +102,10 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Create a single or multiple metadata.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.2 	The metadata column "key" was renamed back to "name".
+	 * 
 	 * @access 	public
 	 * @param 	array 	$data
 	 * @return 	mixed 	int for a single meta, array of ids for multiple.
@@ -128,7 +132,7 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 
 		// Check the integrity of of $data.
 		if ( ! isset($data['guid'])
-			OR ( ! isset($data['key']) OR empty($data['key'])))
+			OR ( ! isset($data['name']) OR empty($data['name'])))
 		{
 			return false;
 		}
@@ -255,6 +259,44 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 	public function get_all($limit = 0, $offset = 0)
 	{
 		return $this->get_many(null, null, $limit, $offset);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * This method is used in order to search metadata table.
+	 *
+	 * @since 	1.3.2
+	 *
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	mixed 	array of objects if found any, else false.
+	 */
+	public function find($field, $match = null, $limit = 0, $offset = 0)
+	{
+		// We start with empty metadata
+		$metadata = false;
+
+		// Attempt to find metadata.
+		$db_metadata = $this->_parent
+			->find($field, $match, $limit, $offset)
+			->get('metadata')
+			->result();
+
+		// If we found any, we create their objects.
+		if ($db_metadata)
+		{
+			foreach ($db_metadata as $db_meta)
+			{
+				$metadata[] = new KB_Meta($db_meta);
+			}
+		}
+
+		// Return the final result.
+		return $metadata;
 	}
 
 	// ------------------------------------------------------------------------
@@ -390,6 +432,10 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Create multiple metadata for a given entity.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.2 	The metadata column "key" was renamed back to "name".
+	 * 
 	 * @access 	public
 	 * @param 	int 	$guid 	the entity's ID.
 	 * @param 	mixed 	$meta 	string or array of name => value.
@@ -434,7 +480,7 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 			{
 				$data[] = array(
 					'guid'  => $guid,
-					'key'   => $key,
+					'name'  => $key,
 					'value' => $val,
 				);
 			}
@@ -448,29 +494,33 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Retrieve a single or multiple metadata of the selected entity.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.2 	The metadata column "key" was renamed back to "name".
+	 * 
 	 * @access 	public
 	 * @param 	int 	$guid 	The entity's id.
-	 * @param 	string 	$key 	The metadata key.
+	 * @param 	string 	$name 	The metadata name.
 	 * @param 	bool 	$single Whether to return the metadata value.
 	 * @return 	mixed
 	 */
-	public function get_meta($guid, $key = null, $single = false)
+	public function get_meta($guid, $name = null, $single = false)
 	{
 		// A single metadata to retrieve?
-		if ( ! empty($key))
+		if ( ! empty($name))
 		{
 			// Multiple metadata?
-			if (is_array($key))
+			if (is_array($name))
 			{
 				return $ths->get_many(array(
 					'guid' => $guid,
-					'key'  => $key,
+					'name' => $name,
 				));
 			}
 
 			$meta = $this->get_by(array(
 				'guid' => $guid,
-				'key'  => $key,
+				'name' => $name,
 			));
 
 			// Return the value or the whole object if found.
@@ -555,6 +605,7 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 	 *
 	 * @since 	1.0.0
 	 * @since 	1.3.0 	Rewritten for better code readability and performance.
+	 * @since 	1.3.2 	The metadata column "key" was renamed back to "name".
 	 * 
 	 * @access 	public
 	 * @return 	bool
@@ -565,15 +616,15 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 	 * To delete multiple one, pass their array as the second parameter or
 	 * you can pass successive names.
 	 */
-	public function delete_meta($guid, $key = null)
+	public function delete_meta($guid, $name = null)
 	{
 		// Let's prepare the WHERE clause.
 		$where['guid'] = $guid;
 
-		// If we passed key(s), add them to where clause.
-		if ($key !== null)
+		// If we passed name(s), add them to where clause.
+		if ($name !== null)
 		{
-			$where['key'] = $key;
+			$where['name'] = $name;
 		}
 
 		return $this->delete_by($where);
@@ -652,14 +703,18 @@ if ( ! function_exists('get_meta'))
 {
 	/**
 	 * Retrieve a single or multiple metadata for the selected entity.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.2 	The metadata column "key" was renamed back to "name".
+	 * 
 	 * @param 	int 	$guid 	The entity's ID.
-	 * @param 	mixed 	$key 	The metadata name or array.
+	 * @param 	mixed 	$name 	The metadata name or array.
 	 * @param 	bool 	$single Whether to retrieve the value instead of the object.
 	 * @return 	mixed 	depends on the value of the metadata.
 	 */
-	function get_meta($guid, $key = null, $single = false)
+	function get_meta($guid, $name = null, $single = false)
 	{
-		return get_instance()->kbcore->metadata->get_meta($guid, $key, $single);
+		return get_instance()->kbcore->metadata->get_meta($guid, $name, $single);
 	}
 }
 
@@ -704,20 +759,42 @@ if ( ! function_exists('get_many_meta'))
 
 // ------------------------------------------------------------------------
 
+if ( ! function_exists('find_metadata'))
+{
+	/**
+	 * This function is used in order to search metadata.
+	 *
+	 * @since 	1.3.2
+	 * 
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	array of metadata if found, else null.
+	 */
+	function find_metadata($field, $match = null, $limit = 0, $offset = 0)
+	{
+		return get_instance()->kbcore->metadata->find($field, $match, $limit, $offset);
+	}
+}
+
+// ------------------------------------------------------------------------
+
 if ( ! function_exists('metadata_exists'))
 {
 	/**
 	 * Checks the existence of a metadata.
 	 *
 	 * @since 	1.3.0
+	 * @since 	1.3.2 	The metadata column "key" was renamed back to "name".
 	 *
 	 * @param 	int 	$guid 	The entity's ID.
-	 * @param 	string 	$key 	The meta key.
+	 * @param 	string 	$name 	The meta name.
 	 * @return 	bool 	true if the meta exists, else false.
 	 */
-	function metadata_exists($guid, $key)
+	function metadata_exists($guid, $name)
 	{
-		return (get_meta($guid, $key) !== null);
+		return (get_meta($guid, $name) !== null);
 	}
 }
 
@@ -903,6 +980,10 @@ class KB_Meta
 
 	/**
 	 * Sets up object properties.
+	 *
+	 * @since 	1.3.0
+	 * @since 	1.3.2 	The metadata column "key" was renamed back to "name".
+	 * 
 	 * @access 	public
 	 * @param 	object
 	 */
@@ -916,7 +997,7 @@ class KB_Meta
 		}
 
 		// Apply a filter so that plugins/themes can use it.
-		$this->data->value = apply_filters("pre_meta_{$meta->key}", $meta->value);
+		$this->data->value = apply_filters("pre_meta_{$meta->name}", $meta->value);
 	}
 
 	// ------------------------------------------------------------------------

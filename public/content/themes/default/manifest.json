@@ -3,11 +3,11 @@
 	"theme_uri": "javascript:void(0)",
 	"description": "The default theme that comes with the library.",
 	"version": "1.0.0",
-	"license": "N/A",
-	"license_uri": "javascript:void(0)",
+	"license": "MIT License",
+	"license_uri": "https://opensource.org/licenses/MIT",
 	"author": "Kader Bouyakoub",
 	"author_uri": "https://github.com/bkader",
 	"author_email": "bkader@mail.com",
-	"tags": "ci-theme, codeigniter, library, bootstrap",
+	"tags": "codeigniter, skeleton, bkader",
 	"screenshot": "screenshot.jpg"
 }
