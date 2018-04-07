@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @version 	1.3.2
  */
 class Admin extends Admin_Controller
 {
@@ -667,6 +667,7 @@ class Admin extends Admin_Controller
 	 * Method for deleting a menu with AJAX request.
 	 *
 	 * @since 	1.3.0
+	 * @since 	1.3.2 	Fixed the returned messages (my apologies).
 	 *
 	 * @access 	private
 	 * @param 	mixed 	$id 	The menu's ID or slug.
@@ -678,12 +679,12 @@ class Admin extends Admin_Controller
 		if (true === $this->kbcore->menus->delete_menu($id))
 		{
 			$this->response->header = 200;
-			$this->response->message = 'Fuckit';
+			$this->response->message = lang('delete_menu_success');
 		}
 		else
 		{
 			$this->response->header = 406;
-			$this->response->message = 'Fuckit';
+			$this->response->message = lang('delete_menu_error');
 		}
 	}
 
@@ -693,6 +694,7 @@ class Admin extends Admin_Controller
 	 * Method for deleting a menu item.
 	 *
 	 * @since 	1.3.0
+	 * @since 	1.3.2 	Fixed the returned messages (my apologies).
 	 *
 	 * @access 	private
 	 * @param 	int 	$id 	The item's ID.
@@ -704,12 +706,12 @@ class Admin extends Admin_Controller
 		if (true === $this->kbcore->menus->delete_item($id))
 		{
 			$this->response->header = 200;
-			$this->response->message = 'Fuckit';
+			$this->response->message = lang('delete_item_success');
 		}
 		else
 		{
 			$this->response->header = 406;
-			$this->response->message = 'Fuckit';
+			$this->response->message = lang('delete_item_error');
 		}
 	}
 
