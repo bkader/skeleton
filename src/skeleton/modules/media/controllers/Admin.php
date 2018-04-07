@@ -160,7 +160,7 @@ class Admin extends Admin_Controller
 		// An error occured? Return it to browser.
 		if ( ! $this->upload->do_upload('file'))
 		{
-			$this->response->header = 500;
+			$this->response->header = 406;
 			$this->response->message = $this->upload->display_errors();
 		}
 		// File uploaded? Proceed.
@@ -193,7 +193,7 @@ class Admin extends Admin_Controller
 			$media_id = $this->kbcore->media->create($media);
 			if ( ! $media_id)
 			{
-				$this->response->header = 500;
+				$this->response->header = 406;
 				$this->response->message = lang('media_upload_error');
 				return;
 			}
@@ -332,7 +332,7 @@ class Admin extends Admin_Controller
 		// Error updating?
 		else
 		{
-			$this->response->header = 500;
+			$this->response->header = 406;
 			$this->response->message = lang('media_update_error');
 		}
 	}
@@ -371,7 +371,7 @@ class Admin extends Admin_Controller
 		// Otherwise, set error message.
 		else
 		{
-			$this->response->header = 500;
+			$this->response->header = 406;
 			$this->response->message = lang('media_delete_error');
 		}
 	}
