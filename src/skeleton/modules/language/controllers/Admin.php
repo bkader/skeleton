@@ -143,6 +143,9 @@ class Admin extends Admin_Controller
 		if ($this->kbcore->options->set_item('languages', $db_langs))
 		{
 			set_alert(lang('language_enable_success'), 'success');
+
+			// Log the activity.
+			log_activity($this->c_user->id, 'enabled language: '.$folder);
 		}
 		else
 		{
@@ -205,7 +208,11 @@ class Admin extends Admin_Controller
 			{
 				$this->kbcore->options->set_item('language', 'english');
 			}
+
 			set_alert(lang('language_disable_success'), 'success');
+
+			// Log the activity.
+			log_activity($this->c_user->id, 'enabled language: '.$folder);
 		}
 		else
 		{
@@ -252,6 +259,9 @@ class Admin extends Admin_Controller
 		if ($this->kbcore->options->set_item('language', $folder))
 		{
 			set_alert(lang('language_default_success'), 'success');
+
+			// Log the activity.
+			log_activity($this->c_user->id, 'set default language to: '.$folder);
 		}
 		else
 		{

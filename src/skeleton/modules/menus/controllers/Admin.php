@@ -172,6 +172,9 @@ class Admin extends Admin_Controller
 				exit;
 			}
 
+			// Log the activity.
+			log_activity($this->c_user->id, 'added a menu: #'.$status);
+
 			// Set alert and redirect to menus list.
 			set_alert(lang('add_menu_success'), 'success');
 			redirect('admin/menus', 'refresh');
@@ -308,6 +311,9 @@ class Admin extends Admin_Controller
 			if ($status)
 			{
 				set_alert(lang('add_item_success'), 'success');
+
+				// Log the activity.
+				log_activity($this->c_user->id, 'added menu item: #'.$status);
 			}
 			else
 			{
@@ -375,6 +381,9 @@ class Admin extends Admin_Controller
 			if (true === $this->kbcore->menus->set_location_menu($data))
 			{
 				set_alert(lang('menu_location_success'), 'success');
+
+				// Log the activity.
+				log_activity($this->c_user->id, 'updated menus locations');
 			}
 			else
 			{
@@ -440,6 +449,9 @@ class Admin extends Admin_Controller
 		if ($this->kbcore->menus->items_order($id, $this->input->post(null, true)))
 		{
 			$status['status'] = true;
+
+			// Log the activity.
+			log_activity($this->c_user->id, 'updated menu items order: #'.$id);
 		}
 
 		// Return the process status.
@@ -550,6 +562,9 @@ class Admin extends Admin_Controller
 				exit;
 			}
 
+			// Log the activity.
+			log_activity($this->c_user->id, 'updated menu: #'.$id);
+
 			// Set alert and redirect to menus list.
 			set_alert(lang('edit_menu_success'), 'success');
 			redirect('admin/menus', 'refresh');
@@ -654,6 +669,9 @@ class Admin extends Admin_Controller
 				exit;
 			}
 
+			// Log the activity.
+			log_activity($this->c_user->id, 'updated menu item: #'.$id);
+
 			// Set alert and redirect to menus list.
 			set_alert(lang('edit_item_success'), 'success');
 			redirect('admin/menus/items/'.$data['item']->owner_id, 'refresh');
@@ -680,6 +698,9 @@ class Admin extends Admin_Controller
 		{
 			$this->response->header = 200;
 			$this->response->message = lang('delete_menu_success');
+
+			// Log the activity.
+			log_activity($this->c_user->id, 'deleted menu: #'.$id);
 		}
 		else
 		{
@@ -707,6 +728,9 @@ class Admin extends Admin_Controller
 		{
 			$this->response->header = 200;
 			$this->response->message = lang('delete_item_success');
+
+			// Log the activity.
+			log_activity($this->c_user->id, 'deleted menu item: #'.$id);
 		}
 		else
 		{

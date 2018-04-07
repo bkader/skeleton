@@ -160,6 +160,10 @@ class Settings extends User_Controller
 			$data = $this->input->post($post, true);
 
 			$this->settings->update_profile($user->id, $data);
+
+			// Log the activity.
+			log_activity($this->c_user->id, 'updated profile');
+
 			redirect('settings/profile', 'refresh');
 			exit;
 		}
@@ -229,6 +233,9 @@ class Settings extends User_Controller
 					$this->auth->user_id(),
 					$this->input->post('npassword', true)
 				);
+
+				// Log the activity.
+				log_activity($this->c_user->id, 'changed password');
 			}
 
 			// Redirect back to same page.
@@ -293,6 +300,9 @@ class Settings extends User_Controller
 					$this->auth->user_id(),
 					$this->input->post('nemail', true)
 				);
+
+				// Log the activity.
+				log_activity($this->c_user->id, 'changed email address');
 			}
 
 			// Redirect back to same page.
@@ -370,6 +380,10 @@ class Settings extends User_Controller
 		{
 			@unlink(FCPATH."content/uploads/avatars/{$this->c_user->avatar}.jpg");
 			set_alert(lang('set_avatar_success'), 'success');
+
+			// Log the activity.
+			log_activity($this->c_user->id, 'updated avatar to use gravatar');
+
 			redirect('settings/avatar');
 			exit;
 		}
@@ -437,6 +451,9 @@ class Settings extends User_Controller
 			redirect('settings/avatar');
 			exit;
 		}
+
+		// Log the activity.
+		log_activity($this->c_user->id, 'updated avatar');
 
 		set_alert(lang('set_avatar_success'), 'success');
 		redirect('settings/avatar');

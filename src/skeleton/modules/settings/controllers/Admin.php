@@ -112,6 +112,9 @@ class Admin extends Admin_Controller
 				}
 			}
 
+			// Log the activity.
+			log_activity($this->c_user->id, 'updated site settings: general');
+
 			set_alert(lang('set_update_success'), 'success');
 			redirect('admin/settings', 'refresh');
 			exit;
@@ -171,6 +174,9 @@ class Admin extends Admin_Controller
 					exit;
 				}
 			}
+
+			// Log the activity.
+			log_activity($this->c_user->id, 'updated site settings: users');
 
 			set_alert(lang('set_update_success'), 'success');
 			redirect('admin/settings/users', 'refresh');
@@ -275,6 +281,9 @@ class Admin extends Admin_Controller
 				}
 			}
 
+			// Log the activity.
+			log_activity($this->c_user->id, 'updated site settings: email');
+
 			set_alert(lang('set_update_success'), 'success');
 			redirect('admin/settings/email', 'refresh');
 			exit;
@@ -327,6 +336,9 @@ class Admin extends Admin_Controller
 					exit;
 				}
 			}
+
+			// Log the activity.
+			log_activity($this->c_user->id, 'updated site settings: uploads');
 
 			set_alert(lang('set_update_success'), 'success');
 			redirect('admin/settings/uploads', 'refresh');
@@ -398,6 +410,9 @@ class Admin extends Admin_Controller
 					exit;
 				}
 			}
+
+			// Log the activity.
+			log_activity($this->c_user->id, 'updated site settings: captcha');
 
 			set_alert(lang('set_update_success'), 'success');
 			redirect('admin/settings/captcha', 'refresh');

@@ -292,6 +292,9 @@ class Admin extends Admin_Controller
 				}
 			}
 
+			// Log the activity.
+			log_activity($this->c_user->id, 'uploaded media: #'.$media_id);
+
 			// Simple message that's is return to use.
 			$this->response->header  = 200;
 			$this->response->message = lang('media_upload_success');
@@ -328,6 +331,9 @@ class Admin extends Admin_Controller
 		{
 			$this->response->header = 200;
 			$this->response->message = lang('media_update_success');
+
+			// Log the activity.
+			log_activity($this->c_user->id, 'updated media details: #'.$id);
 		}
 		// Error updating?
 		else
@@ -361,6 +367,9 @@ class Admin extends Admin_Controller
 			// We set response preferences.
 			$this->response->header = 200;
 			$this->response->message = lang('media_delete_success');
+
+			// Log the activity.
+			log_activity($this->c_user->id, 'deleted media: #'.$id);
 
 			// Make sure to delete the file.
 			@array_map(

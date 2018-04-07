@@ -184,8 +184,20 @@ class Admin extends Admin_Controller
 			$user_data['subtype'] = ($this->input->post('admin') == '1') ? 'administrator' : 'regular';
 
 			$guid = $this->users->create_user($user_data);
-			redirect(($guid > 0) ? 'admin/users' : 'admin/users/add', 'refresh');
-			exit;
+
+			if ($guid > 0)
+			{
+				// Log the activity.
+				log_activity($this->c_user->id, 'created user: #'.$guid);
+
+				redirect('admin/users','refresh');
+				exit;
+			}
+			else
+			{
+				redirect('admin/users/add','refresh');
+				exit;
+			}
 		}
 	}
 
@@ -399,9 +411,13 @@ class Admin extends Admin_Controller
 			$status = $this->kbcore->users->update($id, $user_data);
 
 			// Successful?
-			if ($status == true)
+			if ($status === true)
 			{
 				set_alert(lang('us_admin_edit_success'), 'success');
+
+				// Log the activity.
+				log_activity($this->c_user->id, 'updated user: #'.$id);
+
 				redirect('admin/users', 'refresh');
 			}
 			// Something went wrong?
@@ -455,6 +471,9 @@ class Admin extends Admin_Controller
 		if ($status === true)
 		{
 			set_alert(lang('us_admin_activate_success'), 'success');
+
+			// Log the activity.
+			log_activity($this->c_user->id, 'activate user: #'.$id);
 		}
 		else
 		{
@@ -506,6 +525,9 @@ class Admin extends Admin_Controller
 		if ($status === true)
 		{
 			set_alert(lang('us_admin_deactivate_success'), 'success');
+
+			// Log the activity.
+			log_activity($this->c_user->id, 'deactivated user: #'.$id);
 		}
 		else
 		{
@@ -551,6 +573,9 @@ class Admin extends Admin_Controller
 		else
 		{
 			set_alert(lang('us_admin_delete_success'), 'success');
+
+			// Log the activity.
+			log_activity($this->c_user->id, 'deleted user: #'.$id);
 		}
 
 		redirect($this->agent->referrer());

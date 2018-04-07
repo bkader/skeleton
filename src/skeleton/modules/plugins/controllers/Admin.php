@@ -170,6 +170,9 @@ class Admin extends Admin_Controller
 		elseif ($this->kbcore->plugins->activate($plugin))
 		{
 			set_alert(lang('plugins_activate_success'), 'success');
+
+			// Log the activity.
+			log_activity($this->c_user->id, 'activated plugin: '.$plugin);
 		}
 
 		// None of the above?
@@ -203,6 +206,9 @@ class Admin extends Admin_Controller
 		elseif ($this->kbcore->plugins->deactivate($plugin))
 		{
 			set_alert(lang('plugins_deactivate_success'), 'success');
+
+			// Log the activity.
+			log_activity($this->c_user->id, 'deactivated plugin: #'.$plugin);
 		}
 
 		// None of the above?
@@ -236,6 +242,9 @@ class Admin extends Admin_Controller
 		elseif ($this->kbcore->plugins->delete($plugin))
 		{
 			set_alert(lang('plugins_delete_success'), 'success');
+
+			// Log the activity.
+			log_activity($this->c_user->id, 'deleted plugin: #'.$media_id);
 		}
 
 		// None of the above?

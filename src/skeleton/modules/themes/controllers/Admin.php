@@ -145,6 +145,9 @@ class Admin extends Admin_Controller
 		if ($status === true)
 		{
 			set_alert(lang('theme_activate_success'), 'success');
+
+			// Log the activity.
+			log_activity($this->c_user->id, 'enabled theme: '.$theme);
 		}
 		else
 		{

@@ -93,9 +93,6 @@ class Settings_lib
 		if ($status === true)
 		{
 			set_alert(lang('set_profile_success'), 'success');
-
-			// Log the activity.
-			log_activity($id, 'updated profile');
 		}
 		else
 		{
@@ -150,9 +147,6 @@ class Settings_lib
 		{
 			// Set alert message.
 			set_alert(lang('set_password_success'), 'success');
-
-			// Log the activity.
-			log_activity($id, 'updated profile');
 		}
 		// Something went wrong?
 		else
@@ -236,9 +230,6 @@ class Settings_lib
 		{
 			// Set alert message.
 			set_alert(lang('set_email_info'), 'info');
-
-			// Log the activity.
-			log_activity($id, 'updated profile');
 
 			// TODO: Send the link to user.
 		}
