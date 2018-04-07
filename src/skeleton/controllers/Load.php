@@ -171,7 +171,7 @@ class Load extends KB_Controller
 	        }
 
 			// Prepare our final output.
-			$output  = "/*! This file is auto-generated */\n".$output;
+			$output = "/*! Cache Assets auto-generated file.\nCreated At: ".date('Y-m-d H:i:s')." */\n".$output;
 
 			// Prepare the file to be cached.
 			if (ENVIRONMENT !== 'development')
@@ -435,7 +435,7 @@ class Load extends KB_Controller
 					 * on development environment, we delete file.
 					 */
 					if (ENVIRONMENT === 'development' 
-						OR filemtime($path.$file) < time() - 86400)
+						OR filemtime($path.$file) < (time() - 86400))
 					{
 						@unlink($path.$file);
 					}
