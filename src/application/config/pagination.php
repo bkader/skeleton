@@ -16,17 +16,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 	https://github.com/bkader
  */
 
-$config['full_tag_open']        = '<div class="text-center"><ul class="pagination pagination-small pagination-centered mb0">';
-$config['full_tag_close']       = '</ul></div>';
-$config['num_links']            = 5;
-$config['prev_tag_open']        = '<li>';
-$config['prev_tag_close']       = '</li>';
-$config['next_tag_open']        = '<li>';
-$config['next_tag_close']       = '</li>';
-$config['cur_tag_open']         = '<li class="active"><span>';
-$config['cur_tag_close']        = '<span class="sr-only">(current)</span></span></li>';
-$config['num_tag_open']         = '<li>';
-$config['num_tag_close']        = '</li>';
+$config['full_tag_open']   = '<div class="text-center"><ul class="pagination pagination-small pagination-centered mb0">';
+$config['full_tag_close']  = '</ul></div>';
+$config['num_links']       = 5;
+$config['prev_tag_open']   = '<li>';
+$config['prev_tag_close']  = '</li>';
+$config['next_tag_open']   = '<li>';
+$config['next_tag_close']  = '</li>';
+$config['cur_tag_open']    = '<li class="active"><span>';
+$config['cur_tag_close']   = '<span class="sr-only">(current)</span></span></li>';
+$config['num_tag_open']    = '<li>';
+$config['num_tag_close']   = '</li>';
+$config['first_tag_open']  = '<li>';
+$config['first_tag_close'] = '</li>';
+$config['last_tag_open']   = '<li>';
+$config['last_tag_close']  = '</li>';
 
 // ------------------------------------------------------------------------
 // DON'T EDIT BELOW LINES.

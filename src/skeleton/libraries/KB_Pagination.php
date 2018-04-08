@@ -77,6 +77,10 @@ class KB_Pagination extends CI_Pagination
 				'cur_tag_close',
 				'num_tag_open',
 				'num_tag_close',
+				'first_tag_open',
+				'first_tag_close',
+				'last_tag_open',
+				'last_tag_close',
 			);
 
 			// Create the array of filtered params.
