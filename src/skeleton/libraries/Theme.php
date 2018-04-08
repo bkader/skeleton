@@ -50,7 +50,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @since 		1.3.3 	changed "metadata" to "meta_tags" to avoid conflict with
+ *          			the "Kbcore_metadat" library.
+ *
+ * @version 	1.3.3
  */
 class Theme
 {
@@ -76,7 +79,7 @@ EOT;
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{title}</title>
-    {metadata}
+    {meta_tags}
     {stylesheets}{extra_head}
 </head>
 <body{body_class}>\n
@@ -288,7 +291,7 @@ EOT;
 	 * Holds an array of all <meta> tags.
 	 * @var  array
 	 */
-	private $_metadata = array();
+	private $_meta_tags = array();
 
 	/**
 	 * Array of stylesheets to add first.
@@ -543,17 +546,17 @@ EOT;
 	public function reset()
 	{
 		$filters = array(
-			'after_metadata',
+			'after_meta',
 			'after_scripts',
 			'after_styles',
 			'after_theme_setup',
 			'alert_classes',
 			'alert_template',
-			'before_metadata',
+			'before_meta',
 			'before_scripts',
 			'before_styles',
 			'body_class',
-			'enqueue_metadata',
+			'enqueue_meta',
 			'enqueue_partials',
 			'enqueue_scripts',
 			'enqueue_styles',
@@ -1154,10 +1157,10 @@ EOT;
 			return $this;
 		}
 
-		$this->_metadata[$type.'::'.$name] = array(
+		$this->_meta_tags[$type.'::'.$name] = array(
 			'content' => $content
 		);
-		(empty($attrs)) OR $this->_metadata[$type.'::'.$name]['attrs'] = $attrs;
+		(empty($attrs)) OR $this->_meta_tags[$type.'::'.$name]['attrs'] = $attrs;
 
 		return $this;
 	}
@@ -1165,13 +1168,13 @@ EOT;
 	// --------------------------------------------------------------------
 
 	/**
-	 * Returns all cached metadata.
+	 * Returns all cached meta_tags.
 	 * @access 	protected
 	 * @return 	array
 	 */
 	public function get_meta()
 	{
-		return $this->_metadata;
+		return $this->_meta_tags;
 	}
 
 	// --------------------------------------------------------------------
@@ -1181,40 +1184,47 @@ EOT;
 	 * @access 	protected
 	 * @return 	string
 	 */
-	public function output_metadata()
+	public function output_meta_tags()
 	{
-		// If there are any 'before_metadata', apply them.
-		$metadata = apply_filters('before_metadata', '');
+		// If there are any 'before_meta', apply them.
+		$meta_tags = apply_filters('before_meta', '');
 
-		// Append our output metadata.
-		$metadata .= $this->_render_metadata();
+		// Append our output meta_tags.
+		$meta_tags .= $this->_render_meta_tags();
 
-		// If there are any 'after_metadata', apply them.
-		$metadata = apply_filters('after_metadata', $metadata);
+		// If there are any 'after_meta', apply them.
+		$meta_tags = apply_filters('after_meta', $meta_tags);
 
-		return $metadata;
+		return $meta_tags;
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	 * Collectes all additional metadata and prepare them for output
+	 * Collectes all additional meta_tags and prepare them for output
 	 * @access 	private
 	 * @param 	none
 	 * @return 	string
 	 */
-	private function _render_metadata()
+	private function _render_meta_tags()
 	{
+		// Add the generator that can be altered using "skeleton_generator" filter.
+		$generator = apply_filters('skeleton_generator', 'CodeIgniter Skeleton '.KB_VERSION);
+		if ( ! empty($generator))
+		{
+			$this->add_meta('generator', $generator);
+		}
+
 		// If there are any enqueued meta tags from functions, add them.
-		do_action('enqueue_metadata');
+		do_action('enqueue_meta');
 
 		// Kick off with an empty output.
 		$output = '';
 
 		$i = 1;
-		$j = count($this->_metadata);
+		$j = count($this->_meta_tags);
 
-		foreach ($this->_metadata as $key => $val)
+		foreach ($this->_meta_tags as $key => $val)
 		{
 			list($type, $name) = explode('::', $key);
 			$content = isset($val['content']) ? $val['content'] : null;
@@ -1791,7 +1801,7 @@ EOT;
 			$replace['title'] = $this->get_title();
 
 			// Let's add <meta> tags now;
-			$replace['metadata'] = $this->output_metadata();
+			$replace['meta_tags'] = $this->output_meta_tags();
 
 			// Prepare all stylesheets.
 			$replace['stylesheets'] = $this->output_styles();
@@ -3697,26 +3707,26 @@ endif;
 
 // --------------------------------------------------------------------
 
-if ( ! function_exists('the_metadata'))
+if ( ! function_exists('the_meta_tags'))
 {
 	/**
 	 * Ouputs site <meta> tags.
 	 * @param   bool    $echo   whether to return or echo.
 	 */
-	function the_metadata($echo = true)
+	function the_meta_tags($echo = true)
 	{
 		if ($echo === false)
 		{
-			return get_instance()->theme->output_metadata();
+			return get_instance()->theme->output_meta_tags();
 		}
 
-		echo get_instance()->theme->output_metadata();
+		echo get_instance()->theme->output_meta_tags();
 	}
 }
 
 // --------------------------------------------------------------------
 
-if ( ! function_exists('add_metadata'))
+if ( ! function_exists('add_meta_tag'))
 {
 	/**
 	 * Allow the user to add <meta> tags.
@@ -3724,7 +3734,7 @@ if ( ! function_exists('add_metadata'))
 	 * @param   mixed   $content
 	 * @return  object
 	 */
-	function add_metadata($name, $content = null, $type = 'meta', $attrs = array())
+	function add_meta_tag($name, $content = null, $type = 'meta', $attrs = array())
 	{
 		return get_instance()->theme->add_meta($name, $content, $type, $attrs);
 	}

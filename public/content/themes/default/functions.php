@@ -50,7 +50,7 @@ defined( 'BASEPATH' ) OR exit( 'No direct script access allowed' );
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @version 	1.3.3
  */
 // ------------------------------------------------------------------------
 if ( ! class_exists('Default_theme', false)):
@@ -78,6 +78,9 @@ class Default_theme {
 			// Enqueue our assets.
 			add_action( 'after_theme_setup', array( $this, 'after_theme_setup' ) );
 
+			// Add some meta tags.
+			add_action( 'enqueue_meta', array( $this, 'enqueue_meta' ) );
+
 			// Add IE8 support.
 			add_filter( 'extra_head', array( $this, 'extra_head' ) );
 
@@ -96,6 +99,10 @@ class Default_theme {
 	// Views paths methods.
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Change paths to views, partials and layouts.
+	 * @access 	public
+	 */
 	public function set_views_paths() {
 		// Layouts files.
 		add_filter( 'theme_layouts_path', array( $this, 'theme_layouts_path' ) );
@@ -107,14 +114,29 @@ class Default_theme {
 		add_filter( 'theme_views_path', array( $this, 'theme_views_path' ) );
 	}
 
+	/**
+	 * Change paths to layouts files.
+	 * @access 	public
+	 * @return 	string
+	 */
 	public function theme_layouts_path() {
 		return get_theme_path( 'templates/layouts/' );
 	}
 
+	/**
+	 * Change paths to partials files.
+	 * @access 	public
+	 * @return 	string
+	 */
 	public function theme_partials_path() {
 		return get_theme_path( 'templates/partials/' );
 	}
 
+	/**
+	 * Change paths to views files.
+	 * @access 	public
+	 * @return 	string
+	 */
 	public function theme_views_path() {
 		return get_theme_path( 'templates/' );
 	}
@@ -123,6 +145,11 @@ class Default_theme {
 	// Theme translation.
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Set the path to theme translation files.
+	 * @access 	public
+	 * @return 	string
+	 */
 	public function theme_translation( $path ) {
 		return get_theme_path( 'language' );
 	}
@@ -131,6 +158,11 @@ class Default_theme {
 	// Theme menus.
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Register themes available menus.
+	 * @access 	public
+	 * @return 	string
+	 */
 	public function theme_menus() {
 		register_menu( array(
 			'header-menu'  => 'lang:main_menu',		// Main menu (translated)
@@ -143,9 +175,13 @@ class Default_theme {
 	// Theme images sizes.
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Register themes images sizes.
+	 * @access 	public
+	 * @return 	string
+	 */
 	public function theme_images() {
-		// These sizes are dummy ones.
-		// Use yours depending on your theme.
+		// These sizes are dummy ones. Use yours depending on your theme.
 		add_image_size( 'post', 220, 180, true );
 		add_image_size( 'avatar', 100, 100, true );
 	}
@@ -154,15 +190,25 @@ class Default_theme {
 	// Assets methods.
 	// ------------------------------------------------------------------------
 
+	/**
+	 * This method is triggered after theme was installed.
+	 * @access 	public
+	 */
 	public function after_theme_setup() {
 		// Load Open Sans fonts.
-		add_style( 'opensans', get_common_url( 'vendor/open-sans/css/open-sans.min' ) );
 
 		// Load Font Awesome.
-		add_style( 'fontawesome', get_common_url( 'css/font-awesome.min' ) );
-
-		// Load Bootstrap files.
-		add_style( 'bootstrap', 'assets/css/bootstrap.min' );
+		if ( ENVIRONMENT === 'development') {
+			add_style( 'opensans', 'assets/css/open-sans.min' );
+			add_style( 'fontawesome', get_common_url( 'css/font-awesome.min' ) );
+			add_style( 'bootstrap', 'assets/css/bootstrap.min' );
+			add_script( 'bootstrap', 'assets/js/bootstrap.min' );
+		} else {
+			add_style( 'opensans', 'https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i' );
+			add_style( 'fontawesome', 'https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css' );
+			add_style( 'bootstrap', 'https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' );
+			add_script( 'bootstrap', 'https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js' );
+		}
 
 		// Load main theme style.
 		add_style( 'style', 'assets/css/style' );
@@ -174,28 +220,56 @@ class Default_theme {
 			add_style( 'style-rtl', 'assets/css/style-rtl' );
 		}
 
-		// Load bootstrap JS file.
-		add_script('bootstrap', 'assets/js/bootstrap.min' );
-
 		// Load Zoom CSS and JS files.
 		add_style( 'zoom', get_common_url( 'css/zoom.min' ) );
 		add_script( 'zoom', get_common_url( 'js/zoom.min' ));
 	}
 
+	/**
+	 * Enqueue extra meta tags.
+	 * @access 	public
+	 */
+	public function enqueue_meta() {
+		// We are only adding favicon.
+		add_meta_tag('icon', base_url('favicon.ico'), 'rel', 'type="image/x-icon"');
+	}
+
+	/**
+	 * Add output before closing </head>
+	 * @access 	public
+	 */
 	public function extra_head( $output ) {
-		add_ie9_support($output, false);
+		// We add support for old browsers.
+		add_ie9_support($output, (ENVIRONMENT !== 'development'));
 		return $output;
 	}
 
+	/**
+	 * We add stuff to Google Analytics script position.
+	 * @access 	public
+	 */
 	public function google_analytics( $output ) {
+		// We simply add the analytics script.
 		$output .= get_the_analytics( get_option( 'google_analytics_id' ) );
 		return $output;
 	}
 
+	/**
+	 * We enqueue our partial views so they get cached.
+	 * @access 	public
+	 */
 	public function enqueue_partials() {
 		add_partial( 'navbar' );
+		add_partial( 'sidebar' );
 		add_partial( 'footer' );
 	}
+
+	/**
+	 * Handle our theme layouts.
+	 * @access 	public
+	 * @param 	string 	$layout 	The layout to use.
+	 * @return 	string 	The layout to be used.
+	 */
 
 	public function theme_layout( $layout ) {
 		// Change layout of Auth controller.
@@ -207,6 +281,7 @@ class Default_theme {
 			return 'admin';
 		}
 
+		// Always return the layout.
 		return $layout;
 	}
 
@@ -225,16 +300,44 @@ $default_theme = new Default_theme();
  * If you want to remove it, and you have the right to do it, the filter
  * below show you how to do it.
  */
-/*
-add_filter('skeleton_copyright', 'remove_skeleton_copyright');
+
+// To remove the copyright added between DOCTYPE and <html>:
 if ( ! function_exists('remove_skeleton_copyright'))
 {
-	function remove_skeleton_copyright($copyright)
+	/**
+	 * Remove the Skeleton copyright.
+	 * @param 	string 	$copyright
+	 * @return 	string
+	 */
+	function remove_skeleton_copyright($content)
 	{
-		return '';
+		// Change it or return an empty string
+		// return null or $content = null;
+		return $content;
 	}
+
+	// Now you add the filer.
+	add_filter('skeleton_copyright', 'remove_skeleton_copyright');
 }
-*/
+
+// To remove the generator meta tag:
+if ( ! function_exists('remove_generator'))
+{
+	/**
+	 * Remove the Skeleton generator meta tag.
+	 * @param 	string 	$content
+	 * @return 	string
+	 */
+	function remove_generator($content)
+	{
+		// Change it or return an empty string
+		// return null or $content = null;
+		return $content;
+	}
+
+	// Now you add the filer.
+	add_filter('skeleton_generator', 'remove_generator');
+}
 
 // ------------------------------------------------------------------------
 
@@ -256,6 +359,3 @@ if ( ! function_exists( 'bs_label' )) {
 		return "<span class=\"label label-{$type}\">{$content}</span>";
 	}
 }
-
-/* End of file functions.php */
-/* Location: ./content/themes/default/functions.php */
