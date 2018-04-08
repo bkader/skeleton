@@ -16,9 +16,7 @@ Documentations are hosted on [ReadTheDocs](http://codeigniter-skeleton.readthedo
 I was not really going to share this at all! I built if for my own personal use, then I was told to sell it.
 Well, I am not selling it, I am releasing it for free, but your donations are most welcome if you want to. You can send any amount you want to help me keep this project up and enhance it as much as I can.
 
-## Documentation
-You can find some documentations inside the **docs** folder. They are not complete but more to come later.
+**[Donate](http://bit.ly/2pIIV0D)**
 
-## Donate
-Coding is not my main source of incomes, but it does help me pay bills and feed my family. Except for some client's projects, I earn **$0.00** a month from coding. So as I said earlier, you donations are most welcome.
-[Click Here](http://bit.ly/2pIIV0D) if you want to donate. If this does not work, you can send donations to my **PayPal** address: **bkader[at].mail.com**. I appreciate it.
+## Documentation
+You can find some documentations inside the **docs** folder. They are not complete but more to come later. For the moment, make sure to read our [Wiki](https://github.com/bkader/skeleton/wiki).
