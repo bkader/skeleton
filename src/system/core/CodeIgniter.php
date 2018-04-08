@@ -57,6 +57,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 	const CI_VERSION = '3.1.8';
 
+/**
+ * Skeleton Version
+ *
+ * @var	string
+ *
+ */
+	const KB_VERSION = '1.3.3';
+
 /*
  * ------------------------------------------------------
  *  Load the framework constants
@@ -214,7 +222,6 @@ if ( ! is_php('5.4'))
  * ------------------------------------------------------
  */
 	$EXT->call_hook('pre_system');
-	$PLG->do_action('pre_system');
 
 /*
  * ------------------------------------------------------
