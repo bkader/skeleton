@@ -50,6 +50,15 @@
 					</div>
 				</div>
 
+				<!-- Base controller -->
+				<div class="form-group<?php echo form_error('base_controller') ? ' has-error' : ''?>">
+					<label for="base_controller" class="col-sm-2 control-label"><?php _e('set_base_controller') ?></label>
+					<div class="col-sm-10">
+						<?php echo print_input($base_controller, array('class' => 'form-control')) ?>
+						<div class="help-block"><?php echo form_error('base_controller') ?: lang('set_base_controller_tip') ?></div>
+					</div>
+				</div>
+
 				<!-- Per page -->
 				<div class="form-group<?php echo form_error('per_page') ? ' has-error' : ''?>">
 					<label for="per_page" class="col-sm-2 control-label"><?php _e('set_per_page') ?></label>

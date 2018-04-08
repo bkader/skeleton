@@ -77,6 +77,10 @@ $lang['set_site_keywords_tip'] = 'Enter your comma-separated site keywords.';
 $lang['set_site_author']     = 'Site Author';
 $lang['set_site_author_tip'] = 'Enter the site author if your want to add the author meta tag.';
 
+// Base controller.
+$lang['set_base_controller']     = 'Base Controller';
+$lang['set_base_controller_tip'] = 'The controller used as your default homepage.';
+
 // Per page.
 $lang['set_per_page']     = 'Per Page';
 $lang['set_per_page_tip'] = 'How many items are shown on pages using pagination.';

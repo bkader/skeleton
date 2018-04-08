@@ -424,6 +424,10 @@ class Admin extends Admin_Controller
 
 	/**
 	 * Prepares form fields and validation rules.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Added the base controller setting handler.
+	 * 
 	 * @access 	private
 	 * @param 	string 	$tab 	settings tab.
 	 * @return 	array 	containing rules and fields.
@@ -454,6 +458,79 @@ class Admin extends Admin_Controller
 				);
 			}
 
+			/**
+			 * In case of the base controller settings, we make sure to 
+			 * grab a list of all available controllers/modules and prepare
+			 * the dropdown list.
+			 */
+			if ('base_controller' === $option->name && empty($option->options))
+			{
+				// We start with an empty controllers list.
+				$controllers = array();
+
+				// We set controllers locations.
+				$locations   = array(
+					APPPATH.'controllers/' => null,
+					KBPATH.'controllers/'  => null,
+				);
+
+				// We add modules locations to controllers locations.
+				$modules = $this->router->list_modules();
+				foreach ($modules as $module)
+				{
+					// We add it only if the "controller" folder is found.
+					if (null !== $c = $this->router->module_path($module.'/controllers'))
+					{
+						$locations[$c] = $module;
+					}
+				}
+
+				// Array of files to be ignored.
+				$_to_eliminate = array(
+					'.',
+					'..',
+					'.gitkeep',
+					'index.html',
+					'.htaccess',
+					'Admin.php',
+					'Ajax.php',
+					'Process.php',
+				);
+
+				// Fill controllers.
+				foreach ($locations as $location => $module)
+				{
+					// We read the directory.
+					if ($handle = opendir($location))
+					{
+						while (false !== ($file = readdir($handle)))
+						{
+							// We ignore files to eliminate.
+							if ( ! in_array($file, $_to_eliminate))
+							{
+								// We format the file's name.
+								$file = strtolower(str_replace('.php', '', $file));
+
+								/**
+								 * If the controller's name is different from module's, we 
+								 * make sure to add the module to the start.
+								 */
+								if (null !== $module && $file <> $module)
+								{
+									$file = $module.'/'.$file;
+								}
+
+								// We fill $controllers array.
+								$controllers[$file] = $file;
+							}
+						}
+					}
+				}
+
+				// We add controllers list.
+				$option->options = $controllers;
+			}
+			
 			if ($option->field_type == 'dropdown' && ! empty($option->options))
 			{
 				$data[$option->name]['options'] = array_map(function($val) {
