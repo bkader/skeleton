@@ -49,12 +49,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.3.0
+ * @version 	1.3.3
  */
 class Admin_Controller extends User_Controller
 {
 	/**
 	 * Class constructor
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Added favicon to dashboard.
+	 * 
 	 * @return 	void
 	 */
 	public function __construct()
@@ -82,6 +86,14 @@ class Admin_Controller extends User_Controller
 
 		// Prepare dashboard sidebar.
 		$this->theme->set('admin_menu', $this->_admin_menu(), true);
+
+		// We add favicon.
+		$this->theme->add_meta(
+			'icon',
+			$this->theme->common_url('img/favicon.ico'),
+			'rel',
+			'type="image/x-icon"'
+		);
 	}
 
 	// ------------------------------------------------------------------------
