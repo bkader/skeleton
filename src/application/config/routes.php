@@ -49,7 +49,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
-$route['default_controller'] = 'welcome';
+
+// Get the default controller from database.
+require_once(BASEPATH .'database/DB.php');
+$db =& DB();
+if (null !== $result = $db->where('name', 'base_controller')->get('options')->row())
+{
+	// if we were able to connect and got a result
+	// we set it to that result.
+	$route['default_controller'] = $result->value;
+}
+else
+{
+	// else something went wrong and we'll 
+	// default to the blog controller.
+	$route['default_controller'] = 'welcome';
+}
+
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
