@@ -147,6 +147,10 @@ class Kbcore extends CI_Driver_Library
 
 	/**
 	 * Quick action to add meta tags to given page.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Removed the favicon to let themes decide what to use.
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$object 	the page or course. (object or array)
 	 * @author 	Kader Bouyakoub
@@ -155,9 +159,6 @@ class Kbcore extends CI_Driver_Library
 	 */
 	public function set_meta($object = null)
 	{
-		// Add favicon.
-		$this->ci->theme->add_meta('icon', base_url('favicon.ico'), 'rel', 'type="image/x-icon"');
-
 		// Default meta tags that will be overridden later.
 
 		// Site name and default title.
@@ -444,6 +445,7 @@ class Kbcore extends CI_Driver_Library
 	 * Database WHERE clause generator.
 	 *
 	 * @since 	1.3.0
+	 * @since 	1.3.3 	Added the possibility to use "or:" for single values.
 	 *
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
@@ -502,6 +504,11 @@ class Kbcore extends CI_Driver_Library
 						$method = 'where_not_in';
 						$key    = str_replace('!', '', $key);
 					}
+				}
+				elseif (strpos($key, 'or:') === 0)
+				{
+					$method = 'or_where';
+					$key    = str_replace('or:', '', $key);
 				}
 
 				$this->ci->db->{$method}($key, $val);
