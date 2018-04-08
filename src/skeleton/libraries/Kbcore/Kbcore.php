@@ -446,6 +446,7 @@ class Kbcore extends CI_Driver_Library
 	 *
 	 * @since 	1.3.0
 	 * @since 	1.3.3 	Added the possibility to use "or:" for single values.
+	 * @since 	1.3.3 	Removed lines causing pagination not to work properly.
 	 *
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
@@ -457,16 +458,8 @@ class Kbcore extends CI_Driver_Library
 	{
 		if ($field !== null)
 		{
-			// Format things first.
-			if (is_array($field))
-			{
-				$limit  = $match;
-				$offset = $limit;
-			}
-			else
-			{
-				$field = array($field => $match);
-			}
+			// Make sure $field is an array.
+			(is_array($field)) OR $field = array($field => $match);
 
 			// Let's generate the WHERE clause.
 			foreach ($field as $key => $val)
@@ -530,6 +523,7 @@ class Kbcore extends CI_Driver_Library
 	 *
 	 * @since 	1.3.0
 	 * @since 	1.3.2 	The metadata column "key" was renamed back to "name".
+	 * @since 	1.3.3 	Removed lines causing pagination not to work properly.
 	 *
 	 * @param 	mixed 	$field
 	 * @param 	mixed 	$match
@@ -540,17 +534,8 @@ class Kbcore extends CI_Driver_Library
 	 */
 	public function find($field, $match = null, $limit = 0, $offset = 0, $type = null)
 	{
-		// Format things first.
-		if (is_array($field))
-		{
-			$limit  = $match;
-			$offset = $limit;
-			$type   = $offset;
-		}
-		else
-		{
-			$field = array($field => $match);
-		}
+		// We make sure $field is an array.
+		(is_array($field)) OR $field = array($field => $match);
 
 		/**
 		 * The search is triggered depending of what we are looking for.
