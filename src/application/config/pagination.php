@@ -16,7 +16,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 	https://github.com/bkader
  */
 
-$config['full_tag_open']        = '<div class="text-center"><ul class="pagination pagination-small pagination-centered">';
+$config['full_tag_open']        = '<div class="text-center"><ul class="pagination pagination-small pagination-centered mb0">';
 $config['full_tag_close']       = '</ul></div>';
 $config['num_links']            = 5;
 $config['prev_tag_open']        = '<li>';
