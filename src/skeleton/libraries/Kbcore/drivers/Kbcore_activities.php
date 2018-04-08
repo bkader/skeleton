@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -48,7 +48,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  * @version 	1.3.3
  */
 class Kbcore_activities extends CI_Driver implements CRUD_interface
@@ -232,6 +232,7 @@ class Kbcore_activities extends CI_Driver implements CRUD_interface
 		// Attempt to get activities from database.
 		$db_activities = $this->_parent
 			->where($field, $match, $limit, $offset)
+			->order_by('id', 'DESC')
 			->get('activities')
 			->result();
 
@@ -284,6 +285,7 @@ class Kbcore_activities extends CI_Driver implements CRUD_interface
 		// Attempt to find activities.
 		$db_activities = $this->_parent
 			->find($field, $match, $limit, $offset)
+			->order_by('id', 'DESC')
 			->get('activities')
 			->result();
 
@@ -444,6 +446,31 @@ class Kbcore_activities extends CI_Driver implements CRUD_interface
 			'user_id'  => $user_id,
 			'activity' => $activity,
 		));
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Count activities by arbitrary WHERE clause.
+	 *
+	 * @since 	1.3.0
+	 *
+	 * @access 	public
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	int
+	 */
+	public function count($field = null, $match = null, $limit = 0, $offset = 0)
+	{
+		// Let's build the query first.
+		$query = $this->_parent
+			->where($field, $match, $limit, $offset)
+			->get('activities');
+
+		// We return the count.
+		return $query->num_rows();
 	}
 
 	// ------------------------------------------------------------------------
@@ -668,6 +695,27 @@ if ( ! function_exists('delete_activities'))
 
 // ------------------------------------------------------------------------
 
+if ( ! function_exists('count_activities'))
+{
+	/**
+	 * Count activities by arbitrary WHERE clause.
+	 *
+	 * @since 	1.3.0
+	 *
+	 * @param 	mixed 	$field
+	 * @param 	mixed 	$match
+	 * @param 	int 	$limit
+	 * @param 	int 	$offset
+	 * @return 	int
+	 */
+	function count_activities($field = null, $match = null, $limit = 0, $offset = 0)
+	{
+		return get_instance()->kbcore->activities->count($field, $match, $limit, $offset);
+	}
+}
+
+// ------------------------------------------------------------------------
+
 if ( ! function_exists('purge_activities'))
 {
 	/**
@@ -760,6 +808,9 @@ class KB_Activity
 	public function init($activity) {
 		$this->data = $activity;
 		$this->id   = (int) $activity->id;
+
+		// We add user details to the $data object.
+		$this->data->user = get_user($activity->user_id);
 	}
 
 	// ------------------------------------------------------------------------
