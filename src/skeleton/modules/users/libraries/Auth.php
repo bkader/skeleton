@@ -191,11 +191,8 @@ class Auth
 			return false;
 		}
 
-		// Remove the password for security reasons.
-		unset($this->user->password);
-
 		// Everthing went right, cache the user.
-		$this->user         = $user;
+		$this->user = $user;
 		return $this->user;
 
 	}
