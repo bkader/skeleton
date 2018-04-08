@@ -49,7 +49,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.3.2
+ * @since 		1.3.3 	Changed "settings_admin" file to "settings".
+ * 
+ * @version 	1.3.3
  */
 class Admin extends Admin_Controller
 {
@@ -62,7 +64,7 @@ class Admin extends Admin_Controller
 		parent::__construct();
 
 		// Load settings language file.
-		$this->load->language('settings/settings_admin');
+		$this->load->language('settings/settings');
 	}
 
 	// ------------------------------------------------------------------------

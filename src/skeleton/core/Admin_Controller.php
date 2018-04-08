@@ -57,7 +57,7 @@ class Admin_Controller extends User_Controller
 	 * Class constructor
 	 *
 	 * @since 	1.0.0
-	 * @since 	1.3.3 	Added favicon to dashboard.
+	 * @since 	1.3.3 	Added favicon to dashboard and removed loading admin language file.
 	 * 
 	 * @return 	void
 	 */
@@ -75,9 +75,6 @@ class Admin_Controller extends User_Controller
 
 		// We reset theme settings and add admin assets.
 		$this->_switch_to_admin();
-
-		// Load language file.
-		$this->load->language('admin');
 
 		$this->_load_assets();
 

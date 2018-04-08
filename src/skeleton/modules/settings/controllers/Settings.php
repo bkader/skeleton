@@ -50,24 +50,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.3.2
+ * @since 		1.3.3 	Removed constructor.
+ * 
+ * @version 	1.3.3
  */
 class Settings extends User_Controller
 {
-	/**
-	 * Class constructor
-	 * @return 	void
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-
-		// Make sure to load settings_lib.
-		$this->load->library('settings/settings_lib', null, 'settings');
-	}
-
-	// ------------------------------------------------------------------------
-
 	/**
 	 * This method redirect to profile settings.
 	 * @access 	public

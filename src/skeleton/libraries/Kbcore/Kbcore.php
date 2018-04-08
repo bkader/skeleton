@@ -131,7 +131,7 @@ class Kbcore extends CI_Driver_Library
 		$this->_languages_list();
 
 		// Load main language file.
-		$this->ci->load->language('main');
+		$this->ci->load->language('skeleton');
 
 		// Attempt to authenticate the current user.
 		// $this->auth->authenticate();

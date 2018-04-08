@@ -93,6 +93,7 @@ $lang['company']  = 'Company';
 $lang['phone']    = 'Phone';
 $lang['address']  = 'Address';
 $lang['location'] = 'Location';
+$lang['avatar']   = 'Avatar';
 
 // ------------------------------------------------------------------------
 // Registration page.
@@ -217,3 +218,42 @@ $lang['us_admin_edit_error']       = 'Unable to update user.';
 $lang['us_admin_activate_error']   = 'Unable to activate user.';
 $lang['us_admin_deactivate_error'] = 'Unable to deactivate user.';
 $lang['us_admin_delete_error']     = 'Unable to delete user.';
+
+// ========================================================================
+// Users settings lines.
+// ========================================================================
+
+// Pages titles.
+$lang['set_profile_title']  = 'Update Profile';
+$lang['set_avatar_title']   = 'Update Avatar';
+$lang['set_password_title'] = 'Change Password';
+$lang['set_email_title']    = 'Change Email';
+
+// Pages headings.
+$lang['set_profile_heading']  = $lang['set_profile_title'];
+$lang['set_avatar_heading']   = $lang['set_avatar_title'];
+$lang['set_password_heading'] = $lang['set_password_title'];
+$lang['set_email_heading']    = $lang['set_email_title'];
+
+// Success messages.
+$lang['set_profile_success']  = 'Profile successfully updated.';
+$lang['set_avatar_success']   = 'Avatar successfully updated.';
+$lang['set_password_success'] = 'Password successfully changed.';
+$lang['set_email_success']    = 'Email address successfully changed.';
+
+// Error messages.
+$lang['set_profile_error']     = 'Unable to update profile.';
+$lang['set_avatar_error']      = 'Unable to update avatar.';
+$lang['set_password_error']    = 'Unable to change password.';
+$lang['set_email_error']       = 'Unable to change email address.';
+$lang['set_email_invalid_key'] = 'This new email link is no longer valid.';
+
+// Info messages.
+$lang['set_email_info'] = 'A link to change your email address has been sent to your new address.';
+
+
+// Avatar extra lines.
+$lang['update_avatar']       = 'Update Avatar';
+$lang['add_image']           = 'Add Image';
+$lang['use_gravatar']        = 'Use Gravatar';
+$lang['use_gravatar_notice'] = 'If you check this option, your uploaded profile picture will be deleted and your <a href="%s" target="_blank">Gravatar</a> image will be used instead.';
