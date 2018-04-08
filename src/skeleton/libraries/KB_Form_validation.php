@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @version 	1.3.3
  */
 class KB_Form_validation extends CI_Form_validation
 {
@@ -164,13 +164,17 @@ class KB_Form_validation extends CI_Form_validation
 
 	/**
 	 * Make sure the user exists using ID, username or email address.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Update the check method.
+	 * 
 	 * @access 	public
 	 * @param 	string 	$str
 	 * @return 	boolean
 	 */
 	public function user_exists($str)
 	{
-		return ($this->ci->kbcore->users->get($str) !== null);
+		return (false !== $this->ci->kbcore->users->get($str));
 	}
 
 	// ------------------------------------------------------------------------
