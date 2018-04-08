@@ -6,7 +6,7 @@
 	* [Themes Translations](#themes-translations)
 	* [Theme Menus](#theme-menus)
 	* [Styles and Scripts Hooks](#styles-and-scripts-hooks)
-	* [Metadata Hooks](#metadata-hooks)
+	* [Meta Tags Hooks](#meta-tags-hooks)
 	* [Additional Hooks](#additional-hooks)
 	* [Additional Functions](#additional-functions)
 
@@ -39,6 +39,27 @@ As you guessed:
 * **assets** folder contains all your theme's scripts, styles, fonts and images.
 * **language** folder contains all your language translations.
 * **template** is where views, partials and layouts are located. This folder and sub-folders are protected from direct access by an automatically generated **.htaccess** file.
+
+When developing your themes, two (**2**) files are required so your theme would be recognized and listed on the dashboard:
+
+* **functions.php**: This file handles all hooks (actions and filters) for your theme (we talk about them below).
+* **manifest.json**: This file contains all details about the theme. It is a **JSON** format file, see the example below.
+
+```json
+{
+	"name": "Theme Name",
+	"theme_uri": "your_theme_url",
+	"description": "Give your theme a short description",
+	"version": "1.0.0",
+	"license": "MIT",
+	"license_uri": "https://opensource.org/licenses/MIT",
+	"author": "Your Name",
+	"author_uri": "your_website",
+	"author_email": "email address to provide support",
+	"tags": "theme, comma, separated, tags",
+	"screenshot": "name of the screenshot if you wish to override default one"
+}
+```
 
 ## Hooks and Functions
 
@@ -415,16 +436,16 @@ echo print_alert('This is the message', 'info', false, false);
 print_alert('This is the message', 'info');
 ```
 
-### Metadata Hooks
+### Meta Tags Hooks
 
-These are the **&lt;meta&gt;** tags added to the &lt;head&gt; section. You can enqueue you meta tags on the **after_theme_setup** action, but we thought it would be wide to separate them and create a separate hook form them. You may use the **add_metadata** function en add as many tags as you want. Example: 
+These are the **&lt;meta&gt;** tags added to the &lt;head&gt; section. You can enqueue you meta tags on the **after_theme_setup** action, but we thought it would be wide to separate them and create a separate hook form them. You may use the **add_meta_tag** function en add as many tags as you want. Example: 
 
 ```php
-// add_metadata($name, $content, $type, $attributes);
-add_metadata('charset', 'UTF-8');
-add_metadata('viewport', 'width=device-width, initial-scale=1');
-add_metadata('title', 'Your Title');
-add_metadata('canonical', 'https://github.com/bkader', 'rel');
+// add_meta_tag($name, $content, $type, $attributes);
+add_meta_tag('charset', 'UTF-8');
+add_meta_tag('viewport', 'width=device-width, initial-scale=1');
+add_meta_tag('title', 'Your Title');
+add_meta_tag('canonical', 'https://github.com/bkader', 'rel');
 ```
 
 You can directly output a meta tag on your **header.php** file if you want, using the **meta_tag** function like so:
@@ -437,14 +458,14 @@ echo meta_tag('title', 'Your Title');
 echo meta_tag('canonical', 'https://github.com/bkader', 'rel');
 ```
 
-But as we said earlier, we prefer queuing everything before the final output. To do so, you may use the **enqueue_metadata** action inside which you use the **add_metadata** function, like so:
+But as we said earlier, we prefer queuing everything before the final output. To do so, you may use the **enqueue_meta** action inside which you use the **add_meta_tag** function, like so:
 
 ```php
-add_action('enqueue_metadata', function() {
-	add_metadata('charset', 'UTF-8');
-	add_metadata('viewport', 'width=device-width, initial-scale=1');
-	add_metadata('title', 'Your Title');
-	add_metadata('canonical', 'https://github.com/bkader', 'rel');
+add_action('enqueue_meta', function() {
+	add_meta_tag('charset', 'UTF-8');
+	add_meta_tag('viewport', 'width=device-width, initial-scale=1');
+	add_meta_tag('title', 'Your Title');
+	add_meta_tag('canonical', 'https://github.com/bkader', 'rel');
 });
 ```
 This way, they will be held until the final output is requested. In fact, this is the best way for a better performance.  
@@ -452,14 +473,14 @@ This way, they will be held until the final output is requested. In fact, this i
 There are two (**2**) more hooks (filters) that you may use, they do the same thing as **before_x** and **after_x** (x: styles or scripts). So, they are used to print things **before** or **after** final meta tags output.
 
 ```php
-add_filter('before_metadata', function($output) {
+add_filter('before_meta', function($output) {
 	// Add whatever you want.
 	$output = '<meta name="application-name" content="Skeleton" />'.$output; // Before
 	return $output; // <- ALWAYS return it.
 });
 
 // Or the after:
-add_filter('after_metadata', function($output) {
+add_filter('after_meta', function($output) {
 	// Add whatever you want.
 	$output .= '<meta name="application-name" content="Skeleton" />'; // After
 	return $output; // <- ALWAYS return it.

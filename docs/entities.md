@@ -1,9 +1,22 @@
+# Entities
+
 All what's on the website is considered to be an **entity**. Users, groups, and objects are all entities. The reason behind this approach if to have real **Global Unique IDs** and unique usernames. This way, if you displaying the entity's page is done by simply going to "*site_url/__username__*".
 In fact, if you take a look at **entities** table, you will see that there are two columns that determine the real type of an entity: **type** and **subtype**.
 * **Type** tells on which table to retrieve the rest of the data.
 * **subtype** tells only the real type of the entity.
 
 For instance, an entity of type **user** is treated as a user where the rest of data is stores in **users** table, **group** in **groups** table and **object** in **objects** table. These are the only allowed types but you are free to assign any **subtype** you want while building your application (see respective documentations for more details).
+
+* [Table Structure](#table-structure)
+* [Creating Entities](#creating-entities)
+* [Retrieving Entities](#retrieving-entities)
+* [Searching Entities](#searching-entities)
+* [Updating Entities](#creating-entities)
+* [Deleting Entities](#deleting-entities)
+* [Restore Entities](#restore-entities)
+* [Counting Entities](#counting-entities)
+* [Bonus](#bonus)
+* [Important](#important)
 
 ## Table Structure
 
@@ -30,7 +43,7 @@ Other columns, *enabled*, *deleted*, *created_at*, *updated_at* and *deleted_at*
 
 ## Creating Entities
 
-If you take a look at entities library, the **create** method, you will see that it checks four (**4**) things before creating the entity:
+If you take a look at entities library, the `create` method, you will see that it checks four (**4**) things before creating the entity:
 
 1. The method has received arguments (*array*).
 2. The entity's *type* is set and is one of the three mentioned above.
@@ -38,7 +51,7 @@ If you take a look at entities library, the **create** method, you will see that
 4. The entity's *username* is available.
 
 So you make sure all these conditions are full-filled before proceeding.
-In order to create a new entity, you may use the **create** method or its helper **add_entity** like so:
+In order to create a new entity, you may use the `create` method or its helper `add_entity` like so:
 
 ```php
 // $guid is the new create entity's ID.
@@ -53,15 +66,78 @@ $guid = $this->kbcore->entities->create(array(
 // Of its helper:
 $guid = add_entity(...);
 ```
+
 As you have certainly noticed, these method and function will always return the new created entity's **ID** IF created, otherwise they will return `FALSE`.
 If the provided username is already in use, this method/function will generate a new one for it, appending a number to to.
+
+## Retrieving Entities
+
+Retrieving entities is simple. You can get a single one, and the returned is an object, or retrieve multiple ones where the returned result should be an array of objects. See below:
+
+```php
+/*
+#1 - To retrieve a single entity, you can pass its known ID
+or username to the method/function below:
+*/
+
+$this->kbcore->entities->get($id);
+get_entity($id);
+
+/*
+#2 - To retrieve a single entity by arbitrary WHERE clase, 
+you may use the method/function below.
+NOTE: this method or function returns a SINGLE object, so
+if you want to retrieve multiple ones, you may consider using
+the "get_many" method.
+*/
+
+$this->kbcore->entities->get_by($field, $match);
+get_entity_by($field, $match);
+
+/*
+#3 - To retrieve all, or multiple entities, you can use the 
+method below, where $field is the comparison field and $match
+is the comparison value.
+If $field is an array, you can omit $match.
+
+If this method/function is used without arguments, all existing
+entities with be targeted.
+*/
+
+$this->kbcore->entities->get_many($field, $match);
+get_entities($field, $match);
+
+// EXAMPLES:
+
+// This will retrieve all entities of type "user".
+get_entities('type', 'user');
+
+// This will retrieve all entities of type "user"
+// and subtype "administrator".
+get_entities(['type' => 'user', 'subtype' => 'administrator']);
+
+// Retrieve all users groups where privacy > 1
+get_entities(['type' => 'group', 'subtype' => 'users', 'privacy >' => 1]);
+```
+*Play with it the way you want*.
+
+## Searching Entities
+
+As of version **1.3.0**, it is possible to search entities. To do so, you may use the `find` method or its helper `find_entities`:
+
+```php
+$result = $this->kbcore->entities->find($field, $match, $limit, $offset);
+
+// Or the helper:
+$result = find_entities($field, $match, $limit, $offset);
+```
 
 ## Updating Entities
 
 There are two (**2**) method to update entities (+3 helpers):
 
-* The **update** method targets a single entity and it uses its **ID** or **username** because they are the unique values on the table.
-* The **update_by** method will target a single, mutiple or even all entities.
+* The `update` method targets a single entity and it uses its **ID** or **username** because they are the unique values on the table.
+* The `update_by` method will target a single, mutiple or even all entities.
 
 See examples below to see how it can be done:
 
@@ -118,17 +194,40 @@ $this->kbcore->update('bkader', ['privacy' => 2]);
 update_entity('bkader', ['privacy' => 2]);
 ```
 
-In case you use fields that are unique on the table, like **ID** or **username**, this **update_by** method will always target a single row. Example:
+In case you use fields that are unique on the table, like **ID** or **username**, this `update_by` method will always target a single row. Example:
 
 ```php
 $this->kbcore->entities->update_by(['id' => 1], ['username' => 'new_username']);
 ```
 
-In case you want to target all entities, simply pass a single argument to the method. It should be an array of data to update. If a single argument is passed, the **WHERE** clause is ignored and all entities will be targeted.
+In case you want to target all entities, simply pass a single argument to the method. It should be an array of data to update. If a single argument is passed, the `WHERE` clause is ignored and all entities will be targeted.
+
+As of version **1.3.x**, entities retrieved are instances of `KB_Entity` class that you can use to retrieve details or update the entity. Example:
+
+```php
+// Let's find the entity with ID #1
+$entity = get_entity(1);
+
+// Display username:
+echo $entity->username;
+
+// Display a metadata:
+echo $entity->meta_name; // i.e: echo $entity->company;
+
+// Updating a single detail:
+$entity->update($field, $value); // Returns a boolean.
+
+// To queue changes, you have two options:
+$entity->privacy = 2; // OR
+$entity->set('privacy', 2);
+
+// Then you can call the "save" method to save changes:
+$entity->save(); // Returns a boolean.
+```
 
 ## Deleting Entities
 
-If you check at the end of this page, or the **entities** table, there are two columns handling deletion: **deleted** and **deleted_at**. What do you think they are used for?  
+If you check at the end of this page, or the **entities** table, there are two columns handling deletion: `deleted` and `deleted_at`. What do you think they are used for?  
 Well, we have added the **soft delete** concept, it means that even if entities are deleted, they and their related data are kept on the database, but they are not publicly visible, they can be restored later, anytime you want. However, **removed** entities can no longer be restored, they're gone forever, as well as all their related data. It's okey, don't be sad, you simply should have read the documentation first :sad:.
 
 Let's see how to delete/remove entities:
@@ -157,7 +256,7 @@ delete_entity_by($field, $match); // Alias: delete_entities($field, $match);
 remove_entity_by($field, $match); // Alias: remove_entities($field, $match);
 ```
 
-In the last examples, **$match** (the comparison value) is optional in case **$field** (the comparison field). In examples below, we are simply using the **delete** method because **remove** is used the same way.
+In the last examples, **$match** (the comparison value) is optional in case **$field** (the comparison field). In examples below, we are simply using the `delete` method because `remove` is used the same way.
 
 ```php
 // Here is how it is simply done using the $field - $match.
@@ -195,7 +294,7 @@ delete_entities([
 
 ## Restoring Entities
 
-As said earlier, entities that were **removed** can **NO LONGER** be restored, they are permanently erased from database and all what's related to them to. But, those that were **deleted** or better, flagged as deleted, can be restored anytime using the examples below:
+As said earlier, entities that were **removed** can **NO LONGER** be restored, they are permanently erased from database and all what's related to them to. But, those that were `deleted` or better, flagged as deleted, can be restored anytime using the examples below:
 
 ```php
 // If you want to restore a single entity:
@@ -215,60 +314,19 @@ restore_entities($field, $match);
 
 **Note**: _restore_entity_by_ and _restore_entities_ are certainly used to restore multiple entities, but they can also be used to restore a single entity by arbitrary _WHERE_ clause. Simply use a unique value field for your WHERE clause.
 
-## Retrieving Entities
+## Counting Entities
 
-Retrieving entities is simple. You can get a single one, and the returned is an object, or retrieve multiple ones where the returned result should be an array of objects. See below:
+As of version **1.3.x**, it is possible to count entities using the `count` method or its helper `count_entities`.
 
 ```php
-/*
-#1 - To retrieve a single entity, you can pass its known ID
-or username to the method/function below:
-*/
-
-$this->kbcore->entities->get($id);
-get_entity($id);
-
-/*
-#2 - To retrieve a single entity by arbitrary WHERE clase, 
-you may use the method/function below.
-NOTE: this method or function returns a SINGLE object, so
-if you want to retrieve multiple ones, you may consider using
-the "get_many" method.
-*/
-
-$this->kbcore->entities->get_by($field, $match);
-get_entity_by($field, $match);
-
-/*
-#3 - To retrieve all, or multiple entities, you can use the 
-method below, where $field is the comparison field and $match
-is the comparison value.
-If $field is an array, you can omit $match.
-
-If this method/function is used without arguments, all existing
-entities with be targeted.
-*/
-
-$this->kbcore->entities->get_many($field, $match);
-get_entities($field, $match);
-
-// EXAMPES:
-
-// This will retrieve all entities of type "user".
-get_entities('type', 'user');
-
-// This will retrieve all entities of type "user"
-// and subtype "administrator".
-get_entities(['type' => 'user', 'subtype' => 'administrator']);
-
-// Retrieve all users groups where privacy > 1
-get_entities(['type' => 'group', 'subtype' => 'users', 'privacy >' => 1]);
+$count = $this->kbcore->entities->count($field, $match, $limit, $offset);
+$count = count_entities($field, $match, $limit, $offset);
 ```
-*Play with it the way you want*.
 
 ## Bonus
 
 There are additional method that may be useful when developing your application.
+
 ```php
 // To retrieve entities IDs only:
 $ids = $this->kbcore->entities->get_all_ids($field, $match);
