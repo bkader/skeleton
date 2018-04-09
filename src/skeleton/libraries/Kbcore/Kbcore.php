@@ -117,13 +117,6 @@ class Kbcore extends CI_Driver_Library
 		// Make sure to load the URL helper.
 		$this->ci->load->helper('url');
 
-		/**
-		 * Loading the language helper is now useless because the
-		 * lang() function was moved to KB_Lang.php file so it is
-		 * available even if we don't load the helpe.
-		 */
-		// $this->ci->load->helper('language');
-
 		// Loading theme library.
 		$this->ci->load->library('theme');
 
@@ -347,96 +340,6 @@ class Kbcore extends CI_Driver_Library
 		}
 
 		return true;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Make sure to store language in session.
-	 *
-	 * @since 	1.0.0
-	 * @since 	1.3.3 	Rewritten to fix issue with languages list when only
-	 *         			a single language is available.
-	 *
-	 * @access 	private
-	 * @param 	none
-	 * @return 	void
-	 */
-	private function _set_language()
-	{
-		// Site available languages.
-		$site_languages = $this->ci->config->item('languages');
-
-		/**
-		 * If the language is already stored in session and available, 
-		 * nothing to do. Otherwise, proceed to set the session key.
-		 */
-		if ($this->ci->session->language 
-			&& in_array($this->ci->session->language, $site_languages))
-		{
-			return;
-		}
-		
-		// Hold the default language.
-		$default = $this->ci->config->item('language');
-
-		// All languages with details to search in.
-		$languages = $this->ci->lang->languages();
-
-		// Attempt to detect user's language.
-		$code = substr($this->ci->input->server('HTTP_ACCEPT_LANGUAGE', true), 0, 2);
-
-		foreach ($languages as $folder => $details)
-		{
-			if ($details['code'] === $code && in_array($folder, $site_languages))
-			{
-				$default = $folder;
-				break;
-			}
-		}
-
-		// Now we setup the session data.
-		$this->ci->session->set_userdata('language', $default);
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Pass available site languages to theme views in order to use them
-	 * for language switch.
-	 * @access 	private
-	 * @param 	void
-	 * @return 	void
-	 */
-	private function _languages_list()
-	{
-		// Get the list of all languages details first.
-		$languages = $this->ci->lang->languages();
-
-		// Make sure current language available to views.
-		$this->ci->theme->set(
-			'current_language',
-			$languages[$this->ci->session->language],
-			true
-		);
-
-		// Site languages stored in configuration.
-		$config_languages = $this->ci->config->item('languages');
-
-		// Add our available languages to views.
-		$langs = array();
-
-		if (count($config_languages) > 0)
-		{
-			foreach ($languages as $folder => $details)
-			{
-				if (in_array($folder, $config_languages) && $folder !== $this->ci->session->language)
-				{
-					$langs[$folder] = $details;
-				}
-			}
-		}
-		$this->ci->theme->set('site_languages', $langs, true);
 	}
 
 	// ------------------------------------------------------------------------
@@ -696,6 +599,98 @@ class Kbcore extends CI_Driver_Library
 
 		// Return this so the method can be chainable.
 		return $this->ci->db;
+	}
+
+	// ------------------------------------------------------------------------
+	// Private methods.
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Make sure to store language in session.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Rewritten to fix issue with languages list when only
+	 *         			a single language is available.
+	 *
+	 * @access 	private
+	 * @param 	none
+	 * @return 	void
+	 */
+	private function _set_language()
+	{
+		// Site available languages.
+		$site_languages = $this->ci->config->item('languages');
+
+		/**
+		 * If the language is already stored in session and available, 
+		 * nothing to do. Otherwise, proceed to set the session key.
+		 */
+		if ($this->ci->session->language 
+			&& in_array($this->ci->session->language, $site_languages))
+		{
+			return;
+		}
+		
+		// Hold the default language.
+		$default = $this->ci->config->item('language');
+
+		// All languages with details to search in.
+		$languages = $this->ci->lang->languages();
+
+		// Attempt to detect user's language.
+		$code = substr($this->ci->input->server('HTTP_ACCEPT_LANGUAGE', true), 0, 2);
+
+		foreach ($languages as $folder => $details)
+		{
+			if ($details['code'] === $code && in_array($folder, $site_languages))
+			{
+				$default = $folder;
+				break;
+			}
+		}
+
+		// Now we setup the session data.
+		$this->ci->session->set_userdata('language', $default);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Pass available site languages to theme views in order to use them
+	 * for language switch.
+	 * @access 	private
+	 * @param 	void
+	 * @return 	void
+	 */
+	private function _languages_list()
+	{
+		// Get the list of all languages details first.
+		$languages = $this->ci->lang->languages();
+
+		// Make sure current language available to views.
+		$this->ci->theme->set(
+			'current_language',
+			$languages[$this->ci->session->language],
+			true
+		);
+
+		// Site languages stored in configuration.
+		$config_languages = $this->ci->config->item('languages');
+
+		// Add our available languages to views.
+		$langs = array();
+
+		if (count($config_languages) > 0)
+		{
+			foreach ($languages as $folder => $details)
+			{
+				if (in_array($folder, $config_languages) && $folder !== $this->ci->session->language)
+				{
+					$langs[$folder] = $details;
+				}
+			}
+		}
+		$this->ci->theme->set('site_languages', $langs, true);
 	}
 
 }
