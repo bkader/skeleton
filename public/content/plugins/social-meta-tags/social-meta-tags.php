@@ -82,15 +82,15 @@ class Social_meta_tags
 		$CI =& get_instance();
 
 		// Add some twitter meta tags.
-		add_metadata('twitter:card',    'summary');
-		add_metadata('twitter:site',    config_item('site_name'));
-		add_metadata('twitter:creator', config_item('site_author'));
+		add_meta_tag('twitter:card',    'summary');
+		add_meta_tag('twitter:site',    config_item('site_name'));
+		add_meta_tag('twitter:creator', config_item('site_author'));
 
 		// 
-		add_metadata('og:url', current_url());
-		add_metadata('og:title', $CI->theme->get_title());
-		add_metadata('og:type', 'website');
-		add_metadata('og:image', get_common_url('img/default.png'));
+		add_meta_tag('og:url', current_url());
+		add_meta_tag('og:title', $CI->theme->get_title());
+		add_meta_tag('og:type', 'website');
+		add_meta_tag('og:image', get_common_url('img/default.png'));
 	}
 }
 // Action to do if the plugin is used.
