@@ -1216,6 +1216,7 @@ EOT;
 		}
 
 		// If there are any enqueued meta tags from functions, add them.
+		do_action('enqueue_admin_meta');
 		do_action('enqueue_meta');
 
 		// Kick off with an empty output.
@@ -1542,6 +1543,7 @@ EOT;
 	 */
 	private function _render_styles()
 	{
+		do_action('enqueue_admin_styles');
 		do_action('enqueue_styles');
 
 		/**
@@ -1635,6 +1637,7 @@ EOT;
 	 */
 	private function _render_scripts()
 	{
+		do_action('enqueue_admin_scripts');
 		do_action('enqueue_scripts');
 
 		/**
