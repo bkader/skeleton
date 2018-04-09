@@ -81,6 +81,16 @@ class KB_Controller extends CI_Controller
 	protected $ajax_methods = array();
 
 	/**
+	 * Array of methods that accepts only AJAX requests but
+	 * requires a safe URL check.
+	 *
+	 * @since 	1.3.3
+	 * 
+	 * @var 	array
+	 */
+	protected $safe_ajax_methods = array();
+
+	/**
 	 * Object used by AJAX methods as response.
 	 * @var object
 	 */
@@ -139,7 +149,8 @@ class KB_Controller extends CI_Controller
 		}
 
 		// Not an AJAX method?
-		if ( ! in_array($method, $this->ajax_methods))
+		if ( ! in_array($method, $this->ajax_methods) 
+			&& ! in_array($method, $this->safe_ajax_methods))
 		{
 			return call_user_func_array(array($this, $method), $params);
 		}
@@ -152,24 +163,21 @@ class KB_Controller extends CI_Controller
 
 		// Prepare the response object.
 		$this->response          = new stdClass();
-		$this->response->header  = 400;
+		$this->response->header  = 401;
+		$this->response->type    = 'json';
 		$this->response->message = 'Bad Request';
 
-		/**
-		 * Disable parsing of the {elapsed_time} and {memory_usage}
-		 * pseudo-variables because we don't need them.
-		 */
-		$this->output->parse_exec_vars = false;
-
-		/**
-		 * If we are on an "Admin" controller, we make sure to secure
-		 * requests by checking the safe url and making sure that an
-		 * administrator is performing the action.
-		 */
-		if ('admin' === $this->router->fetch_class() 
-			&& ( ! check_safe_url() OR ! $this->auth->is_admin()))
+		// Does the requested methods require a safe URL check?
+		if (in_array($method, $this->safe_ajax_methods) && ! check_safe_url())
 		{
-			$this->response->header = 401;
+			$this->response->message = lang('error_action_permission');
+			return $this->response();
+		}
+
+		// Are we on an admin controller but the user is not an admin?
+		if ('admin' === $this->router->fetch_class() 
+			&& false === $this->auth->is_admin())
+		{
 			$this->response->message = lang('error_action_permission');
 			return $this->response();
 		}
@@ -192,6 +200,12 @@ class KB_Controller extends CI_Controller
 	 */
 	protected function response()
 	{
+		/**
+		 * Disable parsing of the {elapsed_time} and {memory_usage}
+		 * pseudo-variables because we don't need them.
+		 */
+		$this->output->parse_exec_vars = false;
+
 		// Make sure to always have a message and content type.
 		(isset($this->response->message)) OR $this->response->message = 'Bad Request';
 		(isset($this->response->type)) OR $this->response->type = 'json';
