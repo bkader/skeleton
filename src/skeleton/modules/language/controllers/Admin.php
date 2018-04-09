@@ -66,7 +66,7 @@ class Admin extends Admin_Controller
 	public function __construct()
 	{
 		// We add our AJAX methods.
-		array_push($this->ajax_methods, 'enable', 'disable', 'make_default');
+		array_push($this->safe_ajax_methods, 'enable', 'disable', 'make_default');
 
 		// We add JS files.
 		array_push($this->scripts, 'language');

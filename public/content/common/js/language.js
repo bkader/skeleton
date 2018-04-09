@@ -1,5 +1,5 @@
 /*!
- * Skeleton Media - v1.3.3 (https://github.com/bkader/skeleton)
+ * CodeIgniter Skeleton - Language Module (https://github.com/bkader/skeleton)
  * Copyright 2018 Kader Bouyakoub (https://github.com/bkader)
  * Licensed under MIT (https://github.com/bkader/skeleton/blob/develop/LICENSE.md)
  */
@@ -8,7 +8,9 @@
     jQuery.noConflict();
     "use strict";
 
-    /*! Enable language. */
+    // ========================================================
+    // Enabled language.
+    // ========================================================
     jQuery(document).on("click", ".lang-enable", function (e) {
         e.preventDefault();
         var href = jQuery(this).attr("data-href");
@@ -25,7 +27,9 @@
         return false;
     });
 
-    /*! Disable language. */
+    // ========================================================
+    // Disable language.
+    // ========================================================
     jQuery(document).on("click", ".lang-disable", function (e) {
         e.preventDefault();
         var href = jQuery(this).attr("data-href");
@@ -42,7 +46,9 @@
         return false;
     });
 
-    /*! Set default language. */
+    // ========================================================
+    // Set default language.
+    // ========================================================
     jQuery(document).on("click", ".lang-default", function (e) {
         e.preventDefault();
         var href = jQuery(this).attr("data-href");
