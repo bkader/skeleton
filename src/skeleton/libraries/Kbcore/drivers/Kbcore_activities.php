@@ -55,12 +55,19 @@ class Kbcore_activities extends CI_Driver implements CRUD_interface
 {
 	/**
 	 * Initialize class preferences.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Loaded activities language earlier so modules can use it.
+	 * 
 	 * @access 	public
 	 * @return 	void
 	 */
 	public function initialize()
 	{
 		log_message('info', 'Kbcore_activities Class Initialized');
+
+		// We load the activities language file.
+		$this->ci->load->language('activities/activities');
 	}
 
     // ------------------------------------------------------------------------

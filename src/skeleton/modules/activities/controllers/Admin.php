@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.3.3
- * @version 	0.3.0
+ * @version 	1.3.3
  */
 class Admin extends Admin_Controller
 {
@@ -56,21 +56,6 @@ class Admin extends Admin_Controller
 	 * @var array
 	 */
 	protected $ajax_methods = array('delete');
-
-	/**
-	 * Class constructor
-	 * @access 	public
-	 * @return 	void
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-
-		// We load activities language file.
-		$this->load->language('activities/activities');
-	}
-
-	// ------------------------------------------------------------------------
 
 	/**
 	 * List activities.
@@ -128,13 +113,13 @@ class Admin extends Admin_Controller
 			);
 
 			// Module anchor
-			$activity->module_anchor = ucfirst("{$activity->controller}::{$activity->method}");
+			$activity->module_anchor = '';
 			if ( ! empty($activity->module))
 			{
 				$activity->module_anchor = admin_anchor(
 					'activities?'.(isset($get['user']) ? 'user='.$get['user'].'&' : '').'module='.$activity->module,
 					$activity->module
-				).": {$activity->module_anchor}";
+				);
 			}
 
 			// IP location link.
