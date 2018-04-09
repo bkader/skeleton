@@ -164,9 +164,9 @@ class KB_Controller extends CI_Controller
 		/**
 		 * If we are on an "Admin" controller, we make sure to secure
 		 * requests by checking the safe url and making sure that an
-		 * administration is performing the action.
+		 * administrator is performing the action.
 		 */
-		if ($this->router->fetch_class() === 'Admin'
+		if ('admin' === $this->router->fetch_class() 
 			&& ( ! check_safe_url() OR ! $this->auth->is_admin()))
 		{
 			$this->response->header = 401;
