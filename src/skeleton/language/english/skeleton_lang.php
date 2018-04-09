@@ -187,7 +187,6 @@ $lang['form_validation_unique_email']      = 'This email address is alraedy in u
 $lang['form_validation_unique_username']   = 'This username is not available.';
 $lang['form_validation_user_exists']       = 'No user was found with that username or email address.';
 
-
 // ========================================================================
 // Dashboard Lines.
 // ========================================================================
@@ -198,6 +197,9 @@ $lang['view_site']   = 'View Site';
 
 // Confirmation before action.
 $lang['are_you_sure'] = 'Are you sure you want to %s?';
+
+// Dashboard footer.
+$lang['admin_footer_text'] = 'Thank your for creating with <a href="https://goo.gl/jb4nQC" target="_blank">CodeIgniter Skeleton</a>.';
 
 // ------------------------------------------------------------------------
 // Dashboard sections (singular and plural forms).
