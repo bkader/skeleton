@@ -1332,34 +1332,54 @@ EOT;
 
 	/**
 	 * Simply remove any added files.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Updated to accept multiple arguments.
+	 * 
 	 * @access 	public
-	 * @param 	string 	$type 		the file's type to remove.
-	 * @param 	string 	$handle 	the file key.
-	 * @param 	string 	$group 		what group to target.
 	 * @return 	void
 	 */
-	public function remove($type = 'css', $handle = null)
+	public function remove()
 	{
-		// If no $handle provided, nothing to do, sorry!
-		if (empty($handle))
+		// We collect method arguments and make sure we provided some.
+		$args = func_get_args();
+		if (empty($args))
 		{
 			return $this;
 		}
 
-		// Let's make $handle nicer :)/
-		$handle = preg_replace("/-{$type}$/", '', $handle)."-{$type}";
+		// The type of file to remove is always the first argument.
+		$type = array_shift($args);
 
-		if ($type == 'css')
+		// If not valid, we skip.
+		if ( ! in_array($type, array('css', 'js')))
 		{
-			$this->_removed_styles[] = $handle;
-			unset($this->_styles[$handle]);
-		}
-		else
-		{
-			$this->_removed_scripts[] = $handle;
-			unset($this->_scripts[$handle]);
+			return $this;
 		}
 
+		// We get rid of nasty deep array.
+		(is_array($args[0])) && $args = $args[0];
+
+		// We loop through files and remove them.
+		foreach ($args as $arg)
+		{
+			// Just to reset.
+			$handle = strtolower($arg);
+		
+			// Let's make $handle nicer :)/
+			$handle = preg_replace("/-{$type}$/", '', $handle)."-{$type}";
+
+			if ($type == 'css')
+			{
+				$this->_removed_styles[] = $handle;
+				unset($this->_styles[$handle]);
+			}
+			else
+			{
+				$this->_removed_scripts[] = $handle;
+				unset($this->_scripts[$handle]);
+			}
+		}
 
 		return $this;
 	}
@@ -3843,11 +3863,18 @@ if ( ! function_exists('add_inline_style'))
 if ( ! function_exists('remove_style'))
 {
 	/**
-	 * Removes a give file by its handle.
+	 * Removes a given file by its handle.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Update to format arguments.
 	 */
-	function remove_style($handle)
+	function remove_style()
 	{
-		return get_instance()->theme->remove('css', $handle);
+		// We make sure to collect arguments and format them.
+		$args = func_get_args();
+		(is_array($args[0])) && $args = $args[0];
+
+		return get_instance()->theme->remove('css', $args);
 	}
 }
 
@@ -3959,11 +3986,18 @@ if ( ! function_exists('add_inline_script'))
 if ( ! function_exists('remove_script'))
 {
 	/**
-	 * Removes a give file by its handle.
+	 * Removes a given file by its handle.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Update to format arguments.
 	 */
-	function remove_script($handle)
+	function remove_script()
 	{
-		return get_instance()->theme->remove('js', $handle);
+		// We make sure to collect arguments and format them.
+		$args = func_get_args();
+		(is_array($args[0])) && $args = $args[0];
+
+		return get_instance()->theme->remove('js', $args);
 	}
 }
 
