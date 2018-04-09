@@ -75,3 +75,8 @@ $lang['delete_activity_error']   = 'Unable to delete activity.';
 $lang['act_language_enable'] = 'Enabled language: %s.';
 $lang['act_language_disable'] = 'Disabled language: %s.';
 $lang['act_language_default'] = 'Set %s as default language.';
+
+// Media module.
+$lang['act_media_upload'] = 'Uploaded media: #%s';
+$lang['act_media_update'] = 'Updated media: #%s';
+$lang['act_media_delete'] = 'Deleted media: #%s';

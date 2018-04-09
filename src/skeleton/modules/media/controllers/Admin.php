@@ -48,8 +48,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.3.0
+ * 
+ * @since 		1.0.0
+ * @since 		1.3.0 	Rewritten to make it possible to show single item with get parameter "item".
+ * @since 		1.3.3 	Added dynamically loaded asset fies.
+ * 
+ * @version 	1.3.3
  */
 class Admin extends Admin_Controller
 {
@@ -60,12 +64,13 @@ class Admin extends Admin_Controller
 	public function __construct()
 	{
 		// Add AJAX methods.
-		array_unshift(
-			$this->ajax_methods,
-			'create',
-			'update',
-			'delete'
-		);
+		array_push($this->ajax_methods, 'create', 'update', 'delete');
+
+		// Add require assets files.
+		array_push($this->styles, 'dropzone');
+		array_push($this->scripts, 'dropzone', 'media');
+
+		// Call parent constructor.
 		parent::__construct();
 
 		// Make sure to load media library.
@@ -87,12 +92,6 @@ class Admin extends Admin_Controller
 	 */
 	public function index()
 	{
-		// Make sure to load Dropzone CSS and JS files.
-		$this->theme
-			->add('css', get_common_url('css/dropzone'), 'dropzone')
-			->add('js', get_common_url('js/dropzone'), 'dropzone')
-			->add('js', get_common_url('js/media'), 'media');
-
 		// Prepare form validation.
 		$this->prep_form();
 
@@ -293,7 +292,7 @@ class Admin extends Admin_Controller
 			}
 
 			// Log the activity.
-			log_activity($this->c_user->id, 'uploaded media: #'.$media_id);
+			log_activity($this->c_user->id, sprintf(lang('act_media_upload'), $media_id));
 
 			// Simple message that's is return to use.
 			$this->response->header  = 200;
@@ -315,13 +314,15 @@ class Admin extends Admin_Controller
 	 */
 	public function update($id)
 	{
+		// Default response header code.
+		$this->response->header = 406;
+
 		// we collect data first.
 		$data = $this->input->post(null, true);
 
 		// We make sure at least the name is provided.
 		if (empty($data['name']))
 		{
-			$this->response->header = 406;
 			$this->response->message = lang('media_update_error');
 			return;
 		}
@@ -329,18 +330,16 @@ class Admin extends Admin_Controller
 		// Try to update.
 		if (false !== $this->kbcore->media->update($id, $data))
 		{
-			$this->response->header = 200;
+			$this->response->header  = 200;
 			$this->response->message = lang('media_update_success');
 
-			// Log the activity.
-			log_activity($this->c_user->id, 'updated media details: #'.$id);
+			// We log the activity.
+			log_activity($this->c_user->id, sprintf(lang('act_media_update'), $id));
+			return;
 		}
-		// Error updating?
-		else
-		{
-			$this->response->header = 406;
-			$this->response->message = lang('media_update_error');
-		}
+
+		// Otherwise, media could not be updated.
+		$this->response->message = lang('media_update_error');
 	}
 
 	// ------------------------------------------------------------------------
@@ -350,14 +349,17 @@ class Admin extends Admin_Controller
 	 *
 	 * @since 	1.0.0
 	 * @since 	1.3.0 	Rewritten for better code readability and performance.
+	 * @since 	1.3.3 	Rewritten - again- for better code readability.
 	 * 
 	 * @access 	public
 	 * @param 	int 	$id 	The media ID.
 	 * @return 	void
 	 */
-
 	public function delete($id = 0)
 	{
+		// Default header status code.
+		$this->response->header = 406;
+
 		// We get the media from database.
 		$media = $this->kbcore->media->get($id);
 
@@ -365,24 +367,23 @@ class Admin extends Admin_Controller
 		if ($media && false !== $this->kbcore->media->delete($id))
 		{
 			// We set response preferences.
-			$this->response->header = 200;
+			$this->response->header  = 200;
 			$this->response->message = lang('media_delete_success');
-
-			// Log the activity.
-			log_activity($this->c_user->id, 'deleted media: #'.$id);
 
 			// Make sure to delete the file.
 			@array_map(
 				'unlink',
 				glob(FCPATH.'content/uploads/'.date('Y/m/', $media->created_at).$media->content.'*.*')
 			);
+
+			// Log the activity.
+			log_activity($this->c_user->id, sprintf(lang('act_media_delete'), $id));
+
+			return;
 		}
-		// Otherwise, set error message.
-		else
-		{
-			$this->response->header = 406;
-			$this->response->message = lang('media_delete_error');
-		}
+
+		// Otherwise, media could not be deleted.
+		$this->response->message = lang('media_delete_error');
 	}
 
 }
