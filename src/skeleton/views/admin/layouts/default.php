@@ -43,8 +43,9 @@
 <main class="wrapper" id="wrapper" role="main">
 	<div class="container-fluid">
 		<?php the_content(); ?>
-		<div class="footer">
-			<p class="text-center"><?php echo anchor('', get_option('site_name')) ?><sup class="text-muted" data-toggle="tooltip" title="Skeleton Version"><?php echo KB_VERSION; ?></sup> &copy; Copyright <?php echo date('Y') ?><br><abbr title="Render Time">RT</abbr>: <strong>{elapsed_time}</strong>. <abbr title="Theme Time">TT</abbr>: <strong>{theme_time}</strong><br><?php _e('created_by'); ?> <a href="https://github.com/bkader" target="_blank">Kader Bouyakoub</a></p>
+		<div class="footer clearfix" id="kbfooter" role="contentinfo">
+			<small class="text-muted" id="footer-thankyou"><?php echo apply_filters('admin_footer_text', lang('admin_footer_text')); ?></small>
+			<small class="text-muted pull-right" id="footer-upgrade">Version <?php echo KB_VERSION; ?></small>
 		</div>
 	</div>
 </main>
