@@ -322,12 +322,12 @@ EOT;
 		// Add IE9 support.
 		add_filter('extra_head', function($output) {
 			$config = array(
-				'siteURL'   => site_url(),
-				'baseURL'   => base_url(),
-				'adminURL'  => admin_url(),
-				'currenURL' => current_url(),
-				'ajaxURL'   => ajax_url(),
-				'lang'      => $this->lang->languages($this->session->language),
+				'siteURL'    => site_url(),
+				'baseURL'    => base_url(),
+				'adminURL'   => admin_url(),
+				'currentURL' => current_url(),
+				'ajaxURL'    => ajax_url(),
+				'lang'       => $this->lang->languages($this->session->language),
 			);
 			$output .= "\t<script>var config = ".json_encode($config).";</script>\n";
 			add_ie9_support($output, (ENVIRONMENT === 'production'));
