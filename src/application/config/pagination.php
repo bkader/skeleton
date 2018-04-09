@@ -16,26 +16,39 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 	https://github.com/bkader
  */
 
-$config['full_tag_open']   = '<div class="text-center"><ul class="pagination pagination-small pagination-centered mb0">';
-$config['full_tag_close']  = '</ul></div>';
-$config['num_links']       = 5;
-$config['prev_tag_open']   = '<li>';
-$config['prev_tag_close']  = '</li>';
-$config['next_tag_open']   = '<li>';
-$config['next_tag_close']  = '</li>';
-$config['cur_tag_open']    = '<li class="active"><span>';
-$config['cur_tag_close']   = '<span class="sr-only">(current)</span></span></li>';
-$config['num_tag_open']    = '<li>';
-$config['num_tag_close']   = '</li>';
-$config['first_tag_open']  = '<li>';
-$config['first_tag_close'] = '</li>';
-$config['last_tag_open']   = '<li>';
-$config['last_tag_close']  = '</li>';
+// Enclosing Markup.
+$config['full_tag_open']  = '<p>';
+$config['full_tag_close'] = '</p>';
 
-// ------------------------------------------------------------------------
-// DON'T EDIT BELOW LINES.
-// ------------------------------------------------------------------------
+// Number of "digit" before and after the selected page.
+$config['num_links'] = 5;
 
-$config['use_page_numbers']     = true;
-$config['page_query_string']    = true;
-$config['query_string_segment'] = 'page';
+// Customizing the "Digit" Link.
+$config['num_tag_open']    = '<div>';
+$config['num_tag_close']   = '</div>';
+
+// Customizing the "Previous" Link.
+$config['prev_tag_open']   = '<div>';
+$config['prev_tag_close']  = '</div>';
+
+// Customizing the "Next" Link.
+$config['next_tag_open']   = '<div>';
+$config['next_tag_close']  = '</div>';
+
+// Customizing the First Link.
+$config['first_tag_open']  = '<div>';
+$config['first_tag_close'] = '</div>';
+
+// Customizing the Last Link.
+$config['last_tag_open']  = '<div>';
+$config['last_tag_close'] = '</div>';
+
+// Customizing the "Current Page" Link
+$config['cur_tag_open']    = '<b>';
+$config['cur_tag_close']   = '</b>';
+
+// Whether to hide pages numbers.
+$config['display_pages'] = TRUE;
+
+// Anchors attributes.
+$config['attributes'] = NULL;

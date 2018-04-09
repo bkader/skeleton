@@ -50,47 +50,45 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.0.0
+ * 
+ * @since 		1.0.0
+ * @since 		1.3.3 	Ignored filters on dashboard.
+ * 
+ * @version 	1.3.3
  */
 class KB_Pagination extends CI_Pagination
 {
 	/**
 	 * Class constructor
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Ignore filters on admin section.
+	 * 
 	 * @return 	void
 	 */
 	public function __construct($params = array())
 	{
-		// We first the filter only if there is one.
-		if (has_filter('pagination'))
+		/**
+		 * Because the dashboard is built using Bootstrap, any provided
+		 * pagination configuration will be ignored, we use the default
+		 * one provided by the "_admin_params" method.
+		 */
+		if ('admin' === get_instance()->router->fetch_class())
 		{
-			// List of elements that accept the 'pagination' filter.
-			$filterable_params = array(
-				'full_tag_open',
-				'full_tag_close',
-				'num_links',
-				'prev_tag_open',
-				'prev_tag_close',
-				'next_tag_open',
-				'next_tag_close',
-				'cur_tag_open',
-				'cur_tag_close',
-				'num_tag_open',
-				'num_tag_close',
-				'first_tag_open',
-				'first_tag_close',
-				'last_tag_open',
-				'last_tag_close',
-			);
+			$params = $this->_admin_params();
+		}
+		// Otherwise, we let plugins and themes alter it as they wish.
+		elseif (has_filter('pagination'))
+		{
+			// List of parameters that filters can be applied to.
+			$filterable_params = $this->_filterable_params();
 
-			// Create the array of filtered params.
+			// Apply the pagination filter to our parameters.
 			$filtered_params = array_intersect_key($params, array_flip($filterable_params));
+			$filterable_params = apply_filters('pagination', $filtered_params);
 
-			// Fire pagination filter.
-			$filtered_params = apply_filters('pagination', $filtered_params);
-
-			// For security, we remove any added parm.
-			foreach ($filtered_params as $key => $param)
+			// For security reasons, we remove unaccepted parameters.
+			foreach ($filtered_params as $key => $val)
 			{
 				if ( ! in_array($key, $filterable_params))
 				{
@@ -98,7 +96,7 @@ class KB_Pagination extends CI_Pagination
 				}
 			}
 
-			// Merge all params.
+			// We merge back parameters together.
 			$params = array_merge($params, $filtered_params);
 		}
 
@@ -106,6 +104,77 @@ class KB_Pagination extends CI_Pagination
 
 		// Now we let the parent do the rest.
 		parent::__construct($params);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Pagination dashboard parameters
+	 *
+	 * Because the dashboard is build using Bootstrap, parameters below
+	 * are for Bootstrap pagination.
+	 *
+	 * @since 	1.3.3
+	 *
+	 * @access 	protected
+	 * @return 	array
+	 */
+	protected function _admin_params()
+	{
+		return array(
+			'full_tag_open'        => '<div class="text-center"><ul class="pagination pagination-small pagination-centered m0">',
+			'full_tag_close'       => '</ul></div>',
+			'num_links'            => 5,
+			'num_tag_open'         => '<li>',
+			'num_tag_close'        => '</li>',
+			'prev_tag_open'        => '<li>',
+			'prev_tag_close'       => '</li>',
+			'next_tag_open'        => '<li>',
+			'next_tag_close'       => '</li>',
+			'first_tag_open'       => '<li>',
+			'first_tag_close'      => '</li>',
+			'last_tag_open'        => '<li>',
+			'last_tag_close'       => '</li>',
+			'cur_tag_open'         => '<li class="active"><span>',
+			'cur_tag_close'        => '<span class="sr-only">(current)</span></span></li>',
+			'use_page_numbers'     => true,
+			'page_query_string'    => true,
+			'query_string_segment' => 'page',
+			'display_pages'        => true,
+		);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Pagination filterable parameters
+	 *
+	 * @since 	1.3.3
+	 *
+	 * @access 	protected
+	 * @return 	array
+	 */
+	protected function _filterable_params()
+	{
+		return array(
+			'full_tag_open',
+			'full_tag_close',
+			'num_links',
+			'num_tag_open',
+			'num_tag_close',
+			'prev_tag_open',
+			'prev_tag_close',
+			'next_tag_open',
+			'next_tag_close',
+			'first_tag_open',
+			'first_tag_close',
+			'last_tag_open',
+			'last_tag_close',
+			'cur_tag_open',
+			'cur_tag_close',
+			'display_pages',
+			'attributes',
+		);
 	}
 
 }
