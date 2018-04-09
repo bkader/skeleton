@@ -272,18 +272,7 @@ EOT;
 		 * Here we are resetting all applied filters and actions to
 		 * force using default admin panel theme. Except these:
 		 */
-		$this->theme->reset(
-			'after_metadata',
-			'before_metadata',
-			'after_scripts',
-			'after_styles',
-			'before_scripts',
-			'before_styles',
-			'enqueue_metadata',
-			'the_title',
-			'theme_menus',
-			'theme_translation'
-		);
+		$this->theme->reset('the_title', 'theme_menus', 'theme_translation');
 
 		// Remove extra filters added by libraries.
 		remove_all_filters('pagination');
