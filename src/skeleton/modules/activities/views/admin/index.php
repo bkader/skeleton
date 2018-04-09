@@ -80,6 +80,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			</tbody>
 <?php endif; ?>
 		</table>
-		<?php echo $pagination; ?>
 	</div>
 </div>
+<?php echo $pagination; ?>
