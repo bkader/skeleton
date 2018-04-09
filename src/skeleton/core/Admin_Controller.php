@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -48,16 +48,49 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
+ * @since 		1.0.0
+ * @since 		1.3.3 	Added dynamic assets loading.
+ * 
  * @version 	1.3.3
  */
 class Admin_Controller extends User_Controller
 {
 	/**
+	 * Array of CSS files to be loaded.
+	 *
+	 * @since 	1.3.3
+	 * 
+	 * @var 	array
+	 */
+	protected $styles = array(
+		'font-awesome',
+		'bootstrap',
+		'toastr',
+		'admin',
+	);
+
+	/**
+	 * Array of JS files to be loaded.
+	 *
+	 * @since 	1.3.3
+	 *
+	 * @var 	array
+	 */
+	protected $scripts = array(
+		'modernizr-2.8.3',
+		'jquery-3.2.1',
+		'bootstrap',
+		'toastr',
+		'bootbox',
+		'admin',
+	);
+
+	/**
 	 * Class constructor
 	 *
 	 * @since 	1.0.0
-	 * @since 	1.3.3 	Added favicon to dashboard and removed loading admin language file.
+	 * @since 	1.3.3 	Added favicon to dashboard, removed loading admin language file
+	 *         			and move some actions to "_remap" method.
 	 * 
 	 * @return 	void
 	 */
@@ -76,131 +109,73 @@ class Admin_Controller extends User_Controller
 		// We reset theme settings and add admin assets.
 		$this->_switch_to_admin();
 
-		$this->_load_assets();
-
 		// Load admin helper.
 		$this->load->helper('admin');
-
-		// Prepare dashboard sidebar.
-		$this->theme->set('admin_menu', $this->_admin_menu(), true);
-
-		// We add favicon.
-		$this->theme->add_meta(
-			'icon',
-			$this->theme->common_url('img/favicon.ico'),
-			'rel',
-			'type="image/x-icon"'
-		);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Removes theme filters, change view paths and load resources.
-	 * @access 	private
-	 * @return 	void
-	 */
-	private function _switch_to_admin()
-	{
-		/**
-		 * Here we are resetting all applied filters and actions to
-		 * force using default admin panel theme. Except these:
-		 */
-		$this->theme->reset(
-			'after_metadata',
-			'before_metadata',
-			'after_scripts',
-			'after_styles',
-			'before_scripts',
-			'before_styles',
-			'enqueue_metadata',
-			'the_title',
-			'theme_menus',
-			'theme_translation'
-		);
-
-		// Remove extra filters added by libraries.
-		remove_all_filters('pagination');
-
-		// Make sure to load theme's translation.
-		$theme_lang = apply_filters('theme_translation', false);
-		if (false !== $theme_lang)
-		{
-			$this->theme->load_translation($theme_lang);
-		}
-
-		// Let's set paths to layouts, partials and views.
-		add_filter('theme_layouts_path', function($path) {
-			return realpath(KBPATH.'views/admin/layouts/');
-		});
-
-		add_filter('theme_partials_path', function($path) {
-			return realpath(KBPATH.'views/admin/partials/');
-		});
-
-		add_filter('theme_views_path', function($path) {
-			return realpath(KBPATH.'views/admin/');
-		});
-
-		$module = $this->router->fetch_module();
-		$module_path = $this->router->module_path($module);
-
-		// We change the views path to modules.
-		if ( ! empty($module) && FALSE !== $module_path)
-		{
-			add_action('theme_view', function($view) use ($module, $module_path) {
-				return $module_path.'views/'.str_replace($module.'/', '', $view);
-			});
-		}
-
-		// Add IE9 support.
-		add_filter('extra_head', function($output) {
-			$config = array(
-				'siteURL'   => site_url(),
-				'baseURL'   => base_url(),
-				'adminURL'  => admin_url(),
-				'currenURL' => current_url(),
-				'ajaxURL'   => ajax_url(),
-				'lang'      => $this->lang->languages($this->session->language),
-			);
-			$output .= "\t<script>var config = ".json_encode($config).";</script>\n";
-			add_ie9_support($output, (ENVIRONMENT === 'production'));
-			return $output;
-		});
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Load admin panel assets.
+	 * We remap methods so we can do extra actions when we are not on methods
+	 * that required AJAX requests.
+	 *
+	 * @since 	1.3.3
 	 *
 	 * @access 	public
-	 * @param 	none
-	 * @return 	void
+	 * @param 	string 	$method 	The method's name.
+	 * @param 	array 	$params 	Arguments to pass to the method.
+	 * @return 	mixed 	Depends on the called method.
 	 */
-	protected function _load_assets()
+	public function _remap($method, $params = array())
 	{
-		$this->theme
-			// Add admin panel StyleSheets.
-			->add('css', get_common_url('css/font-awesome'), 'font-awesome')
-			->add('css', get_common_url('css/bootstrap'), 'bootstrap')
-			->add('css', get_common_url('css/toastr'), 'toastr')
-			->add('css', get_common_url('css/admin'), 'admin')
-			// Add admin panel JavaScripts.
-			->add('js', get_common_url('js/handlebars'), 'handlebars')
-			->add('js', get_common_url('js/bootstrap'), 'bootstrap')
-			->add('js', get_common_url('js/axios'), 'axios')
-			->add('js', get_common_url('js/bootbox'), 'bootbox')
-			->add('js', get_common_url('js/toastr'), 'toastr')
-			->add('js', get_common_url('js/admin'), 'admin');
-
-		// Add Right-To-Left support.
-		if (langinfo('direction') === 'rtl')
+		// If on a method that does no require AJAX request.
+		if ( ! in_array($method, $this->ajax_methods))
 		{
-			$this->theme
-				->add('css', get_common_url('css/bootstrap-rtl'), 'bootstrap-rtl')
-				->add('css', get_common_url('css/admin-rtl'), 'admin-rtl');
+			// Prepare dashboard sidebar.
+			$this->theme->set('admin_menu', $this->_admin_menu(), true);
+
+			// We add favicon.
+			$this->theme->add_meta(
+				'icon',
+				$this->theme->common_url('img/favicon.ico'),
+				'rel',
+				'type="image/x-icon"'
+			);
+
+			// We remove Modernizr and jQuery to dynamically load them.
+			$this->theme->remove('js', 'modernizr', 'jquery');
+
+			// Should we compress files?
+			$compress = (ENVIRONMENT === 'production') ? '1' : '';
+
+			// Do we have any CSS files to load?
+			if ( ! empty($this->styles))
+			{
+				$this->styles = implode(',', $this->styles);
+
+				// Right-To-Left languages.
+				('rtl' === langinfo('direction')) && $this->styles .= ',bootstrap-rtl,admin-rtl';
+
+				$this->theme
+					->no_extension()
+					->add('css', site_url("load/styles?c={$compress}&load=".$this->styles));
+			}
+
+			// Do we have any JS files to laod?
+			if ( ! empty($this->scripts))
+			{
+				$this->scripts = implode(',', $this->scripts);
+				$this->theme
+					->no_extension()
+					->add('js', site_url("load/scripts?c={$compress}&load=".$this->scripts));
+			}
+
+			// We call the method.
+			return call_user_func_array(array($this, $method), $params);
 		}
+
+		// Otherwise, we let the parent handle the rest.
+		return parent::_remap($method, $params);
 	}
 
 	// ------------------------------------------------------------------------
@@ -279,6 +254,84 @@ EOT;
 			->add('js', get_common_url('js/jquery-ui'), 'jquery-ui')
 			->add('js', get_common_url('js/jquery.ui.touch-punch'), 'touch-punch')
 			->add_inline('js', $this->theme->compress_output($script));
+	}
+
+	// ------------------------------------------------------------------------
+	// Private methods.
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Removes theme filters, change view paths and load resources.
+	 * @access 	protected
+	 * @return 	void
+	 */
+	protected function _switch_to_admin()
+	{
+		/**
+		 * Here we are resetting all applied filters and actions to
+		 * force using default admin panel theme. Except these:
+		 */
+		$this->theme->reset(
+			'after_metadata',
+			'before_metadata',
+			'after_scripts',
+			'after_styles',
+			'before_scripts',
+			'before_styles',
+			'enqueue_metadata',
+			'the_title',
+			'theme_menus',
+			'theme_translation'
+		);
+
+		// Remove extra filters added by libraries.
+		remove_all_filters('pagination');
+
+		// Make sure to load theme's translation.
+		$theme_lang = apply_filters('theme_translation', false);
+		if (false !== $theme_lang)
+		{
+			$this->theme->load_translation($theme_lang);
+		}
+
+		// Let's set paths to layouts, partials and views.
+		add_filter('theme_layouts_path', function($path) {
+			return realpath(KBPATH.'views/admin/layouts/');
+		});
+
+		add_filter('theme_partials_path', function($path) {
+			return realpath(KBPATH.'views/admin/partials/');
+		});
+
+		add_filter('theme_views_path', function($path) {
+			return realpath(KBPATH.'views/admin/');
+		});
+
+		$module = $this->router->fetch_module();
+		$module_path = $this->router->module_path($module);
+
+		// We change the views path to modules.
+		if ( ! empty($module) && FALSE !== $module_path)
+		{
+			add_action('theme_view', function($view) use ($module, $module_path) {
+				return $module_path.'views/'.str_replace($module.'/', '', $view);
+			});
+		}
+
+		// Add IE9 support.
+		add_filter('extra_head', function($output) {
+			$config = array(
+				'siteURL'   => site_url(),
+				'baseURL'   => base_url(),
+				'adminURL'  => admin_url(),
+				'currenURL' => current_url(),
+				'ajaxURL'   => ajax_url(),
+				'lang'      => $this->lang->languages($this->session->language),
+			);
+			$output .= "\t<script>var config = ".json_encode($config).";</script>\n";
+			add_ie9_support($output, (ENVIRONMENT === 'production'));
+			return $output;
+		});
 	}
 
 	// ------------------------------------------------------------------------
