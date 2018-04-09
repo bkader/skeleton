@@ -129,12 +129,13 @@
             toastr.options.rtl = true;
         }
 
-        jQuery(".alert-dismissable").fadeTo(2000, 500).slideUp(500, function () {
+        // Dismissable alert.
+        jQuery(".alert-dismissable").fadeTo(3000, 500).slideUp(500, function () {
             jQuery(this).alert("close");
         });
 
         // Initialize Bootstrap tooltip.
-        jQuery("[data-toggle=tooltip]").tooltip();
+        jQuery(document).tooltip({selector: '[data-toggle="tooltip"]'});
 
     });
 })(jQuery);
