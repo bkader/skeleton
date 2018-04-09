@@ -46,15 +46,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.3.0
+ * @since 		1.0.0
+ * @version 	1.3.3
  */
 ?><h2 class="page-header clearfix"><?php _e('manage_languages'); ?></h2>
 <div class="panel panel-default">
-	<div class="panel-body">
-		<p class="text-muted"><?php _e('manage_languages_tip'); ?></p><br>
+	<div class="table-responsive">
 		<table class="table table-condensed">
-			<tbody>
+			<caption><?php _e('manage_languages_tip'); ?></caption>
+			<thead>
 				<tr>
 					<th><?php _e('language'); ?></th>
 					<th><?php _e('abbreviation'); ?></th>
@@ -63,33 +63,44 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					<th><?php _e('enabled'); ?></th>
 					<th class="text-right"><?php _e('action'); ?></th>
 				</tr>
-		<?php foreach ($languages as $lang): ?>
+			</thead>
+		<?php if ($languages): ?>
+			<tbody>
+			<?php foreach ($languages as $lang): ?>
 				<tr>
-					<?php if (isset($lang['available']) && false === $lang['available']): ?>
-					<td><del title="<?php _e('missing_language_folder'); ?>" class="text-danger"><?php echo $lang['name_en']; ?>&nbsp;<small class="text-muted"><?php echo $lang['name']; ?></small></del></td>
-					<?php else: ?>
+					<!-- Language name -->
+					<?php if (true === $lang['available']): ?>
 					<td><?php echo $lang['name_en']; ?>&nbsp;<small class="text-muted"><?php echo $lang['name']; ?></small></td>
+					<?php else: ?>
+					<td><del title="<?php _e('missing_language_folder'); ?>" class="text-danger"><?php echo $lang['name_en']; ?>&nbsp;<small class="text-muted"><?php echo $lang['name']; ?></small></del></td>
 					<?php endif; ?>
+
+					<!-- Language abbreviation -->
 					<td><?php echo $lang['code']; ?>&nbsp;<small class="text-muted"><?php echo $lang['locale']; ?></small></td>
+
+					<!-- Language Folder -->
 					<td><?php echo $lang['folder']; ?></td>
+
+					<!-- Language default status -->
 					<td><?php echo label_condition($lang['folder'] === $language); ?></td>
+
+					<!-- Language availability -->
 					<td><?php echo label_condition(in_array($lang['folder'], $available_languages)); ?></td>
+
+					<!-- Language actions -->
 					<td class="text-right">
 						<?php if ($lang['folder'] !== $language): ?>
 						<!-- Make default action -->
-						<?php echo safe_admin_anchor('language/make_default/'.$lang['folder'], lang('make_default'), 'class="btn btn-default btn-xs"'); ?>&nbsp;
+						<a href="#" data-href="<?php echo safe_admin_url('language/make_default/'.$lang['folder']); ?>" class="btn btn-xs btn-default lang-default"><?php _e('make_default'); ?></a>&nbsp;
 						<?php endif; ?>
-					<?php if ($lang['folder'] !== 'english'): ?>
-						<?php if ( ! in_array($lang['folder'], $available_languages)): ?>
-						<?php echo safe_admin_anchor('language/enable/'.$lang['folder'], lang('enable'), 'class="btn btn-success btn-xs"'); ?>&nbsp;
-						<?php else: ?>
-						<?php echo safe_admin_anchor('language/disable/'.$lang['folder'], lang('disable'), 'class="btn btn-danger btn-xs"'); ?>&nbsp;
+						<?php if (null !== $lang['action']): ?>
+							<a href="#" data-href="<?php echo safe_admin_url("language/{$lang['action']}/{$lang['folder']}"); ?>" class="btn btn-xs <?php echo ('enable' == $lang['action']) ? 'btn-success lang-enable' : 'btn-danger lang-disable'; ?>"><?php _e($lang['action']); ?></a>&nbsp;
 						<?php endif; ?>
-					<?php endif; ?>
 					</td>
 				</tr>
-		<?php endforeach; ?>
+			<?php endforeach; ?>
 			</tbody>
+		<?php endif; ?>
 		</table>
 	</div>
 </div>

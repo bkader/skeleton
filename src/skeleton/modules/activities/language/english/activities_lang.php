@@ -66,3 +66,12 @@ $lang['date']       = 'Date';
 $lang['delete_activity_confirm'] = 'Are you sure you want to delete this activity log?';
 $lang['delete_activity_success'] = 'Activity successfully deleted.';
 $lang['delete_activity_error']   = 'Unable to delete activity.';
+
+// ------------------------------------------------------------------------
+// Modules activities lines.
+// ------------------------------------------------------------------------
+
+// Language module.
+$lang['act_language_enable'] = 'Enabled language: %s.';
+$lang['act_language_disable'] = 'Disabled language: %s.';
+$lang['act_language_default'] = 'Set %s as default language.';

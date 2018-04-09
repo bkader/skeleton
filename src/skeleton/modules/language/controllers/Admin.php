@@ -48,20 +48,37 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.3.2
+ * @since 		1.0.0
+ * @since 		1.3.3 	Added dynamically loaded assets.
+ * 
+ * @version 	1.3.3
  */
 class Admin extends Admin_Controller
 {
 	/**
 	 * Class constructor.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Added dynamically loaded assets.
+	 * 
 	 * @return 	void
 	 */
 	public function __construct()
 	{
+		// We add our AJAX methods.
+		array_push($this->ajax_methods, 'enable', 'disable', 'make_default');
+
+		// We add JS files.
+		array_push($this->scripts, 'language');
+
+		// We call parent constructor.
 		parent::__construct();
+
+		// We load module language file.
 		$this->load->language('language/language');
 	}
+
+	// ------------------------------------------------------------------------
 
 	/**
 	 * List site languages.
@@ -87,14 +104,14 @@ class Admin extends Admin_Controller
 		 */
 		foreach ($data['languages'] as $folder => &$lang)
 		{
-			$lang['available'] = false;
-			if (is_dir(APPPATH.'language/'.$folder) && is_dir(KBPATH.'language/'.$folder))
+			// Language availability.
+			$lang['available'] =  (is_dir(APPPATH.'language/'.$folder) && is_dir(KBPATH.'language/'.$folder));
+
+			// Language action.
+			$lang['action'] = null; // Ignore english.
+			if ('english' !== $folder)
 			{
-				$lang['available'] = true;
-			}
-			else
-			{
-				$lang['available'] = false;
+				$lang['action'] = (in_array($folder, $data['available_languages'])) ? 'disable' : 'enable';
 			}
 		}
 
@@ -105,6 +122,8 @@ class Admin extends Admin_Controller
 	}
 
 	// ------------------------------------------------------------------------
+	// AJAX Methods.
+	// ------------------------------------------------------------------------
 
 	/**
 	 * Enable the selected language.
@@ -114,46 +133,44 @@ class Admin extends Admin_Controller
 	 */
 	public function enable($folder = null)
 	{
-		// Check safe URL.
-		if ( ! check_safe_url() OR $folder === 'english')
-		{
-			set_alert(lang('error_safe_url'), 'error');
-			redirect('admin/language');
-			exit;
-		}
+		// Default process status header code.
+		$this->response->header = 406;
 
+		// No valid language provided?
 		if (empty($folder) OR ! array_key_exists($folder, $this->lang->languages()))
 		{
-			set_alert(lang('language_enable_missing'), 'error');
-			redirect('admin/language');
-			exit;
+			$this->response->message = lang('language_enable_missing');
+			return;
 		}
 
+		// Get language stored in database.
 		$db_langs = $this->config->item('languages') ?: array();
+
+		// The language already enabled?
 		if (in_array($folder, $db_langs))
 		{
-			set_alert(lang('language_enable_already'), 'error');
-			redirect('admin/language');
-			exit;
+			$this->response->message = lang('language_enable_already');
+			return;
 		}
 
+		// We add the language to database languages.
 		$db_langs[] = $folder;
 		asort($db_langs);
 
+		// We update languages in database.
 		if ($this->kbcore->options->set_item('languages', $db_langs))
 		{
-			set_alert(lang('language_enable_success'), 'success');
+			$this->response->header  = 200;
+			$this->response->message = lang('language_enable_success');
 
-			// Log the activity.
-			log_activity($this->c_user->id, 'enabled language: '.$folder);
-		}
-		else
-		{
-			set_alert(lang('language_enable_error'), 'error');
+			// We log the activity.
+			log_activity($this->c_user->id, sprintf(lang('act_language_enable'), $folder));
+
+			return;
 		}
 
-		redirect('admin/language');
-		exit;
+		// Default message is that we are unable to enable the language.
+		$this->response->message = lang('language_enable_error');
 	}
 
 	// ------------------------------------------------------------------------
@@ -166,29 +183,27 @@ class Admin extends Admin_Controller
 	 */
 	public function disable($folder = null)
 	{
-		// Check safe URL.
-		if ( ! check_safe_url() OR $folder === 'english')
-		{
-			set_alert(lang('error_safe_url'), 'error');
-			redirect('admin/language');
-			exit;
-		}
+		// Default status header code.
+		$this->response->header = 406;
 
+		// No valid language provided?
 		if (empty($folder) OR ! array_key_exists($folder, $this->lang->languages()))
 		{
-			set_alert(lang('language_disable_missing'), 'error');
-			redirect('admin/language');
-			exit;
+			$this->response->message = lang('language_disable_missing');
+			return;
 		}
 
+		// Get language from database.
 		$db_langs = $this->config->item('languages') ?: array();
+
+		// The language is already disabled?
 		if ( ! in_array($folder, $db_langs))
 		{
-			set_alert(lang('language_disable_already'), 'error');
-			redirect('admin/language');
-			exit;
+			$this->response->message = lang('language_disable_already');
+			return;
 		}
 
+		// We remove the language from database languages array.
 		foreach ($db_langs as $key => $lang)
 		{
 			if ($lang === $folder)
@@ -198,6 +213,7 @@ class Admin extends Admin_Controller
 		}
 		asort($db_langs);
 
+		// We proceed to update.
 		if ($this->kbcore->options->set_item('languages', $db_langs))
 		{
 			/**
@@ -209,18 +225,16 @@ class Admin extends Admin_Controller
 				$this->kbcore->options->set_item('language', 'english');
 			}
 
-			set_alert(lang('language_disable_success'), 'success');
+			$this->response->header = 200;
+			$this->response->message = lang('language_disable_success');
 
 			// Log the activity.
-			log_activity($this->c_user->id, 'enabled language: '.$folder);
-		}
-		else
-		{
-			set_alert(lang('language_disable_error'), 'error');
+			log_activity($this->c_user->id, sprintf(lang('act_language_disable'), $folder));
+			return;
 		}
 
-		redirect('admin/language');
-		exit;
+		// Default message is that we are unable to disable the language.
+		$this->response->message = lang('language_enable_error');
 	}
 
 	// ------------------------------------------------------------------------
@@ -233,43 +247,46 @@ class Admin extends Admin_Controller
 	 */
 	public function make_default($folder = null)
 	{
-		// Check safe URL.
-		if ( ! check_safe_url())
-		{
-			set_alert(lang('error_safe_url'), 'error');
-			redirect('admin/language');
-			exit;
-		}
+		// Default header status code.
+		$this->response->header = 406;
 
+		// No valid language provided?
 		if (empty($folder) OR ! array_key_exists($folder, $this->lang->languages()))
 		{
-			set_alert(lang('language_default_missing'), 'error');
-			redirect('admin/language');
-			exit;
+			$this->response->message = lang('language_default_missing');
+			return;
 		}
 
+		// Retrieve languages from database.
 		$db_langs = $this->config->item('languages') ?: array();
+
+		// If the language is not available, we add it.
 		if ( ! in_array($folder, $db_langs))
 		{
 			$db_langs[] = $folder;
 			asort($db_langs);
-			$this->kbcore->options->set_item('languages', $db_langs);
+
+			// We had issues with adding the language?
+			if ( ! $this->kbcore->options->set_item('languages', $db_langs))
+			{
+				$this->response->message = lang('language_default_error');
+				return;
+			}
 		}
 
+		// We update the site's default language.
 		if ($this->kbcore->options->set_item('language', $folder))
 		{
-			set_alert(lang('language_default_success'), 'success');
+			$this->response->header  = 200;
+			$this->response->message = lang('language_default_success');
 
 			// Log the activity.
-			log_activity($this->c_user->id, 'set default language to: '.$folder);
-		}
-		else
-		{
-			set_alert(lang('language_default_error'), 'error');
+			log_activity($this->c_user->id, sprintf(lang('act_language_default'), $folder));
+			return;
 		}
 
-		redirect('admin/language');
-		exit;
+		// Otherwise, we could not set default language.
+		$this->response->message = lang('language_default_error');
 	}
 
 }
