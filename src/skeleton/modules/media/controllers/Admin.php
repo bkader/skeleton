@@ -64,7 +64,7 @@ class Admin extends Admin_Controller
 	public function __construct()
 	{
 		// Add AJAX methods.
-		array_push($this->ajax_methods, 'create', 'update', 'delete');
+		array_push($this->safe_ajax_methods, 'create', 'update', 'delete');
 
 		// Add require assets files.
 		array_push($this->styles, 'dropzone');
@@ -92,6 +92,9 @@ class Admin extends Admin_Controller
 	 */
 	public function index()
 	{
+		// Added our language lines.
+		add_filter('extra_head', array($this, '_extra_head'));
+
 		// Prepare form validation.
 		$this->prep_form();
 
@@ -358,7 +361,7 @@ class Admin extends Admin_Controller
 	public function delete($id = 0)
 	{
 		// Default header status code.
-		$this->response->header = 406;
+		$this->response->header = 500;
 
 		// We get the media from database.
 		$media = $this->kbcore->media->get($id);
@@ -384,6 +387,26 @@ class Admin extends Admin_Controller
 
 		// Otherwise, media could not be deleted.
 		$this->response->message = lang('media_delete_error');
+	}
+
+	// ------------------------------------------------------------------------
+	// Private methods.
+	// ------------------------------------------------------------------------
+	
+	/**
+	 * Method to add our confirmations alerts to DOM.
+	 *
+	 * @since 	1.3.3
+	 *
+	 * @access 	public
+	 * @param 	string
+	 * @return 	string
+	 */
+	public function _extra_head($output)
+	{
+		$lines = array('delete' => lang('media_delete_confirm'));
+		$output .= '<script>var mediaAlert = '.json_encode($lines).';</script>';
+		return $output;
 	}
 
 }

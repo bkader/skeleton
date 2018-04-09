@@ -1,5 +1,5 @@
 /*!
- * Skeleton Media - v1.3.0 (https://github.com/bkader/skeleton)
+ * CodeIgniter Skeleton - Media Module (https://github.com/bkader/skeleton)
  * Copyright 2018 Kader Bouyakoub (https://github.com/bkader)
  * Licensed under MIT (https://github.com/bkader/skeleton/blob/develop/LICENSE.md)
  */
@@ -8,76 +8,96 @@
     jQuery.noConflict();
     "use strict";
 
-    // Prepare dropzone and upload URL for later use.
-    var droparea = jQuery('[data-dropzone]'),
-        upload_url = droparea.attr('data-upload-url'),
-        media_url = window.location.origin + window.location.pathname;
+    // ========================================================
+    // Hold some needed variables.
+    // ========================================================
+    var wrapper = wrapper || jQuery("#wrapper"),
+        mediaURL = config.adminURL + "/media",
+        droparea = jQuery('[data-dropzone]'),
+        upload_url = droparea.attr('data-upload-url');
 
     // ========================================================
-    // Media actions: view, close modal, delete and update
+    // View media details.
     // ========================================================
-    
-    // Media view button.
     jQuery(document).on("click", ".media-view", function (e) {
         e.preventDefault();
         var that = jQuery(this),
             href = that.attr("data-href");
-        jQuery("#wrapper").load(href + " #wrapper > *", function() {
+        wrapper.load(href + " #wrapper > *", function() {
             window.history.pushState({href: href}, '', href);
             jQuery("#media-modal").modal("show");
         });
     });
 
-    // Close media modal.
-    jQuery(document).on("click", ".media-close", function (e) {
+
+    // ========================================================
+    // Delete media.
+    // ========================================================
+    jQuery(document).on("click", ".media-delete", function (e) {
         e.preventDefault();
-        jQuery("#media-modal").modal("hide").on("hidden.bs.modal", function (f) {
-            window.history.pushState({href: media_url}, '', media_url);
+
+        // Prepare variables to be used.
+        var media_count = jQuery(".attachments > .attachment").length,
+            that = jQuery(this),
+            href = href = that.attr("data-href"),
+            id = that.attr("data-media-id"),
+            _modal = _modal || jQuery("#media-modal");
+
+        // Display the confirmation message.
+        bootbox.confirm({
+            size: "small",
+            message: mediaAlert.delete,
+            callback: function (result) {
+                bootbox.hideAll();
+                if (result === true && href.length) {
+                    jQuery.get(href, function (response, textStatus) {
+                        if (textStatus == "success") {
+                            media_count--;
+                            _modal.modal("hide");
+                            toastr.success(response);
+                            if (media_count <= 0) {
+                                location.reload();
+                            } else {
+                                jQuery("#media-" + id).fadeOut(function () {
+                                    jQuery(this).remove();
+                                });
+                            }
+                            window.history.pushState({href: mediaURL}, '', mediaURL);
+                        } else {
+                            toastr.error(response);
+                        }
+                    });
+                }
+            }
         });
     });
 
-    // Delete media.
-    jQuery(document).on("click", ".media-delete", function (e) {
+    // ========================================================
+    // Update media details.
+    // ========================================================
+    jQuery(document).on("submit", "form.media-update", function (e) {
         e.preventDefault();
         var that = jQuery(this),
-            message = that.attr("data-alert") || "Are you sure?",
-            href = that.attr("data-href");
-
-        if (confirm(message)) {
-            jQuery.ajax({
-                method: "DELETE",
-                type: "DELETE", // Fallback
-                url: href,
-                cache: false,
-                async: true,
-                success: function (data, textStatus, xhr) {
-                    jQuery("#media-modal").modal("hide");
-                    toastr.success(data);
-                    jQuery("#wrapper").load(window.location.href + " #wrapper > *");
-                    window.history.pushState({href: media_url}, '', media_url);
-                },
-                error: function (xhr, textStatus, errorThrown) {
-                    toastr.error(textStatus);
-                }
-            });
-        }
-    });
-
-    // Media update form.
-    jQuery(document).on("submit", "form[data-update]", function (e) {
-        e.preventDefault();
-        var that = jQuery(this),
-            href = that.attr("action");
-
-        var data = {
-            name: jQuery.trim(that.find("#name").val()),
-            description: jQuery.trim(that.find("#description").val())
-        };
+            href = that.attr("action"),
+            _modal = _modal || jQuery("#media-modal"),
+            data = {
+                name: jQuery.trim(that.find("#name").val()),
+                description: jQuery.trim(that.find("#description").val())
+            };
         jQuery.post(href, data, function (response, textStatus, jqXHR) {
             toastr.success(response);
+            _modal.modal("hide");
+            window.history.pushState({href: mediaURL}, '', mediaURL);
         }, "json").fail(function(jqXHR, textStatus, errorThrown) {
             toastr.error(jqXHR.responseJSON);
         });
+    });
+
+    // ========================================================
+    // Put back URL when modal is closed.
+    // ========================================================
+    jQuery(document).on("hide.bs.modal hidden.bs.modal", "#media-modal", function (e) {
+        window.history.pushState({href: mediaURL}, '', mediaURL);
     });
 
     // ========================================================
@@ -85,7 +105,14 @@
     // ========================================================
     jQuery(document).ready(function () {
 
-        var drop = new Dropzone('[data-dropzone]', {
+        // Should we display the modal?
+        var _modal = _modal || jQuery("#media-modal");
+        if (_modal.length) {
+            _modal.modal("show");
+        }
+
+        // Dropzone handler.
+        var drop = new Dropzone("[data-dropzone]", {
             url: upload_url,
             init: function () {
                 this.on('sending', function (file, xhr, formData) {

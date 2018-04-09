@@ -57,7 +57,7 @@ $lang['library'] = 'Library';
 $lang['media_library'] = 'Media Library';
 
 // Drop zone tip.
-$lang['drop_media'] = 'Drag and drop files here.';
+$lang['drop_media'] = 'Drop files here to upload.';
 
 // Media details.
 $lang['media_details']     = 'Attachment Details';

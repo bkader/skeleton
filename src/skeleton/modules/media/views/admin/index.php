@@ -50,7 +50,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @version 	1.3.0
  */
 ?><h2 class="page-header"><?php _e('media_library'); ?></h2>
-<div data-dropzone data-upload-url="<?php echo admin_url('media/create'); ?>">
+<div data-dropzone data-upload-url="<?php echo safe_admin_url('media/create'); ?>">
 	<div class="row attachments">
 	<?php if ($media): ?>
 	<?php foreach ($media as $m): ?>
@@ -58,7 +58,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			<div class="attachment-inner" style="background-image: url('<?php echo $m->username; ?>');">
 				<div class="attachment-action">
 					<a href="#" class="btn btn-primary btn-sm media-view" data-href="<?php echo admin_url('media?item='.$m->id); ?>"><i class="fa fa-eye"></i></a>
-					<a href="#" class="btn btn-danger btn-sm media-delete" data-alert="<?php _e('media_delete_confirm'); ?>" data-href="<?php echo admin_url('media/delete/'.$m->id); ?>"><i class="fa fa-times"></i></a>
+					<a href="#" data-href="<?php echo safe_admin_url('media/delete/'.$m->id); ?>" data-media-id="<?php echo $m->id; ?>" class="btn btn-danger btn-sm media-delete" ><i class="fa fa-times"></i></a>
 				</div>
 			</div>
 		</div>
@@ -70,11 +70,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 </div>
 
 <?php if ($item !== null): ?>
-<div class="modal fade" tabindex="-1" role="dialog" id="media-modal">
+<div class="modal fade" tabindex="-1" role="dialog" id="media-modal" tabindex="-1">
 	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header clearfix">
-				<a type="button" href="#" class="close media-close" aria-hidden="true"><i class="fa fa-times"></i></a>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><i class="fa fa-times"></i></span></button>
 				<h4 class="modal-title"><?php _e('media_details'); ?></h4>
 			</div>
 			<div class="modal-body">
@@ -90,7 +90,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 							<strong><?php _e('media_dimensions'); ?></strong>: <span class="txof"><?php echo $item->details['width']; ?> x <?php echo $item->details['height']; ?></span>
 						<hr />
 
-						<?php echo form_open('admin/media/update/'.$item->id, 'role="form" data-update'); ?>
+						<?php echo form_open(safe_admin_url('media/update/'.$item->id), 'role="form" class="media-update"'); ?>
 							<div class="form-group">
 								<label>URL</label>
 								<p class="well well-sm txof" data-toggle="tooltip" title="<?php _e("media_copy_clipboard"); ?>" onclick="window.prompt('<?php _e("media_copy_clipboard"); ?>', '<?php echo $item->username; ?>');"><?php echo $item->username; ?></p>
@@ -104,7 +104,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 								<textarea class="form-control" type="text" name="description" id="description"><?php echo $item->description; ?></textarea>
 							</div>
 
-							<button type="submit" class="btn btn-primary btn-sm"><?php _e('update'); ?></button> &#124; <a href="<?php echo admin_url("media/{$item->id}/edit"); ?>"><?php _e('edit'); ?></a> &#124; <a href="#" class="text-danger media-delete" data-alert="<?php _e('media_delete_confirm'); ?>" data-href="<?php echo admin_url('media/delete/'.$m->id); ?>"><?php _e('delete'); ?></i></a>
+							<button type="submit" class="btn btn-primary btn-sm"><?php _e('update'); ?></button><a href="#" data-href="<?php echo safe_admin_url('media/delete/'.$m->id); ?>" data-media-id="<?php echo $m->id; ?>" class="btn btn-danger btn-sm pull-right media-delete" tabindex="-1"><?php _e('delete'); ?></a>
 						<?php echo form_close(); ?>
 					</div>
 				</div>
