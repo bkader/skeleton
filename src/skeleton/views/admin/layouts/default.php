@@ -44,7 +44,7 @@
 	<div class="container-fluid">
 		<?php the_content(); ?>
 		<div class="footer">
-			<p class="text-center"><?php echo anchor('', get_option('site_name')) ?>. &copy; Copyright <?php echo date('Y') ?><br><abbr title="Render Time">RT</abbr>: <strong>{elapsed_time}</strong>. <abbr title="Theme Time">TT</abbr>: <strong>{theme_time}</strong><br><?php _e('created_by'); ?> <a href="https://github.com/bkader" target="_blank">Kader Bouyakoub</a></p>
+			<p class="text-center"><?php echo anchor('', get_option('site_name')) ?><sup class="text-muted" data-toggle="tooltip" title="Skeleton Version"><?php echo KB_VERSION; ?></sup> &copy; Copyright <?php echo date('Y') ?><br><abbr title="Render Time">RT</abbr>: <strong>{elapsed_time}</strong>. <abbr title="Theme Time">TT</abbr>: <strong>{theme_time}</strong><br><?php _e('created_by'); ?> <a href="https://github.com/bkader" target="_blank">Kader Bouyakoub</a></p>
 		</div>
 	</div>
 </main>
