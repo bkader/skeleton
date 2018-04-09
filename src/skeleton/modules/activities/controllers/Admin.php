@@ -113,7 +113,7 @@ class Admin extends Admin_Controller
 
 		// Prepare the offset and limit users to get activities.
 		$limit  = $config['per_page'];
-		$offset = (isset($get['page'])) ? $imit * ($get['page'] - 1) : 0;
+		$offset = (isset($get['page'])) ? $config['per_page'] * ($get['page'] - 1) : 0;
 
 		// Retrieve activities.
 		$activities = $this->kbcore->activities->get_many($where, null, $limit, $offset);
@@ -128,10 +128,14 @@ class Admin extends Admin_Controller
 			);
 
 			// Module anchor
-			$activity->module_anchor = admin_anchor(
-				'activities?'.(isset($get['user']) ? 'user='.$get['user'].'&' : '').'module='.$activity->module,
-				$activity->module
-			).": {$activity->controller}::{$activity->controller}";
+			$activity->module_anchor = ucfirst("{$activity->controller}::{$activity->method}");
+			if ( ! empty($activity->module))
+			{
+				$activity->module_anchor = admin_anchor(
+					'activities?'.(isset($get['user']) ? 'user='.$get['user'].'&' : '').'module='.$activity->module,
+					$activity->module
+				).": {$activity->module_anchor}";
+			}
 
 			// IP location link.
 			$activity->ip_address = anchor(
