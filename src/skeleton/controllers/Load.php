@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -48,8 +48,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @since 		1.0.0
+ * @version 	1.3.3
  */
 class Load extends KB_Controller
 {
@@ -73,249 +73,128 @@ class Load extends KB_Controller
 	 * Simple method that does absolutely nothing.
 	 * @return 	void
 	 */
-	public function index()
+	public function index($type)
 	{
-		show_404();
-	}
+		// We prepare the type of assets to load.
+		$type = ('scripts' === $type) ? 'js' : 'css';
 
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Loading StyleSheets.
-	 * @access 	public
-	 * @param 	none 	All params are $_GET.
-	 * @return 	void
-	 */
-	public function styles()
-	{
-		// Let's first make sure there are files first.
-		$files = $this->input->get('load');
-
-		// None? Nothing to do.
+		// We make sure to collect files if there are any.
+		$files = $this->input->get('load', true);
 		if (empty($files))
 		{
-			die();
+			exit();
 		}
 
-		// Let's explode and trim files names.
-		$files = array_map('trim', explode(',', $files));
+		// We format files.
+		$minified = ('1' === $this->input->get('c', true));
+		$files = $this->_prep_files($files, $minified);
 
-		// Should we use the minified version?
-		if ($this->input->get('c') == '1')
+		// We start benchmarking.
+		$this->benchmark->mark("load_assets_{$type}_start");
+
+		// Temporary output.
+		$out = '';
+
+		// We loop through files and add them to output.
+		foreach ($files as $file)
 		{
-			$files = $this->_set_min($files);
+			$out .= $this->_load_file($file, $type);
 		}
 
-		// Prepare an empty output for later use.
-		$output = null;
-
-		// IN PRODUCTION MODE ONLY.
-		if (ENVIRONMENT !== 'development')
+		// Still no output?
+		if ('' === $out)
 		{
-			// Let's first see if the file was cached or not.
-			$cache_file = md5(ENVIRONMENT.implode(',', $files));
-			$cache_file_path = APPPATH."cache/assets/{$cache_file}.css";
-
-			// Was the cached file found?
-			if (is_file($cache_file_path))
-			{
-				// Get the content of the file.
-				$content = file_get_contents($cache_file_path);
-
-				// Check if the file has expired or not.
-				// $expire = substr($content, 0, 10);
-				preg_match('/\d+/', $content, $expire);
-
-				/**
-				 * If the file is still alive, we make sure to remove 
-				 * unnecessary part of content and fill our output.
-				 */
-				if ((strlen($expire[0]) === 10 && (int) $expire[0] > time() - 86400) 
-					&& preg_match('/^(.*)|END-->/', $content, $match))
-				{
-					$output = trim(str_replace($expire[0].'|END-->', '', $content));
-				}
-				// Otherwise, delete the file!
-				else
-				{
-					@unlink($cache_file_path);
-				}
-			}
+			exit();
 		}
 
-		// Still no output? Load files then.
-		if ($output === null)
+		// In case of CSS files, we make sure to move all @import to top.
+		if ('css' === $type 
+			&& preg_match_all('/(;?)(@import (?<url>url\()?(?P<quotes>["\']?).+?(?P=quotes)(?(url)\)))/', $out, $matches))
 		{
-			foreach ($files as $file)
-			{
-				$output .= $this->_load_file('content/common/css/'.$file.'.css');
-			}
+            // remove from out
+            foreach ($matches[0] as $import)
+            {
+                $out = str_replace($import, '', $out);
+            }
 
-			// No output? Nothing to do.
-			if (empty($output))
-			{
-				die();
-			}
-
-			// We make sure to move all @imports to top.
-	        if (preg_match_all('/(;?)(@import (?<url>url\()?(?P<quotes>["\']?).+?(?P=quotes)(?(url)\)))/', $output, $matches)) 
-	        {
-	            // remove from output
-	            foreach ($matches[0] as $import)
-	            {
-	                $output = str_replace($import, '', $output);
-	            }
-
-	            // add to top
-	            $output = implode(';', $matches[2]).';'.trim($output, ';');
-	        }
-
-			// Prepare our final output.
-			$output = "/*! Cache Assets auto-generated file.\nCreated At: ".date('Y-m-d H:i:s')." */\n".$output;
-
-			// Prepare the file to be cached.
-			if (ENVIRONMENT !== 'development')
-			{
-				(isset($cache_file_path)) OR $cache_file_path = APPPATH."cache/assets/{$cache_file}.css";
-				$cached_output = (time() + 86400).'|END-->'.$output;
-
-				// Let's write the cache file.
-				$cache_file_path = fopen($cache_file_path, 'w');
-				fwrite($cache_file_path, $cached_output);
-				fclose($cache_file_path);
-			}
+            // add to top
+            $out = implode(';', $matches[2]).';'.trim($out, ';');
 		}
 
-		// Set header content type and output it.
+		// We make sure to remove all comments on minified files.
+		if (true === $minified)
+		{
+			$regex = array(
+				"`^([\t\s]+)`ism"=>'',
+				"`^\/\*(.+?)\*\/`ism"=>"",
+				"`([\n\A;]+)\/\*(.+?)\*\/`ism"=>"$1",
+				"`([\n\A;\s]+)//(.+?)[\n\r]`ism"=>"$1\n",
+				"`(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+`ism"=>"\n"
+			);
+			$out = preg_replace(array_keys($regex), $regex, $out);
+		}
+
+		// We stop benchmarking and add it to output.
+		$this->benchmark->mark("load_assets_{$type}_end");
+		$bench = $this->benchmark->elapsed_time(
+			"load_assets_{$type}_start",
+			"load_assets_{$type}_end"
+		);
+
+		// We prepare our initial output.
+		$output = "/* This file is auto-generated ({$bench} seconds) */\n".$out;
+
+		// We render our final output.
 		$this->output
-			->set_content_type('css')
+			->set_content_type($type)
 			->set_output($output);
+
 	}
 
 	// ------------------------------------------------------------------------
-
-	/**
-	 * Loading JavaScripts.
-	 * @access 	public
-	 * @param 	none 	All params are $_GET.
-	 * @return 	void
-	 */
-	public function scripts()
-	{
-		// Let's first make sure there are files first.
-		$files = $this->input->get('load');
-
-		// None? Nothing to do.
-		if (empty($files))
-		{
-			die();
-		}
-
-		// Let's explode and trim files names.
-		$files = array_map('trim', explode(',', $files));
-
-		// Should we use the minified version?
-		if ($this->input->get('c') == '1')
-		{
-			$files = $this->_set_min($files);
-		}
-
-		// Prepare an empty output for later use.
-		$output = null;
-
-		// IN PRODUCTION MODE ONLY.
-		if (ENVIRONMENT !== 'development')
-		{
-			// Let's first see if the file was cached or not.
-			$cache_file = md5(ENVIRONMENT.implode(',', $files));
-			$cache_file_path = APPPATH."cache/assets/{$cache_file}.js";
-
-			// Was the cached file found?
-			if (is_file($cache_file_path))
-			{
-				// Get the content of the file.
-				$content = file_get_contents($cache_file_path);
-
-				// Check if the file has expired or not.
-				// $expire = substr($content, 0, 10);
-				preg_match('/\d+/', $content, $expire);
-
-				/**
-				 * If the file is still alive, we make sure to remove 
-				 * unnecessary part of content and fill our output.
-				 */
-				if ((strlen($expire[0]) === 10 && (int) $expire[0] > time() - 86400) 
-					&& preg_match('/^(.*)|END-->/', $content, $match))
-				{
-					$output = trim(str_replace($expire[0].'|END-->', '', $content));
-				}
-				// Otherwise, delete the file!
-				else
-				{
-					// @unlink($cache_file_path);
-				}
-			}
-		}
-
-		// Still no output? Load files then.
-		if ($output === null)
-		{
-			foreach ($files as $file)
-			{
-				$output .= $this->_load_file('content/common/js/'.$file.'.js');
-			}
-
-			// No output? Nothing to do.
-			if (empty($output))
-			{
-				die();
-			}
-
-			// Prepare our final output.
-			$output  = "/*! This file is auto-generated */\n".$output;
-
-			// Prepare the file to be cached.
-			if (ENVIRONMENT !== 'development')
-			{
-				(isset($cache_file_path)) OR $cache_file_path = APPPATH."cache/assets/{$cache_file}.js";
-				$cached_output = (time() + 86400).'|END-->'.$output;
-
-				// Let's write the cache file.
-				$cache_file_path = fopen($cache_file_path, 'w');
-				fwrite($cache_file_path, $cached_output);
-				fclose($cache_file_path);
-			}
-		}
-
-
-		// Set header content type and output it.
-		$this->output
-			->set_content_type('js')
-			->set_output($output);
-	}
-
+	// Private methods.
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Simply appends ".min" to files.
-	 * @access 	private
-	 * @param 	mixed 	$files 	strings or array.
-	 * @return 	the same that was passed.
+	 * Prepare files names from string to return the final array if valid files.
+	 *
+	 * @since 	1.3.3
+	 *
+	 * @access 	protected
+	 * @param 	string 	$files 		String of comma-separated files.
+	 * @param 	bool 	$minified 	Whether to request minified files.
+	 * @return 	array 	files array after being prepared.
 	 */
-	private function _set_min($files)
+	protected function _prep_files($files, $minified = false)
 	{
-		if (is_array($files))
+		/**
+		 * We explode files string into an array then we remove any white
+		 * space then make sure to remove duplicated and empty elements.
+		 * @var array
+		 */
+		$files = explode(',', $files);
+		$files = array_map('trim', array_unique($files));
+		$files = array_filter($files);
+
+		/**
+		 * We now format files names in order to remove any found ".min"
+		 * extension and add it back only if minified files are requested.
+		 * We don't touch the file if it is a full URL.
+		 */
+		foreach ($files as &$file)
 		{
-			foreach($files as &$file)
+			if (false === filter_var($file, FILTER_VALIDATE_URL))
 			{
-				$file .= '.min';
+				$file = str_replace('.min', '', $file);
+				(true === $minified) && $file .= '.min';
+			}
+			else
+			{
+				$file = urlencode($file);
 			}
 		}
-		else
-		{
-			$files .= '.min';
-		}
 
+		// We return the final result.
 		return $files;
 	}
 
@@ -323,43 +202,46 @@ class Load extends KB_Controller
 
 	/**
 	 * Handles file loading.
-	 * @access 	private
+	 * @access 	protected
 	 * @param 	string 	$file
+	 * @param 	string 	$type
 	 * @return 	string
 	 */
-	private function _load_file($file)
+	protected function _load_file($file, $type)
 	{
 		// Backup the file for later use.
 		$old_file = $file;
 
+		// Is it a url?
+		$url_file = urldecode($file);
+		$is_url = (false !== filter_var($url_file, FILTER_VALIDATE_URL));
+
 		// Prepare an empty output.
 		$output = '';
 
-		// Make sure it's a full URL.
-		if (filter_var($file, FILTER_VALIDATE_URL) === FALSE)
+		// Loading from a URL?
+		if (true === $is_url)
 		{
-			$file = base_url($file);
+			$file_path = $url_file;
 		}
-
-		// Check if the file exits first.
-		$found = false;
-		$file_headers = get_headers($file);
-		if (stripos($file_headers[0], '200 OK'))
+		// Otherwise, load from disk.
+		else
 		{
-			$found = true;
-		}
+			// Hold the path to the file.
+			$file_path = $this->theme->common_path("{$type}/{$file}.{$type}");
 
-		// Not found? Return nothing.
-		if ($found === false)
-		{
-			return "/* Missing file: {$old_file} */";
+			// The file does not exist?
+			if (false === $file_path)
+			{
+				return '';
+			}
 		}
 
 		// Use cURL if enabled.
-		if (function_exists('curl_init'))
+		if (true === $is_url && function_exists('curl_init'))
 		{
 			$curl = curl_init();
-			curl_setopt($curl, CURLOPT_URL, $file);
+			curl_setopt($curl, CURLOPT_URL, $file_path);
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt($curl, CURLOPT_HEADER, false);
 			$output .= curl_exec($curl);
@@ -368,41 +250,56 @@ class Load extends KB_Controller
 		// Otherwise, simply use file_get_contents.
 		else
 		{
-			$output .= file_get_contents($file);
+			$output .= file_get_contents($file_path);
 		}
 
 		/**
 		 * Remember, we have backed up the file right?
 		 * The reason behind this it to set relative paths inside it.
-		 * For instance, if an image or a fond is used in the CSS file, 
-		 * you might see something like this: url('../').
-		 * Here we are simply replacing that relative path and use an
-		 * absolute path so image or font don't get broken.
+		 * For instance, if an image or a font is used in the CSS file, you might see 
+		 * something like this: url("../"). Here we are simply replacing that relative
+		 * path and use an absolute path so images or fonts don't get broken.
 		 */
-		if (filter_var($old_file, FILTER_VALIDATE_URL) === FALSE 
-			&& pathinfo($file, PATHINFO_EXTENSION) === 'css'
+		if (pathinfo($file_path, PATHINFO_EXTENSION) === 'css'
 			&& preg_match_all('/url\((["\']?)(.+?)\\1\)/i', $output, $matches, PREG_SET_ORDER))
 		{
 			$search  = array();
 			$replace = array();
 
-			$import_url = str_replace(array('http:', 'https:', basename($file)), '', $file);
+			// Things to remove.
+			$to_remove = array(basename($file_path), $type);
+			if (false === $is_url)
+			{
+				$to_remove[] = $this->theme->common_path();
+			}
+
+			$import_url = str_replace($to_remove, '', $file_path);
+			if (false === $is_url)
+			{
+				$import_url = str_replace(
+					array('http:', 'https:'),
+					'',
+					$this->theme->common_url($import_url)
+				);
+
+				$import_url = rtrim($import_url, '\\');
+			}
 
 			foreach ($matches as $match)
 			{
 				$count = substr_count($match[2], '../');
 				$search[] = str_repeat('../', $count);
 				$temp_import_url = $import_url;
-				for ($i=1; $i <= $count; $i++) { 
+				for ($i=1; $i < $count; $i++) { 
 					$temp_import_url = str_replace(basename($temp_import_url), '', $temp_import_url);
 				}
 				$replace[] = rtrim($temp_import_url, '/').'/';
 			}
-
 			// Replace everything if the output.
 			$output = str_replace(array_unique($search), array_unique($replace), $output);
 		}
 
+		// Return the final output.
 		return $output;
 	}
 
@@ -410,10 +307,10 @@ class Load extends KB_Controller
 
 	/**
 	 * This method handles old cached assets deletion.
-	 * @access 	private
+	 * @access 	protected
 	 * @return 	void
 	 */
-	private function _delete_cache()
+	protected function _delete_cache()
 	{
 		// Prepare the path to to assets folder.
 		$path = APPPATH.'cache/assets/';
