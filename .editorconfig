@@ -16,3 +16,4 @@ indent_style = tab
 
 [*.{js,ts,css,scss}]
 indent_style = space
+insert_final_newline = false
