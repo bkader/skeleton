@@ -29,7 +29,6 @@
         };
     });
 
-
     // ========================================================
     // Sidebar toggle.
     // ========================================================
@@ -113,21 +112,34 @@
     // ========================================================
     jQuery(document).ready(function () {
 
-        // Configure toastr.
+        // --------------------------------------------------------
+        // Toastr Configuration.
+        // --------------------------------------------------------
         toastr.options = {
             "closeButton": true,
             "positionClass": "toast-top-center",
             "hideDuration": "300",
-            "timeOut": "3000",
+            "timeOut": "3500",
             "showEasing": "swing",
             "hideEasing": "linear",
             "showMethod": "fadeIn",
             "hideMethod": "fadeOut"
         };
 
-        if (config.lang.direction === 'rtl') {
+        // Right-to-left language?
+        if (Config.lang.direction === 'rtl') {
             toastr.options.rtl = true;
         }
+
+        // --------------------------------------------------------
+        // BootBox Configuration.
+        // --------------------------------------------------------
+        bootbox.setDefaults({
+            backdrop: false,
+            closeButton: false,
+            locale: Config.lang.code,
+            size: "small"
+        });
 
         // Dismissable alert.
         jQuery(".alert-dismissable").fadeTo(3000, 500).slideUp(500, function () {
