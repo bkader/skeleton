@@ -128,6 +128,27 @@ class Admin extends Admin_Controller
 				$activity->ip_address,
 				'target="_blank"'
 			);
+
+			// Does the activity have a translation?
+			$string = $activity->activity;
+			if (0 === strpos($string, 'lang:'))
+			{
+				// we remove the "lang:" part first.
+				$string = str_replace('lang:', '', $string);
+
+				// Does it need arguments passed?
+				if (false !== strpos($string, '::'))
+				{
+					$exp    = explode('::', $string);
+					$line   = lang(array_shift($exp));
+					$string = vsprintf($line, $exp);
+				}
+				else
+				{
+					$string = lang($string);
+				}
+			}
+			$activity->activity = $string;
 		}
 
 		// Add activities to view.
