@@ -43,9 +43,12 @@ if ( ! function_exists('label_condition'))
 	 * This is a dummy function used to display Boostrap labels
 	 * depending on a given condition.
 	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Fixed issue with translation.
+	 *
 	 * @param 	bool 	$cond 	The conditions result.
 	 * @param 	string 	$true 	String to output if true.
-	 * @param 	string 	$aalse 	String to output if aalse.
+	 * @param 	string 	$false 	String to output if false.
 	 * @return 	string
 	 */
 	function label_condition($cond, $true = 'lang:yes', $false = 'lang:no')
@@ -54,11 +57,11 @@ if ( ! function_exists('label_condition'))
 		$label = '<span class="label label-%s">%s</span>';
 
 		// Should strings be translated?
-		if (sscanf($true, 'lang:%s', $true_line))
+		if (sscanf($true, 'lang:%s', $true_line) === 1)
 		{
 			$true = lang($true_line);
 		}
-		if (sscanf($false, 'lang:%s', $false_line))
+		if (sscanf($false, 'lang:%s', $false_line) === 1)
 		{
 			$false = lang($false_line);
 		}
