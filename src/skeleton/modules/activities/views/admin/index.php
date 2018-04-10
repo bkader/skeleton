@@ -55,12 +55,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		<table class="table table-hover table-condensed table-striped">
 			<thead>
 				<tr>
-					<th><?php _e('user'); ?></th>
-					<th><?php _e('module'); ?></th>
-					<th><?php _e('activity'); ?></th>
-					<th><?php _e('ip_address'); ?></th>
-					<th><?php _e('date'); ?></th>
-					<th class="text-right"><?php _e('action'); ?></th>
+					<th class="col-xs-2"><?php _e('user'); ?></th>
+					<th class="col-xs-1"><?php _e('module'); ?></th>
+					<th class="col-xs-4"><?php _e('activity'); ?></th>
+					<th class="col-xs-2"><?php _e('ip_address'); ?></th>
+					<th class="col-xs-2"><?php _e('date'); ?></th>
+					<th class="col-xs-1 text-right"><?php _e('action'); ?></th>
 				</tr>
 			</thead>
 <?php if ($activities): ?>
