@@ -122,7 +122,7 @@ class KB_Pagination extends CI_Pagination
 	protected function _admin_params()
 	{
 		return array(
-			'full_tag_open'        => '<div class="text-center"><ul class="pagination pagination-small pagination-centered m0">',
+			'full_tag_open'        => '<div class="text-center"><ul class="pagination pagination-sm pagination-centered m0">',
 			'full_tag_close'       => '</ul></div>',
 			'num_links'            => 5,
 			'num_tag_open'         => '<li>',
