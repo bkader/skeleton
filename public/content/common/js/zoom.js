@@ -282,4 +282,4 @@
     new ZoomService().listen()
   })
 
-}(jQuery)
+}(jQuery);
