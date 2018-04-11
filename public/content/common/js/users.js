@@ -16,7 +16,7 @@
     // ========================================================
     // User Class.
     // ========================================================
-    Kbcore.user = {
+    Kbcore.users = {
 
         // Activate user.
         activate: function (el) {
@@ -147,7 +147,7 @@
     // ========================================================
     jQuery(document).on("click", ".user-activate", function (e) {
         e.preventDefault();
-        return Kbcore.user.activate(this);
+        return Kbcore.users.activate(this);
     });
 
     // ========================================================
@@ -155,7 +155,7 @@
     // ========================================================
     jQuery(document).on("click", ".user-deactivate", function (e) {
         e.preventDefault();
-        return Kbcore.user.deactivate(this);
+        return Kbcore.users.deactivate(this);
     });
 
     // ========================================================
@@ -163,7 +163,7 @@
     // ========================================================
     jQuery(document).on("click", ".user-delete", function (e) {
         e.preventDefault();
-        return Kbcore.user.delete(this);
+        return Kbcore.users.delete(this);
     });
 
     // ========================================================
@@ -171,7 +171,7 @@
     // ========================================================
     jQuery(document).on("click", ".user-restore", function (e) {
         e.preventDefault();
-        return Kbcore.user.restore(this);
+        return Kbcore.users.restore(this);
     });
 
     // ========================================================
@@ -179,7 +179,7 @@
     // ========================================================
     jQuery(document).on("click", ".user-remove", function (e) {
         e.preventDefault();
-        return Kbcore.user.remove(this);
+        return Kbcore.users.remove(this);
     });
 
 })(jQuery);
