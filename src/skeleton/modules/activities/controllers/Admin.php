@@ -156,7 +156,7 @@ class Admin extends Admin_Controller
 
 		// Set page title and render view.
 		$this->theme
-			->set_title(lang('activities_log'))
+			->set_title(lang('activity_log'))
 			->add_inline('js', $this->_delete_script())
 			->render($data);
 	}

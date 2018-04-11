@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		1.3.3
  * @version 	1.3.3
  */
-?><h2 class="page-header clearfix"><?php _e('activities_log'); ?><?php echo $back_anchor; ?></h2>
+?><h2 class="page-header clearfix"><?php _e('activity_log'); ?><?php echo $back_anchor; ?></h2>
 <div class="panel panel-default">
 	<div class="table-responsive">
 		<table class="table table-hover table-condensed table-striped">
