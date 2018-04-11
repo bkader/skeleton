@@ -183,7 +183,7 @@ $lang['error_action_permission'] = 'You do not have permission to perform this a
 $lang['form_validation_alpha_extra']       = 'The {field} may contain only alpha-numeric characters, spaces, periods, underscores and dashes.';
 $lang['form_validation_check_credentials'] = 'Invalid username/email address and/or password.';
 $lang['form_validation_current_password']  = 'Your current password in incorrect.';
-$lang['form_validation_unique_email']      = 'This email address is alraedy in use.';
+$lang['form_validation_unique_email']      = 'This email address is already in use.';
 $lang['form_validation_unique_username']   = 'This username is not available.';
 $lang['form_validation_user_exists']       = 'No user was found with that username or email address.';
 
