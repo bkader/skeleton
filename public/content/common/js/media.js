@@ -12,7 +12,7 @@
     // Hold some needed variables.
     // ========================================================
     var wrapper = wrapper || jQuery("#wrapper"),
-        mediaURL = config.adminURL + "/media",
+        mediaURL = Config.adminURL + "/media",
         droparea = jQuery('[data-dropzone]'),
         upload_url = droparea.attr('data-upload-url');
 
