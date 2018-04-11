@@ -281,10 +281,10 @@ class KB_Controller extends CI_Controller
 		$csrf_value = random_string('alnum', 32);
 
 		// Store flash data.
-		$this->session->set_flashdata(array(
+		$this->session->set_tempdata(array(
 			'csrf_key'   => $csrf_key,
 			'csrf_value' => $csrf_value,
-		));
+		), null, 300);
 
 		// Return the array for later use.
 		return array($csrf_key => $csrf_value);
@@ -301,10 +301,10 @@ class KB_Controller extends CI_Controller
 	 */
 	public function check_csrf()
 	{
-		$csrf_key = $this->input->post($this->session->flashdata('csrf_key'));
+		$csrf_key = $this->input->post($_SESSION['csrf_key']);
 
 		// It returns true only of the key is set and the value is valid.
-		return ($csrf_key && $csrf_key == $this->session->flashdata('csrf_value'));
+		return ($csrf_key && $_SESSION['csrf_value'] === $csrf_key);
 	}
 
 	// ------------------------------------------------------------------------
