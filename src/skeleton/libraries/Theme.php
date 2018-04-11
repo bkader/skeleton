@@ -211,9 +211,12 @@ EOT;
 
 	/**
 	 * Set to true if the language file was loaded.
-	 * @var bool
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Renamed.
+	 * @var 	bool
 	 */
-	private $_theme_lang_loaded = false;
+	private $_translation_loaded = false;
 
 	/**
 	 * Holds the currently used language details.
@@ -283,9 +286,12 @@ EOT;
 
 	/**
 	 * Holds the page's title parts separator.
-	 * @var string
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Changed.
+	 * @var 	string
 	 */
-	private $_title_sep = '&#150;';
+	private $_title_sep = '&#8212;';
 
 	/**
 	 * Holds an array of all <meta> tags.
@@ -294,19 +300,19 @@ EOT;
 	private $_meta_tags = array();
 
 	/**
-	 * Array of stylesheets to add first.
+	 * Array of StyleSheets to add first.
 	 * @var array
 	 */
 	private $_prepended_styles = array();
 
 	/**
-	 * Array of stylesheets
+	 * Array of StyleSheets
 	 * @var array
 	 */
 	private $_styles = array();
 
 	/**
-	 * Array of inline styles.
+	 * Array of in-line styles.
 	 * @var array
 	 */
 	private $_inline_styles = array();
@@ -362,7 +368,7 @@ EOT;
 	private $_scripts = array();
 
 	/**
-	 * Array of inline scripts to output.
+	 * Array of in-line scripts to output.
 	 * @var array
 	 */
 	private $_inline_scripts = array();
@@ -534,60 +540,6 @@ EOT;
 
 		// Benchmark for eventual use.
 		$this->ci->benchmark->mark('theme_initialize_end');
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Remove all filters and actions.
-	 * @access 	protected
-	 * @return 	void
-	 */
-	public function reset()
-	{
-		$filters = array(
-			'after_meta',
-			'after_scripts',
-			'after_styles',
-			'after_theme_setup',
-			'alert_classes',
-			'alert_template',
-			'before_meta',
-			'before_scripts',
-			'before_styles',
-			'body_class',
-			'enqueue_meta',
-			'enqueue_partials',
-			'enqueue_scripts',
-			'enqueue_styles',
-			'extra_head',
-			'html_class',
-			'init',
-			'language_attributes',
-			'the_charset',
-			'the_content',
-			'the_title',
-			'theme_layout',
-			'theme_layout_fallback',
-			'theme_layouts_path',
-			'theme_menus',
-			'theme_partial_fallback',
-			'theme_partials_path',
-			'theme_translation',
-			'theme_view',
-			'theme_view_fallback',
-			'theme_views_path'
-		);
-
-		// Exclude filters?
-		$args = func_get_args();
-		if ( ! empty($args))
-		{
-			(is_array($args[0])) && $args = $args[0];
-			$filters = array_diff($filters, $args);
-		}
-
-		array_map('remove_all_filters', $filters);
 	}
 
 	// --------------------------------------------------------------------
@@ -954,12 +906,18 @@ EOT;
 
 	/**
 	 * Returns the current layout's name.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Separated dashboard and front-end hooks.
+	 * 
 	 * @access 	protected
 	 * @return 	string.
 	 */
 	public function get_layout()
 	{
-		$this->_layout = apply_filters('theme_layout', $this->_layout);
+		$this->_layout = ('admin' === $this->controller)
+			? apply_filters('admin_layout', $this->_layout)
+			: apply_filters('theme_layout', $this->_layout);
 
 		return $this->_layout;
 	}
@@ -984,6 +942,10 @@ EOT;
 
 	/**
 	 * Returns the current view's name.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Separated dashboard and front-end hooks.
+	 * 
 	 * @access 	protected
 	 * @return 	string.
 	 */
@@ -992,9 +954,28 @@ EOT;
 		// Make sure the view is set.
 		(isset($this->_view)) OR $this->_view = $this->_guess_view();
 
-		// See if there are any filters applied here.
-		$this->_view = apply_filters('theme_view', $this->_view);
+		// Are we on the front-end?
+		if ('admin' !== $this->controller)
+		{
+			$this->_view = apply_filters('theme_view', $this->_view);
+			return $this->_view;
+		}
 
+		// There is no admin filter?
+		if (false === has_filter('admin_view'))
+		{
+			// Are we on a module that exists?
+			if (null !== $this->module 
+				&& false !== $module_path = $this->ci->router->module_path($this->module))
+			{
+				$this->_view = $module_path.'views/'.$this->controller.'/'.$this->method;
+			}
+
+			return $this->_view;
+		}
+
+		// Otherwise, apply the filter and return the view.
+		$this->_view = apply_filters('admin_view', $this->_view);
 		return $this->_view;
 	}
 
@@ -1061,6 +1042,10 @@ EOT;
 
 	/**
 	 * Returns the current page's title.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Separated dashboard and front-end hooks.
+	 * 
 	 * @access 	protected
 	 * @param 	string 	$before 	string to be prepended.
 	 * @param 	string 	$after 		string to be appended.
@@ -1068,69 +1053,75 @@ EOT;
 	 */
 	public function get_title($before = null, $after = null)
 	{
-		// Already set? Return it.
-		if (isset($this->_title))
-		{
-			return apply_filters('the_title', $this->_title);
-		}
+		// The title not set? Guess it.
+		(isset($this->_title)) OR $this->_title = $this->_guess_title();
 
-		// Make sure it's an array.
-		(is_array($this->_title)) OR $this->_title = array($this->_title);
+		// We make sure the title is an array.
+		(is_array($this->_title)) OR $this->_title = (array) $this->_title;
 
-		$this->_title = array_filter($this->_title);
+		// we apply filter to it.
+		$this->_title = ('admin' === $this->controller)
+			? apply_filters('admin_title', $this->_title)
+			: apply_filters('the_title', $this->_title);
 
-		// If the title is empty, we guess.
-		(empty($this->_title)) && $this->_title = $this->_guess_title();
+		// Something to put before or after?
+		(null !== $before) && array_unshift($this->_title, $before);
+		(null !== $after) && array_push($this->_title, $after);
 
-		// Apply filter if there are any.
-		$this->_title = apply_filters('before_title', $this->_title);
-
-		if ($before !== null)
-		{
-			array_unshift($this->_title, $before);
-		}
-
-		if ($after !== null)
-		{
-			$this->_title[] = $after;
-		}
+		// We trim then remove empty elements and duplicates.
+		$this->_title  = array_map('trim', $this->_title);
+		$this->_title = array_unique(array_filter($this->_title), SORT_STRING);
 
 		// Create the title string.
-		$this->_title = implode($this->_title_sep, array_unique($this->_title, SORT_STRING));
+		$this->_title = implode($this->_title_sep, $this->_title);
+
+		// We add "Skeleton" to the end only on the dashboard.
+		if ('admin' === $this->controller)
+		{
+			$this->_title .= apply_filters('skeleton_title', ' &lsaquo; Skeleton');
+
+			// We add site name to the end.
+			if (null !== $site_name = $this->ci->config->item('site_name'))
+			{
+				$this->_title .= $this->_title_sep.$site_name;
+			}
+		}
 
 		// Return the title.
-		return $before.$this->_title.$after;
+		return $this->_title;
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
 	 * Attempt to guess the title if it's not set.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Enhanced.
+	 * 
 	 * @access 	private
 	 * @return 	array
 	 */
 	private function _guess_title()
 	{
-		$temp_title = array(
-			$this->method
-		);
+		$temp_title = ('index' !== $this->method) ? $this->method : array();
 
-
-		if ($this->controller != $this->method)
+		// Controller has same module's name or module is null?
+		if (null === $this->module)
 		{
 			array_unshift($temp_title, $this->controller);
 		}
-
-		if (isset($this->module) && $this->module !== null && $this->module <> $this->controller)
+		// Admin? We put "Admin" first.
+		elseif ('admin' === $this->controller)
 		{
-			array_unshift($temp_title, $this->module);
+			array_unshift($temp_title, 'admin', $this->module);
+		}
+		else
+		{
+			array_unshift($temp_title, $this->module, $this->controller);
 		}
 
-		$temp_title = array_filter(array_map('ucwords', $temp_title));
-		$title      = implode($this->_title_sep, $temp_title);
-		return array(
-			$title
-		);
+		return array_filter(array_map('ucwords', $temp_title));
 	}
 
 	// --------------------------------------------------------------------
@@ -1181,19 +1172,34 @@ EOT;
 
 	/**
 	 * Takes all site meta tags and prepare the output string.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Separated dashboard and front-end hooks.
+	 * 
 	 * @access 	protected
 	 * @return 	string
 	 */
-	public function output_meta_tags()
+	public function print_meta_tags()
 	{
+		// Prepare filters.
+		$before_filter = 'before_meta';
+		$after_filter  = 'after_meta';
+
+		// On dashboard?
+		if ('admin' === $this->controller)
+		{
+			$before_filter = 'admin_before_meta';
+			$after_filter  = 'admin_after_meta';
+		}
+
 		// If there are any 'before_meta', apply them.
-		$meta_tags = apply_filters('before_meta', '');
+		$meta_tags = apply_filters($before_filter, '');
 
 		// Append our output meta_tags.
 		$meta_tags .= $this->_render_meta_tags();
 
 		// If there are any 'after_meta', apply them.
-		$meta_tags = apply_filters('after_meta', $meta_tags);
+		$meta_tags = apply_filters($after_filter, $meta_tags);
 
 		return $meta_tags;
 	}
@@ -1201,23 +1207,32 @@ EOT;
 	// --------------------------------------------------------------------
 
 	/**
-	 * Collectes all additional meta_tags and prepare them for output
+	 * Collects all additional meta_tags and prepare them for output
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Separated dashboard and front-end hooks.
+	 * 
 	 * @access 	private
 	 * @param 	none
 	 * @return 	string
 	 */
 	private function _render_meta_tags()
 	{
-		// Add the generator that can be altered using "skeleton_generator" filter.
-		$generator = apply_filters('skeleton_generator', 'CodeIgniter Skeleton '.KB_VERSION);
-		if ( ! empty($generator))
+		// Prepare the action to be done.
+		$action = 'admin_enqueue_meta';
+
+		// On the front-end?
+		if ('admin' !== $this->controller)
 		{
-			$this->add_meta('generator', $generator);
+			$action = 'enqueue_meta';
+
+			// Add our generator tag if not empty.
+			$generator = apply_filters('skeleton_generator', 'CodeIgniter Skeleton '.KB_VERSION);
+			(empty($generator)) OR $this->add_meta('generator', $generator);
 		}
 
-		// If there are any enqueued meta tags from functions, add them.
-		do_action('enqueue_admin_meta');
-		do_action('enqueue_meta');
+		// Do the action.
+		do_action($action);
 
 		// Kick off with an empty output.
 		$output = '';
@@ -1244,6 +1259,9 @@ EOT;
 
 	/**
 	 * Add any type of CSS of JS files.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Lowercase $handle and turn back on removing extension.
 	 * @access 	public
 	 * @param 	string 	$type 		type of file to add.
 	 * @param 	string 	$file 		the file to add.
@@ -1275,6 +1293,9 @@ EOT;
 			$handle           = preg_replace("/-{$type}$/", '', $handle)."-{$type}";
 			$attributes['id'] = $handle;
 		}
+
+		// We make sure $handle is always lowercased.
+		$handle = strtolower($handle);
 
 		/**
 		 * If the file is a full url (cdn or using get_theme_url(..))
@@ -1326,6 +1347,7 @@ EOT;
 		}
 
 		$this->{$files}[$handle] = $attributes;
+		$this->_remove_extension = true;
 		return $this;
 	}
 
@@ -1389,6 +1411,10 @@ EOT;
 
 	/**
 	 * Remplaces any file by another.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Lowercase $handle and turn back on removing extension.
+	 * 
 	 * @access 	public
 	 * @param 	string 	$type 		type of file to add.
 	 * @param 	string 	$file 		the file to add.
@@ -1423,6 +1449,9 @@ EOT;
 			$handle           = preg_replace("/-{$type}$/", '', $handle)."-{$type}";
 			$attributes['id'] = $handle;
 		}
+
+		// We make sure $handle is always lowercased.
+		$handle = strtolower($handle);
 
 		/**
 		 * If the file is a full url (cdn or using get_theme_url(..))
@@ -1464,16 +1493,18 @@ EOT;
 		{
 			$this->_scripts[$handle] = $attributes;
 		}
+
+		$this->_remove_extension = true;
 		return $this;
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	 * Allows user to add inline elements (CSS or JS)
+	 * Allows user to add in-line elements (CSS or JS)
 	 * @access 	public
 	 * @param 	string 	$type 		the file's type to add.
-	 * @param 	string 	$content 	the inline content.
+	 * @param 	string 	$content 	the in-line content.
 	 * @param 	string 	$handle 	before which handle the content should be output.
 	 * @return 	object
 	 */
@@ -1481,13 +1512,13 @@ EOT;
 	{
 		$handle = preg_replace("/-{$type}$/", '', $handle)."-{$type}";
 
-		// In case of inline styles.
+		// In case of in-line styles.
 		if ('css' == $type)
 		{
 			$this->_inline_styles[$handle] = $content;
 		}
 
-		// In case of inline scripts.
+		// In case of in-line scripts.
 		elseif ('js' == $type)
 		{
 			$this->_inline_scripts[$handle] = $content;
@@ -1514,21 +1545,37 @@ EOT;
 	// --------------------------------------------------------------------
 
 	/**
-	 * Outputs all site stylesheets and inline styes string.
+	 * Outputs all site StyleSheets and in-line styles string.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Renamed and separated dashboard and front-end hooks.
+	 *
+	 * @access 	public
 	 * @return 	string
 	 */
-	public function output_styles()
+	public function print_styles()
 	{
 		$styles = '';
 
+		// Prepare filters.
+		$before_filter = 'before_styles';
+		$after_filter  = 'after_styles';
+
+		// On dashboard?
+		if ('admin' === $this->controller)
+		{
+			$before_filter = 'admin_before_styles';
+			$after_filter  = 'admin_after_styles';
+		}
+
 		// Any before styles filters?
-		$styles = apply_filters('before_styles', $styles);
+		$styles = apply_filters($before_filter, $styles);
 
 		// Render all enqueued ones.
 		$styles .= $this->_render_styles();
 
 		// Any after styles filters?
-		$styles = apply_filters('after_styles', $styles);
+		$styles = apply_filters($after_filter, $styles);
 
 		return $styles;
 	}
@@ -1537,20 +1584,35 @@ EOT;
 
 	/**
 	 * Collect all additional CSS files and prepare them for output
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Separated dashboard and front-end hooks.
+	 * 
 	 * @access 	private
 	 * @param 	none
 	 * @return 	string
 	 */
 	private function _render_styles()
 	{
-		do_action('enqueue_admin_styles');
-		do_action('enqueue_styles');
+		// Prepare our action and filter.
+		$action = 'enqueue_styles';
+		$filter = 'print_styles';
+
+		// On dashboard?
+		if ('admin' === $this->controller)
+		{
+			$action = 'admin_enqueue_styles';
+			$filter = 'admin_print_styles';
+		}
+
+		// Do the action.
+		do_action($action);
 
 		/**
 		 * Here we are allowing themes, plugins or other resources
 		 * to alter the behavior of this method.
 		 */
-		$_temp_output = apply_filters('output_styles', array(
+		$_temp_output = apply_filters($filter, array(
 			'inline' => $this->_inline_styles,
 			'styles' => $this->_styles,
 			'output' => null,
@@ -1607,22 +1669,37 @@ EOT;
 	// --------------------------------------------------------------------
 
 	/**
-	 * Outputs all script tags and inline scripts.
+	 * Outputs all script tags and in-line scripts.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Renamed and separated dashboard and front-end hooks.
+	 * 
 	 * @access 	protected
 	 * @return 	string
 	 */
-	public function output_scripts()
+	public function print_scripts()
 	{
+		// Prepare before and after filters.
+		$before_filter = 'before_scripts';
+		$after_filter  = 'after_scripts';
+
+		// On dashboard?
+		if ('admin' === $this->controller)
+		{
+			$before_filter = 'admin_before_scripts';
+			$after_filter  = 'admin_after_scripts';
+		}
+
 		$scripts = '';
 
 		// Any before scripts filters?
-		$scripts = apply_filters('before_scripts', $scripts)."\t";
+		$scripts = apply_filters($before_filter, $scripts)."\t";
 
 		// Render all enqueued ones.
 		$scripts .= $this->_render_scripts();
 
 		// Any after scripts filters?
-		$scripts = apply_filters('after_scripts', $scripts)."\t";
+		$scripts = apply_filters($after_filter, $scripts)."\t";
 
 		return $scripts;
 	}
@@ -1637,14 +1714,25 @@ EOT;
 	 */
 	private function _render_scripts()
 	{
-		do_action('enqueue_admin_scripts');
-		do_action('enqueue_scripts');
+		// Prepare the action and filter.
+		$action = 'enqueue_scripts';
+		$filter = 'print_scripts';
+
+		// On dashboard?
+		if ('admin' === $this->controller)
+		{
+			$action = 'admin_enqueue_scripts';
+			$filter = 'admin_print_scripts';
+		}
+
+		// Do the action.
+		do_action($action);
 
 		/**
 		 * Here we are allowing themes, plugins or other resources
 		 * to alter the behavior of this method.
 		 */
-		$_temp_output = apply_filters('output_scripts', array(
+		$_temp_output = apply_filters($filter, array(
 			'inline'  => $this->_inline_scripts,
 			'scripts' => $this->_scripts,
 			'output'  => null,
@@ -1698,14 +1786,27 @@ EOT;
 	 * @param 	string 	$site_id 	Google Analytics ID
 	 * @return 	string
 	 */
-	public function output_analytics($site_id = null)
+	public function print_analytics($site_id = null)
 	{
-		// Get the default Google analytics ID.
-		($site_id) OR $site_id = $this->ci->config->item('google_analytics_id');
-		$output = "";
-		if ($site_id !== 'UA-XXXXX-Y' && $site_id !== null)
+		// No $site_id provided? Get it from configuration.
+		if (null === $site_id)
 		{
-			$output = str_replace('{site_id}', $site_id, $this->_template_google_analytics)."\n";
+			$site_id = $this->ci->config->item('google_analytics_id');
+		}
+		
+		// Prepare the output.
+		$output = '';
+
+		// Valid $site_id? Use it.
+		if ('UA-XXXXX-Y' !== $site_id && null !== $site_id)
+		{
+			// We pass our analytics template to filter.
+			$temp_analytics = ('admin' === $this->controller)
+				? apply_filters('admin_google_analytics', $this->_template_google_analytics)
+				: apply_filters('google_analytics', $this->_template_google_analytics);
+
+			// We replace placeholder.
+			$output = str_replace('{site_id}', $site_id, $temp_analytics)."\n";
 		}
 		return $output;
 	}
@@ -1716,14 +1817,21 @@ EOT;
 
 	/**
 	 * Outputs all additional head string.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Added the "admin_head" filter to admin section.
+	 * 
 	 * @access 	protected
 	 * @param 	string 	$content
 	 * @return 	string
 	 */
-	public function output_extra_head($content = "\n")
+	public function print_extra_head($content = "\n")
 	{
-		// If there any extra head filters, add them.
-		return apply_filters('extra_head', $content);
+		$content = ('admin' === $this->controller)
+			? apply_filters('admin_head', $content)
+			: apply_filters('extra_head', $content);
+
+		return $content;
 	}
 
 	// --------------------------------------------------------------------
@@ -1746,6 +1854,8 @@ EOT;
 
 		return $this;
 	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Displays a partial view alone.
@@ -1791,9 +1901,20 @@ EOT;
 		 * This allows the user to override the default
 		 * header template provided by the theme
 		 */
-		($file === null) && $file = 'header';
-		$header_file = $this->theme_path(preg_replace('/.php$/', '', $file).'.php');
+		(null === $file) && $file = 'header';
+		$file = preg_replace('/.php$/', '', $file).'.php';
 
+		// On front-end?
+		if ('admin' !== $this->controller)
+		{
+			$header_file = $this->theme_path($file);
+		}
+		else
+		{
+			$header_file = realpath(KBPATH.'views/admin/partials/header.php');
+		}
+
+		// The file exists? Load it.
 		if (file_exists($header_file))
 		{
 			$output = $this->ci->load->file($header_file, true);
@@ -1812,10 +1933,10 @@ EOT;
 			$replace['base_url'] = base_url();
 
 			// <html> class.
-			$replace['html_class'] = $this->get_html_class();
+			$replace['html_class'] = $this->html_class();
 
 			// Language attributes.
-			$replace['language_attributes'] = $this->get_language_attributes();
+			$replace['language_attributes'] = $this->language_attributes();
 
 			// Charset.
 			$replace['charset'] = $this->charset();
@@ -1824,13 +1945,13 @@ EOT;
 			$replace['title'] = $this->get_title();
 
 			// Let's add <meta> tags now;
-			$replace['meta_tags'] = $this->output_meta_tags();
+			$replace['meta_tags'] = $this->print_meta_tags();
 
-			// Prepare all stylesheets.
-			$replace['stylesheets'] = $this->output_styles();
+			// Prepare all StyleSheets.
+			$replace['stylesheets'] = $this->print_styles();
 
 			// Any additional extra head?
-			$replace['extra_head'] = $this->output_extra_head();
+			$replace['extra_head'] = $this->print_extra_head();
 
 			// Prepare body class.
 			$replace['body_class'] = $this->body_class();
@@ -1861,36 +1982,36 @@ EOT;
 	public function get_footer($file = null)
 	{
 		/**
-		 * Let's first add our default javascripts which
-		 * can be overriden by on functions.php by whether
+		 * Let's first add our default JavaScripts which
+		 * can be overridden by on functions.php by whether
 		 * replace_js, remove_js or even add_js if the given
 		 * $handle is the same.
 		 */
-
-		// Add modernizr if not targetted for remove.
-		if (isset($this->_removed_scripts)
-			&& ! in_array('modernizr-js', $this->_removed_scripts))
+		if (isset($this->_removed_scripts))
 		{
-			$modernizr_url = (true === $this->cdn_enabled(false))
-				? 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js'
-				: $this->common_url('js/modernizr-2.8.3.min.js');
+			// We start with Modernizr.
+			if ( ! in_array('modernizr-js', $this->_removed_scripts))
+			{
+				// Default is from CDN.
+				$modernizr_url = 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js';
+				if (false === $this->cdn_enabled(false) OR 'development' === ENVIRONMENT)
+				{
+					$modernizr_url = $this->common_url('js/modernizr-2.8.3.min.js');
+				}
+				$this->add('js', $modernizr_url, 'modernizr', null, true);
+			}
+			
+			// We now add jQuery.
+			if ( ! in_array('jquery-js', $this->_removed_scripts))
+			{
+				$jquery_url = 'https://code.jquery.com/jquery-3.2.1.min.js';
+				if (false === $this->cdn_enabled(false) OR 'development' === ENVIRONMENT)
+				{
+					$jquery_url = $this->common_url('js/jquery-3.2.1.min.js');
+				}
+				$this->add('js', $jquery_url, 'jquery', null, true);
+			}
 
-			$this->add('js', $modernizr_url, 'modernizr', null, true);
-
-			unset($modernizr_url);
-		}
-
-		// Add jQuery if not targetted for remove.
-		if (is_array($this->_removed_scripts)
-			&& ! in_array('jquery-js', $this->_removed_scripts))
-		{
-			$jquery_url = (true === $this->cdn_enabled(false))
-				? 'https://code.jquery.com/jquery-3.2.1.min.js'
-				: $this->common_url('js/jquery-3.2.1.min.js');
-
-			$this->add('js', $jquery_url, 'jquery', null, true);
-
-			unset($jquery_url);
 		}
 
 		/**
@@ -1898,13 +2019,25 @@ EOT;
 		 * This allows the user to override the default
 		 * footer template provided by the class.
 		 */
-		($file === null) && $file = 'footer';
-		$footer_file = $this->theme_path(preg_replace('/.php$/', '', $file).'.php');
+		(null === $file) && $file = 'footer';
+		$file = preg_replace('/.php$/', '', $file).'.php';
 
+		// On front-end?
+		if ('admin' !== $this->controller)
+		{
+			$footer_file = $this->theme_path($file);
+		}
+		else
+		{
+			$footer_file = realpath(KBPATH.'views/admin/partials/footer.php');
+		}
+
+		// The file exists? Load it.
 		if (file_exists($footer_file))
 		{
-			$output = $this->ci->load->file($footer_file, true);
+			$output = $this->ci->load->file($header_file, true);
 		}
+
 		/**
 		 * If the footer file is not found, we proceed
 		 * to replacements and prepare our output.
@@ -1915,8 +2048,8 @@ EOT;
 				'{javascripts}',
 				'{analytics}'
 			), array(
-				$this->output_scripts(),
-				$this->output_analytics()
+				$this->print_scripts(),
+				$this->print_analytics()
 			), $this->_template_footer);
 		}
 
@@ -1929,38 +2062,60 @@ EOT;
 	// --------------------------------------------------------------------
 
 	/**
-	 * Return the string to use for get_html_class()
+	 * Return the string to use for html_class()
 	 * @access 	protected
 	 * @param 	string 	$class to add.
 	 * @return 	string
 	 */
-	public function get_html_class($class = null)
+	public function html_class($class = null)
 	{
-		// Apply any filters targetting this class.
-		$this->_html_classes = apply_filters('html_class', $this->_html_classes);
+		// Initial output.
+		$output = '';
+
+		// Apply any filters targeting this class.
+		$this->_html_classes = ('admin' === $this->controller)
+			? apply_filters('admin_html_class', $this->_html_classes)
+			: apply_filters('html_class', $this->_html_classes);
 
 		// If any class is provided, add it.
-		if ($class !== null)
-		{
-			$this->_html_classes[] = $class;
-		}
+		(null !== $class) && array_unshift($this->_html_classes, $class);
 
-		/**
-		 * By using the following, we make sure to trim spaces
-		 * and remove any duplicate classes.
-		 */
+		// We proceed only if there are some classes.
 		if ( ! empty($this->_html_classes) && is_array($this->_html_classes))
 		{
-			$this->_html_classes = array_unique(array_map('trim', $this->_html_classes));
+			// We make sure classes are in an array
+			(is_array($this->_html_classes)) OR $this->_html_classes = (array) $this->_html_classes;
+
+			// We remove empty elements, trim spaces, and keep only unique classes.
+			$this->_html_classes = array_filter($this->_html_classes);
+			$this->_html_classes = array_map('trim', $this->_html_classes);
+			$this->_html_classes = array_unique($this->_html_classes);
+
+			// Stile not empty? Add everything.
+			if ( ! empty($this->_html_classes))
+			{
+				$output .= ' class="'.implode(' ', $this->_html_classes).'"';
+			}
 		}
 
-		// If there are any classes, we build the attribute.
-		if ( ! empty($this->_html_classes))
-		{
-			return ' class="'.implode(' ', $this->_html_classes).'"';
-		}
+		// Return the final output.
+		return $output;
+	}
 
-		return null;
+	// -------------------------------------------------------------------
+
+	/**
+	 * Returns the array of html classes.
+	 *
+	 * @since 	1.3.3
+	 * 
+	 * @access 	protected
+	 * @param 	none
+	 * @return 	array
+	 */
+	public function get_html_class()
+	{
+		return $this->_html_classes;
 	}
 
 	// --------------------------------------------------------------------
@@ -1971,13 +2126,18 @@ EOT;
 	 * @param 	array 	$attributes
 	 * @return 	string
 	 */
-	public function get_language_attributes(string $attributes = null)
+	public function language_attributes(string $attributes = null)
 	{
+		// Initial output.
+		$output = '';
+
 		// Add the first attributes which is the language set in config.
 		$attrs = array($this->language('code'));
 
-		// Apply any filters targetting these attributes.
-		$attrs = apply_filters('language_attributes', $attrs);
+		// Apply any filters targeting these attributes only.
+		$attrs = ('admin' === $this->controller)
+			? apply_filters('admin_language_attributes', $attrs)
+			: apply_filters('language_attributes', $attrs);
 
 		// If there are any extra attributes, we add them.
 		if ($attributes !== null)
@@ -1985,16 +2145,19 @@ EOT;
 			$attrs[] = $attributes;
 		}
 
-		// Trim spaces and remove duplicates.
-		$attrs = array_unique(array_map('trim', $attrs));
+		// We remove empty elements, trim spaces and keep only unique elements.
+		$attrs = array_filter($attrs);
+		$attrs = array_map('trim', $attrs);
+		$attrs = array_unique($attrs);
 
 		// If there are any attributes, we return them.
 		if ( ! empty($attrs))
 		{
-			return ' lang="'.implode(' ', $attrs).'"';
+			$output .= ' lang="'.implode(' ', $attrs).'"';
 		}
 
-		return null;
+		// Return the final output.
+		return $output;
 	}
 
 	// --------------------------------------------------------------------
@@ -2005,30 +2168,39 @@ EOT;
 	 * @param 	string 	$class 	class to add.
 	 * @return 	string
 	 */
-	public function body_class($class = null)
+	public function body_class(string $class = null)
 	{
-		// Apply any filters targetting this class.
-		$this->_body_classes = apply_filters('body_class', $this->_body_classes);
+		// Initial output.
+		$output = '';
+
+		// Apply any filters targeting this class.
+		$this->_body_classes = ('admin' === $this->controller)
+			? apply_filters('admin_body_class', $this->_body_classes)
+			: apply_filters('body_class', $this->_body_classes);
 
 		// If any class is provided, add it.
-		if ($class !== null)
+		(null !== $class) && array_unshift($this->_body_classes, $class);
+
+		// We proceed only if there are some classes.
+		if ( ! empty($this->_body_classes) && is_array($this->_body_classes))
 		{
-			$this->_body_classes[] = $class;
+			// We make sure classes are in an array
+			(is_array($this->_body_classes)) OR $this->_body_classes = (array) $this->_body_classes;
+
+			// We remove empty elements, trim spaces, and keep only unique classes.
+			$this->_body_classes = array_filter($this->_body_classes);
+			$this->_body_classes = array_map('trim', $this->_body_classes);
+			$this->_body_classes = array_unique($this->_body_classes);
+
+			// Stile not empty? Add everything.
+			if ( ! empty($this->_body_classes))
+			{
+				$output .= ' class="'.implode(' ', $this->_body_classes).'"';
+			}
 		}
 
-		/**
-		 * By using the following, we make sure to trim spaces
-		 * and remove any duplicate classes.
-		 */
-		$this->_body_classes = array_unique(array_map('trim', $this->_body_classes));
-
-		// If there are any classes, we build the attribute.
-		if ( ! empty($this->_body_classes))
-		{
-			return ' class="'.implode(' ', $this->_body_classes).'"';
-		}
-
-		return null;
+		// Return the final output.
+		return $output;
 	}
 
 	// --------------------------------------------------------------------
@@ -2054,24 +2226,37 @@ EOT;
 	 */
 	public function charset($charset = null)
 	{
-		// Let's apply filters targetting it.
-		$this->_charsets = apply_filters('the_charset', $this->_charsets);
+		// Initial output.
+		$output = '';
+
+		// Let's apply filters targeting it.
+		$this->_charsets = ('admin' === $this->controller)
+			? apply_filters('admin_charset', $this->_charsets)
+			: apply_filters('the_charset', $this->_charsets);
 
 		// If there are any additional $charset,add it.
-		if ($charset !== null)
-		{
-			$this->_charsets[] = $charset;
-		}
+		(null === $charset) OR array_unshift($this->_charsets, $charset);
 
-		// Trim space and remplace duplicates.
-		$this->_charsets = array_unique(array_map('trim', $this->_charsets));
-
+		// We have some charsets?
 		if ( ! empty($this->_charsets))
 		{
-			return '<meta charset="'.implode(' ', $this->_charsets).'">';
+			// Make sure it's an array.
+			(is_array($this->_charsets)) OR $this->_charsets = (array) $this->_charsets;
+
+			// We remove empty elements, trim spaces and remove duplicates.
+			$this->_charsets = array_filter($this->_charsets);
+			$this->_charsets = array_map('trim', $this->_charsets);
+			$this->_charsets = array_unique($this->_charsets);
+			
+			// Still some charset? Use them.
+			if ( ! empty($this->_charsets))
+			{
+				$output .= '<meta charset="'.implode(' ', $this->_charsets).'">';
+			}
 		}
 
-		return null;
+		// Return the final output.
+		return $output;
 	}
 
 	// --------------------------------------------------------------------
@@ -2094,7 +2279,7 @@ EOT;
 	/**
 	 * Returns the current view file content.
 	 */
-	public function output_content()
+	public function print_content()
 	{
 		return $this->_the_content;
 	}
@@ -2108,12 +2293,16 @@ EOT;
 	 * @param 	string 	$index 	unique identifier to retrieve translations.
 	 * @return 	void
 	 */
-	public function load_translation($path, $index = null)
+	public function load_translation($path = 'language', $index = null)
 	{
-		// Format the path.
-		$path = $this->theme_path(str_replace($this->_theme_path, '', $path));
+		// Already loaded? Nothing to do.
+		if (true === $this->_translation_loaded)
+		{
+			return;
+		}
 
-		$index = apply_filters('theme_translation_index', $index);
+		// Get the path to theme translations.
+		$path = $this->theme_path(str_replace($this->_theme_path, '', $path));
 
 		// The folder does not exist? Nothing to do.
 		if (false === $path)
@@ -2121,10 +2310,13 @@ EOT;
 			return;
 		}
 
-		// Make sure to put .htaccess
-		($path) && $this->_check_htaccess($path);
+		// Prepare the language index.
+		$index = apply_filters('theme_translation_index', $index);
 
-		// Make sure the english version exists!
+		// Make sure to put .htaccess
+		(false !== $path) && $this->_check_htaccess($path);
+
+		// Make sure the English version exists!
 		$english_file = $path.DS.'english.php';
 		if ( ! is_file($english_file))
 		{
@@ -2132,49 +2324,54 @@ EOT;
 		}
 
 		// Include the english version first make sure it's valid.
-		include($english_file);
+		include_once($english_file);
 
 		// Was the language array updated?
 		$full_lang = (isset($lang)) ? $lang : array();
 		unset($lang);
 
 		// Catch the currently used language.
-		$site_lang = $this->ci->config->item('language');
+		$language = $this->ci->config->item('language');
 
 		// Now we load the current language file.
-		if ($site_lang <> 'english')
+		if ('english' !== $language)
 		{
-			$lang_file = $path.DS.$site_lang.'.php';
+			$lang_file = $path.DS.$language.'.php';
 
 			// Load the file only if it exists.
 			if (is_file($lang_file))
 			{
-				include($lang_file);
-				(isset($lang)) && $full_lang = array_replace_recursive($full_lang, $lang);
+				include_once($lang_file);
+
+				// Update our language array.
+				if (isset($this->lang))
+				{
+					$full_lang = array_replace_recursive($full_lang, $lang);
+				}
 			}
 		}
 
 		// Now we add the language array to the global array.
 		if ( ! empty($full_lang))
 		{
-
 			// Adding an index?
-			if ($index !== null)
+			if (null !== $index)
 			{
 				// Set theme language index.
 				$this->_theme_language_index = $index;
 
 				// Add the index to translation.
-				$full_lang = array(
-					$index => $full_lang
-				);
+				$full_lang = array($index => $full_lang);
 			}
 
 			// Merge all.
-			$this->ci->lang->language = array_replace_recursive($this->ci->lang->language, $full_lang);
+			$this->ci->lang->language = array_replace_recursive(
+				$this->ci->lang->language,
+				$full_lang
+			);
 		}
 
-		$this->_theme_lang_loaded = true;
+		$this->_translation_loaded = true;
 	}
 
 	// --------------------------------------------------------------------
@@ -2204,11 +2401,8 @@ EOT;
 			? $this->ci->session->language
 			: $this->ci->config->item('language');
 
-		// Get language details.
-		$return = $this->ci->lang->languages($folder);
-
-		// Return a single key or the whole array?
-		return ($key && isset($return[$key])) ? $return[$key] : $return;
+		// Get the requested detail.
+		return $this->ci->lang->lang($key);
 	}
 
 	// --------------------------------------------------------------------
@@ -2230,18 +2424,15 @@ EOT;
 			return;
 		}
 
-		(is_array($message)) OR $message = array(
-			$type => $message
-		);
+		// We turn things into an array.
+		(is_array($message)) OR $message = array($type => $message);
 
 		// Prepare out empty messages array.
 		(is_array($this->_messages)) OR $this->_messages = array();
 
 		foreach ($message as $key => $val)
 		{
-			$this->_messages[] = array(
-				$key => $val
-			);
+			$this->_messages[] = array($key => $val);
 		}
 
 		// Make sure the session library is loaded.
@@ -2275,19 +2466,22 @@ EOT;
 			return '';
 		}
 
-		// Prepare the alert template.
-		$this->_template_alert = apply_filters('alert_template', $this->_template_alert);
+		// On the front-end only.
+		if ('admin' !== $this->controller)
+		{
+			// Prepare the alert template.
+			$this->_template_alert = apply_filters('alert_template', $this->_template_alert);
+			
+			// Now we prepare alert classes.
+			$this->_alert_classes = apply_filters('alert_classes', $this->_alert_classes);
+		}
 
-		// Now we prepare alert classes.
-		$this->_alert_classes = apply_filters('alert_classes', $this->_alert_classes);
-
+		// Initial output.
 		$output = '';
 
-		foreach ($this->_messages as $message)
+		foreach ($this->_messages as $index => $message)
 		{
-			reset($message);
 			$key = key($message);
-
 			$output .= str_replace(array(
 				'{class}',
 				'{message}'
@@ -2295,8 +2489,12 @@ EOT;
 				$this->_alert_classes[$key],
 				$message[$key]
 			), $this->_template_alert);
+
+			// Remove it.
+			unset($this->_messages[$index]);
 		}
 
+		// Return the final output.
 		return $output;
 	}
 
@@ -2318,18 +2516,20 @@ EOT;
 		}
 
 		// Prepare the alert template.
-		if ($js === true)
+		$template = (true === $js) ? $this->_template_alert_js : $this->_template_alert;
+
+		// On front-end?
+		if ('admin' !== $this->controller)
 		{
-			$template = apply_filters('alert_template_js', $this->_template_alert_js);
-		}
-		else
-		{
-			$template = apply_filters('alert_template', $this->_template_alert);
+			$template = (true === $js)
+				? apply_filters('alert_template_js', $this->_template_alert_js)
+				: apply_filters('alert_template', $this->_template_alert);
+			
+			// We apply filter on alerts classes.
+			$this->_alert_classes = apply_filters('alert_classes', $this->_alert_classes);
 		}
 
-		// Now we prepare alert classes.
-		$this->_alert_classes = apply_filters('alert_classes', $this->_alert_classes);
-
+		// Replace things.
 		$output = str_replace(array(
 			'{class}',
 			'{message}'
@@ -2338,6 +2538,7 @@ EOT;
 			$message
 		), $template);
 
+		// Return the final output.
 		return $output;
 	}
 
@@ -2358,8 +2559,8 @@ EOT;
 		$this->ci->benchmark->mark('theme_render_start');
 
 		// Load the language file only if it was not loaded.
-		$theme_lang = apply_filters('theme_translation', false);
-		if (false !== $theme_lang && $this->_theme_lang_loaded === false)
+		if (false === $this->_translation_loaded 
+			&& null !== $theme_lang = apply_filters('theme_translation', null))
 		{
 			$this->load_translation($theme_lang);
 		}
@@ -2379,24 +2580,18 @@ EOT;
 		foreach ($options as $key => $val)
 		{
 			// add_css and add_js are the only distinct methods.
-			if (in_array($key, array(
-				'css',
-				'js'
-			)))
+			if (in_array($key, array('css', 'js')))
 			{
 				$this->add($key, $val);
 			}
 
 			// We call the method only if it exists.
-			elseif (method_exists($this, '_set_'.$key))
+			elseif (method_exists($this, 'set_'.$key))
 			{
-				call_user_func_array(array(
-					$this,
-					'_set_'.$key
-				), (array) $val);
+				call_user_func_array(array($this, 'set_'.$key), (array) $val);
 			}
 
-			// Otherwise we set variables to views.
+			// Otherwise we pass variables to views.
 			else
 			{
 				$this->set($key, $val);
@@ -2479,7 +2674,7 @@ EOT;
 			return (true === $this->_cdn_enabled);
 		}
 
-		return (true === $this->_cdn_enabled && !empty($this->_cdn_server));
+		return (true === $this->_cdn_enabled && ! empty($this->_cdn_server));
 	}
 
 	// --------------------------------------------------------------------
@@ -2535,7 +2730,9 @@ EOT;
 				 * By adding this hook, we let the user handle
 				 * the path to partial views.
 				 */
-				$full_path = apply_filters('theme_partials_path', $full_path);
+				$full_path = ('admin' === $this->controller)
+					? realpath(KBPATH.'views/admin/partials/')
+					: apply_filters('theme_partials_path', $full_path);
 
 				// Alternative path to partials file.
 				$alt_path .= 'partials/';
@@ -2553,8 +2750,7 @@ EOT;
 				 * By default, it should be an index.php inside
 				 * the theme's folder.
 				 */
-				$alt_file = 'index.php';
-				$alt_file = apply_filters('theme_layout_fallback', $alt_file);
+				$alt_file = apply_filters('theme_layout_fallback', 'index.php');
 
 				// The fallback is $_template_layout property.
 				$fallback = 'layout';
@@ -2563,7 +2759,9 @@ EOT;
 				 * By adding this hook, we let the user handle
 				 * the path to layouts files.
 				 */
-				$full_path = apply_filters('theme_layouts_path', $full_path);
+				$full_path = ('admin' === $this->controller)
+					? realpath(KBPATH.'views/admin/layouts/')
+					: apply_filters('theme_layouts_path', $full_path);
 
 				// Alternative path to layouts files.
 				$alt_path .= 'layouts/';
@@ -2590,7 +2788,9 @@ EOT;
 				 * By adding this hook, we let the user handle
 				 * the path to view views.
 				 */
-				$full_path = apply_filters('theme_views_path', $full_path);
+				$full_path = ('admin' === $this->controller)
+					? realpath(KBPATH.'views/admin/')
+					: apply_filters('theme_views_path', $full_path);
 
 				break;
 		}
@@ -2718,14 +2918,19 @@ EOT;
 		$this->_the_content = $layout['content'] = $this->_load_file($view, $data, 'view');
 
 		// If there are any filter applied to it, use them.
-		$this->_the_content = apply_filters('the_content', $this->_the_content);
+		if ('admin' !== $this->controller)
+		{
+			$this->_the_content = apply_filters('the_content', $this->_the_content);
+		}
 
 		/**
 		 * Let's now prepare the layout file to load.
 		 * It is possible to change the layout on functions.php
 		 * by using the 'theme_layout' filter.
 		 */
-		$this->_layout = apply_filters('theme_layout', $this->_layout);
+		$this->_layout = ('admin' === $this->controller)
+			? apply_filters('admin_theme_layout', $this->_layout)
+			: apply_filters('theme_layout', $this->_layout);
 
 		// Use the default layout if not found.
 		(null === $this->_layout) && $this->_layout = 'default';
@@ -3198,7 +3403,7 @@ if ( ! function_exists('html_class'))
 	 */
 	function html_class($class = null, $echo = true)
 	{
-		$classes = get_instance()->theme->get_html_class($class);
+		$classes = get_instance()->theme->html_class($class);
 		if (false === $echo)
 		{
 			return $classes;
@@ -3216,7 +3421,7 @@ if ( ! function_exists('language_attributes'))
 	 */
 	function language_attributes($attributes = null, $echo = true)
 	{
-		$attrs = get_instance()->theme->get_language_attributes($attributes);
+		$attrs = get_instance()->theme->language_attributes($attributes);
 		if (false === $echo)
 		{
 			return $attrs;
@@ -3562,10 +3767,10 @@ if ( ! function_exists('the_extra_head'))
 		// Should we return it instead?
 		if ($echo === false)
 		{
-			return get_instance()->theme->output_extra_head($content);
+			return get_instance()->theme->print_extra_head($content);
 		}
 
-		echo get_instance()->theme->output_extra_head($content);
+		echo get_instance()->theme->print_extra_head($content);
 	}
 }
 
@@ -3592,8 +3797,8 @@ if ( ! function_exists('add_ie9_support'))
 		}
 		$output .= <<<EOT
 	<!--[if lt IE 9]>
-    <script type="text/javascript" src="{$html5shiv}"></script>
-    <script type="text/javascript" src="{$respond}"></script>
+    <script type="text/JavaScript" src="{$html5shiv}"></script>
+    <script type="text/JavaScript" src="{$respond}"></script>
     <![endif]-->
 EOT;
 	}
@@ -3612,10 +3817,10 @@ if ( ! function_exists('the_content'))
 	{
 		if ($echo === false)
 		{
-			return get_instance()->theme->output_content();
+			return get_instance()->theme->print_content();
 		}
 
-		echo get_instance()->theme->output_content();
+		echo get_instance()->theme->print_content();
 	}
 }
 
@@ -3631,7 +3836,7 @@ if ( ! function_exists('the_analytics'))
 	 */
 	function the_analytics($site_id = null)
 	{
-		echo get_instance()->theme->output_analytics($site_id);
+		echo get_instance()->theme->print_analytics($site_id);
 	}
 }
 
@@ -3647,7 +3852,7 @@ if ( ! function_exists('get_the_analytics'))
 	 */
 	function get_the_analytics($site_id = null)
 	{
-		return get_instance()->theme->output_analytics($site_id);
+		return get_instance()->theme->print_analytics($site_id);
 	}
 }
 
@@ -3740,10 +3945,10 @@ if ( ! function_exists('the_meta_tags'))
 	{
 		if ($echo === false)
 		{
-			return get_instance()->theme->output_meta_tags();
+			return get_instance()->theme->print_meta_tags();
 		}
 
-		echo get_instance()->theme->output_meta_tags();
+		echo get_instance()->theme->print_meta_tags();
 	}
 }
 
@@ -3807,21 +4012,21 @@ if ( ! function_exists('css'))
 
 // --------------------------------------------------------------------
 
-if ( ! function_exists('the_stylesheets'))
+if ( ! function_exists('the_StyleSheets'))
 {
 	/**
-	 * Outputs css link tags and inline stypes.
+	 * Outputs css link tags and in-line stypes.
 	 * @param   bool    $echo   whether to echo or not
 	 * @return  string
 	 */
-	function the_stylesheets($echo = true)
+	function the_StyleSheets($echo = true)
 	{
 		if ($echo === false)
 		{
-			return get_instance()->theme->output_styles();
+			return get_instance()->theme->print_styles();
 		}
 
-		echo get_instance()->theme->output_styles();
+		echo get_instance()->theme->print_styles();
 	}
 }
 
@@ -3830,7 +4035,7 @@ if ( ! function_exists('the_stylesheets'))
 if ( ! function_exists('add_style'))
 {
 	/**
-	 * Adds stylesheets to view.
+	 * Adds StyleSheets to view.
 	 * @param   string  $handle     used as identifier.
 	 * @param   string  $file       the css file.
 	 * @param   int     $ver        the file's version.
@@ -3849,7 +4054,7 @@ if ( ! function_exists('add_style'))
 if ( ! function_exists('add_inline_style'))
 {
 	/**
-	 * Allows the user to add an inline styles that can even
+	 * Allows the user to add an in-line styles that can even
 	 * be put before $handle if provided.
 	 * @param   string  $content    the full style content.
 	 * @param   string  $handle     the handle before which it should be put.
@@ -3912,7 +4117,7 @@ if ( ! function_exists('js'))
 	{
 		if ($file)
 		{
-			$attributes['type'] = 'text/javascript';
+			$attributes['type'] = 'text/JavaScript';
 
 			$file = ($common === true) ? get_common_url($file) : get_theme_url($file);
 
@@ -3936,21 +4141,21 @@ if ( ! function_exists('js'))
 
 // --------------------------------------------------------------------
 
-if ( ! function_exists('the_javascripts'))
+if ( ! function_exists('the_JavaScripts'))
 {
 	/**
-	 * Returns or echoes all javascripts files and inline scrips.
+	 * Returns or echoes all JavaScripts files and in-line scrips.
 	 * @param   bool    $echo   whether to echo or not.
 	 * @return  string
 	 */
-	function the_javascripts($echo = true)
+	function the_JavaScripts($echo = true)
 	{
 		if ($echo === false)
 		{
-			return get_instance()->theme->output_scripts();
+			return get_instance()->theme->print_scripts();
 		}
 
-		echo get_instance()->theme->output_scripts();
+		echo get_instance()->theme->print_scripts();
 	}
 }
 
@@ -3959,7 +4164,7 @@ if ( ! function_exists('the_javascripts'))
 if ( ! function_exists('add_script'))
 {
 	/**
-	 * Adds javascript files to view.
+	 * Adds JavaScript files to view.
 	 */
 	function add_script($handle = '', $file = null, $ver = null, $prepend = false, $attrs = array())
 	{
@@ -3972,7 +4177,7 @@ if ( ! function_exists('add_script'))
 if ( ! function_exists('add_inline_script'))
 {
 	/**
-	 * Allows the user to add an inline scripts that can even
+	 * Allows the user to add an in-line scripts that can even
 	 * be put before $handle if provided.
 	 * @param   string  $content    the full script content.
 	 * @param   string  $handle     the handle before which it should be put.

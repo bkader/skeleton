@@ -106,9 +106,6 @@ class Admin_Controller extends User_Controller
 			exit;
 		}
 
-		// We reset theme settings and add admin assets.
-		$this->_switch_to_admin();
-
 		// Load admin helper.
 		$this->load->helper('admin');
 	}
@@ -132,6 +129,9 @@ class Admin_Controller extends User_Controller
 		if ( ! in_array($method, $this->ajax_methods) 
 			&& ! in_array($method, $this->safe_ajax_methods))
 		{
+			// Print admin head part.
+			add_filter('admin_head', array($this, 'admin_head'));
+
 			// Prepare dashboard sidebar.
 			$this->theme->set('admin_menu', $this->_admin_menu(), true);
 
@@ -152,6 +152,9 @@ class Admin_Controller extends User_Controller
 			// Do we have any CSS files to load?
 			if ( ! empty($this->styles))
 			{
+				$this->styles = array_map('trim', $this->styles);
+				$this->styles = array_filter($this->styles);
+				$this->styles = array_unique($this->styles);
 				$this->styles = implode(',', $this->styles);
 
 				// Right-To-Left languages.
@@ -165,6 +168,9 @@ class Admin_Controller extends User_Controller
 			// Do we have any JS files to laod?
 			if ( ! empty($this->scripts))
 			{
+				$this->scripts = array_map('trim', $this->scripts);
+				$this->scripts = array_filter($this->scripts);
+				$this->scripts = array_unique($this->scripts);
 				$this->scripts = implode(',', $this->scripts);
 				$this->theme
 					->no_extension()
@@ -262,66 +268,41 @@ EOT;
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Removes theme filters, change view paths and load resources.
-	 * @access 	protected
-	 * @return 	void
+	 * Added some needed scripts to the head section.
+	 *
+	 * @since 	1.3.3
+	 *
+	 * @access 	public
+	 * @param 	string 	$output
+	 * @return 	string
 	 */
-	protected function _switch_to_admin()
+	public function admin_head($output)
 	{
-		/**
-		 * Here we are resetting all applied filters and actions to
-		 * force using default admin panel theme. Except these:
-		 */
-		$this->theme->reset('the_title', 'theme_menus', 'theme_translation');
+		// JavaScript opening tag.
+		$output .= "\t".'<script type="text/javascript">';
 
-		// Remove extra filters added by libraries.
-		remove_all_filters('pagination');
+		// Creating Kbcore object.
+		$output .= 'var Kbcore = {}';
 
-		// Make sure to load theme's translation.
-		$theme_lang = apply_filters('theme_translation', false);
-		if (false !== $theme_lang)
-		{
-			$this->theme->load_translation($theme_lang);
-		}
+		// Adding configuration.
+		$config = json_encode(array(
+			'siteURL'    => site_url(),
+			'baseURL'    => base_url(),
+			'adminURL'   => admin_url(),
+			'currentURL' => current_url(),
+			'ajaxURL'    => ajax_url('admin'),
+			'lang'       => $this->lang->languages($this->session->language),
+		));
+		$output .= ", Config = {$config}";
 
-		// Let's set paths to layouts, partials and views.
-		add_filter('theme_layouts_path', function($path) {
-			return realpath(KBPATH.'views/admin/layouts/');
-		});
+		// Object for later use.
+		$output .= ', i18n = {};';
 
-		add_filter('theme_partials_path', function($path) {
-			return realpath(KBPATH.'views/admin/partials/');
-		});
+		// JavaScript closing tag and IE9 support.
+		$output .= '</script>'."\n";
+		add_ie9_support($output, (ENVIRONMENT === 'production'));
 
-		add_filter('theme_views_path', function($path) {
-			return realpath(KBPATH.'views/admin/');
-		});
-
-		$module = $this->router->fetch_module();
-		$module_path = $this->router->module_path($module);
-
-		// We change the views path to modules.
-		if ( ! empty($module) && FALSE !== $module_path)
-		{
-			add_action('theme_view', function($view) use ($module, $module_path) {
-				return $module_path.'views/'.str_replace($module.'/', '', $view);
-			});
-		}
-
-		// Add IE9 support.
-		add_filter('extra_head', function($output) {
-			$config = array(
-				'siteURL'    => site_url(),
-				'baseURL'    => base_url(),
-				'adminURL'   => admin_url(),
-				'currentURL' => current_url(),
-				'ajaxURL'    => ajax_url(),
-				'lang'       => $this->lang->languages($this->session->language),
-			);
-			$output .= "\t<script>var config = ".json_encode($config).";</script>\n";
-			add_ie9_support($output, (ENVIRONMENT === 'production'));
-			return $output;
-		});
+		return $output;
 	}
 
 	// ------------------------------------------------------------------------

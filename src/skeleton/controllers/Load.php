@@ -173,8 +173,6 @@ class Load extends KB_Controller
 		 * @var array
 		 */
 		$files = explode(',', $files);
-		$files = array_map('trim', array_unique($files));
-		$files = array_filter($files);
 
 		/**
 		 * We now format files names in order to remove any found ".min"
@@ -342,4 +340,5 @@ class Load extends KB_Controller
 			closedir($handle);
 		}
 	}
+
 }

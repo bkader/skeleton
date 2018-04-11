@@ -75,17 +75,23 @@ function pages_title_add_site_name()
 	// We simply apply the filter.
 	add_filter('the_title', function($title)
 	{
+		// Implode the title array.
+		$temp_title = implode('-', $title);
+
 		// We only add the site name if not detected.
 		$site_name = config_item('site_name');
-		if (strpos($title, $site_name) === false)
+
+		// If the site name is not found, we add it.
+		if (strpos($temp_title, $site_name) === false)
 		{
-			$title .= ' &#150; '.config_item('site_name');
+			array_push($title, $site_name);
 		}
+
 		return $title;
 	});
 }
 
-add_filter('plugin_settings_the-title', 'the_title_settings');
+add_action('plugin_settings_the-title', 'the_title_settings');
 
 if ( ! function_exists('the_title_settings'))
 {
@@ -98,12 +104,11 @@ if ( ! function_exists('the_title_settings'))
 		<p>The content you see on this page is found within this plugins main file <strong>the-title.php</strong>. Look for a function called <strong>the_title_settings</strong></p>
 
 		<h4>How to create settings page for a plugin?</h4>
-		<p>Easy! Simply add a new filter with your plugin's folder name, like so:</p>
-		<pre><code>// Here I am using this plugin's folder name, "the-title".<br />add_filter('plugin_settings_<strong>the-title</strong>', function(\$content) {<br />&nbsp;&nbsp;&nbsp;&nbsp;\$content .= '&lt;h1&gt;Hell There&lt;/h1&gt;';<br/>&nbsp;&nbsp;&nbsp;&nbsp;return \$content;<br />});</code></pre><br />
-		<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem voluptas pariatur necessitatibus quod porro amet libero molestias hic debitis commodi quos doloribus reprehenderit sequi, recusandae, voluptatem aut dolores voluptate in!</p>
+		<p>Easy! Simply add a new action with your plugin's folder name, like so:</p>
+		<pre><code>// Here I am using this plugin's folder name, "the-title".<br />add_action('plugin_settings_<strong>the-title</strong>', function(\$content) {<br />&nbsp;&nbsp;&nbsp;&nbsp;\$content .= '&lt;h1&gt;Hell There&lt;/h1&gt;';<br/>&nbsp;&nbsp;&nbsp;&nbsp;echo \$content;<br />});</code></pre>
 	</div>
 </div>
 EOT;
-		return $content;
+		echo $content;
 	}
 }

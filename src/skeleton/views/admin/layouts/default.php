@@ -45,7 +45,7 @@
 		<?php the_content(); ?>
 		<div class="footer clearfix" id="kbfooter" role="contentinfo">
 			<small class="text-muted" id="footer-thankyou"><?php echo apply_filters('admin_footer_text', lang('admin_footer_text')); ?></small>
-			<small class="text-muted pull-right" id="footer-upgrade">Version <?php echo KB_VERSION; ?></small>
+			<small class="text-muted pull-right" id="footer-upgrade">Version <abbr title="{elapsed_time}"><?php echo KB_VERSION; ?></abbr></small>
 		</div>
 	</div>
 </main>
