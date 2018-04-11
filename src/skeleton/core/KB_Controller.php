@@ -152,6 +152,13 @@ class KB_Controller extends CI_Controller
 		if ( ! in_array($method, $this->ajax_methods) 
 			&& ! in_array($method, $this->safe_ajax_methods))
 		{
+			// Add a class to body class if the user is logged in.
+			if (true === $this->auth->online())
+			{
+				$this->theme->set_body_class('logged-in');
+			}
+
+			// Call the method.
 			return call_user_func_array(array($this, $method), $params);
 		}
 
