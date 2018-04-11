@@ -2212,22 +2212,47 @@ EOT;
 		// If any class is provided, add it.
 		(null !== $class) && array_unshift($this->_body_classes, $class);
 
-		// We proceed only if there are some classes.
-		if ( ! empty($this->_body_classes) && is_array($this->_body_classes))
+		// We make sure classes are in an array
+		(is_array($this->_body_classes)) OR $this->_body_classes = (array) $this->_body_classes;
+
+		/**
+		 * Skeleton custom body class made available for
+		 * themes to target and interact with.
+		 */
+		$classes = array();
+
+		// Are we on the home page?
+		(null === $this->ci->uri->segment(1)) && $classes[] = 'home';
+
+		// We add the module, controller and method.
+		$classes[] = (null === $this->module) ? $this->controller : $this->module;
+		('index' !== $this->method) && $classes[] = $this->method;
+
+		// We add the current language.
+		$classes[] = 'locale-'.strtolower($this->language('locale'));
+
+		// Are we on the dashboard?
+		if ('admin' === $this->controller)
 		{
-			// We make sure classes are in an array
-			(is_array($this->_body_classes)) OR $this->_body_classes = (array) $this->_body_classes;
+			// We put "admin" first.
+			array_unshift($classes, 'admin');
 
-			// We remove empty elements, trim spaces, and keep only unique classes.
-			$this->_body_classes = array_filter($this->_body_classes);
-			$this->_body_classes = array_map('trim', $this->_body_classes);
-			$this->_body_classes = array_unique($this->_body_classes);
+			// Then we add Skeleton version.
+			$classes[] = 'version-'.str_replace('.', '-', KB_VERSION);
+		}
 
-			// Stile not empty? Add everything.
-			if ( ! empty($this->_body_classes))
-			{
-				$output .= ' class="'.implode(' ', $this->_body_classes).'"';
-			}
+		// Merge things.
+		$this->_body_classes = array_merge($classes, $this->_body_classes);
+
+		// We remove empty elements, trim spaces, and keep only unique classes.
+		$this->_body_classes = array_filter($this->_body_classes);
+		$this->_body_classes = array_map('trim', $this->_body_classes);
+		$this->_body_classes = array_unique($this->_body_classes);
+
+		// Stile not empty? Add everything.
+		if ( ! empty($this->_body_classes))
+		{
+			$output .= ' class="'.implode(' ', $this->_body_classes).'"';
 		}
 
 		// Return the final output.
