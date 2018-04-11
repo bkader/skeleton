@@ -163,13 +163,14 @@ class KB_Controller extends CI_Controller
 
 		// Prepare the response object.
 		$this->response          = new stdClass();
-		$this->response->header  = 401;
+		$this->response->header  = 400;
 		$this->response->type    = 'json';
 		$this->response->message = 'Bad Request';
 
 		// Does the requested methods require a safe URL check?
 		if (in_array($method, $this->safe_ajax_methods) && ! check_safe_url())
 		{
+			$this->response->header  = 412;
 			$this->response->message = lang('error_action_permission');
 			return $this->response();
 		}
@@ -178,6 +179,7 @@ class KB_Controller extends CI_Controller
 		if ('admin' === $this->router->fetch_class() 
 			&& false === $this->auth->is_admin())
 		{
+			$this->response->header  = 412;
 			$this->response->message = lang('error_action_permission');
 			return $this->response();
 		}
