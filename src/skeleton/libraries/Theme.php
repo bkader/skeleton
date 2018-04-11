@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') or exit('No direct script access allowed');
 
@@ -49,7 +49,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  * @since 		1.3.3 	changed "metadata" to "meta_tags" to avoid conflict with
  *          			the "Kbcore_metadat" library.
  *
@@ -961,6 +961,9 @@ EOT;
 			return $this->_view;
 		}
 
+		// Remove the module and admin from path.
+		$this->_view = preg_replace("/{$this->module}\/admin\//", '', $this->_view);
+
 		// There is no admin filter?
 		if (false === has_filter('admin_view'))
 		{
@@ -968,7 +971,8 @@ EOT;
 			if (null !== $this->module 
 				&& false !== $module_path = $this->ci->router->module_path($this->module))
 			{
-				$this->_view = $module_path.'views/'.$this->controller.'/'.$this->method;
+				$view = (isset($this->_view)) ? $this->_view : $this->method;
+				$this->_view = $module_path.'views/admin/'.$view;
 			}
 
 			return $this->_view;
@@ -2118,6 +2122,33 @@ EOT;
 		return $this->_html_classes;
 	}
 
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Quick add classes to html class.
+	 *
+	 * @since 	1.3.3
+	 *
+	 * @access 	public
+	 * @param 	mixed
+	 * @return 	Theme
+	 */
+	public function set_html_class()
+	{
+		// Collect arguments an proceed if there are any.
+		$args = func_get_args();
+		if ( ! empty($args))
+		{
+			// We get rid of deep nasty array.
+			(is_array($args[0])) && $args = $args[0];
+
+			// We add them to html classes.
+			$this->_html_classes = array_merge($this->_html_classes, $args);
+		}
+
+		return $this;
+	}
+
 	// --------------------------------------------------------------------
 
 	/**
@@ -2214,6 +2245,33 @@ EOT;
 	public function get_body_class()
 	{
 		return $this->_body_classes;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Quick add classes to body class.
+	 *
+	 * @since 	1.3.3
+	 *
+	 * @access 	public
+	 * @param 	mixed
+	 * @return 	Theme
+	 */
+	public function set_body_class()
+	{
+		// Collect arguments an proceed if there are any.
+		$args = func_get_args();
+		if ( ! empty($args))
+		{
+			// We get rid of deep nasty array.
+			(is_array($args[0])) && $args = $args[0];
+
+			// We add them to body classes.
+			$this->_body_classes = array_merge($this->_body_classes, $args);
+		}
+
+		return $this;
 	}
 
 	// --------------------------------------------------------------------
