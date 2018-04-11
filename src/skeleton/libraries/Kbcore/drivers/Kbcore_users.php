@@ -186,7 +186,7 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 		if ($activation_code !== null)
 		{
 			// Create the variable.
-			$this->_parent->variables->create(
+			$this->_parent->variables->add_var(
 				$guid,
 				'activation_code',
 				$activation_code,
