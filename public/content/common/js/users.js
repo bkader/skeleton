@@ -25,7 +25,7 @@
                 return;
             }
             bootbox.confirm({
-                message: i18n.user.activate,
+                message: i18n.users.activate,
                 callback: function (result) {
                     bootbox.hideAll();
                     if (result === true) {
@@ -48,7 +48,7 @@
                 return;
             }
             bootbox.confirm({
-                message: i18n.user.deactivate,
+                message: i18n.users.deactivate,
                 callback: function (result) {
                     bootbox.hideAll();
                     if (result === true) {
@@ -71,7 +71,7 @@
                 return;
             }
             bootbox.confirm({
-                message: i18n.user.delete,
+                message: i18n.users.delete,
                 callback: function (result) {
                     bootbox.hideAll();
                     if (result === true) {
@@ -94,7 +94,7 @@
                 return;
             }
             bootbox.confirm({
-                message: i18n.user.restore,
+                message: i18n.users.restore,
                 callback: function (result) {
                     bootbox.hideAll();
                     if (result === true) {
@@ -121,7 +121,7 @@
             }
             bootbox.confirm({
                 size: "small",
-                message: i18n.user.remove,
+                message: i18n.users.remove,
                 callback: function (result) {
                     bootbox.hideAll();
                     if (result === true && href.length && id.length) {

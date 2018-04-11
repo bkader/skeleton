@@ -726,7 +726,7 @@ class Admin extends Admin_Controller
 		);
 
 		// Append our lines.
-		$output .= '<script>i18n.user = '.json_encode($lines).';</script>';
+		$output .= '<script type="text/javascript">var i18n=i18n||{};i18n.users='.json_encode($lines).';</script>';
 
 		// Return the final $output.
 		return $output;

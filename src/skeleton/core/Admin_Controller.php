@@ -278,12 +278,6 @@ EOT;
 	 */
 	public function admin_head($output)
 	{
-		// JavaScript opening tag.
-		$output .= "\t".'<script type="text/javascript">';
-
-		// Creating Kbcore object.
-		$output .= 'var Kbcore = {}';
-
 		// Adding configuration.
 		$config = json_encode(array(
 			'siteURL'    => site_url(),
@@ -293,15 +287,13 @@ EOT;
 			'ajaxURL'    => ajax_url('admin'),
 			'lang'       => $this->lang->languages($this->session->language),
 		));
-		$output .= ", Config = {$config}";
 
-		// Object for later use.
-		$output .= ', i18n = {};';
+		$output .= "\t<script type=\"text/javascript\">var Kbcore=Kbcore||{},Config=Config||{},i18n=i18n||{};Object.assign(Config, {$config});</script>\n";
 
-		// JavaScript closing tag and IE9 support.
-		$output .= '</script>'."\n";
+		// Add support for older browser.
 		add_ie9_support($output, (ENVIRONMENT === 'production'));
 
+		// Return the final output.
 		return $output;
 	}
 
