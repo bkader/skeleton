@@ -1,5 +1,5 @@
 /*!
- * Skeleton Dashboard - v1.3.0 (https://github.com/bkader/skeleton)
+ * Skeleton Dashboard - Admin JS (https://github.com/bkader/skeleton)
  * Copyright 2018 Kader Bouyakoub (https://github.com/bkader)
  * Licensed under MIT (https://github.com/bkader/skeleton/blob/develop/LICENSE.md)
  */
@@ -106,7 +106,6 @@
             }, 'json');
         }
     });
-
     // ========================================================
     // When the DOM is ready.
     // ========================================================
@@ -148,6 +147,14 @@
 
         // Initialize Bootstrap tooltip.
         jQuery(document).tooltip({selector: '[data-toggle="tooltip"]'});
+
+        // Responsive table with dropdown buttons.
+        jQuery(".table-responsive").on("show.bs.dropdown", function () {
+            jQuery(".table-responsive").css("overflow", "inherit");
+        });
+        jQuery(".table-responsive").on("hide.bs.dropdown", function () {
+            jQuery(".table-responsive").css("overflow", "auto");
+        });
 
     });
 })(jQuery);

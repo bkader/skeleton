@@ -20,7 +20,6 @@
             position: relative;
 
             > .attachment-action {
-                opacity: 0;
                 text-align: center;
                 position: absolute;
                 top: 0;
@@ -28,8 +27,6 @@
                 bottom: 0;
                 left: 0;
                 background-color: rgba(0, 0, 0, .5);
-                -webkit-transition: opacity 100ms ease-in-out;
-                transition: opacity 100ms ease-in-out;
 
                 > .btn + .btn {
                     margin-left: 15px;
@@ -60,9 +57,18 @@
         @include screen-sm {
             height: 137px;
 
-            .attachment-action {
-                padding-top: 53px;
+            > .attachment-inner {
+                > .attachment-action {
+                    @include transition(opacity 0.1s ease-in-out);
+                    @include opacity(0);
+                    padding-top: 53px;
+                }
+
+                &:hover > .attachment-action {
+                    @include opacity(1);
+                }
             }
+
         }
 
         @include screen-md {
