@@ -135,18 +135,8 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 		// Make sure user's type is always set.
 		(isset($entity['subtype'])) OR $entity['subtype'] = 'regular';
 
-		// Should the user be enabled?
-		$activation_code = null;
-		if ( ! isset($entity['enabled'])
-			&& $this->_parent->options->item('email_activation', false) === true)
-		{
-			// Add the column.
-			$entity['enabled'] = 0;
-
-			// Generate the activation code for later use.
-			(function_exists('random_string')) OR $this->ci->load->helper('string');
-			$activation_code = random_string('alnum', 40);
-		}
+		// The user should be enabled or not?
+		(isset($entity['enabled'])) OR $entity['enabled'] = 0;
 
 		// Add the language if it's not set.
 		if ( ! isset($data['language']))
@@ -181,18 +171,6 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 
 		// Insert the user.
 		$this->ci->db->insert('users', $user);
-
-		// Is the user enabled?
-		if ($activation_code !== null)
-		{
-			// Create the variable.
-			$this->_parent->variables->add_var(
-				$guid,
-				'activation_code',
-				$activation_code,
-				'requested from: '.$this->ci->input->ip_address()
-			);
-		}
 
 		// Some metadata?
 		if ( ! empty($meta))
