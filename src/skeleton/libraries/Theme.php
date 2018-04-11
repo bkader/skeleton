@@ -2244,9 +2244,9 @@ EOT;
 		// Merge things.
 		$this->_body_classes = array_merge($classes, $this->_body_classes);
 
-		// We remove empty elements, trim spaces, and keep only unique classes.
-		$this->_body_classes = array_filter($this->_body_classes);
+		// We trim spaces, remove empty elements, and keep only unique classes.
 		$this->_body_classes = array_map('trim', $this->_body_classes);
+		$this->_body_classes = array_filter($this->_body_classes);
 		$this->_body_classes = array_unique($this->_body_classes);
 
 		// Stile not empty? Add everything.
