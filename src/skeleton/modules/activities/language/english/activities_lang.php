@@ -54,7 +54,7 @@ $lang['activities'] = 'Activities';
 $lang['activity'] = 'Activity';
 
 // Dashboard title;
-$lang['activities_log'] = 'Activities Log';
+$lang['activity_log'] = 'Activity Log';
 
 // Activities table headings.
 $lang['module']     = 'Module';
@@ -80,3 +80,20 @@ $lang['act_language_default'] = 'Set %s as default language.';
 $lang['act_media_upload'] = 'Uploaded media: #%s';
 $lang['act_media_update'] = 'Updated media: #%s';
 $lang['act_media_delete'] = 'Deleted media: #%s';
+
+// Users module.
+$lang['act_user_register']  = 'Joined the site.';
+$lang['act_user_resend']    = 'Requested activation code: <abbr title="%s">%s</abbr>';
+$lang['act_user_restore']   = 'Restored account.';
+$lang['act_user_activated'] = 'Email activation.';
+$lang['act_user_recover']   = 'Requested password code: <abbr title="%s">%s</abbr>';
+$lang['act_user_reset']     = 'Reset password.';
+$lang['act_user_login']     = 'Logged in.';
+
+$lang['act_user_create']     = 'Created user: #%s';
+$lang['act_user_update']     = 'Updated user: #%s';
+$lang['act_user_activate']   = 'Activated user: #%s';
+$lang['act_user_deactivate'] = 'Deactivated user: #%s';
+$lang['act_user_delete']     = 'Deleted user: #%s';
+$lang['act_user_restore']    = 'Restored user: #%s';
+$lang['act_user_remove']     = 'Removed user: #%s';

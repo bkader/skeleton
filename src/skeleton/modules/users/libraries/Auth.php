@@ -33,18 +33,21 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Users Module - Authentication Library
+ * Users Module - Authenticate Library.
  *
  * @package 	CodeIgniter
- * @subpackage 	Modules
- * @category 	Libraries
- * @author 	Kader Bouyakoub <bkader@mail.com>
- * @link 	https://github.com/bkader
+ * @subpackage 	Skeleton
+ * @category 	Modules\Libraries
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		1.0.0
+ * @version 	1.3.3
  */
 class Auth
 {
@@ -55,6 +58,13 @@ class Auth
 	private $user;
 
 	/**
+	 * Holds the current user's IP address.
+	 * @since 	1.3.3
+	 * @var 	string
+	 */
+	private $ip_address;
+
+	/**
 	 * Class constructor
 	 * @return 	void
 	 */
@@ -62,6 +72,9 @@ class Auth
 	{
 		$this->kbcore =& $config['kbcore'];
 		$this->ci =& $this->kbcore->ci;
+
+		// We always user's IP address.
+		$this->ip_address = $this->ci->input->ip_address();
 
 		/**
 		 * The following files are used everywhere on the
@@ -134,6 +147,10 @@ class Auth
 
 	/**
 	 * Return the currently logged in user's object.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Switched to config instead of options.
+	 * 
 	 * @access 	public
 	 * @param 	none
 	 * @return 	object if found, else false.
@@ -160,7 +177,7 @@ class Auth
 		 * stored tokens and make sure only a single user 
 		 * per session is allowed.
 		 */
-		if ($this->kbcore->options->item('allow_multi_session', true) === false)
+		if (false === $this->ci->config->item('allow_multi_session'))
 		{
 			// Get the variable from database.
 			$var = $this->kbcore->variables->get_by(array(
@@ -214,26 +231,34 @@ class Auth
 
 	/**
 	 * Returns true if the current user is an admin.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Reversed check condition.
+	 * 
 	 * @access 	public
 	 * @param 	none
 	 * @return 	bool
 	 */
 	public function is_admin()
 	{
-		return ($this->online() && $this->user->admin === true);
+		return (true === $this->online() && true === $this->user->admin);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Return the current user's ID.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Reversed check condition.
+	 * 
 	 * @access 	public
 	 * @param 	none
 	 * @return 	int
 	 */
 	public function user_id()
 	{
-		return ($this->online()) ? $this->user()->id : null;
+		return (true === $this->online()) ? $this->user()->id : false;
 	}
 
 	// ------------------------------------------------------------------------
@@ -242,6 +267,11 @@ class Auth
 
 	/**
 	 * Login method.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Log activity was moved from "_set_session" to "login", and
+	 *         			added a check to see who deleted the user.
+	 * 
 	 * @access 	public
 	 * @param 	string 	$identity 	username or emaila address.
 	 * @param 	string 	$password 	the password.
@@ -257,10 +287,11 @@ class Auth
 		}
 
 		// Fires before processing.
-		do_action_ref_array('user_login', array(&$identity, &$password));
+		do_action_ref_array('before_user_login', array(&$identity, &$password));
 
 		// What type of login to use?
-		switch ($this->kbcore->options->item('login_type', 'both'))
+		$login_type = $this->ci->config->item('login_type');
+		switch ($login_type)
 		{
 			// Get the user by username.
 			case 'username':
@@ -326,10 +357,28 @@ class Auth
 		// Make sure the account is not deleted.
 		if ($user->deleted > 0)
 		{
-			set_alert(sprintf(
-				lang('us_account_deleted'),
-				anchor('login/restore', lang('click_here'))
-			), 'error');
+			// Check who deleted the user.
+			$log = $this->kbcore->activities->get_by(array(
+				'module'     => 'users',
+				'controller' => 'admin',
+				'method'     => 'delete',
+				'activity'   => 'lang:act_user_delete::'.$user->id,
+			));
+
+			// An admin did it? No way to restore it.
+			if (false !== $log)
+			{
+				set_alert(lang('us_account_deleted_admin'), 'error');
+			}
+			// Otherwise, the user can restore his/her account.
+			else
+			{
+				set_alert(sprintf(
+					lang('us_account_deleted'),
+					anchor('login/restore', lang('click_here'))
+				), 'error');
+			}
+			
 			return false;
 		}
 
@@ -337,25 +386,40 @@ class Auth
 		$this->ci->users->delete_password_codes($user->id);
 
 		// Setup the session.
-		return $this->_set_session($user->id, $remember, null, $user->language);
+		if (true === $this->_set_session($user->id, $remember, null, $user->language))
+		{
+			// Log the activity.
+			$this->kbcore->activities->log_activity($user->id, 'lang:act_user_login');
+
+			return true;
+		}
+
+		return false;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Quick login method without passing by all filters found in login().
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Added a little check.
+	 * 
 	 * @access 	public
 	 * @param 	object 	$user 	the user's object to login.
 	 * @return 	bool
 	 */
 	public function quick_login($user)
 	{
-		if ( ! is_object($user) OR empty($user))
+		// ID, username or email provided?
+		if ( ! $user instanceof KB_User OR ! is_object($user))
 		{
-			return false;
+			$user = $this->ci->kbcore->users->get($user);
 		}
 
-		return $this->_set_session($user->id, true, null, $user->language);
+		return (false !== $user) 
+			? $this->_set_session($user->id, true, null, $user->language)
+			: false;
 	}
 
 	// ------------------------------------------------------------------------
@@ -370,17 +434,13 @@ class Auth
 	{
 		// Catch the user's ID for later use.
 		$user_id = 0;
-		if ($this->online())
-		{
-			$user_id = $this->user()->id;
+		(true === $this->online()) && $user_id = $this->user()->id;
 
-			// Fires before logging out the user.
-			do_action('user_logout', $user_id);
-		}
+		// Fires before logging out the user.
+		do_action('before_user_logout', $user_id);
 
 		// Delete the cookie.
-		$this->ci->load->helper('cookie');
-		delete_cookie('c_user');
+		$this->ci->input->set_cookie('c_user', '', '');
 
 		// Delete online tokens.
 		$this->ci->users->delete_online_tokens($user_id);
@@ -390,6 +450,9 @@ class Auth
 
 		// Destroy the session.
 		$this->ci->session->sess_destroy();
+
+		// Fires After user is logged out, cookie deleted and session destroyed.
+		do_action('after_user_logout', $user_id);
 	}
 
 	// ------------------------------------------------------------------------
@@ -398,6 +461,10 @@ class Auth
 
 	/**
 	 * Setup session data at login and autologin.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Log activity was moved from "_set_session" to "login".
+	 * 
 	 * @access 	private
 	 * @param 	int 	$user_id 	the user's ID.
 	 * @param 	bool 	$remember 	whether to remember the user.
@@ -420,6 +487,9 @@ class Auth
 			$token = $this->ci->hash->hash($user_id.session_id().rand());
 		}
 
+		// Fires before logging in the user.
+		do_action('after_user_login', $user_id);
+
 		// Prepare session data.
 		$sess_data = array(
 			'user_id'  => $user_id,
@@ -427,8 +497,7 @@ class Auth
 		);
 
 		// Add user language only if available.
-		if ( ! empty($language) 
-			&& in_array($language, $this->ci->config->item('languages')))
+		if ($language && in_array($language, $this->ci->config->item('languages')))
 		{
 			$sess_data['language'] = $language;
 		}
@@ -437,23 +506,13 @@ class Auth
 		$this->ci->session->set_userdata($sess_data);
 
 		// Now we create/update the variable.
-		$this->kbcore->variables->set_var(
-			$user_id,
-			'online_token',
-			$token,
-			$this->ci->input->ip_address()
-		);
+		$this->kbcore->variables->set_var($user_id, 'online_token', $token, $this->ip_address);
 
 		// Put the user online.
 		$this->kbcore->users->update($user_id, array('online' => 1));
 
-		// Log the activity.
-		$this->kbcore->activities->log_activity($user_id, 'logged in');
-
 		// The return depends on $remember.
-		return ($remember === true) 
-			? $this->_set_cookie($user_id, $token)
-			: true;
+		return (true === $remember) ? $this->_set_cookie($user_id, $token) : true;
 	}
 
 	// ------------------------------------------------------------------------

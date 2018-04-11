@@ -33,18 +33,21 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Users Module - Users Library
+ * Users Module - Users Library.
  *
  * @package 	CodeIgniter
- * @subpackage 	Modules
- * @category 	Libraries
- * @author 	Kader Bouyakoub <bkader@mail.com>
- * @link 	https://github.com/bkader
+ * @subpackage 	Skeleton
+ * @category 	Modules\Libraries
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		1.0.0
+ * @version 	1.3.3
  */
 class Users_lib
 {
@@ -56,11 +59,24 @@ class Users_lib
 
 	/**
 	 * Class constructor
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Make sure the kbcore is loaded.
+	 *
+	 * @access 	public
 	 * @return 	void
 	 */
-	public function __construct()
+	public function __construct($config = array())
 	{
-		$this->ci =& get_instance();
+		if (isset($config['kbcore']))
+		{
+			$this->kbcore =& $config['kbcore'];
+			$this->ci =& $this->kbcore->ci;
+		}
+		else
+		{
+			$this->ci =& get_instance();
+		}
 	}
 
 	// ------------------------------------------------------------------------
@@ -79,23 +95,45 @@ class Users_lib
 			return false;
 		}
 
-		$guid = $this->ci->kbcore->users->create($data);
-
-		if ($guid > 0)
+		// User created successfully?
+		if (false !== $guid = $this->ci->kbcore->users->create($data))
 		{
-			// Account activation enabled?
-			if ( ! isset($data['enabled'])
-				&& $this->ci->kbcore->options->item('email_activation', false) === true)
+			// Require email activation or manual activation?
+			$require_activation = ( ! isset($data['enabled']) && false !== $this->ci->kbcore->options->item('email_activation'));
+			$manual_activation = (false !== $this->ci->kbcore->options->item('manual_activation'));
+
+			// Requires manual activation?
+			if (true === $require_activation && true === $manual_activation)
 			{
+				$this->_send_email('manual', $guid, array('name' => $data['first_name']));
+				set_alert(lang('us_register_info_manual'), 'info');
+			}
+			// Require an email activation?
+			elseif (true === $require_activation)
+			{
+				// Generate a new activation code and insert it into database.
+				(function_exists('random_string')) OR $this->ci->load->helper('string');
+				$code = random_string('alnum', 40);
+				$this->ci->kbcore->variables->add_var($guid, 'activation_code', $code, $this->ci->input->ip_address());
+
+				// We send the email to user.
+				$this->_send_email('activation', $guid, array(
+					'name' => $data['first_name'],
+					'link' => anchor('register/activate/'.$code, '', 'target="_blank"')
+				));
+
+				// Set the alert message.
 				set_alert(lang('us_register_info'), 'info');
 			}
+			// Otherwise, the user may log in.
 			else
 			{
+				$this->_send_email('welcome', $guid);
 				set_alert(lang('us_register_success'), 'success');
 			}
 
 			// Log the activity.
-			$this->ci->kbcore->activities->log_activity($guid, 'registered');
+			$this->ci->kbcore->activities->log_activity($guid, 'lang:act_user_register');
 		}
 		else
 		{
@@ -125,18 +163,7 @@ class Users_lib
 		}
 
 		// Get the user from database.
-		$selects = array(
-			'entities.id',
-			'entities.username',
-			'entities.subtype',
-			'entities.enabled',
-			'entities.deleted',
-			'users.email',
-			'users.password',
-		);
-		$user = $this->ci->kbcore->users
-			->select($selects)
-			->get($identity);
+		$user = $this->ci->kbcore->users->get($identity);
 		if ( ! $user)
 		{
 			set_alert(lang('us_wrong_credentials'), 'error');
@@ -192,12 +219,12 @@ class Users_lib
 
 		// Send the activation code to user.
 
-		if ($status === true)
+		if (true === $status)
 		{
 			set_alert(lang('us_resend_success'), 'success');
 
 			// Log the activity.
-			$this->ci->kbcore->activities->log_activity($user->id, 'new activation code: '.$activation_code);
+			$this->ci->kbcore->activities->log_activity($user->id, "lang:act_user_resend::{$activation_code}::".substr($activation_code, 0, 8));
 
 			// Purge user's captcha and old ones.
 			$this->delete_captcha();
@@ -228,19 +255,7 @@ class Users_lib
 		}
 
 		// Get the user from database.
-		$selects = array(
-			'entities.id',
-			'entities.subtype',
-			'entities.username',
-			'entities.language',
-			'entities.enabled',
-			'entities.deleted',
-			'users.email',
-			'users.password',
-		);
-		$user = $this->ci->kbcore->users
-			->select($selects)
-			->get($identity);
+		$user = $this->ci->kbcore->users->get($identity);
 		if ( ! $user)
 		{
 			set_alert(lang('us_wrong_credentials'), 'error');
@@ -262,15 +277,16 @@ class Users_lib
 		}
 
 		// Restore the user and quick-login.
-		$status = $this->ci->kbcore->entities->update($user->id, array(
-			'deleted'    => 0,
-			'deleted_at' => 0,
-		));
-
-		if ($status === true)
+		if (true === $this->ci->kbcore->entities->restore($user->id))
 		{
+			// Send email to user
+			$ip_address = $this->ci->input->ip_address();
+			$this->_send_email('restore', $user, array(
+				'ip_link' => anchor('https://www.iptolocation.net/trace-'.$ip_address, $ip_address, 'target="_blank"'),
+			));
+
 			// Log the activity.
-			$this->ci->kbcore->activities->log_activity($user->id, 'restored account');
+			$this->ci->kbcore->activities->log_activity($user->id, 'lang:act_user_restore');
 
 			// Purge user's captcha and old ones.
 			$this->delete_captcha();
@@ -278,7 +294,7 @@ class Users_lib
 			return $this->ci->auth->quick_login($user);
 		}
 
-		return $status;
+		return false;
 	}
 
 	// ------------------------------------------------------------------------
@@ -313,15 +329,17 @@ class Users_lib
 		$status = $this->ci->kbcore->entities->update($var->guid, array('enabled' => 1));
 
 		// Everything went well?
-		if ($status === true)
+		if (true === $status)
 		{
+			// Send email to user.
+			$this->_send_email('activated', $var->guid, array('login_url' => site_url('login')));
+
+			// Set alert message.
 			set_alert(lang('us_activate_success'), 'success');
 
-			// Delete activation code.
+			// Log the activity and purge codes.
+			$this->ci->kbcore->activities->log_activity($var->guid, 'lang:act_user_activated');
 			$this->delete_activation_codes($var->guid);
-
-			// Log the activity.
-			$this->ci->kbcore->activities->log_activity($var->guid, 'activation code: '.$code);
 		}
 		else
 		{
@@ -350,22 +368,8 @@ class Users_lib
 			return false;
 		}
 
-		// Things to select.
-		$selects = array(
-			'entities.id',
-			'entities.subtype',
-			'entities.username',
-			'entities.enabled',
-			'entities.deleted',
-			'users.email',
-		);
-
-		// Grab the user from database.
-		$user = $this->ci->kbcore->users
-			->select($selects)
-			->get($identity);
-
-		// The user does not exist?
+		// Get the user from database.
+		$user = $this->ci->kbcore->users->get($identity);
 		if ( ! $user)
 		{
 			set_alert(lang('us_wrong_credentials'), 'error');
@@ -432,12 +436,23 @@ class Users_lib
 
 		// Send the activation code to user.
 
-		if ($status === true)
+		if (true === $status)
 		{
+			// Send email to user.
+			$ip_address = $this->ci->input->ip_address();
+			$this->_send_email('recover', $user, array(
+				'link'    => anchor('login/reset/'.$password_code, '', 'target="_blank"'),
+				'ip_link' => anchor('https://www.iptolocation.net/trace-'.$ip_address, $ip_address, 'target="_blank"'),
+			));
+
+			// Set alert and log the activity.
 			set_alert(lang('us_recover_success'), 'success');
 
 			// Log the activity.
-			$this->ci->kbcore->activities->log_activity($user->id, 'new password code: '.$password_code);
+			$this->ci->kbcore->activities->log_activity(
+				$user->id,
+				"lang:act_user_recover::{$password_code}::".substr($password_code, 0, 8)
+			);
 		}
 		else
 		{
@@ -446,6 +461,8 @@ class Users_lib
 
 		return $status;
 	}
+
+	// ------------------------------------------------------------------------
 
 	/**
 	 * Checks the password reset code.
@@ -468,7 +485,7 @@ class Users_lib
 			'created_at >'  => time() - (DAY_IN_SECONDS * 2),
 		));
 
-		return ($var) ? $var->guid : false;
+		return (false !== $var) ? $var->guid : false;
 	}
 
 	// ------------------------------------------------------------------------
@@ -493,13 +510,19 @@ class Users_lib
 		$status = $this->ci->kbcore->users->update($user_id, array('password' => $password));
 
 		// Done?
-		if ($status === true)
+		if (true === $status)
 		{
+			// Send email to user.
+			$ip_address = $this->ci->input->ip_address();
+			$this->_send_email('password', $user_id, array(
+				'login_url' => site_url('login'),
+				'ip_link'    => anchor('https://www.iptolocation.net/trace-'.$ip_address, $ip_address, 'target="_blank"'),
+			));
 			// Set success message.
 			set_alert(lang('us_reset_success'), 'success');
 
 			// Log the activity.
-			$this->ci->kbcore->activities->log_activity($user_id, 'changed password');
+			$this->ci->kbcore->activities->log_activity($user_id, 'lang:act_user_reset');
 
 			// Delete all password codes.
 			$this->delete_password_codes($user_id);
@@ -614,4 +637,74 @@ class Users_lib
 			'created_at <' => time() - 7200
 		));
 	}
+
+	// ------------------------------------------------------------------------
+	// Private methods.
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for sending emails to users.
+	 *
+	 * @since 	1.3.3
+	 *
+	 * @access 	private
+	 * @param 	string 	$type 	The message type to send.
+	 * @param 	mixed 	$user 	The user object, ID, username or email address.
+	 * @param 	array 	$data 	Array of data to pass to subject and message.
+	 * @return 	bool 	true if the email was sent, else false.
+	 */
+	private function _send_email($type, $user, $data = array())
+	{
+		// Nothing provided? Nothing to do.
+		if (empty($type) OR empty($user))
+		{
+			return false;;
+		}
+
+		// get the user by his/her id or username?
+		if ( ! $user Instanceof KB_User OR ! is_object($user))
+		{
+			$user = $this->ci->kbcore->users->get($user);
+		}
+
+		// We make sure the user exists on database.
+		if (false === $user)
+		{
+			return false;
+		}
+
+		// Prepare default variables to be replaced.
+		$email     = (isset($data['email'])) ? $data['email'] : $user->email;
+		$name      = ' '.(isset($data['name']) ? $data['name'] : $user->first_name);
+		$site_name = $this->ci->config->item('site_name');
+		$site_link = anchor('', $site_name, 'target="_blank"');
+		
+		$search  = array('{name}', '{site_name}', '{site_link}');
+		$replace = array($name, $site_name, $site_link);
+
+		// We load emails language file.
+		$this->ci->load->language('users/emails');
+
+		// Prepare email subject and body templates.
+		$subject = lang('us_email_'.$type.'_subject');
+		$message = lang('us_email_'.$type.'_message');
+
+		// Additional $data?
+		if ( ! empty($data))
+		{
+			foreach ($data as $key => $val)
+			{
+				array_push($search, '{'.$key.'}');
+				array_push($replace, $val);
+			}
+		}
+
+		// Parse email subject and message.
+		$subject = str_replace($search, $replace, $subject);
+		$message = str_replace($search, $replace, $message);
+
+		// Now we send the message.
+		return $this->ci->kbcore->send_email($email, $subject, nl2br($message));
+	}
+
 }

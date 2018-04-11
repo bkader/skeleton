@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -46,8 +46,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @since 		1.0.0
+ * @version 	1.3.3
  */
 
 // ------------------------------------------------------------------------
@@ -101,9 +101,10 @@ $lang['avatar']   = 'Avatar';
 $lang['us_register_title']   = 'Register';
 $lang['us_register_heading'] = 'Create Account';
 
-$lang['us_register_success'] = 'Account successfully created. You may now login.';
-$lang['us_register_info']    = 'Account successfully created. The activation link was sent to you.';
-$lang['us_register_error']   = 'Unable to create account.';
+$lang['us_register_success']     = 'Account successfully created. You may now login.';
+$lang['us_register_info']        = 'Account successfully created. The activation link was sent to you.';
+$lang['us_register_info_manual'] = 'All accounts require approval by a site admin before being active. You will receive an email once approved.';
+$lang['us_register_error']       = 'Unable to create account.';
 
 // ------------------------------------------------------------------------
 // Account activation.
@@ -135,6 +136,7 @@ $lang['us_account_missing']  = 'This user does not exist.';
 $lang['us_account_disabled']  = 'You account is not yet active. Use the link that was sent to you or %s to receive a new one.';
 $lang['us_account_banned']    = 'This user is banned from the site.';
 $lang['us_account_deleted']   = 'Your account has been deleted but not yet removed from database. %s if you wish to restore it.';
+$lang['us_account_deleted_admin']   = 'Your account has been deleted by an administrator thus you cannot restore it. Feel free to contact us for more details.';
 
 // ------------------------------------------------------------------------
 // Lost password page.
@@ -145,7 +147,6 @@ $lang['us_recover_heading'] = 'Lost Password';
 $lang['us_recover_notice']  = 'Enter your username or email address and we will send you a link to reset your password.';
 $lang['us_recover_success'] = 'Password reset link successfully sent.';
 $lang['us_recover_error']   = 'Unable to send password reset link.';
-
 
 // ------------------------------------------------------------------------
 // Reset password page.
@@ -181,9 +182,11 @@ $lang['us_manage_users'] = 'Manage Users';
 // Users actions.
 $lang['add_user']        = 'Add User';
 $lang['edit_user']       = 'Edit User';
-$lang['delete_user']     = 'Delete User';
 $lang['activate_user']   = 'Activate User';
 $lang['deactivate_user'] = 'Deactivate User';
+$lang['delete_user']     = 'Delete User';
+$lang['restore_user']    = 'Restore User';
+$lang['remove_user']     = 'Remove User';
 
 // Users roles.
 $lang['role']  = 'Role';
@@ -204,6 +207,8 @@ $lang['inactive'] = 'Inactive';
 $lang['us_admin_activate_confirm']   = 'Are you sure you want to activate this user?';
 $lang['us_admin_deactivate_confirm'] = 'Are you sure you want to deactivate this user?';
 $lang['us_admin_delete_confirm']     = 'Are you sure you want to delete this user?';
+$lang['us_admin_restore_confirm']    = 'Are you sure you want to restore this user?';
+$lang['us_admin_remove_confirm']     = 'Are you sure you want to remove this user and all related data?';
 
 // Success messages.
 $lang['us_admin_add_success']        = 'User successfully created.';
@@ -211,6 +216,8 @@ $lang['us_admin_edit_success']       = 'User successfully updated.';
 $lang['us_admin_activate_success']   = 'User successfully activated.';
 $lang['us_admin_deactivate_success'] = 'User successfully deactivated.';
 $lang['us_admin_delete_success']     = 'User successfully deleted.';
+$lang['us_admin_restore_success']    = 'User successfully restored.';
+$lang['us_admin_remove_success']     = 'User and related data successfully removed.';
 
 // Error messages.
 $lang['us_admin_add_error']        = 'Unable to create user.';
@@ -218,6 +225,15 @@ $lang['us_admin_edit_error']       = 'Unable to update user.';
 $lang['us_admin_activate_error']   = 'Unable to activate user.';
 $lang['us_admin_deactivate_error'] = 'Unable to deactivate user.';
 $lang['us_admin_delete_error']     = 'Unable to delete user.';
+$lang['us_admin_restore_error']    = 'Unable to restore user.';
+$lang['us_admin_remove_error']     = 'Unable to remove user and all related data.';
+
+// Messages on own account.
+$lang['us_admin_activate_error_own']   = 'You cannot activate your own account.';
+$lang['us_admin_deactivate_error_own'] = 'You cannot deactivate your own account.';
+$lang['us_admin_delete_error_own']     = 'You cannot delete your own account.';
+$lang['us_admin_restore_error_own']    = 'You cannot restore your own account.';
+$lang['us_admin_remove_error_own']     = 'You cannot remove your own account.';
 
 // ========================================================================
 // Users settings lines.
@@ -250,7 +266,6 @@ $lang['set_email_invalid_key'] = 'This new email link is no longer valid.';
 
 // Info messages.
 $lang['set_email_info'] = 'A link to change your email address has been sent to your new address.';
-
 
 // Avatar extra lines.
 $lang['update_avatar']       = 'Update Avatar';

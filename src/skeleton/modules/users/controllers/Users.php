@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -49,8 +49,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @since 		1.0.0
+ * @version 	1.3.3
  */
 class Users extends KB_Controller
 {
@@ -64,8 +64,7 @@ class Users extends KB_Controller
 
 		// Make sure the user is not logged in.
 		$method = $this->router->fetch_method();
-		if ($this->auth->online() 
-			&& ! in_array($method, array('logout', 'change_email')))
+		if ($this->auth->online() && 'logout' !== $this->router->fetch_method())
 		{
 			set_alert(lang('error_logged_in'), 'error');
 			redirect('');
@@ -73,10 +72,15 @@ class Users extends KB_Controller
 		}
 	}
 
-	public function index()
-	{
-		die('here');
-	}
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Index method kept as backup.
+	 * @since 	1.0.0
+	 * @access 	public
+	 * @return 	void
+	 */
+	public function index() {}
 
 	// ------------------------------------------------------------------------
 	// Account management methods.
@@ -197,7 +201,7 @@ class Users extends KB_Controller
 		$status = $this->users->activate_by_code($code);
 
 		// The redirection depends on the activation status.
-		redirect(($status === true ? 'login' : ''),'refresh');
+		redirect(($status === true ? 'login' : ''), 'refresh');
 		exit;
 	}
 
@@ -505,7 +509,7 @@ class Users extends KB_Controller
 			$this->users->prep_password_reset($this->input->post('identity', true));
 
 			// Redirect back to the same page.
-			redirect('login/recover','refresh');
+			redirect('login/recover', 'refresh');
 			exit;
 		}
 	}
@@ -569,10 +573,7 @@ class Users extends KB_Controller
 			}
 
 			// Attempt to reset password.
-			$status = $this->users->reset_password(
-				$user_id,
-				$this->input->post('npassword', true)
-			);
+			$status = $this->users->reset_password($user_id, $this->input->post('npassword', true));
 
 			// The redirection depends on the process status.
 			redirect(($status === true ? 'login' : 'login/reset/'.$code), 'refresh');

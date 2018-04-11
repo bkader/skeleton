@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -48,11 +48,39 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.3.0
+ * @since 		1.0.0
+ * @version 	1.3.3
  */
 class Admin extends Admin_Controller
 {
+	/**
+	 * Class constructor
+	 *
+	 * @since 	1.3.3
+	 *
+	 * @access 	public
+	 * @return 	void
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+
+		// Add AJAX method.
+		array_push(
+			$this->safe_ajax_methods,
+			'activate',
+			'deactivate',
+			'delete',
+			'restore',
+			'remove'
+		);
+
+		// We add users JS file.
+		array_push($this->scripts, 'users');
+	}
+
+	// ------------------------------------------------------------------------
+
 	/**
 	 * List all site users.
 	 * @access 	public
@@ -60,6 +88,9 @@ class Admin extends Admin_Controller
 	 */
 	public function index()
 	{
+		// We add our language lines to head tag.
+		add_filter('admin_head', array($this, '_admin_head'));
+
 		// Create pagination.
 		$this->load->library('pagination');
 
@@ -74,16 +105,20 @@ class Admin extends Admin_Controller
 		// Create pagination links.
 		$data['pagination'] = $this->pagination->create_links();
 
-		// Prepare offset.
-		$offset = ($this->input->get('page'))
-			? $config['per_page'] * ($this->input->get('page') - 1)
-			: 0;
-
 		// Display limit.
 		$limit = $config['per_page'];
 
+		// Prepare offset.
+		$offset = 0;
+		if ($this->input->get('page'))
+		{
+			$offset = $config['per_page'] * ($this->input->get('page') - 1);
+		}
+
 		// Get all users.
 		$data['users'] = $this->kbcore->users->get_all($limit, $offset);
+
+		// Set page title and render view.
 		$this->theme
 			->set_title(lang('us_manage_users'))
 			->render($data);
@@ -121,40 +156,33 @@ class Admin extends Admin_Controller
 					'rules' => 'required|matches[password]'),
 		));
 
-		// Were form fields stored in session?
-		$cached = $this->session->flashdata('form');
-		if ($cached && is_array($cached))
-		{
-			extract($cached);
-		}
-
 		// Before form processing
 		if ($this->form_validation->run() == false)
 		{
 			// Prepare form fields.
 			$data['first_name'] = array_merge(
 				$this->config->item('first_name', 'inputs'),
-				array('value' => set_value('first_name', @$first_name))
+				array('value' => set_value('first_name'))
 			);
 			$data['last_name'] = array_merge(
 				$this->config->item('last_name', 'inputs'),
-				array('value' => set_value('last_name', @$last_name))
+				array('value' => set_value('last_name'))
 			);
 			$data['email'] = array_merge(
 				$this->config->item('email', 'inputs'),
-				array('value' => set_value('email', @$email))
+				array('value' => set_value('email'))
 			);
 			$data['username'] = array_merge(
 				$this->config->item('username', 'inputs'),
-				array('value' => set_value('username', @$username))
+				array('value' => set_value('username'))
 			);
 			$data['password'] = array_merge(
 				$this->config->item('password', 'inputs'),
-				array('value' => set_value('password', @$password))
+				array('value' => set_value('password'))
 			);
 			$data['cpassword'] = array_merge(
 				$this->config->item('cpassword', 'inputs'),
-				array('value' => set_value('cpassword', @$cpassword))
+				array('value' => set_value('cpassword'))
 			);
 
 			// Extra security layer.
@@ -171,9 +199,6 @@ class Admin extends Admin_Controller
 			// // Passed CSRF?
 			if ( ! $this->check_csrf())
 			{
-				// Store form values in session
-				$this->session->set_flashdata('form', $this->input->post(null, true));
-
 				set_alert(lang('error_csrf'), 'error');
 				redirect('admin/users/add', 'refresh');
 				exit;
@@ -183,21 +208,18 @@ class Admin extends Admin_Controller
 			$user_data['enabled'] = ($this->input->post('enabled') == '1') ? 1 : 0;
 			$user_data['subtype'] = ($this->input->post('admin') == '1') ? 'administrator' : 'regular';
 
-			$guid = $this->users->create_user($user_data);
-
-			if ($guid > 0)
+			// User created successfully?
+			if (false !== $guid = $this->kbcore->users->create($user_data))
 			{
 				// Log the activity.
-				log_activity($this->c_user->id, 'created user: #'.$guid);
+				log_activity($this->c_user->id, 'lang:act_user_create::'.$guid);
 
-				redirect('admin/users','refresh');
+				redirect('admin/users', 'refresh');
 				exit;
 			}
-			else
-			{
-				redirect('admin/users/add','refresh');
-				exit;
-			}
+
+			redirect('admin/users/add', 'refresh');
+			exit;
 		}
 	}
 
@@ -241,7 +263,7 @@ class Admin extends Admin_Controller
 			$rules[] = array(
 				'field' => 'email',
 				'label' => 'lang:email_address',
-				'rules' => 'trim|required|valid_email|is_unique[users.email]|is_unique[variables.params]|is_unique[metadata.value]',
+				'rules' => 'trim|required|valid_email|unique_email',
 			);
 		}
 
@@ -251,7 +273,7 @@ class Admin extends Admin_Controller
 			$rules[] = array(
 				'field' => 'username',
 				'label' => 'lang:username',
-				'rules' => 'trim|required|min_length[5]|max_length[32]|is_unique[entities.username]',
+				'rules' => 'trim|required|min_length[5]|max_length[32]|unique_username',
 			);
 		}
 
@@ -407,16 +429,13 @@ class Admin extends Admin_Controller
 				unset($user_data['password']);
 			}
 
-			// Attempt to update user's details.
-			$status = $this->kbcore->users->update($id, $user_data);
-
-			// Successful?
-			if ($status === true)
+			// Successful or nothing to update?
+			if (empty($user_data) OR true === $this->kbcore->users->update($id, $user_data))
 			{
 				set_alert(lang('us_admin_edit_success'), 'success');
 
 				// Log the activity.
-				log_activity($this->c_user->id, 'updated user: #'.$id);
+				log_activity($this->c_user->id, 'lang:act_user_update::'.$id);
 
 				redirect('admin/users', 'refresh');
 			}
@@ -431,6 +450,8 @@ class Admin extends Admin_Controller
 	}
 
 	// ------------------------------------------------------------------------
+	// AJAX Methods.
+	// ------------------------------------------------------------------------
 
 	/**
 	 * Activate a user.
@@ -441,47 +462,46 @@ class Admin extends Admin_Controller
 	 */
 	public function activate($id = 0)
 	{
-		/**
-		 * We check few conditions:
-		 * 1. The ID is set.
-		 * 2. THe URL passes security process.
-		 * 3.  The user is not targeting his/her own account.
-		 */
-		if ($id < 0
-			OR ! check_safe_url()
-			OR $id == $this->c_user->id)
+		// Default header status code.
+		$this->response->header = 409;
+
+		// We make sure $id is valid.
+		if ( ! is_numeric($id) OR $id < 0)
 		{
-			set_alert(lang('error_safe_url'), 'error');
-			redirect($this->agent->referrer());
-			exit;
+			$this->response->header  = 412;
+			$this->response->message = lang('error_safe_url');
+			return;
 		}
 
-		// Make sure the user exists and is deactivated.
-		$user = $this->kbcore->users->get($id);
-		if ( ! $user OR $user->enabled <> 0)
+		// The user cannot activate his/her own account.
+		if ($id == $this->c_user->id)
 		{
-			set_alert(lang('us_admin_activate_error'), 'error');
-			redirect($this->agent->referrer());
-			exit;
+			$this->response->header  = 405;
+			$this->response->message = lang('us_admin_activate_error_own');
+			return;
 		}
 
-		// Enabled the users.
-		$status = $this->kbcore->entities->update($id, array('enabled' => 1));
-
-		if ($status === true)
+		// The user does not exist, or already enabled?
+		if (false === $this->kbcore->users->get_by(array('id' => $id, 'enabled' => 0)))
 		{
-			set_alert(lang('us_admin_activate_success'), 'success');
-
-			// Log the activity.
-			log_activity($this->c_user->id, 'activate user: #'.$id);
-		}
-		else
-		{
-			set_alert(lang('us_admin_activate_error'), 'error');
+			$this->response->message = lang('us_admin_activate_error');
+			return;
 		}
 
-		redirect($this->agent->referrer());
-		exit;
+		// Successfully disabled the user?
+		if (false !== $this->kbcore->entities->update($id, array('enabled' => 1)))
+		{
+			$this->response->header  = 200;
+			$this->response->message = lang('us_admin_activate_success');
+
+			// We log the activity.
+			log_activity($this->c_user->id, 'lang:act_user_activate::'.$id);
+
+			return;
+		}
+
+		// Otherwise, user could not be activated.
+		$this->response->message = lang('us_admin_activate_error');
 	}
 
 	// ------------------------------------------------------------------------
@@ -495,91 +515,221 @@ class Admin extends Admin_Controller
 	 */
 	public function deactivate($id = 0)
 	{
-		/**
-		 * We check few conditions:
-		 * 1. The ID is set.
-		 * 2. THe URL passes security process.
-		 * 3.  The user is not targeting his/her own account.
-		 */
-		if ($id < 0
-			OR ! check_safe_url()
-			OR $id == $this->c_user->id)
+		// Default header status code.
+		$this->response->header = 409;
+
+		// We make sure $id is valid.
+		if ( ! is_numeric($id) OR $id < 0)
 		{
-			set_alert(lang('error_safe_url'), 'error');
-			redirect($this->agent->referrer());
-			exit;
+			$this->response->header  = 412;
+			$this->response->message = lang('error_safe_url');
+			return;
 		}
 
-		// Make sure the user exists and is deactivated.
-		$user = $this->kbcore->users->get($id);
-		if ( ! $user OR $user->enabled <> 1)
+		// The user cannot deactivate his/her own account.
+		if ($id == $this->c_user->id)
 		{
-			set_alert(lang('us_admin_deactivate_error'), 'error');
-			redirect($this->agent->referrer());
-			exit;
+			$this->response->header  = 405;
+			$this->response->message = lang('us_admin_deactivate_error_own');
+			return;
 		}
 
-		// Enabled the users.
-		$status = $this->kbcore->entities->update($id, array('enabled' => 0));
-
-		if ($status === true)
+		// The user does not exist, or already disabled?
+		if (false === $this->kbcore->users->get_by(array('id' => $id, 'enabled' => 1)))
 		{
-			set_alert(lang('us_admin_deactivate_success'), 'success');
-
-			// Log the activity.
-			log_activity($this->c_user->id, 'deactivated user: #'.$id);
-		}
-		else
-		{
-			set_alert(lang('us_admin_deactivate_error'), 'error');
+			$this->response->message = lang('us_admin_deactivate_error');
+			return;
 		}
 
-		redirect($this->agent->referrer());
-		exit;
+		// Successfully disabled the user?
+		if (false !== $this->kbcore->entities->update($id, array('enabled' => 0)))
+		{
+			$this->response->header  = 200;
+			$this->response->message = lang('us_admin_deactivate_success');
+
+			// We log the activity.
+			log_activity($this->c_user->id, 'lang:act_user_deactivate::'.$id);
+
+			return;
+		}
+
+		// Otherwise, user could not be activated.
+		$this->response->message = lang('us_admin_deactivate_error');
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
 	 * Delete existing user.
+	 *
+	 * @since 	1.0.0
+	 * 
 	 * @access 	public
 	 * @param 	int 	$id 	user's ID.
-	 * @author 	Kader Bouyakoub
-	 * @version 1.0
-	 * @return 	void.
+	 * @return 	void
 	 */
 	public function delete($id = 0)
 	{
-		/**
-		 * We check few conditions:
-		 * 1. The ID is set.
-		 * 2. THe URL passes security process.
-		 * 3.  The user is not targeting his/her own account.
-		 */
-		if ($id < 0
-			OR ! check_safe_url()
-			OR $id == $this->c_user->id)
+		// Default response header status code.
+		$this->response->header = 409;
+
+		// Did we provide a valid $id?
+		if ( ! is_numeric($id) OR $id < 0)
 		{
-			set_alert(lang('error_safe_url'), 'error');
-			redirect($this->agent->referrer());
-			exit;
+			$this->response->header  = 412;
+			$this->response->message = lang('error_safe_url');
+			return;
 		}
 
-		// Could not be deleted?
-		if ( ! $this->kbcore->users->remove($id))
+		// The user cannot delete his/her own account.
+		if ($id == $this->c_user->id)
 		{
-			set_alert(lang('us_admin_delete_error'), 'error');
-		}
-		else
-		{
-			set_alert(lang('us_admin_delete_success'), 'success');
-
-			// Log the activity.
-			log_activity($this->c_user->id, 'deleted user: #'.$id);
+			$this->response->header  = 405;
+			$this->response->message = lang('us_admin_delete_error_own');
+			return;
 		}
 
-		redirect($this->agent->referrer());
-		exit;
+		// We attempt to remove the user.
+		if (false !== $this->kbcore->users->delete($id))
+		{
+			$this->response->header  = 200;
+			$this->response->message = lang('us_admin_delete_success');
+
+			// We log the activity.
+			log_activity($this->c_user->id, 'lang:act_user_delete::'.$id);
+
+			return;
+		}
+
+		// Otherwise, user could not be deleted.
+		$this->response->message = lang('us_admin_delete_error');
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Restore existing user.
+	 *
+	 * @since 	1.3.3
+	 * 
+	 * @access 	public
+	 * @param 	int 	$id 	user's ID.
+	 * @return 	void
+	 */
+	public function restore($id = 0)
+	{
+		// Default response header status code.
+		$this->response->header = 409;
+
+		// Did we provide a valid $id?
+		if ( ! is_numeric($id) OR $id < 0)
+		{
+			$this->response->header  = 412;
+			$this->response->message = lang('error_safe_url');
+			return;
+		}
+
+		// The user cannot restore his/her own account.
+		if ($id == $this->c_user->id)
+		{
+			$this->response->header  = 405;
+			$this->response->message = lang('us_admin_restore_error_own');
+			return;
+		}
+
+		// We attempt to restore the user.
+		if (false !== $this->kbcore->users->restore($id))
+		{
+			$this->response->header  = 200;
+			$this->response->message = lang('us_admin_restore_success');
+
+			// We log the activity.
+			log_activity($this->c_user->id, 'lang:act_user_restore::'.$id);
+
+			return;
+		}
+
+		// Otherwise, user could not be restored.
+		$this->response->message = lang('us_admin_restore_error');
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Remove existing user.
+	 *
+	 * @since 	1.3.3
+	 * 
+	 * @access 	public
+	 * @param 	int 	$id 	user's ID.
+	 * @return 	void
+	 */
+	public function remove($id = 0)
+	{
+		// Default response header status code.
+		$this->response->header = 409;
+
+		// Did we provide a valid $id?
+		if ( ! is_numeric($id) OR $id < 0)
+		{
+			$this->response->header  = 412;
+			$this->response->message = lang('error_safe_url');
+			return;
+		}
+
+		// The user cannot remove his/her own account.
+		if ($id == $this->c_user->id)
+		{
+			$this->response->header  = 405;
+			$this->response->message = lang('us_admin_remove_error_own');
+			return;
+		}
+
+		// We attempt to remove the user.
+		if (false !== $this->kbcore->users->remove($id))
+		{
+			$this->response->header  = 200;
+			$this->response->message = lang('us_admin_remove_success');
+
+			// We log the activity.
+			log_activity($this->c_user->id, 'lang:act_user_remove::'.$id);
+
+			return;
+		}
+
+		// Otherwise, user could not be removed.
+		$this->response->message = lang('us_admin_remove_error');
+	}
+
+	// ------------------------------------------------------------------------
+	// Private Methods.
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method to add our confirmations alerts to DOM.
+	 *
+	 * @since 	1.3.3
+	 *
+	 * @access 	public
+	 * @param 	string
+	 * @return 	string
+	 */
+	public function _admin_head($output)
+	{
+		// Confirmation messages.
+		$lines = array(
+			'activate'   => htmlentities(lang('us_admin_activate_confirm'), ENT_QUOTES, 'UTF-8'),
+			'deactivate' => htmlentities(lang('us_admin_deactivate_confirm'), ENT_QUOTES, 'UTF-8'),
+			'delete'     => htmlentities(lang('us_admin_delete_confirm'), ENT_QUOTES, 'UTF-8'),
+			'restore'    => htmlentities(lang('us_admin_restore_confirm'), ENT_QUOTES, 'UTF-8'),
+			'remove'     => htmlentities(lang('us_admin_remove_confirm'), ENT_QUOTES, 'UTF-8'),
+		);
+
+		// Append our lines.
+		$output .= '<script>i18n.user = '.json_encode($lines).';</script>';
+
+		// Return the final $output.
+		return $output;
 	}
 
 }
