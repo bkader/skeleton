@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -48,8 +48,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @since 		1.0.0
+ * @since 		1.3.3 	Added extra functions.
+ * 
+ * @version 	1.3.3
  */
 
 if ( ! function_exists('print_input'))
@@ -158,5 +160,78 @@ if ( ! function_exists('_translate'))
 	function _translate($str)
 	{
 		return (sscanf($str, 'lang:%s', $line) === 1) ? line($line) : $str;
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('safe_form_open'))
+{
+	/**
+	 * Function for creating the opening portion of the form, but with
+	 * a secured action using "safe_url" from KB_url_helper.
+	 *
+	 * @since 	1.3.3
+	 *
+	 * @param 	string 	The URI segments of the form destination.
+	 * @param 	array 	A key/value pair of attributes.
+	 * @param 	array 	A key/value pair hidden data.
+	 * @return 	string
+	 */
+	function safe_form_open($action = '', $attributes = array(), $hidden = array())
+	{
+		$CI =& get_instance();
+
+		// We make sure to load the URL helper.
+		(function_exists('site_url')) OR $CI->load->helper('url');
+
+		// If the "safe_url" function was not found, we use default function.
+		if ( ! function_exists('safe_url'))
+		{
+			return form_open($action, $attributes, $hidden);
+		}
+
+		// No action provided? Use the current URL.
+		if ( ! $action)
+		{
+			$action = safe_url(uri_string());
+		}
+		// If an action is not a full URL then turn it into one
+		elseif (false === strpos($action, '://'))
+		{
+			$action = safe_url($action);
+		}
+
+		return form_open($action, $attributes	, $hidden);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('safe_form_open_multipart'))
+{
+	/**
+	 * Function for creating the opening portion of the form, but with
+	 * "multipart/form-data" and a secured action using "safe_url".
+	 *
+	 * @since 	1.3.3
+	 *
+	 * @param	string	the URI segments of the form destination
+	 * @param	array	a key/value pair of attributes
+	 * @param	array	a key/value pair hidden data
+	 * @return	string
+	 */
+	function safe_form_open_multipart($action = '', $attributes = array(), $hidden = array())
+	{
+		if (is_string($attributes))
+		{
+			$attributes .= ' enctype="multipart/form-data"';
+		}
+		else
+		{
+			$attributes['enctype'] = 'multipart/form-data';
+		}
+
+		return safe_form_open($action, $attributes, $hidden);
 	}
 }
