@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 100122
 File Encoding         : 65001
 
-Date: 2018-03-29 06:08:11
+Date: 2018-04-12 19:39:03
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -126,16 +126,17 @@ CREATE TABLE `options` (
 -- ----------------------------
 -- Records of options
 -- ----------------------------
-INSERT INTO `options` VALUES ('active_plugins', 'a:1:{i:0;s:9:\"the-title\";}', 'plugins', 'text', '', '1');
+INSERT INTO `options` VALUES ('active_plugins', 'a:0:{}', 'plugins', 'text', '', '1');
 INSERT INTO `options` VALUES ('admin_email', 'admin@localhost', 'email', 'text', '', '1');
 INSERT INTO `options` VALUES ('allowed_types', 'gif|png|jpeg|jpg|pdf|doc|txt|docx|xls|zip|rar|xls|mp4', 'upload', 'text', '', '1');
 INSERT INTO `options` VALUES ('allow_multi_session', 'true', 'users', 'dropdown', 'a:2:{s:4:\"true\";s:8:\"lang:yes\";s:5:\"false\";s:7:\"lang:no\";}', '1');
 INSERT INTO `options` VALUES ('allow_registration', 'true', 'users', 'dropdown', 'a:2:{s:4:\"true\";s:8:\"lang:yes\";s:5:\"false\";s:7:\"lang:no\";}', '1');
-INSERT INTO `options` VALUES ('email_activation', 'false', 'users', 'dropdown', 'a:2:{s:4:\"true\";s:8:\"lang:yes\";s:5:\"false\";s:7:\"lang:no\";}', '1');
+INSERT INTO `options` VALUES ('base_controller', 'welcome', 'general', 'dropdown', '', '1');
+INSERT INTO `options` VALUES ('email_activation', 'true', 'users', 'dropdown', 'a:2:{s:4:\"true\";s:8:\"lang:yes\";s:5:\"false\";s:7:\"lang:no\";}', '1');
 INSERT INTO `options` VALUES ('google_analytics_id', 'UA-XXXXX-Y', 'general', 'text', '', '0');
 INSERT INTO `options` VALUES ('google_site_verification', '', 'general', 'text', '', '0');
 INSERT INTO `options` VALUES ('language', 'english', 'language', 'dropdown', 'a:2:{s:7:\"english\";s:7:\"english\";s:6:\"french\";s:6:\"french\";}', '1');
-INSERT INTO `options` VALUES ('languages', 'a:3:{i:6;s:6:\"arabic\";i:2;s:7:\"english\";i:5;s:6:\"french\";}', 'language', 'text', '', '1');
+INSERT INTO `options` VALUES ('languages', 'a:1:{i:2;s:7:\"english\";}', 'language', 'text', '', '1');
 INSERT INTO `options` VALUES ('login_type', 'both', 'users', 'dropdown', 'a:3:{s:4:\"both\";s:9:\"lang:both\";s:8:\"username\";s:13:\"lang:username\";s:5:\"email\";s:18:\"lang:email_address\";}', '1');
 INSERT INTO `options` VALUES ('mail_protocol', 'mail', 'email', 'dropdown', 'a:3:{s:4:\"mail\";s:4:\"Mail\";s:4:\"smtp\";s:4:\"SMTP\";s:8:\"sendmail\";s:8:\"Sendmail\";}', '1');
 INSERT INTO `options` VALUES ('manual_activation', 'false', 'users', 'dropdown', 'a:2:{s:4:\"true\";s:8:\"lang:yes\";s:5:\"false\";s:7:\"lang:no\";}', '1');
@@ -146,17 +147,16 @@ INSERT INTO `options` VALUES ('sendmail_path', '/usr/sbin/sendmail', 'email', 't
 INSERT INTO `options` VALUES ('server_email', 'noreply@localhost', 'email', 'text', '', '1');
 INSERT INTO `options` VALUES ('site_author', 'Kader Bouyakoub', 'general', 'text', '', '0');
 INSERT INTO `options` VALUES ('site_description', 'A skeleton application for building CodeIgniter application.', 'general', 'text', '', '0');
-INSERT INTO `options` VALUES ('site_favicon', 'favicon.png', 'general', 'text', '', '0');
+INSERT INTO `options` VALUES ('site_favicon', '', 'general', 'text', '', '0');
 INSERT INTO `options` VALUES ('site_keywords', 'these, are, site, keywords', 'general', 'text', '', '0');
-INSERT INTO `options` VALUES ('site_name', 'Skeleton', 'general', 'text', '', '1');
+INSERT INTO `options` VALUES ('site_name', 'Skeleton Demo', 'general', 'text', '', '1');
 INSERT INTO `options` VALUES ('smtp_crypto', 'none', 'email', 'dropdown', 'a:3:{s:4:\"none\";s:9:\"lang:none\";s:3:\"ssl\";s:3:\"SSL\";s:3:\"tls\";s:3:\"TLS\";}', '1');
 INSERT INTO `options` VALUES ('smtp_host', '', 'email', 'text', '', '0');
-INSERT INTO `options` VALUES ('smtp_pass', '', 'email', 'text', '', '0');
+INSERT INTO `options` VALUES ('smtp_pass', '', 'email', 'password', '', '0');
 INSERT INTO `options` VALUES ('smtp_port', '', 'email', 'text', '', '0');
 INSERT INTO `options` VALUES ('smtp_user', '', 'email', 'text', '', '0');
 INSERT INTO `options` VALUES ('theme', 'default', 'theme', 'text', '', '1');
-INSERT INTO `options` VALUES ('themes', 'a:1:{s:7:\"default\";a:12:{s:4:\"name\";s:7:\"Default\";s:6:\"folder\";s:7:\"default\";s:9:\"theme_uri\";s:18:\"javascript:void(0)\";s:11:\"description\";s:46:\"The default theme that comes with the library.\";s:7:\"version\";s:5:\"1.0.0\";s:7:\"license\";s:3:\"N/A\";s:11:\"license_uri\";s:18:\"javascript:void(0)\";s:6:\"author\";s:15:\"Kader Bouyakoub\";s:10:\"author_uri\";s:25:\"https://github.com/bkader\";s:12:\"author_email\";s:15:\"bkader@mail.com\";s:4:\"tags\";s:41:\"ci-theme, codeigniter, library, bootstrap\";s:10:\"screenshot\";s:76:\"http://dev.example.com/skeleton/public/content/themes/default/screenshot.jpg\";}}', 'theme', 'text', '', '1');
-INSERT INTO `options` VALUES ('theme_admin', 'acp', 'theme', 'text', '', '1');
+INSERT INTO `options` VALUES ('themes', 'a:1:{s:7:\"default\";a:12:{s:4:\"name\";s:7:\"Default\";s:6:\"folder\";s:7:\"default\";s:9:\"theme_uri\";s:18:\"javascript:void(0)\";s:11:\"description\";s:46:\"The default theme that comes with the library.\";s:7:\"version\";s:5:\"1.0.0\";s:7:\"license\";s:11:\"MIT License\";s:11:\"license_uri\";s:35:\"https://opensource.org/licenses/MIT\";s:6:\"author\";s:15:\"Kader Bouyakoub\";s:10:\"author_uri\";s:25:\"https://github.com/bkader\";s:12:\"author_email\";s:15:\"bkader@mail.com\";s:4:\"tags\";s:29:\"codeigniter, skeleton, bkader\";s:10:\"screenshot\";s:76:\"http://dev.example.com/skeleton/public/content/themes/default/screenshot.jpg\";}}', 'theme', 'text', '', '1');
 INSERT INTO `options` VALUES ('theme_images_default', 'a:2:{s:4:\"post\";a:3:{s:5:\"width\";i:220;s:6:\"height\";i:180;s:4:\"crop\";b:1;}s:6:\"avatar\";a:3:{s:5:\"width\";i:100;s:6:\"height\";i:100;s:4:\"crop\";b:1;}}', 'theme', 'text', '', '0');
 INSERT INTO `options` VALUES ('theme_menus_default', 'a:3:{s:11:\"header-menu\";s:14:\"lang:main_menu\";s:11:\"footer-menu\";s:16:\"lang:footer_menu\";s:12:\"sidebar-menu\";s:17:\"lang:sidebar_menu\";}', 'menus', 'text', '', '0');
 INSERT INTO `options` VALUES ('upload_path', 'content/uploads', 'upload', 'text', '', '1');
