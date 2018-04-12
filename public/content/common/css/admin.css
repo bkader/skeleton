@@ -379,6 +379,65 @@ body {
   }
 }
 
+.menu-order {
+  display: block;
+  margin: 15px 0;
+  padding: 0;
+  list-style: none;
+}
+.menu-order .menu-item {
+  border: 1px solid #e6e6e6;
+}
+@media screen and (min-width: 992px) {
+  .menu-order .menu-item {
+    width: 50%;
+  }
+}
+.menu-order .menu-item + .menu-item {
+  margin-top: 7.5px;
+}
+
+.menu-item > .menu-item-bar {
+  background-color: #f2f2f2;
+  padding: 7.5px 15px;
+  position: relative;
+}
+.menu-item .menu-item-title {
+  display: block;
+  padding-right: 75px;
+}
+.menu-item .menu-item-controls {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.menu-item .menu-item-controls a {
+  float: left;
+  text-decoration: none;
+  padding: 7.5px 15px;
+}
+.menu-item .menu-item-controls a.item-edit {
+  color: inherit;
+}
+.menu-item .menu-item-controls a.item-delete {
+  color: #db2828;
+}
+.menu-item .menu-item-controls a:hover, .menu-item .menu-item-controls a:focus, .menu-item .menu-item-controls a:active {
+  background-color: #e6e6e6;
+}
+.menu-item .menu-item-settings {
+  padding: 15px;
+}
+.menu-item .menu-item-settings label {
+  font-weight: 400;
+  font-size: 0.83em;
+  font-style: italic;
+}
+
+.js .menu-item-bar {
+  cursor: move;
+}
+
 .btn-app {
   border-radius: 3px;
   position: relative;

@@ -1,0 +1,56 @@
+.menu-order {
+    display: block;
+    margin: $gutters 0;
+    padding: 0;
+    list-style: none;
+
+    .menu-item {
+        border: 1px solid darken(#fff, 10%);
+        @include screen-md {width: 50%;}
+    }
+
+    .menu-item + .menu-item { margin-top: $gutters / 2; }
+
+}
+
+.menu-item {
+    > .menu-item-bar {
+        background-color: darken(#fff, 5%);
+        padding: ($gutters / 2) $gutters;
+        position: relative;
+    }
+
+    .menu-item-title {
+        display: block;
+        padding-right: $gutters * 5;
+    }
+
+    .menu-item-controls {
+        @include absolute(top 0 right 0);
+
+        a {
+            float: left;
+            text-decoration: none;
+            padding: ($gutters / 2) $gutters;
+            &.item-edit { color: inherit; }
+            &.item-delete { color: $color__danger; }
+
+            @include hover-focus-active {
+                background-color: darken(#fff, 10%);
+            }
+        }
+
+    }
+
+    .menu-item-settings {
+        padding: $gutters;
+
+        label {
+            font-weight: 400;
+            font-size: 0.83em;
+            font-style: italic;
+        }
+    }
+}
+
+.js .menu-item-bar { cursor: move; }

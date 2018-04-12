@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -46,29 +46,33 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.3.0
+ * @since 		1.0.0
+ * @version 	1.3.3
  */
-?><h3 class="page-header clearfix">
-	<?php _e('manage_locations'); ?>
-	<?php echo admin_anchor('menus', lang('manage_menus'), 'class="btn btn-default btn-sm pull-right"'); ?>
-</h3>
+?><h3 class="page-header clearfix"><?php
+
+// Page header.
+_e('smn_manage_locations');
+
+// Manage menus anchor.
+echo admin_anchor('menus', lang('smn_manage_menus'), 'class="btn btn-default btn-sm pull-right"');
+
+?></h3>
 <div class="row">
 	<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
 		<div class="panel panel-default">
 			<div class="panel-body">
 <?php if (count($locations) > 0): ?>
-				<p><?php printf(lang('theme_locations_tip'), count($locations)); ?></p>
+				<p><?php printf(lang('smn_theme_locations'), count($locations)); ?></p>
 				<br />
 				<?php echo validation_errors('<div class="alert alert-danger">', '</div>'); ?>
 				<?php echo form_open('admin/menus/locations', 'role="form" class="form-horizontal"', $hidden); ?>
-
 				<?php foreach ($locations as $slug => $location): ?>
 					<div class="form-group">
 						<label for="location-<?php echo $slug; ?>" class="col-sm-4 control-label"><?php echo $location; ?></label>
 						<div class="col-sm-8">
 							<select name="menu_location[<?php echo $slug; ?>]" id="location-<?php echo $slug; ?>" class="form-control input-sm">
-								<option value="0"><?php _e('select_menu'); ?></option>
+								<option value="0"><?php _e('smn_select_menu'); ?></option>
 							<?php foreach ($menus as $menu): ?>
 								<option value="<?php echo $menu->id; ?>"<?php if ($menu->menu_location === $slug): ?> selected="selected"<?php endif; ?>><?php echo $menu->name; ?></option>
 							<?php endforeach; unset($menu); ?>
@@ -76,16 +80,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 						</div>
 					</div>
 				<?php endforeach; ?>
-
 				<div class="form-group">
 					<div class="col-sm-8 col-sm-offset-4">
 						<button type="submit" class="btn btn-primary btn-sm btn-block"><?php _e('save_changes'); ?></button>
 					</div>
 				</div>
-
 				<?php echo form_close(); ?>
 <?php else: ?>
-				<p><?php printf(lang('theme_locations_none'), count($locations)); ?></p>
+				<p><?php printf(lang('smn_theme_locations_none'), count($locations)); ?></p>
 <?php endif; ?>
 			</div>
 		</div>

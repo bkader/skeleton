@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -46,116 +46,85 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.3.0
+ * @since 		1.0.0
+ * @version 	1.3.3
  */
 
-// ------------------------------------------------------------------------
-// Menus lines.
-// ------------------------------------------------------------------------
+// Pages title.
+$lang['smn_manage_menus']     = 'Manage Menus';
+$lang['smn_manage_locations'] = 'Manage Locations';
+$lang['smn_menu_items']       = 'Menu Items';
+$lang['smn_menu_items_name']  = 'Menu Items: %s';
 
-// Section title.
-$lang['manage_menus'] = 'Manage Menus';
+// Action buttons.
+$lang['smn_add_menu']    = 'Add Menu';
+$lang['smn_add_item']    = 'Add Item';
+$lang['smn_edit_menu']   = 'Edit Menu';
+$lang['smn_edit_item']   = 'Edit Item';
+$lang['smn_save_menu']   = 'Save Menu';
+$lang['smn_save_item']   = 'Save Item';
+$lang['smn_delete_menu'] = 'Delete Menu';
+$lang['smn_delete_item'] = 'Delete Item';
 
-// Menu actions.
-$lang['add_menu']    = 'Add Menu';
-$lang['save_menu']   = 'Save Menu';
-$lang['edit_menu']   = 'Edit Menu';
-$lang['delete_menu'] = 'Delete Menu';
-
-// Success messages.
-$lang['add_menu_success']    = 'Menu successfully created.';
-$lang['edit_menu_success']   = 'Menu successfully updated.';
-$lang['delete_menu_success'] = 'Menu successfully deleted.';
-
-// Error messages.
-$lang['add_menu_error']    = 'Unable to create menu.';
-$lang['edit_menu_error']   = 'Unable to update menu.';
-$lang['delete_menu_error'] = 'Unable to delete menu.';
-$lang['edit_menu_no_menu'] = 'This menu does not exist.';
+// Actions buttons with placeholders.
+$lang['smn_edit_menu_name']   = 'Edit Menu: %s';
+$lang['smn_edit_item_name']   = 'Edit Item: %s';
+$lang['smn_delete_menu_name'] = 'Delete Menu: %s';
+$lang['smn_delete_item_name'] = 'Delete Item: %s';
 
 // Confirmation messages.
-$lang['delete_menu_confirm'] = 'Are you sure you want to delete this menu?';
-
-// Menu details.
-$lang['menu_name']        = 'Menu Name';
-$lang['menu_slug']        = 'Menu Slug';
-$lang['menu_description'] = 'Menu Description';
-
-// Menu details tips.
-$lang['menu_name_tip']        = 'Give your menu a name, then click Add Menu.';
-$lang['menu_slug_tip']        = 'Enter a UNIQUE slug for your menu.';
-$lang['menu_description_tip'] = '(Optional) Enter your menu description.';
-
-// ------------------------------------------------------------------------
-// Items lines.
-// ------------------------------------------------------------------------
-
-// Section title.
-$lang['menu_items'] = 'Menu Items';
-
-// Items actions.
-$lang['add_item']    = 'Add Item';
-$lang['save_item']   = 'Save Item';
-$lang['edit_item']   = 'Edit Item';
-$lang['delete_item'] = 'Delete Item';
+$lang['smn_delete_menu_confirm'] = 'Are you sure you want to delete this menu?';
+$lang['smn_delete_item_confirm'] = 'Are you sure you want to delete this menu item?';
 
 // Success messages.
-$lang['menu_structure_success'] = 'Menu items order successfully updated.';
-$lang['add_item_success']    = 'Menu item successfully created.';
-$lang['edit_item_success']   = 'Item item successfully updated.';
-$lang['delete_item_success'] = 'Menu item successfully deleted.';
+$lang['smn_add_menu_success']         = 'Menu successfully created.';
+$lang['smn_add_item_success']         = 'Menu item successfully created.';
+$lang['smn_save_menu_success']        = 'Menu successfully updated.';
+$lang['smn_save_item_success']        = 'Menu item successfully updated.';
+$lang['smn_delete_menu_success']      = 'Menu successfully deleted.';
+$lang['smn_delete_item_success']      = 'Menu item successfully deleted.';
+$lang['smn_update_locations_success'] = 'Menus locations successfully updated.';
 
 // Error messages.
-$lang['menu_structure_error'] = 'Unable to update menu items order.';
-$lang['add_item_error']       = 'Unable to create menu item.';
-$lang['edit_item_error']      = 'Unable to update menu item.';
-$lang['delete_item_error']    = 'Unable to delete menu item.';
-$lang['edit_item_no_menu']    = 'This menu item does not exist.';
+$lang['smn_add_menu_error']         = 'Unable to add menu.';
+$lang['smn_add_item_error']         = 'Unable to add menu item.';
+$lang['smn_save_menu_error']        = 'Unable to update menu.';
+$lang['smn_save_item_error']        = 'Unable to update menu item.';
+$lang['smn_delete_menu_error']      = 'Unable to delete menu.';
+$lang['smn_delete_item_error']      = 'Unable to delete menu item.';
+$lang['smn_update_locations_error'] = 'Unable to update menus locations.';
 
-// Confirmation messages.
-$lang['delete_item_confirm'] = 'Are you sure you want to delete this menu item?';
+// Menu or item inexistent.
+$lang['smn_inexistent_menu'] = 'That menu does not exists.';
+$lang['smn_inexistent_item'] = 'That menu item does not exists.';
 
-// Items details.
-$lang['menu_structure']   = 'Menu Structure';
-$lang['item_title']       = 'Item Title';
-$lang['item_href']        = 'Item URL';
-$lang['item_description'] = 'Item Description';
-$lang['item_order']       = 'Item Order';
-$lang['title_attr']       = 'Title Attribute';
-$lang['css_classes']      = 'CSS Classes';
-$lang['link_relation']    = 'Link Relationship (XFN)';
-$lang['link_target']      = 'Link Target';
+// Menus details and tips.
+$lang['smn_menu_name']        = 'Menu Name';
+$lang['smn_menu_slug']        = 'Menu Slug';
+$lang['smn_menu_description'] = 'Menu Description';
 
-// Items details tips.
-$lang['menu_structure_tip']   = 'Drag each item into the order you prefer.';
-$lang['item_title_tip']       = 'This will be the text to display.';
-$lang['item_href_tip']        = 'Enter the URL of your menu item.';
-$lang['item_description_tip'] = 'The description will be displayed in the menu if the current theme supports it.';
-$lang['item_order_tip']       = '(Optional) The order of your item within the menu.';
-$lang['link_target_tip']      = 'Open the link in a new window.';
+$lang['smn_menu_name_tip']        = 'Give your menu a name, then click Add Menu.';
+$lang['smn_menu_slug_tip']        = 'Enter a UNIQUE slug for your menu.';
+$lang['smn_menu_description_tip'] = '(Optional) Enter your menu description.';
 
-// ------------------------------------------------------------------------
-// Locations lines.
-// ------------------------------------------------------------------------
+// Items details and tips.
+$lang['smn_item_title']            = 'Title';
+$lang['smn_item_url']              = 'URL';
+$lang['smn_item_attribute_title']  = 'Title Attribute';
+$lang['smn_item_attribute_class']  = 'CSS Classes';
+$lang['smn_item_attribute_rel']    = 'Link Relationship (XFN)';
+$lang['smn_item_attribute_target'] = 'Open the link in a new window';
+$lang['smn_item_description']      = 'Description';
 
-// Section title and main lines.
-$lang['manage_locations'] = 'Manage Locations';
-$lang['menu_location']    = 'Menu Location';
+$lang['smn_item_title_tip']       = 'This will be the text to display.';
+$lang['smn_item_url_tip']         = 'Enter the URL of your menu item.';
+$lang['smn_item_description_tip'] = 'The description will be displayed in the menu if the current theme supports it.';
 
-// Actions and inputs.
-$lang['assign_menu'] = 'Assign Menu';
-$lang['select_menu'] = '&#151; Select a Menu &#151;';
+// Menu structure.
+$lang['smn_menu_structure']        = 'Menu Structure';
+$lang['smn_menu_structure_tip']    = 'Drag each item into the order you prefer.';
 
-// Success messages.
-$lang['menu_location_success'] = 'Menus locations successfully updated.';
-
-// Error messages.
-$lang['theme_locations_none'] = 'You theme does not support menus.';
-$lang['menu_location_error']  = 'Unable to update menus locations.';
-
-// Locations details.
-$lang['theme_locations'] = 'Theme Locations';
-
-// Locations details tips.
-$lang['theme_locations_tip'] = 'Your theme supports %s menus. Select which menu appears in each location.';
+// Locations select none item.
+$lang['smn_select_menu']           = '&#151; Select a Menu &#151;';
+$lang['smn_theme_locations']       = 'Your theme supports %s menus. Select which menu appears in each location.';
+$lang['smn_theme_locations_nonce'] = 'You theme does not support menus.';

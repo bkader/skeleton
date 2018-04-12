@@ -97,3 +97,12 @@ $lang['act_user_deactivate'] = 'Deactivated user: #%s';
 $lang['act_user_delete']     = 'Deleted user: #%s';
 $lang['act_user_restore']    = 'Restored user: #%s';
 $lang['act_user_remove']     = 'Removed user: #%s';
+
+// Menus module.
+$lang['act_menus_add_menu']         = 'Added menu: #%s';
+$lang['act_menus_edit_menu']        = 'Edited menu: #%s';
+$lang['act_menus_update_locations'] = 'Updated menus location.';
+$lang['act_menus_add_item']         = 'Added menu item: #%s';
+$lang['act_menus_update_items']     = 'Updated menu items: #%s';
+$lang['act_menus_delete_menu']      = 'Deleted menu: #%s';
+$lang['act_menus_delete_item']      = 'Deleted menu item: #%s';

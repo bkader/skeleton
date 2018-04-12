@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -46,15 +46,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.3.0
+ * @since 		1.0.0
+ * @version 	1.3.3
  */
-?><h2 class="page-header clearfix">
-	<?php _e('manage_menus'); ?>
-	<span class="pull-right">
-		<?php echo admin_anchor('menus/add', lang('add_menu'), 'class="btn btn-primary btn-sm"'); ?>&nbsp;<?php echo admin_anchor('menus/locations', lang('manage_locations'), 'class="btn btn-default btn-sm"'); ?>
-	</span>
-</h2>
+?><h2 class="page-header clearfix"><?php _e('smn_manage_menus'); ?><span class="pull-right"><?php
+
+// Add menu anchor:
+echo admin_anchor('menus/add', lang('smn_add_menu'), 'class="btn btn-primary btn-sm"');
+
+// Manage locations anchor.
+echo '&nbsp;'.admin_anchor('menus/locations', lang('smn_manage_locations'), 'class="btn btn-default btn-sm"');
+
+?></span></h2>
 <div class="panel panel-default">
 	<div class="table-responsive">
 		<table class="table table-hover table-condensed">
@@ -76,14 +79,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					<td><?php echo $menu->description ?></td>
 					<td><?php echo $menu->location_name ?></td>
 					<td class="text-right">
-						<a class="btn btn-default btn-xs" href="<?php echo admin_url('menus/edit/menu/'.$menu->id) ?>" title="<?php _e('edit_menu') ?>"><i class="fa fa-edit"></i></a>&nbsp;
-						<a class="btn btn-primary btn-xs" href="<?php echo admin_url('menus/items/'.$menu->id) ?>" title="<?php _e('menu_items') ?>"><i class="fa fa-list-ul"></i></a>&nbsp;
-						<a class="btn btn-danger btn-xs delete-menu" href="#" data-menu-id="<?php echo $menu->id; ?>" data-href="<?php echo safe_admin_url('menus/delete/menu/'.$menu->id) ?>" data-alert="<?php _e('delete_menu_confirm'); ?>" title="<?php _e('delete_menu') ?>"><i class="fa fa-times"></i></a>
+						<a class="btn btn-default btn-xs" href="<?php echo admin_url('menus/edit/'.$menu->id) ?>" title="<?php _e('smn_edit_menu') ?>"><i class="fa fa-edit"></i></a>&nbsp;
+						<a class="btn btn-primary btn-xs" href="<?php echo admin_url('menus/items/'.$menu->id) ?>" title="<?php _e('smn_menu_items') ?>"><i class="fa fa-list-ul"></i></a>&nbsp;
+						<a href="<?php echo safe_admin_url('menus/delete/menu/'.$menu->id) ?>" data-menu-id="<?php echo $menu->id; ?>" class="btn btn-danger btn-xs menu-delete" title="<?php _e('smn_delete_menu') ?>"><i class="fa fa-trash-o"></i></a>
 					</td>
 				</tr>
 			<?php endforeach; ?>
 		<?php endif; ?>
 			</tbody>
 		</table>
-	</div><!--/.panel-body-->
-</div><!--/.panel-->
+	</div>
+</div>

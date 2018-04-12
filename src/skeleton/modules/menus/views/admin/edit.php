@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -46,38 +46,43 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.3.0
+ * @since 		1.0.0
+ * @version 	1.3.3
  */
-?><h2 class="page-header clearfix">
-	<?php _e('edit_menu'); ?>: <?php echo $menu->name; ?>
-	<?php echo admin_anchor('menus', lang('manage_menus'), 'class="btn btn-primary btn-sm pull-right"') ?>
-</h2>
+?><h2 class="page-header clearfix"><?php
+
+// Page header.
+printf(lang('smn_edit_menu_name'), $menu->name);
+
+// Manage menus anchor.
+echo admin_anchor('menus', lang('smn_manage_menus'), 'class="btn btn-default btn-sm pull-right"');
+
+?></h2>
 <div class="row">
 	<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
 		<div class="panel panel-default">
 			<div class="panel-body">
-				<?php echo form_open('admin/menus/edit/menu/'.$menu->id, 'role="form"', $hidden); ?>
+				<?php echo form_open('admin/menus/edit/'.$menu->id, 'role="form"', $hidden); ?>
 
 					<div class="form-group<?php echo (form_error('name')) ? ' has-error' : ''; ?>">
-						<label for="name"><?php _e('menu_name'); ?></label>
+						<label for="name"><?php _e('smn_menu_name'); ?></label>
 						<?php echo print_input($name, array('class' => 'form-control', 'autofocus' => 'autofocus')); ?>
-						<?php echo form_error('name', '<p class="help-block">', '</p>') ?: '<p class="help-block">'.lang('menu_name_tip').'</p>' ?>
+						<?php echo form_error('name', '<p class="help-block">', '</p>') ?: '<p class="help-block">'.lang('smn_menu_name_tip').'</p>' ?>
 					</div>
 
 					<div class="form-group<?php echo (form_error('username')) ? ' has-error' : ''; ?>">
-						<label for="username"><?php _e('menu_slug'); ?></label>
+						<label for="username"><?php _e('smn_menu_slug'); ?></label>
 						<?php echo print_input($username, array('class' => 'form-control', 'autofocus' => 'autofocus')); ?>
-						<?php echo form_error('username', '<p class="help-block">', '</p>') ?: '<p class="help-block">'.lang('menu_slug_tip').'</p>' ?>
+						<?php echo form_error('username', '<p class="help-block">', '</p>') ?: '<p class="help-block">'.lang('smn_menu_slug_tip').'</p>' ?>
 					</div>
 
 					<div class="form-group<?php echo (form_error('menu_description')) ? ' has-error' : ''; ?>">
-						<label for="description"><?php _e('menu_description'); ?></label>
+						<label for="description"><?php _e('smn_menu_description'); ?></label>
 						<?php echo print_input($description, array('class' => 'form-control', 'rows' => 3)); ?>
-						<p class="help-block"><?php _e('menu_description_tip'); ?></p>
+						<p class="help-block"><?php _e('smn_menu_description_tip'); ?></p>
 					</div>
 
-					<button type="submit" class="btn btn-primary btn-sm pull-right"><?php _e('save_menu'); ?></button>
+					<button type="submit" class="btn btn-primary btn-sm pull-right"><?php _e('smn_save_menu'); ?></button>
 					<?php echo anchor('admin/menus', lang('cancel'), 'class="btn btn-default btn-sm"'); ?>
 
 				<?php echo form_close(); ?>
