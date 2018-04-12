@@ -51,39 +51,37 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 
 // Dashboard page title and tip.
-$lang['manage_languages']     = 'Manage Languages';
-$lang['manage_languages_tip'] = 'Enabled, disable, install and set site\'s default language. Enabled languages are available to site visitors.';
+$lang['sln_manage_languages']     = 'Manage Languages';
+$lang['sln_manage_languages_tip'] = 'Enabled, disable, install and set site\'s default language. Enabled languages are available to site visitors.';
 
 // Language details.
-$lang['folder']       = 'Folder';
-$lang['abbreviation'] = 'Abbreviation';
-$lang['is_default']   = 'Is Default';
-$lang['enabled']      = 'Enabled';
+$lang['sln_folder']       = 'Folder';
+$lang['sln_abbreviation'] = 'Abbreviation';
+$lang['sln_is_default']   = 'Is Default';
+$lang['sln_enabled']      = 'Enabled';
 
 // Language actions.
-$lang['make_default'] = 'Make Default';
+$lang['sln_make_default'] = 'Make Default';
 
 // Success messages.
-$lang['language_enable_success']  = 'Language successfully enabled.';
-$lang['language_disable_success'] = 'Language successfully disable.';
-$lang['language_default_success'] = 'Default language successfully changed.';
+$lang['sln_language_enable_success']  = 'Language successfully enabled.';
+$lang['sln_language_disable_success'] = 'Language successfully disabled.';
+$lang['sln_language_default_success'] = 'Default language successfully changed.';
 
 // Error messages.
-$lang['english_required']       = 'Required and untouchable.';
-$lang['language_enable_error']  = 'Unable to enable language.';
-$lang['language_disable_error'] = 'Unable to disable language.';
-$lang['language_default_error'] = 'Unable to change default language.';
+$lang['sln_english_required']       = 'Required and untouchable.';
+$lang['sln_language_enable_error']  = 'Unable to enable language.';
+$lang['sln_language_disable_error'] = 'Unable to disable language.';
+$lang['sln_language_default_error'] = 'Unable to change default language.';
 
 // Missing language errors.
-$lang['missing_language_folder']  = 'The language folder is missing. Lines may not be translated.';
-$lang['language_enable_missing']  = 'The language you are trying to enable is not available.';
-$lang['language_disable_missing'] = 'The language you are trying to disable is not available.';
-$lang['language_default_missing'] = 'The language you are trying to make as default is not available.';
+$lang['sln_language_missing_folder']  = 'The language folder is missing. Lines may not be translated.';
+$lang['sln_language_missing_line']    = 'The requested language line could not be found.';
+$lang['sln_language_enable_missing']  = 'The language you are trying to enable is not available.';
+$lang['sln_language_disable_missing'] = 'The language you are trying to disable is not available.';
+$lang['sln_language_default_missing'] = 'The language you are trying to make as default is not available.';
 
 // Already enabled/disable/default message.
-$lang['language_enable_already']  = 'This language is already enabled.';
-$lang['language_disable_already'] = 'This language is already disabled.';
-$lang['language_default_already'] = 'This language is already the default one.';
-
-// Lines errors.
-$lang['language_missing_line'] = 'The requested language line could not be found.';
+$lang['sln_language_enable_already']  = 'This language is already enabled.';
+$lang['sln_language_disable_already'] = 'This language is already disabled.';
+$lang['sln_language_default_already'] = 'This language is already the default one.';

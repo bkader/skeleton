@@ -117,7 +117,7 @@ class Admin extends Admin_Controller
 
 		// Set page title and render view.
 		$this->theme
-			->set_title(lang('manage_languages'))
+			->set_title(lang('sln_manage_languages'))
 			->render($data);
 	}
 
@@ -134,12 +134,13 @@ class Admin extends Admin_Controller
 	public function enable($folder = null)
 	{
 		// Default process status header code.
-		$this->response->header = 406;
+		$this->response->header = 409;
 
 		// No valid language provided?
 		if (empty($folder) OR ! array_key_exists($folder, $this->lang->languages()))
 		{
-			$this->response->message = lang('language_enable_missing');
+			$this->response->header  = 406;
+			$this->response->message = lang('sln_language_enable_missing');
 			return;
 		}
 
@@ -149,7 +150,7 @@ class Admin extends Admin_Controller
 		// The language already enabled?
 		if (in_array($folder, $db_langs))
 		{
-			$this->response->message = lang('language_enable_already');
+			$this->response->message = lang('sln_language_enable_already');
 			return;
 		}
 
@@ -161,16 +162,16 @@ class Admin extends Admin_Controller
 		if ($this->kbcore->options->set_item('languages', $db_langs))
 		{
 			$this->response->header  = 200;
-			$this->response->message = lang('language_enable_success');
+			$this->response->message = lang('sln_language_enable_success');
 
 			// We log the activity.
-			log_activity($this->c_user->id, sprintf(lang('act_language_enable'), $folder));
+			log_activity($this->c_user->id, 'lang:act_language_enable::'.$folder);
 
 			return;
 		}
 
 		// Default message is that we are unable to enable the language.
-		$this->response->message = lang('language_enable_error');
+		$this->response->message = lang('sln_language_enable_error');
 	}
 
 	// ------------------------------------------------------------------------
@@ -184,12 +185,13 @@ class Admin extends Admin_Controller
 	public function disable($folder = null)
 	{
 		// Default status header code.
-		$this->response->header = 406;
+		$this->response->header = 409;
 
 		// No valid language provided?
 		if (empty($folder) OR ! array_key_exists($folder, $this->lang->languages()))
 		{
-			$this->response->message = lang('language_disable_missing');
+			$this->response->header  = 406;
+			$this->response->message = lang('sln_language_disable_missing');
 			return;
 		}
 
@@ -199,7 +201,7 @@ class Admin extends Admin_Controller
 		// The language is already disabled?
 		if ( ! in_array($folder, $db_langs))
 		{
-			$this->response->message = lang('language_disable_already');
+			$this->response->message = lang('sln_language_disable_already');
 			return;
 		}
 
@@ -225,16 +227,16 @@ class Admin extends Admin_Controller
 				$this->kbcore->options->set_item('language', 'english');
 			}
 
-			$this->response->header = 200;
-			$this->response->message = lang('language_disable_success');
+			$this->response->header  = 200;
+			$this->response->message = lang('sln_language_disable_success');
 
 			// Log the activity.
-			log_activity($this->c_user->id, sprintf(lang('act_language_disable'), $folder));
+			log_activity($this->c_user->id, 'lang:act_language_disable::'.$folder);
 			return;
 		}
 
 		// Default message is that we are unable to disable the language.
-		$this->response->message = lang('language_enable_error');
+		$this->response->message = lang('sln_language_enable_error');
 	}
 
 	// ------------------------------------------------------------------------
@@ -248,12 +250,13 @@ class Admin extends Admin_Controller
 	public function make_default($folder = null)
 	{
 		// Default header status code.
-		$this->response->header = 406;
+		$this->response->header = 409;
 
 		// No valid language provided?
 		if (empty($folder) OR ! array_key_exists($folder, $this->lang->languages()))
 		{
-			$this->response->message = lang('language_default_missing');
+			$this->response->header  = 409;
+			$this->response->message = lang('sln_language_default_missing');
 			return;
 		}
 
@@ -269,7 +272,7 @@ class Admin extends Admin_Controller
 			// We had issues with adding the language?
 			if ( ! $this->kbcore->options->set_item('languages', $db_langs))
 			{
-				$this->response->message = lang('language_default_error');
+				$this->response->message = lang('sln_language_default_error');
 				return;
 			}
 		}
@@ -278,15 +281,15 @@ class Admin extends Admin_Controller
 		if ($this->kbcore->options->set_item('language', $folder))
 		{
 			$this->response->header  = 200;
-			$this->response->message = lang('language_default_success');
+			$this->response->message = lang('sln_language_default_success');
 
 			// Log the activity.
-			log_activity($this->c_user->id, sprintf(lang('act_language_default'), $folder));
+			log_activity($this->c_user->id, 'lang:act_language_default::'.$folder);
 			return;
 		}
 
 		// Otherwise, we could not set default language.
-		$this->response->message = lang('language_default_error');
+		$this->response->message = lang('sln_language_default_error');
 	}
 
 }

@@ -3,66 +3,57 @@
  * Copyright 2018 Kader Bouyakoub (https://github.com/bkader)
  * Licensed under MIT (https://github.com/bkader/skeleton/blob/develop/LICENSE.md)
  */
-(function ($, undefined) {
+(function($, window, document, undefined) {
 
-    jQuery.noConflict();
+    $.noConflict();
     "use strict";
 
     // ========================================================
     // Enabled language.
     // ========================================================
-    jQuery(document).on("click", ".lang-enable", function (e) {
+    $(document).on("click", ".lang-enable", function (e) {
         e.preventDefault();
-        var href = jQuery(this).attr("data-href");
-        if (href.length) {
-            jQuery.get(href, function (response, textStatus) {
-                if (textStatus == "success") {
-                    toastr.success(response);
-                    jQuery("#wrapper").load(config.adminURL + "/language #wrapper > *");
-                } else {
-                    toastr.error(response);
-                }
-            });
-        }
-        return false;
+        var href = $(this).attr("href");
+        if (!href.length) { return; }
+        $.get(href, function (response) {
+            toastr.success(response);
+        }).done(function () {
+            $("#wrapper").load(Config.currentURL + " #wrapper > *");
+        }).fail(function (response) {
+            toastr.error(response.responseJSON);
+        });
     });
 
     // ========================================================
     // Disable language.
     // ========================================================
-    jQuery(document).on("click", ".lang-disable", function (e) {
+    $(document).on("click", ".lang-disable", function (e) {
         e.preventDefault();
-        var href = jQuery(this).attr("data-href");
-        if (href.length) {
-            jQuery.get(href, function (response, textStatus) {
-                if (textStatus == "success") {
-                    toastr.success(response);
-                    jQuery("#wrapper").load(config.adminURL + "/language #wrapper > *");
-                } else {
-                    toastr.error(response);
-                }
-            });
-        }
-        return false;
+        var href = $(this).attr("href");
+        if (!href.length) { return; }
+        $.get(href, function (response) {
+            toastr.success(response);
+        }).done(function () {
+            $("#wrapper").load(Config.currentURL + " #wrapper > *");
+        }).fail(function (response) {
+            toastr.error(response.responseJSON);;
+        });
     });
 
     // ========================================================
     // Set default language.
     // ========================================================
-    jQuery(document).on("click", ".lang-default", function (e) {
+    $(document).on("click", ".lang-default", function (e) {
         e.preventDefault();
-        var href = jQuery(this).attr("data-href");
-        if (href.length) {
-            jQuery.get(href, function (response, textStatus) {
-                if (textStatus == "success") {
-                    toastr.success(response);
-                    jQuery("#wrapper").load(config.adminURL + "/language #wrapper > *");
-                } else {
-                    toastr.error(response);
-                }
-            });
-        }
-        return false;
+        var href = $(this).attr("href");
+        if (!href.length) { return; }
+        $.get(href, function (response) {
+            toastr.success(response);
+        }).done(function () {
+            $("#wrapper").load(Config.currentURL + " #wrapper > *");
+        }).fail(function (response) {
+            toastr.error(response.responseJSON);
+        });
     });
 
-})(jQuery);
+})(window.jQuery || window.Zepto, window, document);

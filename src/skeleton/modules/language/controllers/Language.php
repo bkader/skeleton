@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -46,8 +46,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.3.2
+ * @since 		1.0.0
+ * @version 	1.3.3
  */
 class Language extends KB_Controller
 {
@@ -74,6 +74,10 @@ class Language extends KB_Controller
 
 	/**
 	 * Switch site language.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Update user's language.
+	 * 
 	 * @access 	public
 	 * @param 	string 	$folder The language's folder name.
 	 * @return 	void
@@ -95,7 +99,15 @@ class Language extends KB_Controller
 		// Language not available? Nothing to do.
 		if (in_array($folder, $this->config->item('languages')))
 		{
+			// We setup the session.
 			$this->session->set_userdata('language', $folder);
+
+			// We update user's language if he/she is logged in.
+			if (true === $this->auth->online())
+			{
+				$user = $this->auth->user();
+				$user->update('language', $folder);
+			}
 		}
 
 		redirect($redirect);
@@ -116,6 +128,9 @@ class Language extends KB_Controller
 	 */
 	public function line()
 	{
+		// Default status header.
+		$this->response->header = 404;
+
 		// Should we load a file?
 		if ($file = $this->input->post('file'))
 		{
@@ -126,12 +141,13 @@ class Language extends KB_Controller
 		$line = $this->input->post('line');
 		if (empty($line))
 		{
+			$this->response->message = lang('sln_language_missing_line');
 			return;
 		}
 
 		// We set status code and translate the line.
 		$this->response->header = 200;
-		$this->response->message = $this->lang->line($line);
+		$this->response->message = lang($line);
 	}
 
 }

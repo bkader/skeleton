@@ -49,52 +49,41 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		1.0.0
  * @version 	1.3.3
  */
-?><h2 class="page-header clearfix"><?php _e('manage_languages'); ?></h2>
+?><h2 class="page-header clearfix"><?php _e('sln_manage_languages'); ?></h2>
 <div class="panel panel-default">
 	<div class="table-responsive">
 		<table class="table table-condensed">
-			<caption><?php _e('manage_languages_tip'); ?></caption>
+			<caption><?php _e('sln_manage_languages_tip'); ?></caption>
 			<thead>
 				<tr>
-					<th><?php _e('language'); ?></th>
-					<th><?php _e('abbreviation'); ?></th>
-					<th><?php _e('folder'); ?></th>
-					<th><?php _e('is_default'); ?></th>
-					<th><?php _e('enabled'); ?></th>
-					<th class="text-right"><?php _e('action'); ?></th>
+					<th class="col-xs-3"><?php _e('language'); ?></th>
+					<th class="col-xs-2"><?php _e('sln_abbreviation'); ?></th>
+					<th class="col-xs-2"><?php _e('sln_folder'); ?></th>
+					<th class="col-xs-1"><?php _e('sln_is_default'); ?></th>
+					<th class="col-xs-1"><?php _e('sln_enabled'); ?></th>
+					<th class="col-xs-3 text-right"><?php _e('action'); ?></th>
 				</tr>
 			</thead>
 		<?php if ($languages): ?>
 			<tbody>
 			<?php foreach ($languages as $lang): ?>
 				<tr>
-					<!-- Language name -->
 					<?php if (true === $lang['available']): ?>
 					<td><?php echo $lang['name_en']; ?>&nbsp;<small class="text-muted"><?php echo $lang['name']; ?></small></td>
 					<?php else: ?>
-					<td><del title="<?php _e('missing_language_folder'); ?>" class="text-danger"><?php echo $lang['name_en']; ?>&nbsp;<small class="text-muted"><?php echo $lang['name']; ?></small></del></td>
+					<td><del title="<?php _e('sln_missing_language_folder'); ?>" class="text-danger"><?php echo $lang['name_en']; ?>&nbsp;<small class="text-muted"><?php echo $lang['name']; ?></small></del></td>
 					<?php endif; ?>
-
-					<!-- Language abbreviation -->
 					<td><?php echo $lang['code']; ?>&nbsp;<small class="text-muted"><?php echo $lang['locale']; ?></small></td>
-
-					<!-- Language Folder -->
 					<td><?php echo $lang['folder']; ?></td>
-
-					<!-- Language default status -->
 					<td><?php echo label_condition($lang['folder'] === $language); ?></td>
-
-					<!-- Language availability -->
 					<td><?php echo label_condition(in_array($lang['folder'], $available_languages)); ?></td>
-
-					<!-- Language actions -->
 					<td class="text-right">
 						<?php if ($lang['folder'] !== $language): ?>
 						<!-- Make default action -->
-						<a href="#" data-href="<?php echo safe_admin_url('language/make_default/'.$lang['folder']); ?>" class="btn btn-xs btn-default lang-default"><?php _e('make_default'); ?></a>&nbsp;
+						<a href="<?php echo safe_admin_url('language/make_default/'.$lang['folder']); ?>" class="btn btn-xs btn-default lang-default"><?php _e('sln_make_default'); ?></a>&nbsp;
 						<?php endif; ?>
 						<?php if (null !== $lang['action']): ?>
-							<a href="#" data-href="<?php echo safe_admin_url("language/{$lang['action']}/{$lang['folder']}"); ?>" class="btn btn-xs <?php echo ('enable' == $lang['action']) ? 'btn-success lang-enable' : 'btn-danger lang-disable'; ?>"><?php _e($lang['action']); ?></a>&nbsp;
+							<a href="<?php echo safe_admin_url("language/{$lang['action']}/{$lang['folder']}"); ?>" class="btn btn-xs <?php echo ('enable' == $lang['action']) ? 'btn-success lang-enable' : 'btn-danger lang-disable'; ?>"><?php _e($lang['action']); ?></a>&nbsp;
 						<?php endif; ?>
 					</td>
 				</tr>
