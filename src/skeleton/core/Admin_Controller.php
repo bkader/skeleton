@@ -126,8 +126,8 @@ class Admin_Controller extends User_Controller
 	public function _remap($method, $params = array())
 	{
 		// If on a method that does no require AJAX request.
-		if ( ! in_array($method, $this->ajax_methods) 
-			&& ! in_array($method, $this->safe_ajax_methods))
+		if (method_exists($this, $method) 
+			&& ( ! in_array($method, $this->ajax_methods) && ! in_array($method, $this->safe_ajax_methods)))
 		{
 			// Print admin head part.
 			add_filter('admin_head', array($this, 'admin_head'));
