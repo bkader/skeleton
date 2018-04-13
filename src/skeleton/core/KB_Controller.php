@@ -135,6 +135,9 @@ class KB_Controller extends CI_Controller
 	 * We are remapping things just so we can handle methods that are
 	 * http accessed and methods that require AJAX requests only.
 	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Added logged-in user check for safe AJAX methods.
+	 *
 	 * @access 	public
 	 * @param 	string 	$method 	The method's name.
 	 * @param 	array 	$params 	Arguments to pass to the method.
@@ -175,7 +178,8 @@ class KB_Controller extends CI_Controller
 		$this->response->message = 'Bad Request';
 
 		// Does the requested methods require a safe URL check?
-		if (in_array($method, $this->safe_ajax_methods) && ! check_safe_url())
+		if (in_array($method, $this->safe_ajax_methods) 
+			&& ( ! check_safe_url() OR true !== $this->auth->online()))
 		{
 			$this->response->header  = 412;
 			$this->response->message = lang('error_action_permission');
