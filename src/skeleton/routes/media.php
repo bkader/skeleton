@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -46,13 +46,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @since 		1.0.0
+ * @version 	1.3.3
  */
 
 // Dashboard routes.
-Route::resources('admin/media', array(
-	'module'     => 'media',
-	'controller' => 'admin',
-	'constraint' => '([0-9]+)'
-));
+Route::post('media/upload', 'media/upload');
+Route::post('media/update', 'media/update');
+Route::get('media/delete', 'media/delete');
+Route::get('media/(:any)', 'media/index/$1');

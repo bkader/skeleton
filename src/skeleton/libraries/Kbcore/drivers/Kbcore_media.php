@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -48,8 +48,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @since 		1.0.0
+ * @version 	1.3.3
  */
 class Kbcore_media extends CI_Driver implements CRUD_interface
 {
@@ -90,13 +90,30 @@ class Kbcore_media extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Retrieve a single media item by primary key.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Updated so we can get the media by username.
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$id 	The primary key value.
 	 * @return 	object if found, else null
 	 */
 	public function get($id)
 	{
-		return $this->get_by('id', $id);
+		// By ID?
+		if (is_numeric($id))
+		{
+			return $this->get_by('id', $id);
+		}
+
+		// By username?
+		if (is_string($id))
+		{
+			return $this->get_by('username', $id);
+		}
+
+		// Otherwise let the "get_by" method do the rest;
+		return $this->get_by($id);
 	}
 
 	// ------------------------------------------------------------------------
