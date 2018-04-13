@@ -75,13 +75,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					<td><?php _e($user->subtype) ?></td>
 					<td><?php echo label_condition((1 == $user->enabled), 'lang:active', 'lang:inactive'); ?>&nbsp;<?php echo label_condition((0 == $user->deleted), null, 'lang:deleted'); ?></td>
 					<td class="text-right">
-						<a class="btn btn-default btn-xs" target="_blank" href="<?php echo site_url($user->username) ?>" title="<?php _e('view_user') ?>"><i class="fa fa-fw fa-eye"></i></a>
-						<a class="btn btn-primary btn-xs" href="<?php echo admin_url('users/edit/'.$user->id) ?>" title="<?php _e('edit_user') ?>"><i class="fa fa-fw fa-edit"></i></a>
+						<a class="btn btn-default btn-xs" target="_blank" href="<?php echo site_url($user->username) ?>" title="<?php _e('view_user') ?>"><i class="fa fa-fw fa-eye"></i></a>&nbsp;
+						<a class="btn btn-primary btn-xs" href="<?php echo admin_url('users/edit/'.$user->id) ?>" title="<?php _e('edit_user') ?>"><i class="fa fa-fw fa-edit"></i></a>&nbsp;
 					<?php if (0 == $user->enabled): ?>
 						<a href="<?php echo safe_admin_url('users/activate/'.$user->id); ?>" data-user-id="<?php echo $user->id; ?>" class="btn btn-success btn-xs user-activate" title="<?php _e('activate_user'); ?>"><i class="fa fa-fw fa-unlock-alt"></i></a>
 					<?php else: ?>
 						<a href="<?php echo safe_admin_url('users/deactivate/'.$user->id); ?>" data-user-id="<?php echo $user->id; ?>" class="btn btn-warning btn-xs user-deactivate" title="<?php _e('deactivate_user'); ?>"><i class="fa fa-fw fa-lock"></i></a>
-					<?php endif; ?>
+					<?php endif; ?>&nbsp;
 						<div class="btn-group btn-group-xs">
 							<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="<?php _e('more'); ?>"><i class="fa fa-fw fa-caret-down"></i></button>
 							<ul class="dropdown-menu dropdown-menu-right">
