@@ -25,17 +25,45 @@ src/application/controllers/Test.php
 !**/index.html
 
 # Ignore all captcha images.
+!public/content/captcha/
 public/content/captcha/*
-!public/content/captcha/.index.html
-public/content/cache-assets/*
+!public/content/captcha/index.html
 
 # Ignore all uploaded files.
-!public/content/uploads/index.html
-!public/content/uploads/temp/*
-!public/content/uploads/temp/index.html
-!public/content/uploads/avatars/*
-!public/content/uploads/avatars/index.html
+!public/content/uploads/
 public/content/uploads/*
+!public/content/uploads/index.html
+!public/content/uploads/temp/
+public/content/uploads/temp/*
+!public/content/uploads/temp/index.html
+
+public/content/uploads/avatars/*
+!public/content/uploads/avatars/index.html
+
+# Ignore all public modules except default ones.
+# Think of removing or commenting the following lines
+# if you want your plugins to be pushed to your repo.
+!public/content/modules/
+public/content/modules/*
+!public/content/modules/index.html
+
+# Ignore all plugins except default ones.
+# Think of removing or commenting the following lines
+# if you want your plugins to be pushed to your repo.
+!public/content/plugins/
+public/content/plugins/*
+!public/content/plugins/cache-assets/*
+!public/content/plugins/extra-profile-fields/*
+!public/content/plugins/helloworld/*
+!public/content/plugins/social-meta-tags/*
+!public/content/plugins/the-title/*
+
+# Ignore all themes except the default one.
+# Think of removing or commenting the following lines
+# if you want your themes to be pushed to your repo.
+!public/content/themes/
+public/content/themes/*
+!public/content/themes/default/
 
 # Sublime Text cache files
 *.tmlanguage.cache
