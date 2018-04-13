@@ -71,7 +71,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					<?php if (true === $lang['available']): ?>
 					<td><?php echo $lang['name_en']; ?>&nbsp;<small class="text-muted"><?php echo $lang['name']; ?></small></td>
 					<?php else: ?>
-					<td><del title="<?php _e('sln_missing_language_folder'); ?>" class="text-danger"><?php echo $lang['name_en']; ?>&nbsp;<small class="text-muted"><?php echo $lang['name']; ?></small></del></td>
+					<td><del title="<?php _e('sln_language_missing_folder'); ?>" class="text-danger"><?php echo $lang['name_en']; ?>&nbsp;<small class="text-muted"><?php echo $lang['name']; ?></small></del></td>
 					<?php endif; ?>
 					<td><?php echo $lang['code']; ?>&nbsp;<small class="text-muted"><?php echo $lang['locale']; ?></small></td>
 					<td><?php echo $lang['folder']; ?></td>
