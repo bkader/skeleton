@@ -250,6 +250,10 @@ class Kbcore_plugins extends CI_Driver
 
 	/**
 	 * Delete the selected plugin.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	A little check to delete only deactivated plugins.
+	 * 
 	 * @access 	public
 	 * @param 	string 	$name 	The plugin's folder name.
 	 * @return 	boolean
@@ -263,8 +267,9 @@ class Kbcore_plugins extends CI_Driver
 			return false;
 		}
 
-		// Make sure the directory is found.
-		if (false === $this->plugins_path($name))
+		// We cannot delete a plugin that does not exist or a plugin that is active.
+		if (false === $this->plugins_path($name) 
+			OR false !== $this->_is_enabled($name))
 		{
 			return false;
 		}
