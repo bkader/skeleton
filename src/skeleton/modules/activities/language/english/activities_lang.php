@@ -106,3 +106,8 @@ $lang['act_menus_add_item']         = 'Added menu item: #%s';
 $lang['act_menus_update_items']     = 'Updated menu items: #%s';
 $lang['act_menus_delete_menu']      = 'Deleted menu: #%s';
 $lang['act_menus_delete_item']      = 'Deleted menu item: #%s';
+
+// Plugins Module.
+$lang['act_plugin_activate']   = 'Activated plugin: %s';
+$lang['act_plugin_deactivate'] = 'Deactivated plugin: %s';
+$lang['act_plugin_delete']     = 'Deleted plugin: %s';

@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -46,8 +46,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.3.0
+ * @since 		1.0.0
+ * @version 	1.3.3
  */
-?><h2 class="page-header clearfix"><?php _e('settings'); ?>: <?php echo $plugin['name']; ?></h2>
+?><h2 class="page-header clearfix"><?php printf(lang('spg_plugin_settings_name'), $plugin['name']); ?></h2>
 <?php do_action('plugin_settings_'.$plugin['folder']); ?>

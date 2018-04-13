@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -46,24 +46,45 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @since 		1.0.0
+ * @version 	1.3.3
  */
 class Admin extends Admin_Controller
 {
 	/**
 	 * Class constructor.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Added admin head part and JS file.
+	 * 
 	 * @return 	void
 	 */
 	public function __construct()
 	{
+		// Protected AJAX methods.
+		array_unshift($this->safe_ajax_methods, 'activate', 'deactivate', 'delete');
+
+		// Call parent constructor.
 		parent::__construct();
 		
 		// Make sure to load plugins admin language file.
 		$this->load->language('plugins/plugins');
+
+		// Add our head string.
+		add_filter('admin_head', array($this, '_admin_head'));
+
+		// We add JS file.
+		array_push($this->scripts, 'plugins');
 	}
+
+	// ------------------------------------------------------------------------
+
 	/**
 	 * List of available plugins.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Rewritten for better code and active filter.
+	 * 
 	 * @access 	public
 	 * @param 	none
 	 * @return 	void
@@ -71,39 +92,79 @@ class Admin extends Admin_Controller
 	public function index()
 	{
 		// Get all plugins.
-		$data['plugins'] = $this->kbcore->plugins->get_plugins();
+		$plugins = $this->kbcore->plugins->get_plugins();
+
+		// Prepare counters.
+		$count_all      = 0;
+		$count_active   = 0;
+		$count_inactive = 0;
+
+		// Filter displayed plugins.
+		$filter = $this->input->get('status');
+		if ( ! in_array($filter, array('active', 'inactive')))
+		{
+			$filter = null;
+		}
 
 		// Add action buttons.
-		if ($data['plugins'])
+		if ($plugins)
 		{
-			foreach ($data['plugins'] as &$plugin)
+			foreach ($plugins as $slug => &$plugin)
 			{
-				// Activation/Deactivation link.
-				$plugin['actions'][] = ($plugin['enabled'])
-					? safe_admin_anchor('plugins/deactivate/'.$plugin['folder'], lang('deactivate'))
-					: safe_admin_anchor('plugins/activate/'.$plugin['folder'], lang('activate'));
+				// Increment counters.
+				$count_all++;
+				(true === $plugin['enabled']) && $count_active++;
+				(false === $plugin['enabled']) && $count_inactive++;
 
-				// Plugin settings link.
-				if ($plugin['has_settings'])
+				if (true === $plugin['enabled'] && 'inactive' === $filter)
 				{
-					$plugin['actions'][] = admin_anchor('plugins/settings/'.$plugin['folder'], lang('settings'));
+					unset($plugins[$slug]);
+					continue;
 				}
 
-				// Plugin delete button.
-				$plugin['actions'][] = safe_admin_anchor(
-					'plugins/delete/'.$plugin['folder'],
-					lang('delete'),
-					array(
-						'class'        => 'text-danger',
-						'data-confirm' => sprintf(lang('plugins_delete_confirm'), $plugin['name']),
-					)
-				);
+				if (false === $plugin['enabled'] && 'active' === $filter)
+				{
+					unset($plugins[$slug]);
+					continue;
+				}
+
+				// So we can reset things.
+				$plugin['actions'] = array();
+
+				// Activate/Deactivate plugin.
+				$_status = (true === $plugin['enabled']) ? 'deactivate' : 'activate';
+				$plugin['actions'][] = safe_admin_anchor("plugins/{$_status}/{$slug}", lang('spg_'.$_status), "class=\"plugin-{$_status}\"");
+
+				// Does the plugin have a settings page?
+				if (true === $plugin['has_settings'])
+				{
+					$plugin['actions'][] = admin_anchor('plugins/settings/'.$slug, lang('spg_settings'));
+				}
+
+				// We add the delete plugin only if the plugin is not enabled.
+				if (true !== $plugin['enabled'])
+				{
+					$plugin['actions'][] = safe_admin_anchor(
+						"plugins/delete/{$slug}",
+						lang('spg_delete'),
+						'class="plugin-delete text-danger" data-plugin="'.$slug.'"'
+					);
+				}
 			}
 		}
 
+		// Data to pass to view.
+		$data = array(
+			'plugins'        => $plugins,
+			'filter'         => $filter,
+			'count_all'      => $count_all,
+			'count_active'   => $count_active,
+			'count_inactive' => $count_inactive,
+		);
+
 		// Set page title and load view.
 		$this->theme
-			->set_title(lang('manage_plugins'))
+			->set_title(lang('spg_manage_plugins'))
 			// ->set_view('index')
 			->render($data);
 	}
@@ -118,144 +179,184 @@ class Admin extends Admin_Controller
 	 */
 	public function settings($plugin = null)
 	{
-		$data['plugin'] = $this->kbcore->plugins->get_plugin($plugin);
+		// Get the plugin first.
+		$plugin = $this->kbcore->plugins->get_plugin($plugin);
 
-		/**
-		 * We must check two things:
-		 * 1. The plugin mast exist.
-		 * 2. The plugin must be activated.
-		 */
-		if ( ! $data['plugin'])
+		// The plugin does not exists?
+		if ( ! $plugin)
 		{
-			set_alert(lang('missing_plugin'), 'error');
-			redirect('admin/plugins');
-			exit;
-		}
-		if ( ! $data['plugin']['enabled'])
-		{
-			set_alert(lang('plugin_disabled'), 'error');
-			redirect('admin/plugins');
-			exit;
-		}
-		if ( ! $data['plugin']['has_settings'])
-		{
-			set_alert(lang('plugin_with_no_settings'), 'error');
+			set_alert(lang('spg_plugin_missing'), 'error');
 			redirect('admin/plugins');
 			exit;
 		}
 
+		// Disabled? It needs to be enabled first.
+		if ( ! $plugin['enabled'])
+		{
+			set_alert(lang('spg_plugin_settings_disabled'), 'error');
+			redirect('admin/plugins');
+			exit;
+		}
+
+		// It does not have a settings page?
+		if ( ! $plugin['has_settings'])
+		{
+			set_alert(lang('spg_plugin_settings_missing'), 'error');
+			redirect('admin/plugins');
+			exit;
+		}
+
+		// Set page title and render view.
 		$this->theme
-			->set_title(lang('plugin_settings'))
-			->render($data);
+			->set_title(sprintf(lang('spg_plugin_settings_name'), $plugin['name']))
+			->render(array('plugin' => $plugin));
 
 	}
 
 	// ------------------------------------------------------------------------
+	// AJAX methods.
+	// ------------------------------------------------------------------------
 
 	/**
 	 * Activate an existing plugin.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Rewritten to be an AJAX method.
+	 * 
 	 * @access 	public
-	 * @param 	string 	$plugin 	THe plugin's folder name
+	 * @param 	string 	$plugin 	The plugin's folder name
 	 * @return 	void
 	 */
-	public function activate($plugin)
+	public function activate($plugin = null)
 	{
-		// Check safe URL first.
-		if ( ! check_safe_url())
+		// Default header status code.
+		$this->response->header = 406;
+
+		// No plugin slug provided?
+		if (empty($plugin) OR ! is_string($plugin))
 		{
-			set_alert(lang('error_safe_url'), 'error');
+			$this->response->header  = 412;
+			$this->response->message = lang('spg_plugin_missing');
+			return;
 		}
 
-		// Was the plugin activated?
-		elseif ($this->kbcore->plugins->activate($plugin))
+		// Successfully activated?
+		if ($this->kbcore->plugins->activate($plugin))
 		{
-			set_alert(lang('plugins_activate_success'), 'success');
+			$this->response->header   = 200;
+			$this->response->message = lang('spg_plugin_activate_success');
 
-			// Log the activity.
-			log_activity($this->c_user->id, 'activated plugin: '.$plugin);
+			// Get the plugin data from database to log the activity.
+			$p = $this->kbcore->plugins->get_plugin_info($plugin);
+			log_activity($this->c_user->id, 'lang:act_plugin_activate::'.$p['name']);
+
+			return;
 		}
 
-		// None of the above?
-		else
-		{
-			set_alert(lang('plugins_activate_error'), 'error');
-		}
-
-		// Redirect back to admin plugins page.
-		redirect('admin/plugins');
-		exit;
+		// Otherwise, the plugin could not be activated.
+		$this->response->message = lang('spg_plugin_activate_error');
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Deactivate an existing plugin.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Rewritten to be an AJAX method.
+	 * 
 	 * @access 	public
-	 * @param 	string 	$plugin 	THe plugin's folder name
+	 * @param 	string 	$plugin 	The plugin's folder name
 	 * @return 	void
 	 */
 	public function deactivate($plugin)
 	{
-		// Check safe URL first.
-		if ( ! check_safe_url())
+		// Default header status code.
+		$this->response->header = 406;
+
+		// No plugin slug provided?
+		if (empty($plugin) OR ! is_string($plugin))
 		{
-			set_alert(lang('error_safe_url'), 'error');
+			$this->response->header  = 412;
+			$this->response->message = lang('spg_plugin_missing');
+			return;
 		}
 
-		// Was the plugin deactivated?
-		elseif ($this->kbcore->plugins->deactivate($plugin))
+		// Successfully activated?
+		if ($this->kbcore->plugins->deactivate($plugin))
 		{
-			set_alert(lang('plugins_deactivate_success'), 'success');
+			$this->response->header   = 200;
+			$this->response->message = lang('spg_plugin_deactivate_success');
 
-			// Log the activity.
-			log_activity($this->c_user->id, 'deactivated plugin: #'.$plugin);
+			// Get the plugin data from database to log the activity.
+			$p = $this->kbcore->plugins->get_plugin_info($plugin);
+			log_activity($this->c_user->id, 'lang:act_plugin_deactivate::'.$p['name']);
+			return;
 		}
 
-		// None of the above?
-		else
-		{
-			set_alert(lang('plugins_deactivate_error'), 'error');
-		}
-
-		// Redirect back to admin plugins page.
-		redirect('admin/plugins');
-		exit;
+		// Otherwise, the plugin could not be deactivated.
+		$this->response->message = lang('spg_plugin_deactivate_error');
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Delete an existing plugin.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Rewritten to be an AJAX method.
+	 * 
 	 * @access 	public
-	 * @param 	string 	$plugin 	THe plugin's folder name
+	 * @param 	string 	$plugin 	The plugin's folder name
 	 * @return 	void
 	 */
 	public function delete($plugin)
 	{
-		// Check safe URL first.
-		if ( ! check_safe_url())
+		// Default header status code.
+		$this->response->header = 406;
+
+		// No plugin slug provided?
+		if (empty($plugin) OR ! is_string($plugin))
 		{
-			set_alert(lang('error_safe_url'), 'error');
+			$this->response->header  = 412;
+			$this->response->message = lang('spg_plugin_missing');
+			return;
 		}
 
-		// Was the plugin deactivated?
-		elseif ($this->kbcore->plugins->delete($plugin))
+		// Successfully deleted?
+		if ($this->kbcore->plugins->delete($plugin))
 		{
-			set_alert(lang('plugins_delete_success'), 'success');
+			$this->response->header   = 200;
+			$this->response->message = lang('spg_plugin_delete_success');
 
-			// Log the activity.
-			log_activity($this->c_user->id, 'deleted plugin: #'.$media_id);
+			// Get the plugin data from database to log the activity.
+			$p = $this->kbcore->plugins->get_plugin_info($plugin);
+			log_activity($this->c_user->id, 'lang:act_plugin_delete::'.$p['name']);
+			return;
 		}
 
-		// None of the above?
-		else
-		{
-			set_alert(lang('plugins_delete_error'), 'error');
-		}
+		// Otherwise, the plugin could not be deleted.
+		$this->response->message = lang('spg_plugin_delete_error');
+	}
 
-		// Redirect back to admin plugins page.
-		redirect('admin/plugins');
-		exit;
+	// ------------------------------------------------------------------------
+	// Private methods.
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Add some plugin language lines to head section.
+	 *
+	 * @since 	1.3.3
+	 *
+	 * @access 	public
+	 * @param 	string
+	 * @return 	string
+	 */
+	public function _admin_head($output)
+	{
+		$lines = array('delete' => lang('spg_plugin_delete_confirm'));
+		$output .= '<script type="text/javascript">var i18n=i18n||{};i18n.plugins='.json_encode($lines).';</script>';
+		return $output;
 	}
 
 }

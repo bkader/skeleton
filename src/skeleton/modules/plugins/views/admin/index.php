@@ -49,20 +49,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		Version 1.0.0
  * @version 	1.3.0
  */
-?><h2 class="page-header clearfix"><?php _e('manage_plugins'); ?></h2>
+?><h2 class="page-header clearfix">
+	<?php _e('spg_manage_plugins'); ?>
+	<span class="pull-right"><?php
+echo admin_anchor('plugins', sprintf(lang('spg_all'), $count_all), 'class="btn btn-'.(null === $filter ? 'primary' : 'default').' btn-sm"').'&nbsp;';
+echo admin_anchor('plugins?status=active', sprintf(lang('spg_active'), $count_active), 'class="btn btn-'.('active' === $filter ? 'primary' : 'default').' btn-sm"').'&nbsp;';
+echo admin_anchor('plugins?status=inactive', sprintf(lang('spg_inactive'), $count_inactive), 'class="btn btn-'.('inactive' === $filter ? 'primary' : 'default').' btn-sm"');
+	?></span>
+</h2>
 <div class="panel panel-default">
 	<div class="table-responsive">
 		<table class="table table-hover table-condensed">
 			<thead>
 				<tr>
-					<th class="col-md-3"><?php _e('plugin') ?></th>
-					<th class="col-md-9"><?php _e('description') ?></th>
+					<th class="col-md-3"><?php _e('spg_plugin') ?></th>
+					<th class="col-md-9"><?php _e('spg_description') ?></th>
 				</tr>
 			</thead>
 		<?php if ($plugins): ?>
 			<tbody>
-		<?php foreach ($plugins as $plugin): ?>
-				<tr>
+		<?php foreach ($plugins as $slug => $plugin): ?>
+				<tr id="plugin-<?php echo $slug; ?>">
 					<td>
 						<?php echo ($plugin['enabled']) ? '<strong>'.$plugin['name'].'</strong>' : $plugin['name']; ?><br />
 						<small><?php echo implode('&nbsp;&#124;&nbsp;', $plugin['actions']); ?></small>
