@@ -152,13 +152,16 @@ class Admin_Controller extends User_Controller
 			// Do we have any CSS files to load?
 			if ( ! empty($this->styles))
 			{
+				// Are we using a right-to-left language? Add RTL files.
+				if ('rtrl' === langinfo('direction'))
+				{
+					array_push($this->styles, 'bootstrap-rtl', 'admin-rtl');
+				}
+
 				$this->styles = array_map('trim', $this->styles);
 				$this->styles = array_filter($this->styles);
 				$this->styles = array_unique($this->styles);
 				$this->styles = implode(',', $this->styles);
-
-				// Right-To-Left languages.
-				('rtl' === langinfo('direction')) && $this->styles .= ',bootstrap-rtl,admin-rtl';
 
 				$this->theme
 					->no_extension()

@@ -2502,6 +2502,10 @@ EOT;
 
 	/**
 	 * Return the currently used language details.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Fixed issue with language details.
+	 * 
 	 * @access 	public
 	 * @param 	string 	$key 	The key to return.
 	 * @return 	mixed 	Array if no key provided/found or string.
@@ -2513,8 +2517,8 @@ EOT;
 			? $this->ci->session->language
 			: $this->ci->config->item('language');
 
-		// Get the requested detail.
-		return $this->ci->lang->lang($key);
+		$return = $this->ci->lang->languages($folder);
+		return (isset($return[$key])) ? $return[$key] : $return;
 	}
 
 	// --------------------------------------------------------------------
