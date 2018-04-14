@@ -368,7 +368,7 @@ class Kbcore_menus extends CI_Driver
 			if ($menu_id == 0)
 			{
 				$this->_parent->metadata->update_by(
-					array('name' => 'menu_location', 'value' => $menu_id),
+					array('name' => 'menu_location', 'value' => $location),
 					array('value' => null)
 				);
 			}
