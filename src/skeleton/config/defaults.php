@@ -97,7 +97,7 @@ $config['smtp_pass']     = '';
 // Language settings.
 // ------------------------------------------------------------------------
 $config['language'] = 'french';
-$config['languages'] = array('english', 'french');
+$config['languages'] = array('arabic', 'english', 'french');
 
 // ------------------------------------------------------------------------
 // Themes settings.
