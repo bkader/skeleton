@@ -89,8 +89,8 @@ $lang['set_per_page']     = 'Per Page';
 $lang['set_per_page_tip'] = 'How many items are shown on pages using pagination.';
 
 // Google analytics.
-$lang['set_google_analytics_id'] = 'Google Anaytilcs ID';
-$lang['set_google_analytics_id_tip'] = 'Enter your Google Anaytilcs ID';
+$lang['set_google_analytics_id'] = 'Google Analytics ID';
+$lang['set_google_analytics_id_tip'] = 'Enter your Google Analytics ID';
 
 // Google site verification.
 $lang['set_google_site_verification'] = 'Google Site Verification';

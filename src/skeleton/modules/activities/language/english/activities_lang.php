@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.3.3
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -47,11 +47,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.3.3
- * @version 	1.0.0
+ * @version 	1.3.3
  */
 
-$lang['sac_activities'] = 'Activities';
 $lang['sac_activity'] = 'Activity';
+$lang['sac_activities'] = 'Activities';
 
 // Dashboard title;
 $lang['sac_activity_log'] = 'Activity Log';
@@ -116,6 +116,6 @@ $lang['act_plugin_delete']     = 'Deleted plugin: %s';
 
 // Themes plugin.
 $lang['act_themes_activate'] = 'Activated theme: %s';
-$lang['act_themes_delete']   = 'Activated theme: %s';
+$lang['act_themes_delete']   = 'Delete theme: %s';
 $lang['act_themes_install']  = 'Installed theme: %s';
 $lang['act_themes_upload']   = 'Uploaded theme: %s';
