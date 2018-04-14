@@ -96,6 +96,13 @@
     });
 
     // ========================================================
+    // Remove modal on close;
+    // ========================================================
+    $(document).on("hidden.bs.modal", ".modal", function (e) {
+        $(this).remove();
+    });
+
+    // ========================================================
     // When the DOM is ready.
     // ========================================================
     $(document).ready(function () {
@@ -128,6 +135,10 @@
             locale: Config.lang.code,
             size: "small"
         });
+
+        // If there is an available modal, we display it.
+        var _modal = _modal || $(".modal");
+        if (_modal.length) { _modal.modal("show"); }
 
         // Dismissable alert.
         $(".alert-dismissable").fadeTo(3000, 500).slideUp(500, function () {
