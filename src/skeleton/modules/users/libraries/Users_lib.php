@@ -228,6 +228,13 @@ class Users_lib
 
 			// Purge user's captcha and old ones.
 			$this->delete_captcha();
+
+			// Send email to use.
+			$ip_address = $this->ci->input->ip_address();
+			$this->_send_email('new_activation', $user, array(
+				'link'    => anchor('register/activate/'.$activation_code, '', 'target="_blank"'),
+				'ip_link' => anchor('https://www.iptolocation.net/trace-'.$ip_address, $ip_address, 'target="_blank"'),
+			));
 		}
 		else
 		{
