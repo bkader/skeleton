@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -49,13 +49,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @since 		1.3.3 	Removed constructor.
- * 
+ * @since 		1.0.0
  * @version 	1.3.3
  */
 class Settings extends User_Controller
 {
+	/**
+	 * Class constructor
+	 * @access 	public
+	 * @return 	void
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->load->library('settings/settings_lib', null, 'settings');
+	}
+
+	// ------------------------------------------------------------------------
+
 	/**
 	 * This method redirect to profile settings.
 	 * @access 	public
