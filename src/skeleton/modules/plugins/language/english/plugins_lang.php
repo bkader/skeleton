@@ -71,8 +71,8 @@ $lang['spg_plugin_settings_success']   = 'Plugin settings successfully updated.'
 // Error messages.
 $lang['spg_plugin_activate_error']   = 'Unable to activate plugin.';
 $lang['spg_plugin_deactivate_error'] = 'Unable to deactivate plugin.';
-$lang['spg_plugin_delete_error']    = 'Unable to deleted plugin.';
-$lang['spg_plugin_uploaded_error']   = 'Unable to uploaded plugin.';
+$lang['spg_plugin_delete_error']    = 'Unable to delete plugin.';
+$lang['spg_plugin_uploaded_error']   = 'Unable to upload plugin.';
 $lang['spg_plugin_settings_error']   = 'Unable to update plugin settings.';
 
 // Confirmation messages.
@@ -105,4 +105,4 @@ $lang['spg_license_uri']  = 'License URI';
 $lang['spg_author']       = 'Author';
 $lang['spg_author_uri']   = 'Author URI';
 $lang['spg_author_email'] = 'Author Email';
-$lang['spg_tags']         = 'Author Email';
+$lang['spg_tags']         = 'Tags';

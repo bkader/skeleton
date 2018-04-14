@@ -78,7 +78,7 @@ echo admin_anchor('plugins?status=inactive', sprintf(lang('spg_inactive'), $coun
 						<p><?php echo $plugin['description']; ?></p>
 						<small>
 							<?php echo $plugin['version'] ? 'Version: '.$plugin['version']: ''; ?>&nbsp;&#124;&nbsp;<?php echo ($plugin['author_uri']) ? anchor($plugin['author_uri'], $plugin['author'], 'target="_blank" rel="nofollow"') : $plugin['author']; ?>
-							<?php if ($plugin['license']): ?>&nbsp;&#124;&nbsp;License:
+							<?php if ($plugin['license']): ?>&nbsp;&#124;&nbsp;<?php _e('spg_license'); ?>:
 								<?php echo ($plugin['license_uri']) ? anchor($plugin['license_uri'], $plugin['license'], 'target="_blank" rel="nofollow"') : $plugin['license']; ?>
 							<?php endif; ?>
 						</small>

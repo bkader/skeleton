@@ -59,7 +59,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 // -------------------------------------------------------------------
 $lang['us_email_welcome_subject'] = 'Welcome to {site_name}';
 $lang['us_email_welcome_message'] = <<<EOT
-Hello{name},
+Hello {name},
 
 Most people have really long welcome email sequences after you register on their site.
 
@@ -76,7 +76,7 @@ EOT;
 // -------------------------------------------------------------------
 $lang['us_email_manual_subject'] = 'Manual Activation';
 $lang['us_email_manual_message'] = <<<EOT
-Hello{name},
+Hello {name},
 
 Thank you for joining us at {site_link}. Your account is created but needs approval by a site admin before being active.
 We sincerely apologies for this crucial step, but it is only for security purposes.
@@ -93,9 +93,9 @@ EOT;
 // -------------------------------------------------------------------
 $lang['us_email_activation_subject'] = 'Account Activation';
 $lang['us_email_activation_message'] = <<<EOT
-Hello{name},
+Hello {name},
 
-Thank you for registering at {site_link}. Your account is created and must be activated befeore you can use it.
+Thank you for registering at {site_link}. Your account is created and must be activated before you can use it.
 
 To activate your account click on the following link or copy-paste it in your browser:
 {link}
@@ -109,7 +109,7 @@ EOT;
 // -------------------------------------------------------------------
 $lang['us_email_activated_subject'] = 'Account Activated';
 $lang['us_email_activated_message'] = <<<EOT
-Hello{name},
+Hello {name},
 
 Your account at {site_link} was successfully activated. You may now <a href="{login_url}" target="_blank">login</a> anytime you want.
 
@@ -123,7 +123,7 @@ EOT;
 // -------------------------------------------------------------------
 $lang['us_email_new_activation_subject'] = 'New Activation Link';
 $lang['us_email_new_activation_message'] = <<<EOT
-Hello{name},
+Hello {name},
 
 You have recently requested a new activation link on {site_link} because your account was not active.
 To activate your account click on the following link or copy-paste it in your browser:
@@ -142,7 +142,7 @@ EOT;
 // -------------------------------------------------------------------
 $lang['us_email_recover_subject'] = 'Password Reset';
 $lang['us_email_recover_message'] = <<<EOT
-Hello{name},
+Hello {name},
 
 You are receiving this email because we received a password reset request for your account on {site_link}.
 
@@ -162,7 +162,7 @@ EOT;
 // -------------------------------------------------------------------
 $lang['us_email_password_subject'] = 'Password Changed';
 $lang['us_email_password_message'] = <<<EOT
-Hello{name},
+Hello {name},
 
 This email confirms that your password at {site_link} has been successfully changed. You may now <a href="{login_url}" target="_blank">login</a> using the new one.
 
@@ -179,7 +179,7 @@ EOT;
 // -------------------------------------------------------------------
 $lang['us_email_restore_subject'] = 'Account Restored';
 $lang['us_email_restore_message'] = <<<EOT
-Hello{name},
+Hello {name},
 
 This email confirms that your account at {site_link} has been successfully restored.
 
