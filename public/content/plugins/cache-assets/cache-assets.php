@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -49,8 +49,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @since 		1.0.0
+ * @version 	1.3.3
  */
 
 add_action('plugin_activate_cache-assets',        array('Cache_assets', 'activate'));	// Plugin activation.
@@ -256,8 +256,8 @@ class Cache_assets
 			self::activate();
 		}
 
-		add_filter('output_styles', array('Cache_assets', 'cache_styles'));
-		add_filter('output_scripts', array('Cache_assets', 'cache_scripts'));
+		add_filter('print_styles', array('Cache_assets', 'cache_styles'));
+		add_filter('print_scripts', array('Cache_assets', 'cache_scripts'));
 
 		return true;
 	}
@@ -342,10 +342,10 @@ class Cache_assets
 			if ( ! $KB->options->set_item('assets_cache_time', $new_time)
 				&& ! $KB->options->set_item('assets_cache_dashboard', $new_dash))
 			{
-				set_alert(lang('plugin_settings_error'), 'error');
+				set_alert(lang('spg_plugin_settings_error'), 'error');
 			}
 
-			set_alert(lang('plugin_settings_success'), 'success');
+			set_alert(lang('spg_plugin_settings_success'), 'success');
 			redirect(current_url(), 'refresh');
 			exit;
 		}
