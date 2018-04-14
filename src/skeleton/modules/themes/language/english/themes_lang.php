@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -46,26 +46,62 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @since 		1.0.0
+ * @version 	1.3.3
  */
 
-// ------------------------------------------------------------------------
-// Themes Settings.
-// ------------------------------------------------------------------------
-$lang['theme_settings'] = 'Themes Settings';
+// Theme: singular and plural forms.
+$lang['sth_theme']  = 'Theme';
+$lang['sth_themes'] = 'Themes';
 
+// Dashboard title.
+$lang['sth_theme_settings'] = 'Themes Settings';
+
+// Theme actions and buttons.
+$lang['sth_theme_activate'] = 'Activate';
+$lang['sth_theme_add']      = 'Add Theme';
+$lang['sth_theme_delete']   = 'Delete';
+$lang['sth_theme_details']  = 'Details';
+$lang['sth_theme_install']  = 'Install';
+$lang['sth_theme_upload']   = 'Upload Theme';
+
+// Confirmation messages.
+$lang['sth_theme_activate_confirm'] = 'Are you sure you want to activate this theme?';
+$lang['sth_theme_delete_confirm']   = 'Are you sure you want to delete this theme?';
+$lang['sth_theme_install_confirm']  = 'Are you sure you want to install this theme?';
+$lang['sth_theme_upload_confirm']   = 'Are you sure you want to upload this theme?';
+
+// Success messages.
+$lang['sth_theme_activate_success'] = 'Theme successfully activated.';
+$lang['sth_theme_delete_success']   = 'Theme successfully deleted.';
+$lang['sth_theme_install_success']  = 'Theme successfully installed.';
+$lang['sth_theme_upload_success']   = 'Theme successfully uploaded.';
+
+// Error messages.
+$lang['sth_theme_activate_error'] = 'Unable to activate theme.';
+$lang['sth_theme_delete_error']   = 'Unable to delete theme.';
+$lang['sth_theme_install_error']  = 'Unable to install theme.';
+$lang['sth_theme_upload_error']   = 'Unable to upload theme.';
+$lang['sth_theme_delete_active']  = 'You cannot delete the currently active theme.';
 
 // Theme details.
-$lang['author']        = 'Author';
-$lang['author_email']  = 'Author Email';
-$lang['version']       = 'Version';
-$lang['license']       = 'License';
-$lang['tags']          = 'Tags';
+$lang['sth_details']      = 'Theme Details';
+$lang['sth_details_name'] = 'Theme Details: %s';
+$lang['sth_name']         = 'Name';
+$lang['sth_folder']       = 'Folder';
+$lang['sth_theme_uri']    = 'Theme URI';
+$lang['sth_description']  = 'Description';
+$lang['sth_version']      = 'Version';
+$lang['sth_license']      = 'License';
+$lang['sth_license_uri']  = 'License URI';
+$lang['sth_author']       = 'Author';
+$lang['sth_author_uri']   = 'Author URI';
+$lang['sth_author_email'] = 'Author Email';
+$lang['sth_tags']         = 'Tags';
+$lang['sth_screenshot']   = 'Screenshot';
 
-// Theme activation.
-$lang['theme_activate_success'] = 'Theme successfully changed.';
-$lang['theme_activate_error']   = 'Unable to change theme.';
-
-// ------------------------------------------------------------------------
-$lang['add_theme'] = 'Add Theme';
+// Details with links:
+$lang['sth_theme_name']         = '<a href="%2$s" target="_blank" rel="nofollow">%1$s</a>';
+$lang['sth_theme_license']      = '<a href="%2$s" target="_blank" rel="nofollow">%1$s</a>';
+$lang['sth_theme_author']       = '<a href="%2$s" target="_blank" rel="nofollow">%1$s</a>';
+$lang['sth_theme_author_email'] = '<a href="mailto:%1$s" target="_blank" rel="nofollow">Support</a>';

@@ -113,3 +113,9 @@ $lang['act_menus_delete_item']      = 'Deleted menu item: #%s';
 $lang['act_plugin_activate']   = 'Activated plugin: %s';
 $lang['act_plugin_deactivate'] = 'Deactivated plugin: %s';
 $lang['act_plugin_delete']     = 'Deleted plugin: %s';
+
+// Themes plugin.
+$lang['act_themes_activate'] = 'Activated theme: %s';
+$lang['act_themes_delete']   = 'Activated theme: %s';
+$lang['act_themes_install']  = 'Installed theme: %s';
+$lang['act_themes_upload']   = 'Uploaded theme: %s';

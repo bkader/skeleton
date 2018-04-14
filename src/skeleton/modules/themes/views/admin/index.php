@@ -49,33 +49,82 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		Version 1.0.0
  * @version 	1.3.2
  */
-?><h2 class="page-header clearfix">
-	<?php _e('theme_settings') ?>
-	<span class="pull-right"><?php echo admin_anchor('themes/add', lang('add_theme'), 'class="btn btn-primary btn-sm"'); ?></span>
-</h2>
+?><h2 class="page-header clearfix"><?php
 
+// Page header.
+_e('sth_theme_settings');
+
+// Add theme anchor.
+echo admin_anchor('themes', lang('sth_theme_add'), 'class="btn btn-primary btn-sm pull-right"');
+
+?></h2>
 <?php if ($themes): ?>
 <div class="row">
-<?php foreach ($themes as $theme): ?>
-	<div class="col-sm-6 col-md-4" id="theme-<?php echo $theme['folder'] ?>">
-		<div class="thumbnail">
-			<img src="<?php echo $theme['screenshot'] ?>" alt="<?php echo $theme['name'] ?>" class="img-responsive" data-action="zoom">
-			<div class="caption">
-				<h3><a href="<?php echo $theme['theme_uri'] ?>"><?php echo $theme['name'] ?></a> <?php echo $theme['enabled'] ? '<small>('.lang('active').')</small>' : '' ?></h3>
-				<p><?php echo $theme['description'] ?></p><br>
-				<table class="table table-condensed table-striped mb0">
-					<tr><th class="col-xs-5"><?php _e('author'); ?></th><td><a href="<?php echo $theme['author_uri'] ?>" target="_blank"><?php echo $theme['author'] ?></a></td></tr>
-					<tr><th><?php _e('author_email'); ?></th><td><a href="mailto:<?php echo $theme['author_email'] ?>" target="_blank"><?php echo $theme['author_email'] ?></a></td></tr>
-					<tr><th><?php _e('version') ?></th><td><?php echo $theme['version'] ?></td></tr>
-					<tr><th><?php _e('license') ?></th><td><a href="<?php echo $theme['license_uri'] ?>" target="_blank"><?php echo $theme['license'] ?></a></td></tr>
-					<tr><th><?php _e('tags') ?></th><td><small><?php echo $theme['tags'] ?></small></td></tr>
-				</table>
-			<?php if ($theme['folder'] <> get_option('theme')): ?><br>
-				<?php echo safe_admin_anchor("themes/activate/{$theme['folder']}", lang('enable'), 'class="btn btn-primary btn-block"') ?>
-			<?php endif; ?>
-			</div>
-		</div>
-	</div>
+<?php foreach ($themes as $t): ?>
+	<div class="col-sm-6 col-md-4" id="theme-<?php echo $t['folder'] ?>">
+		<div class="theme-item thumbnail">
+			<img src="<?php echo $t['screenshot'] ?>" alt="<?php echo $t['name'] ?>" class="theme-screenshot img-responsive">
+			<div class="theme-caption caption clearfix">
+				<h4 class="theme-title"><?php echo $t['name']; ?><span class="theme-actions pull-right"><?php
+
+// Activate button.
+if (true !== $t['enabled'])
+{
+	echo safe_admin_anchor(
+		'themes/activate/'.$t['folder'],
+		lang('sth_theme_activate'),
+		'class="theme-activate btn btn-default btn-sm"'
+	).'&nbsp;';
+}
+
+// Details anchor.
+echo admin_anchor(
+	'themes/?theme='.$t['folder'],
+	lang('sth_theme_details'),
+	'class="theme-details btn btn-primary btn-sm"'
+);
+				?></span></h4>
+			</div><!--/.caption-->
+		</div><!--thumbnail-->
+	</div><!--/.column-->
 <?php endforeach; ?>
 </div>
 <?php endif; ?>
+<div id="theme-modal-container">
+	<?php if (null !== $theme): ?>
+	<div class="modal fade" tabindex="-1" role="dialog" id="theme-modal" tabindex="-1">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header clearfix">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><i class="fa fa-times"></i></span></button>
+					<h4 class="modal-title"><?php printf(lang('sth_details_name'), $theme['name']); ?></h4>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-sm-12 col-md-7">
+							<img src="<?php echo $theme['screenshot']; ?>" alt="<?php echo $theme['name']; ?>">
+						</div>
+						<div class="col-sm-12 col-md-5">
+							<h2 class="page-header clearfix"><?php echo $theme['name_uri']; ?> <small class="text-muted"><?php echo $theme['version']; ?></small><small class="pull-right"><?php echo label_condition($theme['enabled'], 'lang:active', ''); ?></small></h2>
+							<p><?php echo $theme['description']; ?></p><br />
+							<table class="table table-condensed table-striped">
+								<tr><th><?php _e('sth_author'); ?></th><td><?php echo $theme['author']; ?></td></tr>
+								<?php if ($theme['author_email']): ?>
+								<tr><th><?php _e('sth_author_email'); ?></th><td><small><?php echo $theme['author_email']; ?></small></td></tr>
+								<?php endif; ?>
+								<tr><th><?php _e('sth_license'); ?></th><td><?php echo $theme['license']; ?></td></tr>
+								<tr><th><?php _e('sth_tags'); ?></th><td><small><?php echo $theme['tags']; ?></small></td></tr>
+							</table>
+							<?php if (true !== $theme['enabled']): ?>
+							<p class="clearfix">
+								<a href="<?php echo safe_admin_url('themes/activate/'.$theme['folder']); ?>" class="theme-activate btn btn-primary btn-sm" data-theme="<?php echo $theme['folder']; ?>"><?php _e('sth_theme_activate'); ?></a>
+								<a href="<?php echo safe_admin_url('themes/delete/'.$theme['folder']); ?>" class="theme-delete btn btn-danger btn-sm pull-right" data-theme="<?php echo $theme['folder']; ?>"><?php _e('sth_theme_delete'); ?></a></p>
+						<?php endif; ?>
+						</div>
+					</div><!--/.row-->
+				</div><!--/modal-body-->
+			</div><!--/.modal-content-->
+		</div><!--/.modal-dialog-->
+	</div><!--/.modal-->
+	<?php endif; ?>
+</div><!--/#theme-modal-container-->
