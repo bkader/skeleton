@@ -251,7 +251,7 @@ class Users extends KB_Controller
 
 			// Set page title and render view.
 			$this->theme
-				->set_title(lang('resend_link'))
+				->set_title(lang('us_resend_title'))
 				->render($data);
 		}
 		// After form processing.
