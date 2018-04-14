@@ -52,10 +52,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Admin extends Admin_Controller
 {
 	/**
-	 * Array of method that accept only AJAX requests.
-	 * @var array
+	 * Class constructor
+	 * @access 	public
+	 * @return 	void
 	 */
-	protected $ajax_methods = array('delete');
+	public function __construct()
+	{
+		// Add our delete action as safe AJAX method.
+		array_push($this->safe_ajax_methods, 'delete');
+
+		// Call parent constructor.
+		parent::__construct();
+
+		// We add translations lines to head.
+		add_filter('admin_head', array($this, '_admin_head'));
+	}
+
+	// ------------------------------------------------------------------------
 
 	/**
 	 * List activities.
@@ -156,11 +169,12 @@ class Admin extends Admin_Controller
 
 		// Set page title and render view.
 		$this->theme
-			->set_title(lang('activity_log'))
-			->add_inline('js', $this->_delete_script())
+			->set_title(lang('sac_activity_log'))
 			->render($data);
 	}
 
+	// ------------------------------------------------------------------------
+	// Ajax Method.
 	// ------------------------------------------------------------------------
 
 	/**
@@ -171,62 +185,43 @@ class Admin extends Admin_Controller
 	 */
 	public function delete($id = 0)
 	{
-		// We proceed only if the $id is provided and the activity is deleted.
-		if ($id > 0 && $this->kbcore->activities->delete($id))
+		// Default response header status code.
+		$this->response->header = 406;
+
+		// Did we provide an invalid id?
+		if ( ! is_numeric($id) OR $id < 0)
+		{
+			$this->response->header  = 412;
+			$this->response->message = lang('error_safe_url');
+			return;
+		}
+
+		// Successfully deleted?
+		if (false !== $this->kbcore->activities->delete($id))
 		{
 			$this->response->header  = 200;
-			$this->response->message = lang('delete_activity_success');
+			$this->response->message = lang('sac_activity_delete_success');
+			return;
 		}
-		else
-		{
-			$this->response->header = 406;
-			$this->response->message = lang('delete_activity_error');
-		}
+
+		// Otherwise, the activity could not be deleted.
+		$this->response->message = lang('sac_activity_delete_error');
 	}
 
 	// ------------------------------------------------------------------------
+	// Private methods.
+	// ------------------------------------------------------------------------
 
 	/**
-	 * Print the delete activity script.
-	 * @access 	protected
+	 * Add the head part to output.
+	 * @access 	public
 	 * @param 	none
 	 * @return 	string
 	 */
-	private function _delete_script()
+	public function _admin_head($output)
 	{
-		// Confirmation message and current URL.
-		$confirm     = lang('delete_activity_confirm');
-		$current_url = current_url();
-
-		// Build our script.
-		$output = <<<EOT
-
-<script type="text/javascript">
-jQuery(document).on("click", ".delete-activity", function (e) {
-	e.preventDefault();
-	var that = jQuery(this),
-		href = that.attr("data-href"),
-		id   = that.attr("data-id"),
-		row  = jQuery("#activity-" + id);
-	if (id.length && href.length && confirm("{$confirm}")) {
-		jQuery.get(href, function (response, textStatus) {
-			if (textStatus == "success") {
-				toastr.success(response);
-				row.animate({opacity: 0}, function () {
-                    jQuery("#wrapper").load("{$current_url} #wrapper > *", function () {
-                    	row.remove();
-                    });
-				});
-			} else {
-				toastr.error(response);
-			}
-		});
-	}
-	return false;
-});
-</script>
-EOT;
-		// We return the final output.
+		$lines['delete'] = lang('sac_activity_delete_confirm');
+		$output .= '<script type="text/javascript">var i18n=i18n||{};i18n.activities='.json_encode($lines).';</script>';
 		return $output;
 	}
 

@@ -60,6 +60,42 @@
     });
 
     // ========================================================
+    // Delete activity.
+    // ========================================================
+    $(document).on("click", ".activity-delete", function (e) {
+        e.preventDefault();
+        var that = $(this), href = that.attr("href"), id = that.attr("data-activity-id");
+        if (!href.length) { return; }
+        var activitiesCount = $(".activity-log").children(".activity-item").length;
+        console.log(activitiesCount);
+        bootbox.confirm({
+            message: i18n.activities.delete,
+            callback: function (result) {
+                bootbox.hideAll();
+                if (result !== true) { return; }
+                $.get(href, function (response) {
+                    toastr.success(response);
+                }).done(function () {
+                    activitiesCount--;
+                    var row = $("#activity-" + id);
+                    row.animate({opacity: 0}, function () {
+                        if (activitiesCount <= 0) {
+                            window.location.href = Config.adminURL + "/activities";
+                        }
+                        else {
+                            $("#wrapper").load(Config.currentURL + " #wrapper > *", function () {
+                                row.remove();
+                            });
+                        }
+                    });
+                }).fail(function (response) {
+                    toastr.error(response.responseJSON);
+                });
+            }
+        });
+    });
+
+    // ========================================================
     // When the DOM is ready.
     // ========================================================
     $(document).ready(function () {

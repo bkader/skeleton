@@ -50,22 +50,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @version 	1.0.0
  */
 
-$lang['activities'] = 'Activities';
-$lang['activity'] = 'Activity';
+$lang['sac_activities'] = 'Activities';
+$lang['sac_activity'] = 'Activity';
 
 // Dashboard title;
-$lang['activity_log'] = 'Activity Log';
+$lang['sac_activity_log'] = 'Activity Log';
 
 // Activities table headings.
-$lang['module']     = 'Module';
-$lang['method']     = 'Method';
-$lang['ip_address'] = 'IP Address';
-$lang['date']       = 'Date';
+$lang['sac_user']       = 'User';
+$lang['sac_module']     = 'Module';
+$lang['sac_method']     = 'Method';
+$lang['sac_ip_address'] = 'IP Address';
+$lang['sac_date']       = 'Date';
+$lang['sac_action']     = 'Action';
 
 // Activities delete messages.
-$lang['delete_activity_confirm'] = 'Are you sure you want to delete this activity log?';
-$lang['delete_activity_success'] = 'Activity successfully deleted.';
-$lang['delete_activity_error']   = 'Unable to delete activity.';
+$lang['sac_activity_delete_confirm'] = 'Are you sure you want to delete this activity log?';
+$lang['sac_activity_delete_success'] = 'Activity successfully deleted.';
+$lang['sac_activity_delete_error']   = 'Unable to delete activity.';
 
 // ------------------------------------------------------------------------
 // Modules activities lines.

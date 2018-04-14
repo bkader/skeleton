@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.3.3
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -55,25 +55,25 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		<table class="table table-hover table-condensed table-striped">
 			<thead>
 				<tr>
-					<th class="col-xs-2"><?php _e('user'); ?></th>
-					<th class="col-xs-1"><?php _e('module'); ?></th>
-					<th class="col-xs-4"><?php _e('activity'); ?></th>
-					<th class="col-xs-2"><?php _e('ip_address'); ?></th>
-					<th class="col-xs-2"><?php _e('date'); ?></th>
-					<th class="col-xs-1 text-right"><?php _e('action'); ?></th>
+					<th class="col-xs-2"><?php _e('sac_user'); ?></th>
+					<th class="col-xs-1"><?php _e('sac_module'); ?></th>
+					<th class="col-xs-4"><?php _e('sac_activity'); ?></th>
+					<th class="col-xs-2"><?php _e('sac_ip_address'); ?></th>
+					<th class="col-xs-2"><?php _e('sac_date'); ?></th>
+					<th class="col-xs-1 text-right"><?php _e('sac_action'); ?></th>
 				</tr>
 			</thead>
 <?php if ($activities): ?>
-			<tbody>
+			<tbody class="activity-log">
 				<?php foreach ($activities as $activity): ?>
-				<tr id="activity-<?php echo $activity->id; ?>">
+				<tr id="activity-<?php echo $activity->id; ?>" class="activity-item">
 					<td><?php echo $activity->user_anchor; ?></td>
 					<td><?php echo $activity->module_anchor; ?></td>
 					<td><?php echo $activity->activity; ?></td>
 					<td><?php echo $activity->ip_address; ?></td>
 					<td><?php echo date('Y/m/d H:i', $activity->created_at); ?></td>
 					<td class="text-right">
-						<a href="#" data-href="<?php echo safe_admin_url('activities/delete/'.$activity->id); ?>" data-id="<?php echo $activity->id; ?>" class="btn btn-danger btn-xs delete-activity"><i class="fa fa-times"></i></a>
+						<a href="<?php echo safe_admin_url('activities/delete/'.$activity->id); ?>" data-activity-id="<?php echo $activity->id; ?>" class="btn btn-danger btn-xs activity-delete"><i class="fa fa-trash-o"></i></a>
 					</td>
 				</tr>
 				<?php endforeach; ?>
