@@ -51,7 +51,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
  * @since 		1.3.3 	changed "metadata" to "meta_tags" to avoid conflict with
- *          			the "Kbcore_metadat" library.
+ *          			the "Kbcore_metadata" library and added themes count.
  *
  * @version 	1.3.3
  */
@@ -196,6 +196,14 @@ EOT;
 	 * @var string
 	 */
 	private $_themes_folder = 'themes';
+
+	/**
+	 * Holds the count of available valid themes.
+	 *
+	 * @since 	1.3.3
+	 * @var 	integer
+	 */
+	private $_themes = 0;
 
 	/**
 	 * Holds the current theme's name.
@@ -579,10 +587,11 @@ EOT;
 		{
 			foreach ($folders as $key => $folder)
 			{
-				// A theme is valid ONLY if it has the 'theme_infp.php' file.
+				// A theme is valid ONLY if it has the 'manifest.json' file.
 				if (false !== realpath(FCPATH."{$this->_themes_folder}/{$folder}/manifest.json"))
 				{
 					$folders[$folder] = $this->_get_theme_details($folder);
+					$this->_themes++;
 				}
 				unset($folders[$key]);
 			}
@@ -664,6 +673,26 @@ EOT;
 
 		// Replace defaults and return the result.
 		return array_replace($defaults, $manifest);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the count of available valid themes.
+	 *
+	 * @since 	1.3.3
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	int
+	 */
+	public function count()
+	{
+		// We make sure to get themes so the count is incremented.
+		$this->get_themes();
+
+		// We then return the full count.
+		return $this->_themes;
 	}
 
 	// --------------------------------------------------------------------
