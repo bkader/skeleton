@@ -125,6 +125,6 @@ $lang['smn_menu_structure']        = 'Menu Structure';
 $lang['smn_menu_structure_tip']    = 'Drag each item into the order you prefer.';
 
 // Locations select none item.
-$lang['smn_select_menu']           = '&#151; Select a Menu &#151;';
-$lang['smn_theme_locations']       = 'Your theme supports %s menus. Select which menu appears in each location.';
-$lang['smn_theme_locations_nonce'] = 'You theme does not support menus.';
+$lang['smn_select_menu']          = '&#151; Select a Menu &#151;';
+$lang['smn_theme_locations']      = 'Your theme supports %s menus. Select which menu appears in each location.';
+$lang['smn_theme_locations_none'] = 'You theme does not support menus.';

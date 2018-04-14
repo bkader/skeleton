@@ -111,7 +111,7 @@ $lang['us_register_error']       = 'Unable to create account.';
 // ------------------------------------------------------------------------
 $lang['us_activate_invalid_key'] = 'This account activation link is no longer valid.';
 $lang['us_activate_error']       = 'Unable to activate account.';
-$lang['us_activate_success']     = 'Account successfully activated. You may now login';
+$lang['us_activate_success']     = 'Account successfully activated. You may now login.';
 
 // ------------------------------------------------------------------------
 // Resend activation link.

@@ -125,6 +125,6 @@ $lang['smn_menu_structure']        = 'Structure du menu';
 $lang['smn_menu_structure_tip']    = 'Glissez chaque élément pour les placer dans l’ordre que vous préférez.';
 
 // Locations select none item.
-$lang['smn_select_menu']           = '&#151; Choisir un menu &#151;';
-$lang['smn_theme_locations']       = 'Votre thème peut utiliser %s menus. Sélectionnez les menu qui devront apparaître dans chaque emplacement.';
-$lang['smn_theme_locations_nonce'] = 'Votre thème ne prend pas en charge nativement les menus.';
+$lang['smn_select_menu']          = '&#151; Choisir un menu &#151;';
+$lang['smn_theme_locations']      = 'Votre thème peut utiliser %s menus. Sélectionnez les menu qui devront apparaître dans chaque emplacement.';
+$lang['smn_theme_locations_none'] = 'Votre thème ne prend pas en charge nativement les menus.';
