@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -44,12 +44,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 require_once('CRUD_interface.php');
 
 /**
- * Main application library.
+ * Kbcore Library
+ *
+ * This is the Skeleton main library that handles almost everything on the application.
  *
  * @package 	CodeIgniter
+ * @subpackage 	Skeleton
  * @category 	Libraries
- * @author 	Kader Bouyakoub <bkader@mail.com>
- * @link 	https://github.com/bkader
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://github.com/bkader
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		1.0.0
+ * @version 	1.3.3
  */
 class Kbcore extends CI_Driver_Library
 {
@@ -67,6 +73,11 @@ class Kbcore extends CI_Driver_Library
 
 	/**
 	 * Class constructor
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Updated methods order to avoid loading different language (activities).
+	 *
+	 * @access 	public
 	 * @return 	void
 	 */
 	public function __construct()
@@ -97,6 +108,12 @@ class Kbcore extends CI_Driver_Library
 		// Let's assign options from database to CodeIgniter config.
 		$this->ci->load->config('defaults');
 
+		// We initialize options.
+		$this->options->initialize();
+
+		// Store language in session.
+		$this->_set_language();
+
 		/**
 		 * Here we are making an instance of this driver global
 		 * so that themes, plugins or others can use it.
@@ -105,14 +122,15 @@ class Kbcore extends CI_Driver_Library
 		$KB = new stdClass();
 		foreach ($this->valid_drivers as $driver)
 		{
-			$this->{$driver}->initialize();
-			$KB->{$driver} = $this->{$driver};
+			// Options already initialized.
+			if ('options' !== $driver)
+			{
+				$this->{$driver}->initialize();
+				$KB->{$driver} = $this->{$driver};
+			}
 		}
 		$KB->ci =& $this->ci;
 		$DB =& $this->ci->db;
-
-		// Store language in session.
-		$this->_set_language();
 
 		// Make sure to load the URL helper.
 		$this->ci->load->helper('url');
