@@ -23,6 +23,7 @@ body { font-family: $font__droid; }
 h1, h2, h3, h4, h5, h6 { font-family: $font__dubai; }
 
 .form-control,
+.btn,
 input,
 textarea {
     font-family: $font__droid;
@@ -57,3 +58,20 @@ textarea {
 
 // Change dashboard statuses font.
 .status { font-family: $font__droid; }
+
+// Menus
+.menu-item {
+
+    .menu-item-title {
+        padding-left: $gutters * 5;
+        padding-right: 0;
+    }
+
+    .menu-item-controls {
+        left: 0;
+        right: auto;
+
+        a { float: right; }
+
+    }
+}

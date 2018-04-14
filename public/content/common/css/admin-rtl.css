@@ -36,6 +36,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .form-control,
+.btn,
 input,
 textarea {
   font-family: "Droid Arabic Kufi", "Fira Sans", sans-serif;
@@ -68,4 +69,16 @@ textarea {
 
 .status {
   font-family: "Droid Arabic Kufi", "Fira Sans", sans-serif;
+}
+
+.menu-item .menu-item-title {
+  padding-left: 75px;
+  padding-right: 0;
+}
+.menu-item .menu-item-controls {
+  left: 0;
+  right: auto;
+}
+.menu-item .menu-item-controls a {
+  float: right;
 }
