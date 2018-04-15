@@ -108,18 +108,19 @@ class Kbcore extends CI_Driver_Library
 		// Let's assign options from database to CodeIgniter config.
 		$this->ci->load->config('defaults');
 
-		// We initialize options.
-		$this->options->initialize();
-
-		// Store language in session.
-		$this->_set_language();
-
 		/**
 		 * Here we are making an instance of this driver global
 		 * so that themes, plugins or others can use it.
 		 */
 		global $KB, $DB;
 		$KB = new stdClass();
+
+		// We initialize options.
+		$this->options->initialize();
+		$KB->options = $this->options;
+
+		// Store language in session.
+		$this->_set_language();
 		foreach ($this->valid_drivers as $driver)
 		{
 			// Options already initialized.
@@ -129,6 +130,8 @@ class Kbcore extends CI_Driver_Library
 				$KB->{$driver} = $this->{$driver};
 			}
 		}
+
+		// We finally add add instance of CI and DB objects.
 		$KB->ci =& $this->ci;
 		$DB =& $this->ci->db;
 
@@ -144,12 +147,11 @@ class Kbcore extends CI_Driver_Library
 		// Load main language file.
 		$this->ci->load->language('skeleton');
 
-		// Attempt to authenticate the current user.
-		// $this->auth->authenticate();
-		$this->ci->load->library('users/auth', array('kbcore' => $this));
-
 		// Initialize plugins if plugins system is enabled.
 		$this->plugins->load_plugins();
+
+		// Attempt to authenticate the current user.
+		$this->ci->load->library('users/auth', array('kbcore' => $this));
 
 		log_message('info', 'Kbcore Class Initialized');
 	}
