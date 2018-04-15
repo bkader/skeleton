@@ -74,5 +74,5 @@ function helloworld_initialize()
 	}
 
 	// Add Author meta tag.
-	add_metadata('author', 'https://github.com/bkader', 'rel');	
+	add_meta_tag('author', 'https://github.com/bkader', 'rel');	
 }
