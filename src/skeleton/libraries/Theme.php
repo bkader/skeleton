@@ -2258,7 +2258,11 @@ EOT;
 		('index' !== $this->method) && $classes[] = $this->method;
 
 		// We add the current language.
-		$classes[] = 'locale-'.strtolower($this->language('locale'));
+		('rtl' === $this->language('direction')) && $classes[] = 'rtl';
+		if ('admin' === $this->controller)
+		{
+			$classes[] = 'locale-'.strtolower($this->language('locale'));
+		}
 
 		// Are we on the dashboard?
 		if ('admin' === $this->controller)
