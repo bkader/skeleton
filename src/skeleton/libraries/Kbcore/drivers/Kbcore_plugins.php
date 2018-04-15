@@ -274,15 +274,15 @@ class Kbcore_plugins extends CI_Driver
 			return false;
 		}
 
-		/**
-		 * Two steps here: 
-		 * 1. delete all files within the plugin's folder.
-		 * 2. delete the folder.
-		 */
-		$this->deactivate($name);
-		array_map('unlink', glob($this->plugins_path($name).'/*.*'));
-		rmdir($this->plugins_path($name));
-		return true;
+		/// Proceed to plugin deletion after deactivation.
+		if (false !== $this->deactivate($name))
+		{
+			$this->ci->load->helper('directory');
+			directory_delete($this->plugins_path($name));
+			return true;
+		}
+
+		return false;
 	}
 
 	// ------------------------------------------------------------------------
