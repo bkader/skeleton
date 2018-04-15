@@ -989,7 +989,9 @@ EOT;
 				&& false !== $module_path = $this->ci->router->module_path($this->module))
 			{
 				$view = (isset($this->_view)) ? $this->_view : $this->method;
-				$this->_view = $module_path.'views/admin/'.$view;
+				$this->_view = ('admin' === $this->module)
+					? $module_path.'views/'.str_replace('admin/', '', $view)
+					: $module_path.'views/admin/'.$view;
 			}
 
 			return $this->_view;
@@ -2844,9 +2846,16 @@ EOT;
 				 * By adding this hook, we let the user handle
 				 * the path to partial views.
 				 */
-				$full_path = ('admin' === $this->controller)
-					? realpath(KBPATH.'views/admin/partials/')
-					: apply_filters('theme_partials_path', $full_path);
+				if ('admin' === $this->module)
+				{
+					$full_path = realpath(KBPATH.'modules/admin/views/partials/');
+				}
+				else
+				{
+					$full_path = ('admin' === $this->controller)
+						? realpath(KBPATH.'views/admin/partials/')
+						: apply_filters('theme_partials_path', $full_path);
+				}
 
 				// Alternative path to partials file.
 				$alt_path .= 'partials/';
@@ -2873,9 +2882,16 @@ EOT;
 				 * By adding this hook, we let the user handle
 				 * the path to layouts files.
 				 */
-				$full_path = ('admin' === $this->controller)
-					? realpath(KBPATH.'views/admin/layouts/')
-					: apply_filters('theme_layouts_path', $full_path);
+				if ('admin' === $this->module)
+				{
+					$full_path = realpath(KBPATH.'modules/admin/views/layouts/');
+				}
+				else
+				{
+					$full_path = ('admin' === $this->controller)
+						? realpath(KBPATH.'views/admin/layouts/')
+						: apply_filters('theme_layouts_path', $full_path);
+				}
 
 				// Alternative path to layouts files.
 				$alt_path .= 'layouts/';
@@ -2902,9 +2918,16 @@ EOT;
 				 * By adding this hook, we let the user handle
 				 * the path to view views.
 				 */
-				$full_path = ('admin' === $this->controller)
-					? realpath(KBPATH.'views/admin/')
-					: apply_filters('theme_views_path', $full_path);
+				if ('admin' === $this->module)
+				{
+					$full_path = realpath(KBPATH.'modules/admin/views/');
+				}
+				else
+				{
+					$full_path = ('admin' === $this->controller)
+						? realpath(KBPATH.'views/admin/')
+						: apply_filters('theme_views_path', $full_path);
+				}
 
 				break;
 		}

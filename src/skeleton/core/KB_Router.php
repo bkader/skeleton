@@ -401,7 +401,7 @@ class KB_Router extends CI_Router
 		{
 			if (empty($manifest['admin_menu']))
 			{
-				$manifest['admin_menu'] = lang($module);
+				$manifest['admin_menu'] = ucwords($module);
 			}
 			elseif (sscanf($manifest['admin_menu'], 'lang:%s', $line))
 			{
@@ -491,13 +491,17 @@ class KB_Router extends CI_Router
 
 	/**
 	 * Returns TRUE if an Admin controllers is found.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Ignored admin module if there is one.
+	 * 
 	 * @access 	public
 	 * @param 	string 	$module 	The module's name.
 	 * @return 	boolean
 	 */
 	public function has_admin($module)
 	{
-		return (is_file($this->module_path($module).'controllers/Admin.php'));
+		return ('admin' !== $module && is_file($this->module_path($module).'controllers/Admin.php'));
 	}
 
 	// ------------------------------------------------------------------------
