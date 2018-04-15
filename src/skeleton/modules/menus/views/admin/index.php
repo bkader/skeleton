@@ -81,7 +81,7 @@ echo '&nbsp;'.admin_anchor('menus/locations', lang('smn_manage_locations'), 'cla
 					<td class="text-right">
 						<a class="btn btn-default btn-xs" href="<?php echo admin_url('menus/edit/'.$menu->id) ?>" title="<?php _e('smn_edit_menu') ?>"><i class="fa fa-edit"></i></a>&nbsp;
 						<a class="btn btn-primary btn-xs" href="<?php echo admin_url('menus/items/'.$menu->id) ?>" title="<?php _e('smn_menu_items') ?>"><i class="fa fa-list-ul"></i></a>&nbsp;
-						<a href="<?php echo safe_admin_url('menus/delete/menu/'.$menu->id) ?>" data-menu-id="<?php echo $menu->id; ?>" class="btn btn-danger btn-xs menu-delete" title="<?php _e('smn_delete_menu') ?>"><i class="fa fa-trash-o"></i></a>
+						<a href="<?php echo safe_ajax_url('menus/delete/menu/'.$menu->id) ?>" data-menu-id="<?php echo $menu->id; ?>" class="btn btn-danger btn-xs menu-delete" title="<?php _e('smn_delete_menu') ?>"><i class="fa fa-trash-o"></i></a>
 					</td>
 				</tr>
 			<?php endforeach; ?>

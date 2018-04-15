@@ -33,37 +33,33 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.3.3
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Language Module - Admin Controller
- *
- * Allow administrators to manage site's languages.
+ * Menus Module - Ajax Controller.
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
  * @category 	Modules\Controllers
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
- * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		1.0.0
- * @since 		1.3.3 	Added languages JS file.
- * 
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @since 		1.3.3
  * @version 	1.3.3
  */
-class Admin extends Admin_Controller
-{
+class Ajax extends AJAX_Controller {
+
 	/**
 	 * __construct
 	 *
-	 * We simply call parent's constructor, load module's language file
-	 * and we make sure to load our languages JS file.
+	 * Simply call parent constructor, make sure to load menus language file and 
+	 * make sure to add safe admin AJAX methods.
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://github.com/bkader
-	 * @since 	1.0.0
+	 * @since 	1.3.3
 	 *
 	 * @access 	public
 	 * @param 	none
@@ -72,63 +68,67 @@ class Admin extends Admin_Controller
 	public function __construct()
 	{
 		parent::__construct();
+		
+		// Add AJAX methods.
+		array_unshift($this->safe_admin_methods, 'delete');
 
-		// We load module language file.
-		$this->load->language('language/language');
-
-		// We add JS files.
-		array_push($this->scripts, 'language');
+		// Make sure to load menus language file.
+		$this->load->language('menus/menus');
 	}
 
 	// ------------------------------------------------------------------------
+	// Administration methods.
+	// ------------------------------------------------------------------------
 
 	/**
-	 * index
+	 * delete
 	 *
-	 * Method for displaying the list of available site languages.
+	 * Method for deleting the selected menu/item from database.
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://github.com/bkader
-	 * @since 	1.0.0
+	 * @since 	1.3.3
 	 *
 	 * @access 	public
-	 * @param 	none
-	 * @return 	void
+	 * @param 	string 	$target 	The target to delete: menu or item.
+	 * @param 	int 	$id 		The menu/item ID.
+	 * @return 	AJAX_Controller::response()
 	 */
-	public function index()
+	public function delete($target, $id = 0)
 	{
-		// Get site's current language.
-		$data['language'] = $this->config->item('language');
+		// Default response header.
+		$this->response->header = 406;
 
-		// Get site's available languages.
-		$data['available_languages'] = $this->config->item('languages') ?: array();
-
-		// Get all languages details.
-		$data['languages'] = $this->lang->languages();
-		ksort($data['languages']);
-
-		/**
-		 * We check if the language folder is available or not and set 
-		 * it to available if found. This way we avoid installing languages
-		 * that are not really available.
-		 */
-		foreach ($data['languages'] as $folder => &$lang)
+		// We make sure only "menu" or "item" are provided.
+		if ( ! $target OR ! in_array($target, array('menu', 'item')))
 		{
-			// Language availability.
-			$lang['available'] =  (is_dir(APPPATH.'language/'.$folder) && is_dir(KBPATH.'language/'.$folder));
-
-			// Language action.
-			$lang['action'] = null; // Ignore english.
-			if ('english' !== $folder)
-			{
-				$lang['action'] = (in_array($folder, $data['available_languages'])) ? 'disable' : 'enable';
-			}
+			$this->response->header  = 412;
+			$this->response->message = lang('error_safe_url');
+			return;
 		}
 
-		// Set page title and render view.
-		$this->theme
-			->set_title(lang('sln_manage_languages'))
-			->render($data);
+		// We make sure we provided a valid id.
+		if ( ! is_numeric($id) OR $id < 0)
+		{
+			$this->response->header  = 412;
+			$this->response->message = lang('error_safe_url');
+			return;
+		}
+
+		// Successfully deleted?
+		if (false !== $this->kbcore->menus->{"delete_{$target}"}($id))
+		{
+			$this->response->header = 200;
+			$this->response->message = lang("smn_delete_{$target}_success");
+
+			// We log the activity.
+			log_activity($this->c_user->id, "lang:act_menus_delete_{$target}::{$id}");
+
+			return;
+		}
+
+		// Otherwise, the item/menu could not be deleted.
+		$this->response->message = lang("smn_delete_{$target}_error");
 	}
 
 }

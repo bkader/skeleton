@@ -38,48 +38,66 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Activities Module - List Activities
+ * Activities Module - Ajax Controller.
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @category 	Modules\Views
+ * @category 	Modules\Controllers
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.3.3
  * @version 	1.3.3
  */
-?><h2 class="page-header clearfix"><?php _e('sac_activity_log'); ?><?php echo $back_anchor; ?></h2>
-<div class="panel panel-default">
-	<div class="table-responsive">
-		<table class="table table-hover table-condensed table-striped">
-			<thead>
-				<tr>
-					<th class="col-xs-2"><?php _e('sac_user'); ?></th>
-					<th class="col-xs-1"><?php _e('sac_module'); ?></th>
-					<th class="col-xs-4"><?php _e('sac_activity'); ?></th>
-					<th class="col-xs-2"><?php _e('sac_ip_address'); ?></th>
-					<th class="col-xs-2"><?php _e('sac_date'); ?></th>
-					<th class="col-xs-1 text-right"><?php _e('sac_action'); ?></th>
-				</tr>
-			</thead>
-<?php if ($activities): ?>
-			<tbody class="activity-log">
-				<?php foreach ($activities as $activity): ?>
-				<tr id="activity-<?php echo $activity->id; ?>" class="activity-item">
-					<td><?php echo $activity->user_anchor; ?></td>
-					<td><?php echo $activity->module_anchor; ?></td>
-					<td><?php echo $activity->activity; ?></td>
-					<td><?php echo $activity->ip_address; ?></td>
-					<td><?php echo date('Y/m/d H:i', $activity->created_at); ?></td>
-					<td class="text-right">
-						<a href="<?php echo safe_ajax_url('activities/delete/'.$activity->id); ?>" data-activity-id="<?php echo $activity->id; ?>" class="btn btn-danger btn-xs activity-delete"><i class="fa fa-trash-o"></i></a>
-					</td>
-				</tr>
-				<?php endforeach; ?>
-			</tbody>
-<?php endif; ?>
-		</table>
-	</div>
-</div>
-<?php echo $pagination; ?>
+class Ajax extends AJAX_Controller
+{
+	/**
+	 * Class constructor.
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+
+		// Add our safe admin AJAX method.
+		array_push($this->safe_admin_methods, 'delete');
+	}
+
+	// ------------------------------------------------------------------------
+	// Administration methods.
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Delete the selected activity.
+	 * @access 	public
+	 * @param 	int 	$id 	The activity's ID.
+	 * @return 	void
+	 */
+	public function delete($id = 0)
+	{
+		// Default response header status code.
+		$this->response->header = 406;
+
+		// Did we provide an invalid id?
+		if ( ! is_numeric($id) OR $id < 0)
+		{
+			$this->response->header  = 412;
+			$this->response->message = lang('error_safe_url');
+			return;
+		}
+
+		// Successfully deleted?
+		if (false !== $this->kbcore->activities->delete($id))
+		{
+			$this->response->header  = 200;
+			$this->response->message = lang('sac_activity_delete_success');
+			return;
+		}
+
+		// Otherwise, the activity could not be deleted.
+		$this->response->message = lang('sac_activity_delete_error');
+	}
+
+}

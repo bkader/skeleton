@@ -76,7 +76,7 @@ echo admin_anchor('menus', lang('smn_manage_menus'), 'class="btn btn-default btn
 							<span class="menu-item-title"><?php echo $item->name; ?></span>
 							<span class="menu-item-controls">
 								<a href="#" class="item-edit" data-toggle="collapse" data-target="#menu-item-settings-<?php echo $item->id; ?>" title="<?php _e('smn_edit_item'); ?>"><i class="fa fa-edit"></i></a>
-								<a href="<?php echo safe_admin_url('menus/delete/item/'.$item->id); ?>" data-item-id="<?php echo $item->id; ?>" class="item-delete" title="<?php _e('smn_delete_item'); ?>" tabindex="-1"><i class="fa fa-trash-o"></i></a>
+								<a href="<?php echo safe_ajax_url('menus/delete/item/'.$item->id); ?>" data-item-id="<?php echo $item->id; ?>" class="item-delete" title="<?php _e('smn_delete_item'); ?>" tabindex="-1"><i class="fa fa-trash-o"></i></a>
 							</span>
 						</div>
 						<div class="menu-item-settings collapse" id="menu-item-settings-<?php echo $item->id; ?>">
@@ -114,7 +114,7 @@ echo admin_anchor('menus', lang('smn_manage_menus'), 'class="btn btn-default btn
 							<div class="form-group">
 								<a href="#" data-toggle="collapse" data-target="#menu-item-advanced-<?php echo $item->id; ?>" class="btn btn-default btn-sm pull-right"><?php _e('advanced'); ?></a>
 								</span>
-								<a href="<?php echo safe_admin_url('menus/delete/item/'.$item->id); ?>" data-item-id="<?php echo $item->id; ?>" class="btn btn-danger btn-sm item-delete" tabindex="-1"><?php _e('delete'); ?></a>
+								<a href="<?php echo safe_ajax_url('menus/delete/item/'.$item->id); ?>" data-item-id="<?php echo $item->id; ?>" class="btn btn-danger btn-sm item-delete" tabindex="-1"><?php _e('delete'); ?></a>
 							</div>
 						</div>
 					</div>

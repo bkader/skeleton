@@ -61,9 +61,6 @@ class Admin extends Admin_Controller
 	 */
 	public function __construct()
 	{
-		// Protected AJAX methods.
-		array_unshift($this->safe_ajax_methods, 'activate', 'deactivate', 'delete');
-
 		// Call parent constructor.
 		parent::__construct();
 		
@@ -133,7 +130,7 @@ class Admin extends Admin_Controller
 
 				// Activate/Deactivate plugin.
 				$_status = (true === $plugin['enabled']) ? 'deactivate' : 'activate';
-				$plugin['actions'][] = safe_admin_anchor("plugins/{$_status}/{$slug}", lang('spg_'.$_status), "class=\"plugin-{$_status}\"");
+				$plugin['actions'][] = safe_ajax_anchor("plugins/{$_status}/{$slug}", lang('spg_'.$_status), "class=\"plugin-{$_status}\"");
 
 				// Does the plugin have a settings page?
 				if (true === $plugin['has_settings'])
@@ -144,7 +141,7 @@ class Admin extends Admin_Controller
 				// We add the delete plugin only if the plugin is not enabled.
 				if (true !== $plugin['enabled'])
 				{
-					$plugin['actions'][] = safe_admin_anchor(
+					$plugin['actions'][] = safe_ajax_anchor(
 						"plugins/delete/{$slug}",
 						lang('spg_delete'),
 						'class="plugin-delete text-danger" data-plugin="'.$slug.'"'
@@ -211,132 +208,6 @@ class Admin extends Admin_Controller
 			->set_title(sprintf(lang('spg_plugin_settings_name'), $plugin['name']))
 			->render(array('plugin' => $plugin));
 
-	}
-
-	// ------------------------------------------------------------------------
-	// AJAX methods.
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Activate an existing plugin.
-	 *
-	 * @since 	1.0.0
-	 * @since 	1.3.3 	Rewritten to be an AJAX method.
-	 * 
-	 * @access 	public
-	 * @param 	string 	$plugin 	The plugin's folder name
-	 * @return 	void
-	 */
-	public function activate($plugin = null)
-	{
-		// Default header status code.
-		$this->response->header = 406;
-
-		// No plugin slug provided?
-		if (empty($plugin) OR ! is_string($plugin))
-		{
-			$this->response->header  = 412;
-			$this->response->message = lang('spg_plugin_missing');
-			return;
-		}
-
-		// Successfully activated?
-		if ($this->kbcore->plugins->activate($plugin))
-		{
-			$this->response->header   = 200;
-			$this->response->message = lang('spg_plugin_activate_success');
-
-			// Get the plugin data from database to log the activity.
-			$p = $this->kbcore->plugins->get_plugin_info($plugin);
-			log_activity($this->c_user->id, 'lang:act_plugin_activate::'.$p['name']);
-
-			return;
-		}
-
-		// Otherwise, the plugin could not be activated.
-		$this->response->message = lang('spg_plugin_activate_error');
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Deactivate an existing plugin.
-	 *
-	 * @since 	1.0.0
-	 * @since 	1.3.3 	Rewritten to be an AJAX method.
-	 * 
-	 * @access 	public
-	 * @param 	string 	$plugin 	The plugin's folder name
-	 * @return 	void
-	 */
-	public function deactivate($plugin)
-	{
-		// Default header status code.
-		$this->response->header = 406;
-
-		// No plugin slug provided?
-		if (empty($plugin) OR ! is_string($plugin))
-		{
-			$this->response->header  = 412;
-			$this->response->message = lang('spg_plugin_missing');
-			return;
-		}
-
-		// Successfully activated?
-		if ($this->kbcore->plugins->deactivate($plugin))
-		{
-			$this->response->header   = 200;
-			$this->response->message = lang('spg_plugin_deactivate_success');
-
-			// Get the plugin data from database to log the activity.
-			$p = $this->kbcore->plugins->get_plugin_info($plugin);
-			log_activity($this->c_user->id, 'lang:act_plugin_deactivate::'.$p['name']);
-			return;
-		}
-
-		// Otherwise, the plugin could not be deactivated.
-		$this->response->message = lang('spg_plugin_deactivate_error');
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Delete an existing plugin.
-	 *
-	 * @since 	1.0.0
-	 * @since 	1.3.3 	Rewritten to be an AJAX method.
-	 * 
-	 * @access 	public
-	 * @param 	string 	$plugin 	The plugin's folder name
-	 * @return 	void
-	 */
-	public function delete($plugin)
-	{
-		// Default header status code.
-		$this->response->header = 406;
-
-		// No plugin slug provided?
-		if (empty($plugin) OR ! is_string($plugin))
-		{
-			$this->response->header  = 412;
-			$this->response->message = lang('spg_plugin_missing');
-			return;
-		}
-
-		// Successfully deleted?
-		if ($this->kbcore->plugins->delete($plugin))
-		{
-			$this->response->header   = 200;
-			$this->response->message = lang('spg_plugin_delete_success');
-
-			// Get the plugin data from database to log the activity.
-			$p = $this->kbcore->plugins->get_plugin_info($plugin);
-			log_activity($this->c_user->id, 'lang:act_plugin_delete::'.$p['name']);
-			return;
-		}
-
-		// Otherwise, the plugin could not be deleted.
-		$this->response->message = lang('spg_plugin_delete_error');
 	}
 
 	// ------------------------------------------------------------------------

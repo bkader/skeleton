@@ -54,8 +54,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */
-class KB_Controller extends CI_Controller
-{
+class KB_Controller extends CI_Controller {
+
 	/**
 	 * Holds the current user's object.
 	 * @var object
@@ -73,28 +73,6 @@ class KB_Controller extends CI_Controller
 	 * @var array
 	 */
 	protected $data = array();
-
-	/**
-	 * Array of method that accept only AJAX requests.
-	 * @var array
-	 */
-	protected $ajax_methods = array();
-
-	/**
-	 * Array of methods that accepts only AJAX requests but
-	 * requires a safe URL check.
-	 *
-	 * @since 	1.3.3
-	 * 
-	 * @var 	array
-	 */
-	protected $safe_ajax_methods = array();
-
-	/**
-	 * Object used by AJAX methods as response.
-	 * @var object
-	 */
-	protected $response;
 
 	/**
 	 * Class constructor
@@ -150,90 +128,15 @@ class KB_Controller extends CI_Controller
 		{
 			show_404();
 		}
-
-		// Not an AJAX method?
-		if ( ! in_array($method, $this->ajax_methods) 
-			&& ! in_array($method, $this->safe_ajax_methods))
+		
+		// Add a class to body class if the user is logged in.
+		if (true === $this->auth->online())
 		{
-			// Add a class to body class if the user is logged in.
-			if (true === $this->auth->online())
-			{
-				$this->theme->set_body_class('logged-in');
-			}
-
-			// Call the method.
-			return call_user_func_array(array($this, $method), $params);
+			$this->theme->set_body_class('logged-in');
 		}
 
-		// We make sure the request done is AJAX.
-		if ( ! $this->input->is_ajax_request())
-		{
-			show_404();
-		}
-
-		// Prepare the response object.
-		$this->response          = new stdClass();
-		$this->response->header  = 400;
-		$this->response->type    = 'json';
-		$this->response->message = 'Bad Request';
-
-		// Does the requested methods require a safe URL check?
-		if (in_array($method, $this->safe_ajax_methods) 
-			&& ( ! check_safe_url() OR true !== $this->auth->online()))
-		{
-			$this->response->header  = 412;
-			$this->response->message = lang('error_action_permission');
-			return $this->response();
-		}
-
-		// Are we on an admin controller but the user is not an admin?
-		if ('admin' === $this->router->fetch_class() 
-			&& false === $this->auth->is_admin())
-		{
-			$this->response->header  = 412;
-			$this->response->message = lang('error_action_permission');
-			return $this->response();
-		}
-
-		// Let the method perform actions.
-		call_user_func_array(array($this, $method), $params);
-
-		// Always return the final response.
-		return $this->response();
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * This method handles the rest of AJAX requests.
-	 *
-	 * @access 	public
-	 * @param 	none
-	 * @return 	string
-	 */
-	protected function response()
-	{
-		/**
-		 * Disable parsing of the {elapsed_time} and {memory_usage}
-		 * pseudo-variables because we don't need them.
-		 */
-		$this->output->parse_exec_vars = false;
-
-		// Make sure to always have a message and content type.
-		(isset($this->response->message)) OR $this->response->message = 'Bad Request';
-		(isset($this->response->type)) OR $this->response->type = 'json';
-
-		// Make sure to json_encode message if using JSON.
-		if ($this->response->type === 'json')
-		{
-			$this->response->message = json_encode($this->response->message);
-		}
-
-		// Return the final output.
-		return $this->output
-			->set_content_type($this->response->type)
-			->set_status_header($this->response->header)
-			->set_output($this->response->message);
+		// Call the method.
+		return call_user_func_array(array($this, $method), $params);
 	}
 
 	// ------------------------------------------------------------------------

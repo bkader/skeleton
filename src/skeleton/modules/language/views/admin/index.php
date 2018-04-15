@@ -80,10 +80,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					<td class="text-right">
 						<?php if ($lang['folder'] !== $language): ?>
 						<!-- Make default action -->
-						<a href="<?php echo safe_admin_url('language/make_default/'.$lang['folder']); ?>" class="btn btn-xs btn-default lang-default"><?php _e('sln_make_default'); ?></a>&nbsp;
+						<a href="<?php echo safe_ajax_url('language/make_default/'.$lang['folder']); ?>" class="btn btn-xs btn-default lang-default"><?php _e('sln_make_default'); ?></a>&nbsp;
 						<?php endif; ?>
 						<?php if (null !== $lang['action']): ?>
-							<a href="<?php echo safe_admin_url("language/{$lang['action']}/{$lang['folder']}"); ?>" class="btn btn-xs <?php echo ('enable' == $lang['action']) ? 'btn-success lang-enable' : 'btn-danger lang-disable'; ?>"><?php _e($lang['action']); ?></a>&nbsp;
+							<a href="<?php echo safe_ajax_url("language/{$lang['action']}/{$lang['folder']}"); ?>" class="btn btn-xs <?php echo ('enable' == $lang['action']) ? 'btn-success lang-enable' : 'btn-danger lang-disable'; ?>"><?php _e($lang['action']); ?></a>&nbsp;
 						<?php endif; ?>
 					</td>
 				</tr>

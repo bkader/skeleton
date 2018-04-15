@@ -49,5 +49,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		1.0.0
  * @version 	1.3.3
  */
-?><h2 class="page-header clearfix"><?php printf(lang('spg_plugin_settings_name'), $plugin['name']); ?></h2>
+?><h2 class="page-header clearfix"><?php
+// Page header.
+printf(lang('spg_plugin_settings_name'), $plugin['name']);
+
+// Back button.
+echo admin_anchor('plugins', lang('back'), 'class="btn btn-primary btn-sm pull-right"');
+?></h2>
 <?php do_action('plugin_settings_'.$plugin['folder']); ?>

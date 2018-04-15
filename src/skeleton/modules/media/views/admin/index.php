@@ -50,7 +50,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @version 	1.3.0
  */
 ?><h2 class="page-header"><?php _e('smd_media_library'); ?></h2>
-<div data-dropzone data-upload-url="<?php echo safe_url('media/upload'); ?>">
+<div data-dropzone data-upload-url="<?php echo safe_ajax_url('media/upload'); ?>">
 	<div class="row attachments">
 	<?php if ($media): ?>
 	<?php foreach ($media as $m): ?>
@@ -58,7 +58,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			<div class="attachment-inner" style="background-image: url('<?php echo $m->content; ?>');">
 				<div class="attachment-action">
 					<a href="<?php echo admin_url('media?item='.$m->id); ?>" class="btn btn-primary btn-sm media-view"><i class="fa fa-eye"></i></a>
-					<a href="<?php echo safe_url('media/delete/'.$m->id); ?>" data-media-id="<?php echo $m->id; ?>" class="btn btn-danger btn-sm media-delete" ><i class="fa fa-times"></i></a>
+					<a href="<?php echo safe_ajax_url('media/delete/'.$m->id); ?>" data-media-id="<?php echo $m->id; ?>" class="btn btn-danger btn-sm media-delete" ><i class="fa fa-times"></i></a>
 				</div>
 			</div>
 		</div>
@@ -90,7 +90,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 							<strong><?php _e('smd_media_file_size'); ?></strong>: <span class="txof"><?php echo $item->file_size; ?></span><br />
 							<strong><?php _e('smd_media_dimensions'); ?></strong>: <span class="txof"><?php echo $item->details['width']; ?> x <?php echo $item->details['height']; ?></span>
 							<hr />
-							<?php echo form_open(safe_url('media/update/'.$item->id), 'role="form" class="media-update"'); ?>
+							<?php echo form_open(safe_ajax_url('media/update/'.$item->id), 'role="form" class="media-update"'); ?>
 								<div class="form-group">
 									<label><?php _e('smd_media_url'); ?></label>
 									<p class="well well-sm txof" data-toggle="tooltip" title="<?php _e('smd_media_clipboard'); ?>" onclick="window.prompt('<?php _e('smd_media_clipboard'); ?>', '<?php echo $item->content; ?>');"><?php echo site_url('media/'.$item->username); ?></p>
@@ -103,7 +103,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 									<label for="description"><?php _e('smd_media_description'); ?></label>
 									<textarea class="form-control" type="text" name="description" id="description" placeholder="<?php _e('smd_media_description'); ?>"><?php echo $item->description; ?></textarea>
 								</div>
-								<button type="submit" class="btn btn-primary btn-sm"><?php _e('update'); ?></button><a href="<?php echo safe_url('media/delete/'.$m->id); ?>" data-media-id="<?php echo $m->id; ?>" class="btn btn-danger btn-sm pull-right media-delete" tabindex="-1"><?php _e('delete'); ?></a>
+								<button type="submit" class="btn btn-primary btn-sm"><?php _e('update'); ?></button><a href="<?php echo safe_ajax_url('media/delete/'.$m->id); ?>" data-media-id="<?php echo $m->id; ?>" class="btn btn-danger btn-sm pull-right media-delete" tabindex="-1"><?php _e('delete'); ?></a>
 							<?php echo form_close(); ?>
 						</div>
 					</div>

@@ -38,48 +38,47 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Activities Module - List Activities
+ * Process_Controller Class
+ *
+ * Controllers extending this class require a GET request only and should never
+ * output anything. Methods should perform a server-side action then redirects
+ * users to the given URL.
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @category 	Modules\Views
+ * @category 	Core Extension
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.3.3
  * @version 	1.3.3
  */
-?><h2 class="page-header clearfix"><?php _e('sac_activity_log'); ?><?php echo $back_anchor; ?></h2>
-<div class="panel panel-default">
-	<div class="table-responsive">
-		<table class="table table-hover table-condensed table-striped">
-			<thead>
-				<tr>
-					<th class="col-xs-2"><?php _e('sac_user'); ?></th>
-					<th class="col-xs-1"><?php _e('sac_module'); ?></th>
-					<th class="col-xs-4"><?php _e('sac_activity'); ?></th>
-					<th class="col-xs-2"><?php _e('sac_ip_address'); ?></th>
-					<th class="col-xs-2"><?php _e('sac_date'); ?></th>
-					<th class="col-xs-1 text-right"><?php _e('sac_action'); ?></th>
-				</tr>
-			</thead>
-<?php if ($activities): ?>
-			<tbody class="activity-log">
-				<?php foreach ($activities as $activity): ?>
-				<tr id="activity-<?php echo $activity->id; ?>" class="activity-item">
-					<td><?php echo $activity->user_anchor; ?></td>
-					<td><?php echo $activity->module_anchor; ?></td>
-					<td><?php echo $activity->activity; ?></td>
-					<td><?php echo $activity->ip_address; ?></td>
-					<td><?php echo date('Y/m/d H:i', $activity->created_at); ?></td>
-					<td class="text-right">
-						<a href="<?php echo safe_ajax_url('activities/delete/'.$activity->id); ?>" data-activity-id="<?php echo $activity->id; ?>" class="btn btn-danger btn-xs activity-delete"><i class="fa fa-trash-o"></i></a>
-					</td>
-				</tr>
-				<?php endforeach; ?>
-			</tbody>
-<?php endif; ?>
-		</table>
-	</div>
-</div>
-<?php echo $pagination; ?>
+class Process_Controller extends KB_Controller {
+
+	/**
+	 * __construct
+	 *
+	 * Simply call parent's constructor and make sure the request is only
+	 * a GET request.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.3.3
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+
+		// We make sure the request is a GET.
+		if (true !== $this->input->is_get_request())
+		{
+			redirect('');
+			exit;
+		}
+	}
+
+}

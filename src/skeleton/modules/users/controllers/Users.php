@@ -52,10 +52,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		1.0.0
  * @version 	1.3.3
  */
-class Users extends KB_Controller
-{
+class Users extends KB_Controller {
+
 	/**
-	 * Class constructor
+	 * __construct
+	 *
+	 * Simply call parent's constructor and allow access to logout method
+	 * only for already logged-in users.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.0.0
+	 *
+	 * @access 	public
+	 * @param 	none
 	 * @return 	void
 	 */
 	public function __construct()
@@ -63,7 +73,6 @@ class Users extends KB_Controller
 		parent::__construct();
 
 		// Make sure the user is not logged in.
-		$method = $this->router->fetch_method();
 		if ($this->auth->online() && 'logout' !== $this->router->fetch_method())
 		{
 			set_alert(lang('error_logged_in'), 'error');
@@ -75,9 +84,16 @@ class Users extends KB_Controller
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Index method kept as backup.
+	 * index
+	 *
+	 * Method kept as a backup only, it does absolutely nothing.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
 	 * @since 	1.0.0
+	 *
 	 * @access 	public
+	 * @param 	none
 	 * @return 	void
 	 */
 	public function index() {}
@@ -87,7 +103,14 @@ class Users extends KB_Controller
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Account registration.
+	 * register
+	 *
+	 * Method for users registration on the site.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.0.0
+	 *
 	 * @access 	public
 	 * @param 	none
 	 * @return 	void
@@ -190,25 +213,14 @@ class Users extends KB_Controller
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Activate user account.
-	 * @access 	public
-	 * @param 	string 	$code 	account activation code.
-	 * @return 	void
-	 */
-	public function activate($code = null)
-	{
-		// Attempt to activate the account.
-		$status = $this->users->activate_by_code($code);
-
-		// The redirection depends on the activation status.
-		redirect(($status === true ? 'login' : ''), 'refresh');
-		exit;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Resend account activation link.
+	 * resend
+	 *
+	 * Method for resend account activation links.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.0.0
+	 *
 	 * @access 	public
 	 * @param 	none
 	 * @return 	void
@@ -277,7 +289,14 @@ class Users extends KB_Controller
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Restore deleted account.
+	 * restore
+	 *
+	 * Method for restoring a previously soft-deleted account.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.0.0
+	 *
 	 * @access 	public
 	 * @param 	none
 	 * @return 	void
@@ -348,7 +367,14 @@ class Users extends KB_Controller
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Site's login page.
+	 * login
+	 *
+	 * Method for site's members login.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.0.0
+	 *
 	 * @access 	public
 	 * @param 	none
 	 * @return 	void
@@ -435,7 +461,14 @@ class Users extends KB_Controller
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Site's logout method.
+	 * logout
+	 *
+	 * Method for logging out already logged in users.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.0.0
+	 *
 	 * @access 	public
 	 * @param 	none
 	 * @return 	void
@@ -455,7 +488,14 @@ class Users extends KB_Controller
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Lost password page.
+	 * recover
+	 *
+	 * Method for requesting a password reset link.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.0.0
+	 *
 	 * @access 	public
 	 * @param 	none
 	 * @return 	void
@@ -517,9 +557,16 @@ class Users extends KB_Controller
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Reset password page.
+	 * reset
+	 *
+	 * Method for resetting account's password.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.0.0
+	 *
 	 * @access 	public
-	 * @param 	string 	$code 	reset password code.
+	 * @param 	string 	$code 	The password reset code.
 	 * @return 	void
 	 */
 	public function reset($code = null)

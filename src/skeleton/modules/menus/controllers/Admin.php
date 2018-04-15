@@ -49,8 +49,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		1.0.0
  * @version 	1.3.3
  */
-class Admin extends Admin_Controller
-{
+class Admin extends Admin_Controller {
+
 	/**
 	 * Class constructor.
 	 *
@@ -63,9 +63,6 @@ class Admin extends Admin_Controller
 	{
 		// Call parent's constructor
 		parent::__construct();
-		
-		// Add AJAX methods.
-		array_unshift($this->safe_ajax_methods, 'delete', 'order');
 
 		// Make sure to load menus language file.
 		$this->load->language('menus/menus');
@@ -74,7 +71,7 @@ class Admin extends Admin_Controller
 		$this->theme->load_translation();
 
 		// We add our language lines to head tag.
-		add_filter('admin_head', array($this, '_admin_head'), 0);
+		add_filter('admin_head', array($this, '_admin_head'));
 
 		if ('items' === $this->router->fetch_method())
 		{
@@ -83,6 +80,7 @@ class Admin extends Admin_Controller
 			array_splice($this->scripts, 2, 0, array('jquery-ui', 'jquery.ui.touch-punch'));
 		}
 
+		// Add our menus JS file.
 		array_push($this->scripts, 'menus');
 	}
 
@@ -531,58 +529,6 @@ class Admin extends Admin_Controller
 		set_alert(lang('smn_save_menu_success'), 'success');
 		redirect('admin/menus/items/'.$id);
 		exit;
-	}
-
-	// ------------------------------------------------------------------------
-	// Ajax Methods.
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Delete a single menu or menu item.
-	 *
-	 * @since 	1.0.0
-	 * @since 	1.3.0 	Rewritten to do the same as "edit" method.
-	 * @since 	1.3.3 	Rewritten to have only one method instead of two.
-	 * 
-	 * @access 	public
-	 * @param 	string 	$target 	menu or item.
-	 * @param 	int 	$id
-	 * @return 	void
-	 */
-	public function delete($target, $id = 0)
-	{
-		// Default response header.
-		$this->response->header = 406;
-
-		// We make sure only "menu" or "item" are provided.
-		if ( ! $target OR ! in_array($target, array('menu', 'item')))
-		{
-			$this->response->header  = 412;
-			$this->response->message = lang('error_safe_url');
-			return;
-		}
-
-		// We make sure we provided a valid id.
-		if ( ! is_numeric($id) OR $id < 0)
-		{
-			$this->response->header  = 412;
-			$this->response->message = lang('error_safe_url');
-			return;
-		}
-
-		// Successfully deleted?
-		if (false !== $this->kbcore->menus->{"delete_{$target}"}($id))
-		{
-			$this->response->header = 200;
-			$this->response->message = lang("smn_delete_{$target}_success");
-
-			// We log the activity.
-			log_activity($this->c_user->id, "lang:act_menus_delete_{$target}::{$id}");
-
-			return;
-		}
-
-		$this->response->message = lang("smn_delete_{$target}_error");
 	}
 
 	// ------------------------------------------------------------------------

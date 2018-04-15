@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -46,8 +46,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.3.2
+ * @since 		1.0.0
+ * @version 	1.3.3
  */
 ?><h2 class="page-header clearfix"><?php
 
@@ -70,7 +70,7 @@ echo admin_anchor('themes', lang('sth_theme_add'), 'class="btn btn-primary btn-s
 // Activate button.
 if (true !== $t['enabled'])
 {
-	echo safe_admin_anchor(
+	echo safe_ajax_anchor(
 		'themes/activate/'.$t['folder'],
 		lang('sth_theme_activate'),
 		'class="theme-activate btn btn-default btn-sm"'
@@ -117,8 +117,8 @@ echo admin_anchor(
 							</table>
 							<?php if (true !== $theme['enabled']): ?>
 							<p class="clearfix">
-								<a href="<?php echo safe_admin_url('themes/activate/'.$theme['folder']); ?>" class="theme-activate btn btn-primary btn-sm" data-theme="<?php echo $theme['folder']; ?>"><?php _e('sth_theme_activate'); ?></a>
-								<a href="<?php echo safe_admin_url('themes/delete/'.$theme['folder']); ?>" class="theme-delete btn btn-danger btn-sm pull-right" data-theme="<?php echo $theme['folder']; ?>"><?php _e('sth_theme_delete'); ?></a></p>
+								<a href="<?php echo safe_ajax_url('themes/activate/'.$theme['folder']); ?>" class="theme-activate btn btn-primary btn-sm" data-theme="<?php echo $theme['folder']; ?>"><?php _e('sth_theme_activate'); ?></a>
+								<a href="<?php echo safe_ajax_url('themes/delete/'.$theme['folder']); ?>" class="theme-delete btn btn-danger btn-sm pull-right" data-theme="<?php echo $theme['folder']; ?>"><?php _e('sth_theme_delete'); ?></a></p>
 						<?php endif; ?>
 						</div>
 					</div><!--/.row-->

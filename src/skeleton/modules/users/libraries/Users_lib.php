@@ -119,7 +119,7 @@ class Users_lib
 				// We send the email to user.
 				$this->_send_email('activation', $guid, array(
 					'name' => $data['first_name'],
-					'link' => anchor('register/activate/'.$code, '', 'target="_blank"')
+					'link' => process_anchor('users/activate/'.$code, '', 'target="_blank"')
 				));
 
 				// Set the alert message.
@@ -232,7 +232,7 @@ class Users_lib
 			// Send email to use.
 			$ip_address = $this->ci->input->ip_address();
 			$this->_send_email('new_activation', $user, array(
-				'link'    => anchor('register/activate/'.$activation_code, '', 'target="_blank"'),
+				'link'    => process_anchor('users/activate/'.$activation_code, '', 'target="_blank"'),
 				'ip_link' => anchor('https://www.iptolocation.net/trace-'.$ip_address, $ip_address, 'target="_blank"'),
 			));
 		}

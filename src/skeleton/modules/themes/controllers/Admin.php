@@ -51,28 +51,34 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		1.0.0
  * @version 	1.3.3
  */
-class Admin extends Admin_Controller
-{
+class Admin extends Admin_Controller {
+
 	/**
-	 * Class constructor
+	 * __construct
+	 *
+	 * Simply call parent constructor, load language file, add head part extra
+	 * string and load themes JS file.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.0.0
+	 *
+	 * @access 	public
+	 * @param 	none
 	 * @return 	void
 	 */
 	public function __construct()
 	{
-		// Call parent constructor.
 		parent::__construct();
-
-		// Add our safe AJAX methods.
-		array_push($this->safe_ajax_methods, 'activate', 'delete');
 
 		// Make sure to load language file.
 		$this->load->language('themes/themes');
 
-		// Add our needed JS file.
-		array_push($this->scripts, 'themes');
-
 		// Add language lines to head part.
 		add_filter('admin_head', array($this, '_admin_head'));
+
+		// Add our needed JS file.
+		array_push($this->scripts, 'themes');
 	}
 
 	// ------------------------------------------------------------------------
@@ -158,132 +164,6 @@ class Admin extends Admin_Controller
 		$this->theme
 			->set_title(lang('sth_theme_settings'))
 			->render($data);
-	}
-
-	// ------------------------------------------------------------------------
-	// AJAX methods.
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Activate the selected theme.
-	 *
-	 * @since 	1.0.0
-	 * @since 	1.3.3 	Rewritten to be an AJAX method.
-	 * 
-	 * @access 	public
-	 * @param 	string 	$folder 	the theme's folder.
-	 * @return 	void
-	 */
-	public function activate($folder = null)
-	{
-		// Default header status code.
-		$this->response->header = 406;
-
-		// We grab themes stored in database.
-		$db_themes = $this->kbcore->options->get('themes');
-		$db_theme  = $this->kbcore->options->get('theme');
-
-		/**
-		 * We makes sure that:
-		 * 1. The $folder is provided and valid.
-		 * 2. The selected theme is different from the current one.
-		 * 3. The selected theme available.
-		 */
-		if (null === $folder 
-			OR $folder === $db_theme->value 
-			OR ! isset($db_themes->value[$folder]))
-		{
-			$this->response->header  = 412;
-			$this->response->message = lang('error_safe_url');
-			return;
-		}
-
-		// Keep theme's details for later use.
-		$theme = $db_themes->value[$folder];
-
-		// Successfully updated?
-		if (false !== $db_theme->update('value', $folder))
-		{
-			$this->response->header  = 200;
-			$this->response->message = lang('sth_theme_activate_success');
-
-			// We log the activity.
-			log_activity($this->c_user->id, 'lang:act_themes_activate::'.$theme['name']);
-			return;
-		}
-
-		// Otherwise, the theme could not be activated.
-		$this->response->message = lang('sth_theme_activate_error');
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Method for deleting the selected theme.
-	 *
-	 * @since 	1.3.3
-	 *
-	 * @access 	public
-	 * @param 	string 	$folder 	The theme's folder name.
-	 * @return 	void
-	 */
-	public function delete($folder = null)
-	{
-		// Default header status code.
-		$this->response->header = 406;
-
-		// We grab themes stored in database.
-		$db_themes = $this->kbcore->options->get('themes');
-
-		/**
-		 * We make sure that:
-		 * 1. The $folder is provided and valid.
-		 * 2. We have themes stored in database.
-		 * 3. The selected theme is available.
-		 */
-		if (null === $folder 
-			OR false === $db_themes 
-			OR ! isset($db_themes->value[$folder]))
-		{
-			$this->response->header  = 412;
-			$this->response->message = lang('error_safe_url');
-			return;
-		}
-
-		// There is no way we can deleted the currently active theme.
-		if ($folder === $this->config->item('theme'))
-		{
-			$this->response->message = lang('sth_theme_delete_active');
-			return;
-		}
-
-		// We no remove the selected theme from themes array.
-		$themes = $db_themes->value;
-		$theme  = $themes[$folder];
-		unset($themes[$folder]);
-
-		// We load the custom directory helper in order to delete the theme.
-		$this->load->helper('directory');
-
-		/**
-		 * We make sure that:
-		 * 1. The "directory_delete" function exists.
-		 * 2. The directory is successfully deleted.
-		 * 3. Themes stored in database were successfully updated.
-		 */
-		if (false !== directory_delete($this->theme->themes_path($folder)) 
-			&& false !== $db_themes->update('value', $themes))
-		{
-			$this->response->header  = 200;
-			$this->response->message = lang('sth_theme_delete_success');
-
-			// We log the activity.
-			log_activity($this->c_user->id, 'lang:act_themes_delete::'.$theme['name']);
-			return;
-		}
-
-		// Otherwise, the theme could not be deleted.
-		$this->response->mesage = lang('sth_theme_delete_error');
 	}
 
 	// ------------------------------------------------------------------------

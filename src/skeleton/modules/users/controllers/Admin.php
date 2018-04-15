@@ -51,29 +51,26 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		1.0.0
  * @version 	1.3.3
  */
-class Admin extends Admin_Controller
-{
+class Admin extends Admin_Controller {
+
 	/**
-	 * Class constructor
+	 * __construct
 	 *
-	 * @since 	1.3.3
+	 * Simply call parent's constructor and add users JS file.
+	 * We don't need to load module's language file because it has 
+	 * already been loaded on the Auth library.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.0.0
 	 *
 	 * @access 	public
+	 * @param 	none
 	 * @return 	void
 	 */
 	public function __construct()
 	{
 		parent::__construct();
-
-		// Add AJAX method.
-		array_push(
-			$this->safe_ajax_methods,
-			'activate',
-			'deactivate',
-			'delete',
-			'restore',
-			'remove'
-		);
 
 		// We add users JS file.
 		array_push($this->scripts, 'users');
@@ -82,8 +79,16 @@ class Admin extends Admin_Controller
 	// ------------------------------------------------------------------------
 
 	/**
-	 * List all site users.
+	 * index
+	 *
+	 * Display all site's users accounts.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.0.0
+	 *
 	 * @access 	public
+	 * @param 	none
 	 * @return 	void
 	 */
 	public function index()
@@ -127,9 +132,16 @@ class Admin extends Admin_Controller
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Add a new account.
+	 * add
+	 *
+	 * Method for adding a new user's account.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.0.0
 	 *
 	 * @access 	public
+	 * @param 	none
 	 * @return 	void
 	 */
 	public function add()
@@ -226,12 +238,16 @@ class Admin extends Admin_Controller
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Edit an existing user.
+	 * edit
 	 *
+	 * Edit an existing user's account.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
 	 * @since 	1.0.0
-	 * @since 	1.3.0 	Rewritten for less code.
 	 *
 	 * @access 	public
+	 * @param 	int 	$id 	The user's ID.
 	 * @return 	void
 	 */
 	public function edit($id = 0)
@@ -450,268 +466,20 @@ class Admin extends Admin_Controller
 	}
 
 	// ------------------------------------------------------------------------
-	// AJAX Methods.
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Activate a user.
-	 *
-	 * @access 	public
-	 * @param 	int 	$id
-	 * @return 	void
-	 */
-	public function activate($id = 0)
-	{
-		// Default header status code.
-		$this->response->header = 409;
-
-		// We make sure $id is valid.
-		if ( ! is_numeric($id) OR $id < 0)
-		{
-			$this->response->header  = 412;
-			$this->response->message = lang('error_safe_url');
-			return;
-		}
-
-		// The user cannot activate his/her own account.
-		if ($id == $this->c_user->id)
-		{
-			$this->response->header  = 405;
-			$this->response->message = lang('us_admin_activate_error_own');
-			return;
-		}
-
-		// The user does not exist, or already enabled?
-		if (false === $this->kbcore->users->get_by(array('id' => $id, 'enabled' => 0)))
-		{
-			$this->response->message = lang('us_admin_activate_error');
-			return;
-		}
-
-		// Successfully disabled the user?
-		if (false !== $this->kbcore->entities->update($id, array('enabled' => 1)))
-		{
-			$this->response->header  = 200;
-			$this->response->message = lang('us_admin_activate_success');
-
-			// We log the activity.
-			log_activity($this->c_user->id, 'lang:act_user_activate::'.$id);
-
-			return;
-		}
-
-		// Otherwise, user could not be activated.
-		$this->response->message = lang('us_admin_activate_error');
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Deactivate a user.
-	 *
-	 * @access 	public
-	 * @param 	int 	$id
-	 * @return 	void
-	 */
-	public function deactivate($id = 0)
-	{
-		// Default header status code.
-		$this->response->header = 409;
-
-		// We make sure $id is valid.
-		if ( ! is_numeric($id) OR $id < 0)
-		{
-			$this->response->header  = 412;
-			$this->response->message = lang('error_safe_url');
-			return;
-		}
-
-		// The user cannot deactivate his/her own account.
-		if ($id == $this->c_user->id)
-		{
-			$this->response->header  = 405;
-			$this->response->message = lang('us_admin_deactivate_error_own');
-			return;
-		}
-
-		// The user does not exist, or already disabled?
-		if (false === $this->kbcore->users->get_by(array('id' => $id, 'enabled' => 1)))
-		{
-			$this->response->message = lang('us_admin_deactivate_error');
-			return;
-		}
-
-		// Successfully disabled the user?
-		if (false !== $this->kbcore->entities->update($id, array('enabled' => 0)))
-		{
-			$this->response->header  = 200;
-			$this->response->message = lang('us_admin_deactivate_success');
-
-			// We log the activity.
-			log_activity($this->c_user->id, 'lang:act_user_deactivate::'.$id);
-
-			return;
-		}
-
-		// Otherwise, user could not be activated.
-		$this->response->message = lang('us_admin_deactivate_error');
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Delete existing user.
-	 *
-	 * @since 	1.0.0
-	 * 
-	 * @access 	public
-	 * @param 	int 	$id 	user's ID.
-	 * @return 	void
-	 */
-	public function delete($id = 0)
-	{
-		// Default response header status code.
-		$this->response->header = 409;
-
-		// Did we provide a valid $id?
-		if ( ! is_numeric($id) OR $id < 0)
-		{
-			$this->response->header  = 412;
-			$this->response->message = lang('error_safe_url');
-			return;
-		}
-
-		// The user cannot delete his/her own account.
-		if ($id == $this->c_user->id)
-		{
-			$this->response->header  = 405;
-			$this->response->message = lang('us_admin_delete_error_own');
-			return;
-		}
-
-		// We attempt to remove the user.
-		if (false !== $this->kbcore->users->delete($id))
-		{
-			$this->response->header  = 200;
-			$this->response->message = lang('us_admin_delete_success');
-
-			// We log the activity.
-			log_activity($this->c_user->id, 'lang:act_user_delete::'.$id);
-
-			return;
-		}
-
-		// Otherwise, user could not be deleted.
-		$this->response->message = lang('us_admin_delete_error');
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Restore existing user.
-	 *
-	 * @since 	1.3.3
-	 * 
-	 * @access 	public
-	 * @param 	int 	$id 	user's ID.
-	 * @return 	void
-	 */
-	public function restore($id = 0)
-	{
-		// Default response header status code.
-		$this->response->header = 409;
-
-		// Did we provide a valid $id?
-		if ( ! is_numeric($id) OR $id < 0)
-		{
-			$this->response->header  = 412;
-			$this->response->message = lang('error_safe_url');
-			return;
-		}
-
-		// The user cannot restore his/her own account.
-		if ($id == $this->c_user->id)
-		{
-			$this->response->header  = 405;
-			$this->response->message = lang('us_admin_restore_error_own');
-			return;
-		}
-
-		// We attempt to restore the user.
-		if (false !== $this->kbcore->users->restore($id))
-		{
-			$this->response->header  = 200;
-			$this->response->message = lang('us_admin_restore_success');
-
-			// We log the activity.
-			log_activity($this->c_user->id, 'lang:act_user_restore::'.$id);
-
-			return;
-		}
-
-		// Otherwise, user could not be restored.
-		$this->response->message = lang('us_admin_restore_error');
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Remove existing user.
-	 *
-	 * @since 	1.3.3
-	 * 
-	 * @access 	public
-	 * @param 	int 	$id 	user's ID.
-	 * @return 	void
-	 */
-	public function remove($id = 0)
-	{
-		// Default response header status code.
-		$this->response->header = 409;
-
-		// Did we provide a valid $id?
-		if ( ! is_numeric($id) OR $id < 0)
-		{
-			$this->response->header  = 412;
-			$this->response->message = lang('error_safe_url');
-			return;
-		}
-
-		// The user cannot remove his/her own account.
-		if ($id == $this->c_user->id)
-		{
-			$this->response->header  = 405;
-			$this->response->message = lang('us_admin_remove_error_own');
-			return;
-		}
-
-		// We attempt to remove the user.
-		if (false !== $this->kbcore->users->remove($id))
-		{
-			$this->response->header  = 200;
-			$this->response->message = lang('us_admin_remove_success');
-
-			// We log the activity.
-			log_activity($this->c_user->id, 'lang:act_user_remove::'.$id);
-
-			return;
-		}
-
-		// Otherwise, user could not be removed.
-		$this->response->message = lang('us_admin_remove_error');
-	}
-
-	// ------------------------------------------------------------------------
 	// Private Methods.
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Method to add our confirmations alerts to DOM.
+	 * _admin_head
 	 *
+	 * Method for adding some extra lines to the head section of the output.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
 	 * @since 	1.3.3
 	 *
 	 * @access 	public
-	 * @param 	string
+	 * @param 	string 	$output 	The head part of the output.
 	 * @return 	string
 	 */
 	public function _admin_head($output)

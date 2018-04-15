@@ -55,8 +55,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * 
  * @version 	1.3.3
  */
-class Admin extends Admin_Controller
-{
+class Admin extends Admin_Controller {
+
 	/**
 	 * Class constructor.
 	 * @return 	void

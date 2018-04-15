@@ -33,53 +33,73 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		1.3.3
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Activities Module - List Activities
+ * Users Module - Process Controller
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @category 	Modules\Views
+ * @category 	Modules\Controllers
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.3.3
  * @version 	1.3.3
  */
-?><h2 class="page-header clearfix"><?php _e('sac_activity_log'); ?><?php echo $back_anchor; ?></h2>
-<div class="panel panel-default">
-	<div class="table-responsive">
-		<table class="table table-hover table-condensed table-striped">
-			<thead>
-				<tr>
-					<th class="col-xs-2"><?php _e('sac_user'); ?></th>
-					<th class="col-xs-1"><?php _e('sac_module'); ?></th>
-					<th class="col-xs-4"><?php _e('sac_activity'); ?></th>
-					<th class="col-xs-2"><?php _e('sac_ip_address'); ?></th>
-					<th class="col-xs-2"><?php _e('sac_date'); ?></th>
-					<th class="col-xs-1 text-right"><?php _e('sac_action'); ?></th>
-				</tr>
-			</thead>
-<?php if ($activities): ?>
-			<tbody class="activity-log">
-				<?php foreach ($activities as $activity): ?>
-				<tr id="activity-<?php echo $activity->id; ?>" class="activity-item">
-					<td><?php echo $activity->user_anchor; ?></td>
-					<td><?php echo $activity->module_anchor; ?></td>
-					<td><?php echo $activity->activity; ?></td>
-					<td><?php echo $activity->ip_address; ?></td>
-					<td><?php echo date('Y/m/d H:i', $activity->created_at); ?></td>
-					<td class="text-right">
-						<a href="<?php echo safe_ajax_url('activities/delete/'.$activity->id); ?>" data-activity-id="<?php echo $activity->id; ?>" class="btn btn-danger btn-xs activity-delete"><i class="fa fa-trash-o"></i></a>
-					</td>
-				</tr>
-				<?php endforeach; ?>
-			</tbody>
-<?php endif; ?>
-		</table>
-	</div>
-</div>
-<?php echo $pagination; ?>
+class Process extends Process_Controller {
+
+	/**
+	 * __constructr
+	 *
+	 * Simply call parent constructor and make sure to load users_lib
+	 * if it's not loaded.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.3.3
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+
+		// Users_lib not loaded?
+		if ( ! class_exists('Users_lib', false))
+		{
+			$this->load->library('users/users_lib', null, 'users');
+		}
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * activate
+	 *
+	 * Method for activation the newly created account that requires activation
+	 * if the email verification is enabled.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.3.3
+	 *
+	 * @access 	public
+	 * @param 	string 	$code 	The account's activation code.
+	 * @return 	void
+	 */
+	public function activate($code = null)
+	{
+		// Attempt to activate the account.
+		$status = $this->users->activate_by_code($code);
+
+		// The redirection depends on the activation status.
+		redirect(($status === true ? 'login' : ''), 'refresh');
+		exit;
+	}
+
+}

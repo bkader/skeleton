@@ -78,20 +78,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 						<a class="btn btn-default btn-xs" target="_blank" href="<?php echo site_url($user->username) ?>" title="<?php _e('view_user') ?>"><i class="fa fa-fw fa-eye"></i></a>&nbsp;
 						<a class="btn btn-primary btn-xs" href="<?php echo admin_url('users/edit/'.$user->id) ?>" title="<?php _e('edit_user') ?>"><i class="fa fa-fw fa-edit"></i></a>&nbsp;
 					<?php if (0 == $user->enabled): ?>
-						<a href="<?php echo safe_admin_url('users/activate/'.$user->id); ?>" data-user-id="<?php echo $user->id; ?>" class="btn btn-success btn-xs user-activate" title="<?php _e('activate_user'); ?>"><i class="fa fa-fw fa-unlock-alt"></i></a>
+						<a href="<?php echo safe_ajax_url('users/activate/'.$user->id); ?>" data-user-id="<?php echo $user->id; ?>" class="btn btn-success btn-xs user-activate" title="<?php _e('activate_user'); ?>"><i class="fa fa-fw fa-unlock-alt"></i></a>
 					<?php else: ?>
-						<a href="<?php echo safe_admin_url('users/deactivate/'.$user->id); ?>" data-user-id="<?php echo $user->id; ?>" class="btn btn-warning btn-xs user-deactivate" title="<?php _e('deactivate_user'); ?>"><i class="fa fa-fw fa-lock"></i></a>
+						<a href="<?php echo safe_ajax_url('users/deactivate/'.$user->id); ?>" data-user-id="<?php echo $user->id; ?>" class="btn btn-warning btn-xs user-deactivate" title="<?php _e('deactivate_user'); ?>"><i class="fa fa-fw fa-lock"></i></a>
 					<?php endif; ?>&nbsp;
 						<div class="btn-group btn-group-xs">
 							<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="<?php _e('more'); ?>"><i class="fa fa-fw fa-caret-down"></i></button>
 							<ul class="dropdown-menu dropdown-menu-right">
 								<?php if (0 == $user->deleted): ?>
-								<li><a href="<?php echo safe_admin_url('users/delete/'.$user->id); ?>" data-user-id="<?php echo $user->id; ?>" class="user-delete"><?php _e('delete_user'); ?></a></li>
+								<li><a href="<?php echo safe_ajax_url('users/delete/'.$user->id); ?>" data-user-id="<?php echo $user->id; ?>" class="user-delete"><?php _e('delete_user'); ?></a></li>
 								<?php else: ?>
-								<li><a href="<?php echo safe_admin_url('users/restore/'.$user->id); ?>" data-user-id="<?php echo $user->id; ?>" class="user-restore"><?php _e('restore_user'); ?></a></li>
+								<li><a href="<?php echo safe_ajax_url('users/restore/'.$user->id); ?>" data-user-id="<?php echo $user->id; ?>" class="user-restore"><?php _e('restore_user'); ?></a></li>
 								<?php endif; ?>
 								<li role="separator" class="divider"></li>
-								<li><a href="<?php echo safe_admin_url('users/remove/'.$user->id); ?>" data-user-id="<?php echo $user->id; ?>" class="user-remove"><?php _e('remove_user'); ?></a></li>
+								<li><a href="<?php echo safe_ajax_url('users/remove/'.$user->id); ?>" data-user-id="<?php echo $user->id; ?>" class="user-remove"><?php _e('remove_user'); ?></a></li>
 							</ul>
 						</div>
 					</td>

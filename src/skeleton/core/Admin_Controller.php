@@ -125,145 +125,65 @@ class Admin_Controller extends User_Controller
 	 */
 	public function _remap($method, $params = array())
 	{
-		// If on a method that does no require AJAX request.
-		if (method_exists($this, $method) 
-			&& ( ! in_array($method, $this->ajax_methods) && ! in_array($method, $this->safe_ajax_methods)))
+		// The method is not found? Nothing to do.
+		if ( ! method_exists($this, $method))
 		{
-			// Print admin head part.
-			add_filter('admin_head', array($this, 'admin_head'));
+			show_404();
+		}
 
-			// Prepare dashboard sidebar.
-			$this->theme->set('admin_menu', $this->_admin_menu(), true);
+		// Print admin head part.
+		add_filter('admin_head', array($this, 'admin_head'));
 
-			// We add favicon.
-			$this->theme->add_meta(
-				'icon',
-				$this->theme->common_url('img/favicon.ico'),
-				'rel',
-				'type="image/x-icon"'
-			);
+		// Prepare dashboard sidebar.
+		$this->theme->set('admin_menu', $this->_admin_menu(), true);
 
-			// We remove Modernizr and jQuery to dynamically load them.
-			$this->theme->remove('js', 'modernizr', 'jquery');
+		// We add favicon.
+		$this->theme->add_meta(
+			'icon',
+			$this->theme->common_url('img/favicon.ico'),
+			'rel',
+			'type="image/x-icon"'
+		);
 
-			// Should we compress files?
-			$compress = (ENVIRONMENT === 'production') ? '1' : '';
+		// We remove Modernizr and jQuery to dynamically load them.
+		$this->theme->remove('js', 'modernizr', 'jquery');
 
-			// Do we have any CSS files to load?
-			if ( ! empty($this->styles))
+		// Should we compress files?
+		$compress = (ENVIRONMENT === 'production') ? '1' : '';
+
+		// Do we have any CSS files to load?
+		if ( ! empty($this->styles))
+		{
+			// Are we using a right-to-left language? Add RTL files.
+			if ('rtl' === langinfo('direction'))
 			{
-				// Are we using a right-to-left language? Add RTL files.
-				if ('rtl' === langinfo('direction'))
-				{
-					array_push($this->styles, 'bootstrap-rtl', 'admin-rtl');
-				}
-
-				$this->styles = array_map('trim', $this->styles);
-				$this->styles = array_filter($this->styles);
-				$this->styles = array_unique($this->styles);
-				$this->styles = implode(',', $this->styles);
-
-				$this->theme
-					->no_extension()
-					->add('css', site_url("load/styles?c={$compress}&load=".$this->styles));
+				array_push($this->styles, 'bootstrap-rtl', 'admin-rtl');
 			}
 
-			// Do we have any JS files to laod?
-			if ( ! empty($this->scripts))
-			{
-				$this->scripts = array_map('trim', $this->scripts);
-				$this->scripts = array_filter($this->scripts);
-				$this->scripts = array_unique($this->scripts);
-				$this->scripts = implode(',', $this->scripts);
-				$this->theme
-					->no_extension()
-					->add('js', site_url("load/scripts?c={$compress}&load=".$this->scripts));
-			}
+			$this->styles = array_map('trim', $this->styles);
+			$this->styles = array_filter($this->styles);
+			$this->styles = array_unique($this->styles);
+			$this->styles = implode(',', $this->styles);
 
-			// We call the method.
-			return call_user_func_array(array($this, $method), $params);
+			$this->theme
+				->no_extension()
+				->add('css', site_url("load/styles?c={$compress}&load=".$this->styles));
 		}
 
-		// Otherwise, we let the parent handle the rest.
-		return parent::_remap($method, $params);
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Loads jQuery UI.
-	 * @access 	protected
-	 * @return 	void
-	 */
-	protected function load_jquery_ui()
-	{
-		$this->theme
-			->add('css', get_common_url('css/jquery-ui'), 'jquery-ui')
-			->add('js', get_common_url('js/jquery-ui'), 'jquery-ui');
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Generates a JQuery content fot draggable items.
-	 *
-	 * @since 	1.0.0
-	 * @since 	1.3.0 	Added jquery.touch-punch so that sortable elements
-	 *         			work on mobile devices.
-	 *
-	 * @access 	protected
-	 * @param 	string 	$button 			the button that handles saving.
-	 * @param 	string 	$target 			The element id or class to target.
-	 * @param 	string 	$url 				The URL used to send AJAX request.
-	 * @param 	string 	$success_message 	The message to be displayed after success.
-	 * @param 	string 	$error_message 		The message to be displayed after success.
-	 * @return 	void
-	 */
-	protected function add_sortable_list($button, $target, $url, $success_message = null, $error_message = null)
-	{
-		// If these element are not provided, nothing to do.
-		if (empty($button) OR empty($target) OR empty($url))
+		// Do we have any JS files to laod?
+		if ( ! empty($this->scripts))
 		{
-			return;
+			$this->scripts = array_map('trim', $this->scripts);
+			$this->scripts = array_filter($this->scripts);
+			$this->scripts = array_unique($this->scripts);
+			$this->scripts = implode(',', $this->scripts);
+			$this->theme
+				->no_extension()
+				->add('js', site_url("load/scripts?c={$compress}&load=".$this->scripts));
 		}
 
-		// Prepare the script to output.
-		$script =<<<EOT
-\n\t<script>
-	var data = data || [];
-	jQuery('{$target}').sortable({
-		axis: 'y',
-		update: function (event, ui) {
-			data = jQuery(this).sortable('serialize');
-		}
-	});
-	jQuery(document).on('click', '{$button}', function(e) {
-		e.preventDefault();
-		if (data.length) {
-			jQuery.ajax({
-				data: data,
-				type: 'POST',
-				url: '{$url}',
-				success: function(response) {
-					response = jQuery.parseJSON(response);
-					if (response.status == true) {
-						toastr.success('{$success_message}');
-					} else {
-						toastr.error('{$error_message}');
-					}
-				}
-			});
-		}
-	});
-	</script>
-EOT;
-
-		// We make sure to load jQuery UI then output script.
-		$this->theme
-			->add('css', get_common_url('css/jquery-ui'), 'jquery-ui')
-			->add('js', get_common_url('js/jquery-ui'), 'jquery-ui')
-			->add('js', get_common_url('js/jquery.ui.touch-punch'), 'touch-punch')
-			->add_inline('js', $this->theme->compress_output($script));
+		// We call the method.
+		return call_user_func_array(array($this, $method), $params);
 	}
 
 	// ------------------------------------------------------------------------

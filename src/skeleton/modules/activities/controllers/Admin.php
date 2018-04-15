@@ -58,10 +58,6 @@ class Admin extends Admin_Controller
 	 */
 	public function __construct()
 	{
-		// Add our delete action as safe AJAX method.
-		array_push($this->safe_ajax_methods, 'delete');
-
-		// Call parent constructor.
 		parent::__construct();
 
 		// We add translations lines to head.
@@ -171,41 +167,6 @@ class Admin extends Admin_Controller
 		$this->theme
 			->set_title(lang('sac_activity_log'))
 			->render($data);
-	}
-
-	// ------------------------------------------------------------------------
-	// Ajax Method.
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Delete the selected activity.
-	 * @access 	public
-	 * @param 	int 	$id 	The activity's ID.
-	 * @return 	void
-	 */
-	public function delete($id = 0)
-	{
-		// Default response header status code.
-		$this->response->header = 406;
-
-		// Did we provide an invalid id?
-		if ( ! is_numeric($id) OR $id < 0)
-		{
-			$this->response->header  = 412;
-			$this->response->message = lang('error_safe_url');
-			return;
-		}
-
-		// Successfully deleted?
-		if (false !== $this->kbcore->activities->delete($id))
-		{
-			$this->response->header  = 200;
-			$this->response->message = lang('sac_activity_delete_success');
-			return;
-		}
-
-		// Otherwise, the activity could not be deleted.
-		$this->response->message = lang('sac_activity_delete_error');
 	}
 
 	// ------------------------------------------------------------------------
