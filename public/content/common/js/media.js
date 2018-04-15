@@ -30,7 +30,7 @@
         var that = $(this), href = that.attr("href"), id = that.attr("data-media-id");
         if (!href.length) { return; }
         var mediaCount = $(".attachments").children(".attachment").length,
-            _modal = _modal || $("#media-modal");
+            mediaModal = mediaModal || $("#media-modal");
         bootbox.confirm({
             message: i18n.media.delete,
             callback: function (result) {
@@ -42,6 +42,7 @@
                     mediaCount--;
                     if (mediaCount <= 0) { location.reload(); return; }
                     $("#media-" + id).fadeOut(function () {
+                        if (mediaModal.length) { mediaModal.modal("hide"); }
                         $(this).remove();
                     });
                 }).fail(function (response) {
@@ -58,7 +59,7 @@
         e.preventDefault();
         var that = $(this), href = that.attr("action");
         if (!href.length) { return; }
-        var _modal = _modal || $("#media-modal"),
+        var mediaModal = mediaModal || $("#media-modal"),
             data = {
                 name: $.trim(that.find("#name").val()),
                 description: $.trim(that.find("#description").val())
@@ -67,9 +68,10 @@
         $.post(href, data, function (response) {
             toastr.success(response);
         }).done(function () {
-            _modal.modal("hide");
+            mediaModal.modal("hide");
             window.history.pushState({href: Config.adminURL + "/media"}, '', Config.adminURL + "/media");
         }).fail(function (response) {
+            console.log(response);
             toastr.error(response.responseJSON);
         });
     });
@@ -89,8 +91,8 @@
         // LazyLoad images.
         lazyload();
         // Should we display the modal?
-        var _modal = _modal || $("#media-modal");
-        if (_modal.length) { _modal.modal("show"); }
+        var mediaModal = mediaModal || $("#media-modal");
+        if (mediaModal.length) { mediaModal.modal("show"); }
 
         // Dropzone handler.
         var droparea = $("[data-dropzone]");
