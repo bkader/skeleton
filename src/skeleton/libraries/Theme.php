@@ -502,26 +502,14 @@ EOT;
 
 		// We store the real path to theme's folder.
 		$this->_theme_path = realpath(FCPATH."{$this->_themes_folder}/{$this->_theme}");
-		($this->_theme_path) && $this->_theme_path .= DS;
 
 		// If the path to the theme was not found!
 		if (false === $this->_theme_path)
 		{
-			// We do nothing on admin area.
-			if ($this->controller === 'admin')
-			{
-				return;
-			}
-
-			// Simply die();
-			die();
+			return;
 		}
 
-		// Make sure the selected theme exists!
-		if (false === $this->_theme_path)
-		{
-			show_error("The theme your are currently using does not exist. Theme: '{$this->_theme}'");
-		}
+		$this->_theme_path .= DS;
 
 		// Define a constant that can be used everywhere.
 		defined('THEME_PATH') OR define('THEME_PATH', $this->_theme_path);
@@ -2675,6 +2663,12 @@ EOT;
 	 */
 	public function render($data = array(), $title = null, $options = array(), $return = false)
 	{
+		// Make sure the theme path is set correctly.
+		if (false === $this->_theme_path && 'admin' !== $this->controller)
+		{
+			die();
+		}
+
 		// Start benchmark
 		$this->ci->benchmark->mark('theme_render_start');
 
