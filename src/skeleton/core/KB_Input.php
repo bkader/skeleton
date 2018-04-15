@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -48,16 +48,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @since 		1.0.0
+ * @version 	1.3.3
  */
-class KB_Input extends CI_Input
-{
+class KB_Input extends CI_Input {
+
 	/**
-	 * Fetch an item from the REQUEST array
-	 * @param	mixed	$index		Index for item to be fetched from $_REQUEST
-	 * @param	bool	$xss_clean	Whether to apply XSS filtering
-	 * @return	mixed
+	 * request
+	 *
+	 * Method for fetching an item from the REQUEST array
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.0.0
+	 *
+	 * @access 	public
+	 * @param 	string 	$index 		Index of the item to be fetched from $_REQUEST.
+	 * @param 	bool 	$xss_clean 	Whether to apply XSS filtering.
+	 * @return 	mixed
 	 */
 	public function request($index = null, $xss_clean = null)
 	{
@@ -67,8 +75,16 @@ class KB_Input extends CI_Input
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Returns the protocol that the request was made with.
+	 * protocol
+	 *
+	 * Method for returning the protocol that the request was make with.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.0.0
+	 *
 	 * @access 	public
+	 * @param 	none
 	 * @return 	string
 	 */
 	public function protocol()
@@ -86,7 +102,14 @@ class KB_Input extends CI_Input
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Return the referrer.
+	 * referrer
+	 *
+	 * Method for returning the REFERRER.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.0.0
+	 *
 	 * @access 	public
 	 * @param 	string 	$default 	What to return if no referrer is found.
 	 * @param 	bool 	$xss_clean 	Whether to apply XSS filtering
@@ -101,7 +124,14 @@ class KB_Input extends CI_Input
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Returns the query string.
+	 * query_string
+	 *
+	 * Methods for returning the QUERY_STRING from $_SERVER array.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.0.0
+	 *
 	 * @access 	public
 	 * @param 	string 	$default 	What to return if nothing found.
 	 * @param 	bool 	$xss_clean 	Whether to apply XSS filtering
@@ -111,6 +141,86 @@ class KB_Input extends CI_Input
 	{
 		$query_string = $this->server('QUERY_STRING', $xss_clean);
 		return ($query_string) ? $query_string : $default;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * is_post_request
+	 *
+	 * Method for making sure the request is a POST request.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.3.3
+	 *
+	 * @access 	public
+	 * @param 	bool 	$xss_clean 	Whether to apply XSS filtering.
+	 * @return 	bool 	true if it is a POST request, else false.
+	 */
+	public function is_post_request($xss_clean = NULL)
+	{
+		return ($this->server('REQUEST_METHOD', $xss_clean) === 'POST');
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * is_get_request
+	 *
+	 * Method for making sure the request is a GET request.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.3.3
+	 *
+	 * @access 	public
+	 * @param 	bool 	$xss_clean 	Whether to apply XSS filtering.
+	 * @return 	bool 	true if it is a GET request, else false.
+	 */
+	public function is_get_request($xss_clean = NULL)
+	{
+		return ($this->server('REQUEST_METHOD', $xss_clean) === 'GET');
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * is_head_request
+	 *
+	 * Method for making sure the request is a HEAD request.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.3.3
+	 *
+	 * @access 	public
+	 * @param 	bool 	$xss_clean 	Whether to apply XSS filtering.
+	 * @return 	bool 	true if it is a HEAD request, else false.
+	 */
+	public function is_head_request($xss_clean = NULL)
+	{
+		return ($this->server('REQUEST_METHOD', $xss_clean) === 'HEAD');
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * is_pust_request
+	 *
+	 * Method for making sure the request is a PUT request.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.3.3
+	 *
+	 * @access 	public
+	 * @param 	bool 	$xss_clean 	Whether to apply XSS filtering.
+	 * @return 	bool 	true if it is a PUT request, else false.
+	 */
+	public function is_put_request($xss_clean = NULL)
+	{
+		return ($this->server('REQUEST_METHOD', $xss_clean) === 'PUT');
 	}
 
 }
