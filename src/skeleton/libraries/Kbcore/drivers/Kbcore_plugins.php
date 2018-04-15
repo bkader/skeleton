@@ -274,15 +274,11 @@ class Kbcore_plugins extends CI_Driver
 			return false;
 		}
 
-		/// Proceed to plugin deletion after deactivation.
-		if (false !== $this->deactivate($name))
-		{
-			$this->ci->load->helper('directory');
-			directory_delete($this->plugins_path($name));
-			return true;
-		}
-
-		return false;
+		// Proceed to plugin deletion after deactivation.
+		$this->deactivate($name);
+		$this->ci->load->helper('directory');
+		directory_delete($this->plugins_path($name));
+		return true;
 	}
 
 	// ------------------------------------------------------------------------
