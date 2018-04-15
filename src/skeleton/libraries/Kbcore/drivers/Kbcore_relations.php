@@ -948,11 +948,18 @@ class KB_Relation
 	 * @return 	bool 	true if updated, else false.
 	 */
 	public function update($key, $value) {
-		// Keep the status in order to dequeue the key.
-		$status = update_relation($this->id, array($key => $value));
+		// We make sure things are an array.
+		$data = (is_array($key)) ? $key : array($key => $value);
 
-		if ($status === true && isset($this->queue[$key])) {
-			unset($this->queue[$key]);
+		// Keep the status in order to dequeue the key.
+		$status = update_relation($this->id, $data);
+
+		if ($status === true) {
+			foreach ($data as $k => $v) {
+				if (isset($this->queue[$k])) {
+					unset($this->queue[$k]);
+				}
+			}
 		}
 
 		return $status;
