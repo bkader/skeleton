@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -48,8 +48,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.0.0
+ * 
+ * @since 		1.0.0
+ * @since 		1.3.3 	Added both AJAX and API functions.
+ * 
+ * @version 	1.3.3
  */
 
 if ( ! function_exists('current_url'))
@@ -281,6 +284,86 @@ if ( ! function_exists('safe_admin_anchor'))
 
 // ------------------------------------------------------------------------
 
+if ( ! function_exists('process_url'))
+{
+	/**
+	 * Process URL
+	 *
+	 * Returns the full URL to process sections of the site.
+	 *
+	 * @param 	string 	$uri
+	 * @return 	string
+	 */
+	function process_url($uri = '')
+	{
+		$uri = ($uri == '') ? 'process' : 'process/'.$uri;
+		return site_url($uri);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('process_anchor'))
+{
+	/**
+	 * Process Anchor
+	 *
+	 * Creates and anchor that links to an process section.
+	 *
+	 * @param  string 	$uri 	the section to link to.
+	 * @param  string 	$title 	the string to display.
+	 * @param  string 	$attrs 	attribites to add to anchor.
+	 * @return string
+	 */
+	function process_anchor($uri = '', $title = '', $attrs = '')
+	{
+		$uri = ($uri == '') ? 'process' : 'process/'.$uri;
+		return anchor($uri, $title, $attrs);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('safe_process_url'))
+{
+	/**
+	 * Safe Process URL
+	 *
+	 * Generates a secured URL with prepended process URI
+	 *
+	 * @param 	string 	$uri
+	 * @return 	string
+	 */
+	function safe_process_url($uri = '')
+	{
+		$uri = ($uri == '') ? 'process' : 'process/'.$uri;
+		return safe_url($uri);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('safe_process_anchor'))
+{
+	/**
+	 * Safe Process Anchor
+	 *
+	 * Generates a secured process anchor.
+	 *
+	 * @param 	string 	$uri
+	 * @param 	string 	$title
+	 * @param 	string 	$attrs
+	 * @return 	string
+	 */
+	function safe_process_anchor($uri = '', $title = '', $attrs = '')
+	{
+		$uri = ($uri == '') ? 'process' : 'process/'.$uri;
+		return safe_anchor($uri, $title, $attrs);
+	}
+}
+
+// ------------------------------------------------------------------------
+
 if ( ! function_exists('ajax_url'))
 {
 	/**
@@ -355,6 +438,86 @@ if ( ! function_exists('safe_ajax_anchor'))
 	function safe_ajax_anchor($uri = '', $title = '', $attrs = '')
 	{
 		$uri = ($uri == '') ? 'ajax' : 'ajax/'.$uri;
+		return safe_anchor($uri, $title, $attrs);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('api_url'))
+{
+	/**
+	 * API URL
+	 *
+	 * Returns the full URL to api sections of the site.
+	 *
+	 * @param 	string 	$uri
+	 * @return 	string
+	 */
+	function api_url($uri = '')
+	{
+		$uri = ($uri == '') ? 'api' : 'api/'.$uri;
+		return site_url($uri);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('api_anchor'))
+{
+	/**
+	 * API Anchor
+	 *
+	 * Creates and anchor that links to an api section.
+	 *
+	 * @param  string 	$uri 	the section to link to.
+	 * @param  string 	$title 	the string to display.
+	 * @param  string 	$attrs 	attribites to add to anchor.
+	 * @return string
+	 */
+	function api_anchor($uri = '', $title = '', $attrs = '')
+	{
+		$uri = ($uri == '') ? 'api' : 'api/'.$uri;
+		return anchor($uri, $title, $attrs);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('safe_api_url'))
+{
+	/**
+	 * Safe API URL
+	 *
+	 * Generates a secured URL with prepended api URI
+	 *
+	 * @param 	string 	$uri
+	 * @return 	string
+	 */
+	function safe_api_url($uri = '')
+	{
+		$uri = ($uri == '') ? 'api' : 'api/'.$uri;
+		return safe_url($uri);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('safe_api_anchor'))
+{
+	/**
+	 * Safe API Anchor
+	 *
+	 * Generates a secured api anchor.
+	 *
+	 * @param 	string 	$uri
+	 * @param 	string 	$title
+	 * @param 	string 	$attrs
+	 * @return 	string
+	 */
+	function safe_api_anchor($uri = '', $title = '', $attrs = '')
+	{
+		$uri = ($uri == '') ? 'api' : 'api/'.$uri;
 		return safe_anchor($uri, $title, $attrs);
 	}
 }
