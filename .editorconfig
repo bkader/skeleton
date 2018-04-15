@@ -14,5 +14,6 @@ charset = utf-8
 # Tab indentation (no size specified)
 indent_style = tab
 
-[*.{js,ts,css,scss}]
+# Spaces for markdown and assets files.
+[*.{md,js,ts,css,scss}]
 indent_style = space
