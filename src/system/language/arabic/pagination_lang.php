@@ -1,15 +1,16 @@
 <?php
 /**
- * System messages translation for CodeIgniter(tm)
+ * System messages translations for CodeIgniter
  *
- * @author	CodeIgniter community
- * @copyright	Copyright (c) 2014 - 2018, British Columbia Institute of Technology (http://bcit.ca/)
- * @license	http://opensource.org/licenses/MIT	MIT License
- * @link	https://codeigniter.com
+ * @package 	CodeIgniter
+ * @subpackage 	Skeleton
+ * @license 	http://opensource.org/licenses/MIT	MIT License
+ * @link 		https://github.com/bkader
+ * @since 		1.3.3
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-$lang['pagination_first_link']	= '&lsaquo; الأول';
-$lang['pagination_next_link']	= '&gt;';
-$lang['pagination_prev_link']	= '&lt;';
-$lang['pagination_last_link']	= 'الأخير &rsaquo;';
+$lang['pagination_first_link'] = '&lsaquo; الأول';
+$lang['pagination_next_link']  = '&gt;';
+$lang['pagination_prev_link']  = '&lt;';
+$lang['pagination_last_link']  = 'الأخير &rsaquo;';

@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -47,10 +47,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @since 		1.0.0
+ * @version 	1.3.3
  */
 return array(
+
+	// Armenian
+	'armenian' => array(
+		'name'      => 'հայերեն',
+		'name_en'   => 'Armenian',
+		'folder'    => 'armenian',
+		'locale'    => 'hy-AM',
+		'direction' => 'ltr',
+		'code'      => 'hy',
+		'flag'      => 'AM',
+	),
 
 	// Arabic
 	'arabic' => array(
@@ -61,6 +72,17 @@ return array(
 		'direction' => 'rtl',
 		'code'      => 'ar',
 		'flag'      => 'dz',
+	),
+
+	// Czech
+	'czech' => array(
+		'name'      => 'Čeština',
+		'name_en'   => 'Czech',
+		'folder'    => 'czech',
+		'locale'    => 'cs-CZ',
+		'direction' => 'ltr',
+		'code'      => 'cs',
+		'flag'      => 'cz',
 	),
 
 	// English
@@ -96,6 +118,17 @@ return array(
 		'flag'      => 'de',
 	),
 
+	// Greek
+	'greek' => array(
+		'name'      => 'ελληνικά',
+		'name_en'   => 'Greek',
+		'folder'    => 'greek',
+		'locale'    => 'el-GR',
+		'direction' => 'ltr',
+		'code'      => 'el',
+		'flag'      => 'gr',
+	),
+
 	// Hebrew
 	'hebrew' => array(
 		'name'      => 'עִברִית',
@@ -105,6 +138,17 @@ return array(
 		'direction' => 'rtl',
 		'code'      => 'he',
 		'flag'      => 'il',
+	),
+
+	// Hindi
+	'hindi' => array(
+		'name'      => 'हिन्दी',
+		'name_en'   => 'Hindi',
+		'folder'    => 'hindi',
+		'locale'    => 'hi-IN',
+		'direction' => 'ltr',
+		'code'      => 'hi',
+		'flag'      => 'in',
 	),
 
 	// Italian
@@ -118,6 +162,28 @@ return array(
 		'flag'      => 'it',
 	),
 
+	// Japanese
+	'japanese' => array(
+		'name'      => '日本語',
+		'name_en'   => 'Japanese',
+		'folder'    => 'japanese',
+		'locale'    => 'ja-JP',
+		'direction' => 'ltr',
+		'code'      => 'ja',
+		'flag'      => 'jp',
+	),
+
+	// Persian
+	'persian' => array(
+		'name'      => 'فارسی',
+		'name_en'   => 'Persian',
+		'folder'    => 'persian',
+		'locale'    => 'fa-IR',
+		'direction' => 'rtl',
+		'code'      => 'fa',
+		'flag'      => 'ir',
+	),
+
 	// Portuguese
 	'portuguese' => array(
 		'name'      => 'Português',
@@ -129,6 +195,17 @@ return array(
 		'flag'      => 'pt',
 	),
 
+	// Russian
+	'russian' => array(
+		'name'      => 'ру́сский',
+		'name_en'   => 'Russian',
+		'folder'    => 'russian',
+		'locale'    => 'ru-RU',
+		'direction' => 'ltr',
+		'code'      => 'ru',
+		'flag'      => 'ru',
+	),
+
 	// Spanish
 	'spanish' => array(
 		'name'      => 'Español',
@@ -138,6 +215,39 @@ return array(
 		'direction' => 'ltr',
 		'code'      => 'es',
 		'flag'      => 'es',
+	),
+
+	// Turkish
+	'turkish' => array(
+		'name'      => 'Türkçe',
+		'name_en'   => 'Turkish',
+		'folder'    => 'turkish',
+		'locale'    => 'tr-TR',
+		'direction' => 'ltr',
+		'code'      => 'tr',
+		'flag'      => 'tr',
+	),
+
+	// Ukrainian
+	'ukrainian' => array(
+		'name'      => 'українська мова',
+		'name_en'   => 'Ukrainian',
+		'folder'    => 'ukrainian',
+		'locale'    => 'uk-ua',
+		'direction' => 'ltr',
+		'code'      => 'uk',
+		'flag'      => 'ua',
+	),
+
+	// Vietnamese
+	'vietnamese' => array(
+		'name'      => 'tiếng Việt',
+		'name_en'   => 'Vietnamese',
+		'folder'    => 'vietnamese',
+		'locale'    => 'vi-VN',
+		'direction' => 'ltr',
+		'code'      => 'vi',
+		'flag'      => 'vn',
 	),
 
 );

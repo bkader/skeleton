@@ -1,11 +1,12 @@
 <?php
 /**
- * System messages translation for CodeIgniter(tm)
+ * System messages translations for CodeIgniter
  *
- * @author	CodeIgniter community
- * @copyright	Copyright (c) 2014 - 2018, British Columbia Institute of Technology (http://bcit.ca/)
- * @license	http://opensource.org/licenses/MIT	MIT License
- * @link	https://codeigniter.com
+ * @package 	CodeIgniter
+ * @subpackage 	Skeleton
+ * @license 	http://opensource.org/licenses/MIT	MIT License
+ * @link 		https://github.com/bkader
+ * @since 		1.3.3
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -30,26 +31,26 @@ $lang['cal_wednesday']	= 'الأربعاء';
 $lang['cal_thursday']	= 'الخميس';
 $lang['cal_friday']		= 'الجمعة';
 $lang['cal_saturday']	= 'السبت';
-$lang['cal_jan']		= 'ينا';
-$lang['cal_feb']		= 'فبر';
+$lang['cal_jan']		= 'جان';
+$lang['cal_feb']		= 'فيف';
 $lang['cal_mar']		= 'مار';
-$lang['cal_apr']		= 'أبر';
+$lang['cal_apr']		= 'أفر';
 $lang['cal_may']		= 'ماي';
-$lang['cal_jun']		= 'يون';
-$lang['cal_jul']		= 'يول';
-$lang['cal_aug']		= 'أغس';
+$lang['cal_jun']		= 'جوا';
+$lang['cal_jul']		= 'جوي';
+$lang['cal_aug']		= 'أوت';
 $lang['cal_sep']		= 'سبت';
 $lang['cal_oct']		= 'أوك';
 $lang['cal_nov']		= 'نوف';
 $lang['cal_dec']		= 'ديس';
-$lang['cal_january']	= 'يناير';
-$lang['cal_february']	= 'فبراير';
+$lang['cal_january']	= 'جانفي';
+$lang['cal_february']	= 'فيفري';
 $lang['cal_march']		= 'مارس';
-$lang['cal_april']		= 'إبريل';
-$lang['cal_mayl']		= 'مايو';
-$lang['cal_june']		= 'يونيو';
-$lang['cal_july']		= 'يوليو';
-$lang['cal_august']		= 'أغسطس';
+$lang['cal_april']		= 'أفريل';
+$lang['cal_mayl']		= 'ماي';
+$lang['cal_june']		= 'جوان';
+$lang['cal_july']		= 'جويلية';
+$lang['cal_august']		= 'أوت';
 $lang['cal_september']	= 'سبتمبر';
 $lang['cal_october']	= 'أكتوبر';
 $lang['cal_november']	= 'نوفمبر';

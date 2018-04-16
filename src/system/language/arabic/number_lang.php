@@ -1,16 +1,17 @@
 <?php
 /**
- * System messages translation for CodeIgniter(tm)
+ * System messages translations for CodeIgniter
  *
- * @author	CodeIgniter community
- * @copyright	Copyright (c) 2014 - 2018, British Columbia Institute of Technology (http://bcit.ca/)
- * @license	http://opensource.org/licenses/MIT	MIT License
- * @link	https://codeigniter.com
+ * @package 	CodeIgniter
+ * @subpackage 	Skeleton
+ * @license 	http://opensource.org/licenses/MIT	MIT License
+ * @link 		https://github.com/bkader
+ * @since 		1.3.3
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-$lang['terabyte_abbr'] = "ت.ب";
-$lang['gigabyte_abbr'] = "ج.ب";
-$lang['megabyte_abbr'] = "م.ب";
-$lang['kilobyte_abbr'] = "ك.ب";
-$lang['bytes'] = "بايت";
+$lang['terabyte_abbr'] = 'ت.ب';
+$lang['gigabyte_abbr'] = 'ج.ب';
+$lang['megabyte_abbr'] = 'م.ب';
+$lang['kilobyte_abbr'] = 'ك.ب';
+$lang['bytes']         = 'بايت';
