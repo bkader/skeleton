@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -49,8 +49,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @since 		1.0.0
+ * @version 	1.4.0
  */
 class KB_Lang extends CI_Lang
 {
@@ -436,13 +436,18 @@ if ( ! function_exists('line'))
 	/**
 	 * Alias of Lang::line with optional arguments.
 	 *
+	 * @since 	1.0.0
+	 * @since 	1.4.0 	Added $before and $after.
+	 *
 	 * @param 	string 	$line 	the line the retrieve.
 	 * @param 	string 	$index 	whether to look under an index.
+	 * @param 	string 	$before 	Whether to put something before the line.
+	 * @param 	string 	$after 		Whether to put something after the line.
 	 * @return 	string
 	 */
-	function line($line, $index = '')
+	function line($line, $index = '', $before = '', $after = '')
 	{
-		return get_instance()->lang->line($line, $index);
+		return $before.get_instance()->lang->line($line, $index).$after;
 	}
 }
 
@@ -453,13 +458,18 @@ if ( ! function_exists('__'))
 	/**
 	 * Alias of Lang::line with optional arguments.
 	 *
+	 * @since 	1.0.0
+	 * @since 	1.4.0 	Added $before and $after.
+	 *
 	 * @param 	string 	$line 	the line the retrieve.
 	 * @param 	string 	$index 	whether to look under an index.
+	 * @param 	string 	$before 	Whether to put something before the line.
+	 * @param 	string 	$after 		Whether to put something after the line.
 	 * @return 	string
 	 */
-	function __($line, $index = '')
+	function __($line, $index = '', $before = '', $after = '')
 	{
-		return get_instance()->lang->line($line, $index);
+		return $before.get_instance()->lang->line($line, $index).$after;
 	}
 }
 
@@ -470,12 +480,17 @@ if ( ! function_exists('_e'))
 	/**
 	 * Alias of Lang::line with optional arguments.
 	 *
-	 * @param 	string 	$line 	the line the retrieve.
-	 * @param 	string 	$index 	whether to look under an index.
+	 * @since 	1.0.0
+	 * @since 	1.4.0 	Added $before and $after.
+	 *
+	 * @param 	string 	$line 		the line the retrieve.
+	 * @param 	string 	$index 		whether to look under an index.
+	 * @param 	string 	$before 	Whether to put something before the line.
+	 * @param 	string 	$after 		Whether to put something after the line.
 	 * @return 	string
 	 */
-	function _e($line, $index = '')
+	function _e($line, $index = '', $before = '', $after = '')
 	{
-		echo get_instance()->lang->line($line, $index);
+		echo $before, get_instance()->lang->line($line, $index), $after;
 	}
 }
