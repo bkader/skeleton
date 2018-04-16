@@ -54,6 +54,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Load extends KB_Controller
 {
 	/**
+	 * Do we need to use minified versions?
+	 * @var boolean
+	 */
+	protected $_minified = true;
+
+	/**
 	 * Class constructor.
 	 * @return 	void
 	 */
@@ -62,6 +68,9 @@ class Load extends KB_Controller
 		parent::__construct();
 		ob_start('ob_gzhandler');
 		$this->output->set_header('Cache-Control: max-age=31536000, must-revalidate');
+
+		// Set our minified versions use.
+		$this->_minified = ('development' !== ENVIRONMENT);
 
 		// Always delete cache.
 		$this->_delete_cache();
@@ -86,8 +95,12 @@ class Load extends KB_Controller
 		}
 
 		// We format files.
-		$minified = ('1' === $this->input->get('c', true));
-		$files = $this->_prep_files($files, $minified);
+		$this->_minified = (null !== $this->input->get('c'))
+			? ('1' === $this->input->get('c', true))
+			: $this->_minified;
+
+		// Prepare our files.
+		$files = $this->_prep_files($files, $this->_minified);
 
 		// We start benchmarking.
 		$this->benchmark->mark("load_assets_{$type}_start");
@@ -95,54 +108,95 @@ class Load extends KB_Controller
 		// Temporary output.
 		$out = '';
 
-		// We loop through files and add them to output.
-		foreach ($files as $file)
+		// See if we have a cached version on production/staging environment.
+		if ('development' !== ENVIRONMENT)
 		{
-			$out .= $this->_load_file($file, $type);
+			// Let's first see if the file was cached or not.
+			$cached_file = md5(ENVIRONMENT.','.implode(',', $files)).'.'.$type;
+			if (is_file(KBPATH.'cache/assets/'.$cached_file))
+			{
+				// Get the content of the file and see if it has expired or not.
+				$content = file_get_contents(KBPATH.'cache/assets/'.$cached_file);
+				preg_match('/\d+/', $content, $expire);
+
+				// If the file is still alive, we remove unnecessary part of its content.
+				if ((null !== $expire[0] && (time() - 86400) < (int) $expire[0]) 
+					&& preg_match('/^(.*)|END>/', $content, $match))
+				{
+					$out = trim(str_replace($expire[0].'|END>', '', $content));
+
+					// We stop benchmarking and add it to output.
+					$this->benchmark->mark("load_assets_{$type}_end");
+				}
+				// Otherwise, we simply delete the file.
+				else
+				{
+					@unlink(KBPATH.'cache/assets/'.$cached_file);
+				}
+			}
+
 		}
 
-		// Still no output?
+		// Still an empty output?
 		if ('' === $out)
 		{
-			exit();
+			// We loop through files and add them to output.
+			foreach ($files as $file)
+			{
+				$out .= $this->_load_file($file, $type);
+			}
+
+			// Still no output?
+			if ('' === $out)
+			{
+				exit();
+			}
+
+			// In case of CSS files, we make sure to move all @import to top.
+			if ('css' === $type 
+				&& preg_match_all('/(;?)(@import (?<url>url\()?(?P<quotes>["\']?).+?(?P=quotes)(?(url)\)))/', $out, $matches))
+			{
+	            // remove from out
+	            foreach ($matches[0] as $import)
+	            {
+	                $out = str_replace($import, '', $out);
+	            }
+
+	            // add to top
+	            $out = implode(';', $matches[2]).';'.trim($out, ';');
+			}
+
+			// We make sure to remove all comments on minified files.
+			if (true === $this->_minified)
+			{
+				$regex = array(
+					"`^([\t\s]+)`ism"                       => '',
+					"`^\/\*(.+?)\*\/`ism"                   => '',
+					"`([\n\A;]+)\/\*(.+?)\*\/`ism"          => "$1",
+					"`([\n\A;\s]+)//(.+?)[\n\r]`ism"        => "$1\n",
+					"`(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+`ism" => "\n",
+				);
+				$out = preg_replace(array_keys($regex), $regex, $out);
+			}
+
+			// We stop benchmarking and add it to output.
+			$this->benchmark->mark("load_assets_{$type}_end");
+
+			// We make sure to cache files on production/staging environment.
+			if ('development' !== ENVIRONMENT)
+			{
+				$cached_file      = md5(ENVIRONMENT.','.implode(',', $files)).'.'.$type;
+				$cached_output    = (time() + 86400).'|END>'.$out;
+				$cached_file_path = KBPATH.'cache/assets/'.$cached_file;
+				$cached_file_path = fopen($cached_file_path, 'w');
+				fwrite($cached_file_path, $cached_output);
+				fclose($cached_file_path);
+			}
 		}
 
-		// In case of CSS files, we make sure to move all @import to top.
-		if ('css' === $type 
-			&& preg_match_all('/(;?)(@import (?<url>url\()?(?P<quotes>["\']?).+?(?P=quotes)(?(url)\)))/', $out, $matches))
-		{
-            // remove from out
-            foreach ($matches[0] as $import)
-            {
-                $out = str_replace($import, '', $out);
-            }
-
-            // add to top
-            $out = implode(';', $matches[2]).';'.trim($out, ';');
-		}
-
-		// We make sure to remove all comments on minified files.
-		if (true === $minified)
-		{
-			$regex = array(
-				"`^([\t\s]+)`ism"=>'',
-				"`^\/\*(.+?)\*\/`ism"=>"",
-				"`([\n\A;]+)\/\*(.+?)\*\/`ism"=>"$1",
-				"`([\n\A;\s]+)//(.+?)[\n\r]`ism"=>"$1\n",
-				"`(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+`ism"=>"\n"
-			);
-			$out = preg_replace(array_keys($regex), $regex, $out);
-		}
-
-		// We stop benchmarking and add it to output.
-		$this->benchmark->mark("load_assets_{$type}_end");
-		$bench = $this->benchmark->elapsed_time(
-			"load_assets_{$type}_start",
-			"load_assets_{$type}_end"
-		);
-
-		// We prepare our initial output.
-		$output = "/* This file is auto-generated ({$bench} seconds) */\n".$out;
+		// We prepare our final output and add our benchmark result to it.
+		$bench = $this->benchmark->elapsed_time("load_assets_{$type}_start", "load_assets_{$type}_end");
+		$output   = "/* This file is auto-generated ({$bench} seconds) */\n".$out;
 
 		// We render our final output.
 		$this->output
@@ -311,29 +365,27 @@ class Load extends KB_Controller
 	protected function _delete_cache()
 	{
 		// Prepare the path to to assets folder.
-		$path = APPPATH.'cache/assets/';
+		$path = realpath(KBPATH.'cache/assets/');
 
 		// Let's open the folder to read.
 		if ($handle = opendir($path))
 		{
+			// Files to ignore.
+			$ignore = array('.', '..', '.htaccess', '.gitkeep', 'index.html');
+
 			// Loop through all files.
 			while(false !== ($file = readdir($handle)))
 			{
-				/**
-				 * Here we are simply ignoring files with .gitkeep extension.
-				 * Feel free to remove this check in production environment.
-				 */
-				if (pathinfo($file, PATHINFO_EXTENSION) !== 'gitkeep')
+				// We ignore unneeded or invalid files.
+				if (in_array($file, $ignore) OR '.' === $file[0])
 				{
-					/**
-					 * If the file is older than 24 hours or we are 
-					 * on development environment, we delete file.
-					 */
-					if (ENVIRONMENT === 'development' 
-						OR filemtime($path.$file) < (time() - 86400))
-					{
-						@unlink($path.$file);
-					}
+					continue;
+				}
+
+				// If the file is older than 24 hours, we delete file.
+				if (filemtime($path.DIRECTORY_SEPARATOR.$file) < (time() - 86400))
+				{
+					@unlink($path.$file);
 				}
 			}
 

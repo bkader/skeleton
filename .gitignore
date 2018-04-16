@@ -3,13 +3,14 @@
 .phpintel
 
 # Ignore cache files.
+!src/application/cache/*
 src/application/cache/*
-!src/application/cache/*/.gitkeep
-!src/application/cache/*/.htaccess
+!src/application/cache/assets/
+src/application/cache/assets/*
+!src/application/cache/assets/.htaccess
 
 # Ignore log files.
 src/application/logs/*
-!src/application/logs/.gitkeep
 !src/application/logs/.htaccess
 
 # Remove generated encryption key file.
