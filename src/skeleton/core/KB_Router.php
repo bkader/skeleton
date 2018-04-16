@@ -501,7 +501,12 @@ class KB_Router extends CI_Router
 	 */
 	public function has_admin($module)
 	{
-		return ('admin' !== $module && is_file($this->module_path($module).'controllers/Admin.php'));
+		if ('admin' === $module)
+		{
+			return false;
+		}
+		return (is_file($this->module_path($module).'controllers/Admin.php') 
+			OR is_file($this->module_path($module).'controllers/admin/Admin.php'));
 	}
 
 	// ------------------------------------------------------------------------

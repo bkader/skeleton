@@ -2834,6 +2834,11 @@ EOT;
 				/**
 				 * Alterative file just in case.
 				 */
+				if (null !== $this->module 
+					&& false !== $module_path = $this->ci->router->module_path($this->module))
+				{
+					$alt_file = $module_path.'views/partials/'.$file;
+				}
 				$alt_file = apply_filters('theme_partial_fallback', $alt_file);
 
 				/**
@@ -2906,6 +2911,12 @@ EOT;
 				/**
 				 * Alterative file just in case.
 				 */
+				if (null !== $this->module 
+					&& false !== $module_path = $this->ci->router->module_path($this->module))
+				{
+					$alt_file = $module_path.str_replace($this->module, 'views', $file);
+				}
+
 				$alt_file = apply_filters('theme_view_fallback', $alt_file);
 
 				/**
@@ -2965,10 +2976,10 @@ EOT;
 			$output = $this->ci->load->file($file_path, true);
 		}
 		// If there an alt_file file set by the theme and it exists:
-		elseif (null !== $alt_file && is_file($this->theme_path($alt_file)))
+		elseif (null !== $alt_file && is_file($alt_file))
 		{
 			// Change the full path to the new file.
-			$file_path = $this->theme_path($alt_file);
+			$file_path = $alt_file;
 
 			// If there are any vars, use them.
 			(empty($data)) OR $this->ci->load->vars($data);

@@ -167,7 +167,7 @@ class Admin_Controller extends User_Controller
 
 			$this->theme
 				->no_extension()
-				->add('css', site_url("load/styles?c={$compress}&load=".$this->styles));
+				->add('css', site_url("load/styles?c={$compress}&load=".$this->styles), null, null, true);
 		}
 
 		// Do we have any JS files to laod?
@@ -179,7 +179,7 @@ class Admin_Controller extends User_Controller
 			$this->scripts = implode(',', $this->scripts);
 			$this->theme
 				->no_extension()
-				->add('js', site_url("load/scripts?c={$compress}&load=".$this->scripts));
+				->add('js', site_url("load/scripts?c={$compress}&load=".$this->scripts), null, null, true);
 		}
 
 		// We call the method.
