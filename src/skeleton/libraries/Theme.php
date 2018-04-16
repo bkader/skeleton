@@ -1211,8 +1211,8 @@ EOT;
 		// On dashboard?
 		if ('admin' === $this->controller)
 		{
-			$before_filter = 'admin_before_meta';
-			$after_filter  = 'admin_after_meta';
+			$before_filter = 'before_admin_meta';
+			$after_filter  = 'after_admin_meta';
 		}
 
 		// If there are any 'before_meta', apply them.
@@ -1242,7 +1242,7 @@ EOT;
 	private function _render_meta_tags()
 	{
 		// Prepare the action to be done.
-		$action = 'admin_enqueue_meta';
+		$action = 'enqueue_admin_meta';
 
 		// On the front-end?
 		if ('admin' !== $this->controller)
@@ -1587,8 +1587,8 @@ EOT;
 		// On dashboard?
 		if ('admin' === $this->controller)
 		{
-			$before_filter = 'admin_before_styles';
-			$after_filter  = 'admin_after_styles';
+			$before_filter = 'before_admin_styles';
+			$after_filter  = 'after_admin_styles';
 		}
 
 		// Any before styles filters?
@@ -1624,7 +1624,7 @@ EOT;
 		// On dashboard?
 		if ('admin' === $this->controller)
 		{
-			$action = 'admin_enqueue_styles';
+			$action = 'enqueue_admin_styles';
 			$filter = 'admin_print_styles';
 		}
 
@@ -1709,8 +1709,8 @@ EOT;
 		// On dashboard?
 		if ('admin' === $this->controller)
 		{
-			$before_filter = 'admin_before_scripts';
-			$after_filter  = 'admin_after_scripts';
+			$before_filter = 'before_admin_scripts';
+			$after_filter  = 'after_admin_scripts';
 		}
 
 		$scripts = '';
@@ -1744,7 +1744,7 @@ EOT;
 		// On dashboard?
 		if ('admin' === $this->controller)
 		{
-			$action = 'admin_enqueue_scripts';
+			$action = 'enqueue_admin_scripts';
 			$filter = 'admin_print_scripts';
 		}
 
@@ -3077,7 +3077,7 @@ EOT;
 		 * by using the 'theme_layout' filter.
 		 */
 		$this->_layout = ('admin' === $this->controller)
-			? apply_filters('admin_theme_layout', $this->_layout)
+			? apply_filters('admin_layout', $this->_layout)
 			: apply_filters('theme_layout', $this->_layout);
 
 		// Use the default layout if not found.
@@ -3102,10 +3102,15 @@ EOT;
 		// Load the layout file.
 		$output = $this->_load_file($this->_layout, $layout, 'layout');
 
+		// Additional filters.
+		$output = ('admin' === $this->controller)
+			? apply_filters('admin_output', $output)
+			: apply_filters('the_output', $output);
+
 		// If the header file was not called, make sure to call it.
 		if ($this->_header_called === false)
 		{
-			$output = $this->get_header().$output;
+			$output = $this->get_header().PHP_EOL.$output;
 		}
 
 		// If the footer file was not called, make sure to call it.
