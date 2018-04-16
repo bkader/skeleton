@@ -51,9 +51,115 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * 
  * @since 		1.0.0
  * @since 		1.3.3 	Added both AJAX and API functions.
+ * @since 		1.4.0 	Anchor are automatically translated if the title contains "lang:" at the beginning.
  * 
- * @version 	1.3.3
+ * @version 	1.4.0
  */
+
+if ( ! function_exists('anchor'))
+{
+	/**
+	 * Anchor Link
+	 *
+	 * Creates an anchor based on the local URL.
+	 *
+	 * @param	string	the URL
+	 * @param	string	the link title
+	 * @param	mixed	any attributes
+	 * @return	string
+	 */
+	function anchor($uri = '', $title = '', $attributes = '')
+	{
+		$title = (string) $title;
+
+		$site_url = is_array($uri)
+			? site_url($uri)
+			: (preg_match('#^(\w+:)?//#i', $uri) ? $uri : site_url($uri));
+
+		if ($title === '')
+		{
+			$title = $site_url;
+		}
+		elseif (1 === sscanf($title, 'lang:%s', $line))
+		{
+			$title = (function_exists('lang')) ? lang($line) : get_instance()->lang->line($line);
+		}
+
+		if ($attributes !== '')
+		{
+			$attributes = _stringify_attributes($attributes);
+		}
+
+		return '<a href="'.$site_url.'"'.$attributes.'>'.$title.'</a>';
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('anchor_popup'))
+{
+	/**
+	 * Anchor Link - Pop-up version
+	 *
+	 * Creates an anchor based on the local URL. The link
+	 * opens a new window based on the attributes specified.
+	 *
+	 * @param	string	the URL
+	 * @param	string	the link title
+	 * @param	mixed	any attributes
+	 * @return	string
+	 */
+	function anchor_popup($uri = '', $title = '', $attributes = FALSE)
+	{
+		$title = (string) $title;
+		$site_url = preg_match('#^(\w+:)?//#i', $uri) ? $uri : site_url($uri);
+
+		if ($title === '')
+		{
+			$title = $site_url;
+		}
+		elseif (1 === sscanf($title, 'lang:%s', $line))
+		{
+			$title = (function_exists('lang')) ? lang($line) : get_instance()->lang->line($line);
+		}
+
+		if ($attributes === FALSE)
+		{
+			return '<a href="'.$site_url.'" onclick="window.open(\''.$site_url."', '_blank'); return false;\">".$title.'</a>';
+		}
+
+		if ( ! is_array($attributes))
+		{
+			$attributes = array($attributes);
+
+			// Ref: http://www.w3schools.com/jsref/met_win_open.asp
+			$window_name = '_blank';
+		}
+		elseif ( ! empty($attributes['window_name']))
+		{
+			$window_name = $attributes['window_name'];
+			unset($attributes['window_name']);
+		}
+		else
+		{
+			$window_name = '_blank';
+		}
+
+		foreach (array('width' => '800', 'height' => '600', 'scrollbars' => 'yes', 'menubar' => 'no', 'status' => 'yes', 'resizable' => 'yes', 'screenx' => '0', 'screeny' => '0') as $key => $val)
+		{
+			$atts[$key] = isset($attributes[$key]) ? $attributes[$key] : $val;
+			unset($attributes[$key]);
+		}
+
+		$attributes = _stringify_attributes($attributes);
+
+		return '<a href="'.$site_url
+			.'" onclick="window.open(\''.$site_url."', '".$window_name."', '"._stringify_attributes($atts, TRUE)."'); return false;\""
+			.$attributes.'>'.$title.'</a>';
+	}
+}
+
+// ------------------------------------------------------------------------
 
 if ( ! function_exists('current_url'))
 {
@@ -127,6 +233,10 @@ if ( ! function_exists('trace_anchor'))
 		{
 			$title = $site_url;
 		}
+		elseif (1 === sscanf($title, 'lang:%s', $line))
+		{
+			$title = (function_exists('lang')) ? lang($line) : get_instance()->lang->line($line);
+		}
 
 		if ($attributes !== '')
 		{
@@ -196,7 +306,16 @@ if ( ! function_exists('safe_anchor'))
 	{
 		$title = (string) $title;
 		$safe_url = (preg_match('#^(\w+:)?//#i', $uri)) ? $uri : safe_url($uri);
-		($title === '') && $title = $safe_url;
+
+		if ($title === '')
+		{
+			$title = $safe_url;
+		}
+		elseif (1 === sscanf($title, 'lang:%s', $line))
+		{
+			$title = (function_exists('lang')) ? lang($line) : get_instance()->lang->line($line);
+		}
+
 		($attrs !== '') && $attrs = _stringify_attributes($attrs);
 		return '<a href="'.$safe_url.'"'.$attrs.'>'.$title.'</a>';
 	}
