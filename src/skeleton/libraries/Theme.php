@@ -213,7 +213,7 @@ EOT;
 
 	/**
 	 * Array of headers used to fetch theme's data.
-	 * @since 	1.4.0
+	 * @since 	1.3.4
 	 * @var 	array
 	 */
 	private $_css_headers = array(
@@ -228,12 +228,14 @@ EOT;
 		'Author Email',
 		'Tags',
 		'Screenshot',
+		'Language Folder',
+		'Language Index',
 	);
 
 	/**
 	 * Array that holds theme details, combined with details got
 	 * from theme's CSS file ($_css_headers).
-	 * @since 	1.4.0
+	 * @since 	1.3.4
 	 * @var 	array
 	 */
 	private $_default_headers = array(
@@ -248,11 +250,13 @@ EOT;
 		'author_email',
 		'tags',
 		'screenshot',
+		'language',
+		'index',
 	);
 
 	/**
 	 * Array of extensions allowed for themes previews.
-	 * @since 	1.4.0
+	 * @since 	1.3.4
 	 * @var 	array
 	 */
 	private $_screenshot_ext = array('.png', '.jpg', '.jpeg', '.gif');
@@ -605,7 +609,7 @@ EOT;
 				'..',
 				'index.html',
 				'.htaccess',
-				'__MACOSX', // Added as of v1.4.0
+				'__MACOSX', // Added as of v1.3.4
 			);
 
 			while (false !== ($file = readdir($handle)))
@@ -643,7 +647,7 @@ EOT;
 	 * Return details about a given theme.
 	 *
 	 * @since 	1.0.0
-	 * @since 	1.4.0 	We no longer need manifest.json, we will use style.css
+	 * @since 	1.3.4 	We no longer need manifest.json, we will use style.css
 	 * 
 	 * @access 	private
 	 * @param 	string 	$theme 	the theme's folder name.
@@ -696,7 +700,41 @@ EOT;
 
 		// We make sure to finally add the folder name and path to headers.
 		$headers['folder'] = $folder;
-		$headers['full_pah'] = $this->themes_path($folder).DS;
+		$headers['full_pah'] = $this->themes_path($folder).DS;		
+
+		// Let's see if we shall translate the name and description.
+		(empty($headers['language'])) && $headers['language'] = 'language';
+		(empty($headers['index'])) && $headers['index'] = $folder;
+		$english = $this->theme_path($headers['language'].'/english.php');
+		if (false === $english)
+		{
+			return $headers;
+		}
+
+		require_once($english);
+		$full_lang = (isset($lang)) ? $lang : array();
+		unset($lang);
+
+		// If the current language different?
+		$language = $this->ci->config->item('language');
+		if ('english' !== $language 
+			&& false !== $current = $this->theme_path($headers['language']."/{$language}.php"))
+		{
+			require_once($current);
+			(isset($lang)) && $full_lang = array_replace_recursive($full_lang, $lang);
+		}
+
+		// Shall we translate the name?
+		if (isset($lang) && isset($lang['theme_name']))
+		{
+			$headers['name'] = $lang['theme_name'];
+		}
+		// Shall we translate the the description?
+		if (isset($lang) && isset($lang['theme_name']))
+		{
+			$headers['name'] = $lang['theme_name'];
+		}
+
 		return $headers;
 	}
 
@@ -2460,21 +2498,17 @@ EOT;
 			return;
 		}
 
-		// Prepare the language index.
-		$index = apply_filters('theme_translation_index', $index);
-
 		// Make sure to put .htaccess
 		(false !== $path) && $this->_check_htaccess($path);
 
 		// Make sure the English version exists!
-		$english_file = $path.DS.'english.php';
-		if ( ! is_file($english_file))
+		if (false === $english = realpath($path.DS.'english.php'))
 		{
 			return;
 		}
 
 		// Include the english version first make sure it's valid.
-		include_once($english_file);
+		require_once($english);
 
 		// Was the language array updated?
 		$full_lang = (isset($lang)) ? $lang : array();
@@ -2484,41 +2518,25 @@ EOT;
 		$language = $this->ci->config->item('language');
 
 		// Now we load the current language file.
-		if ('english' !== $language)
+		if ('english' !== $language 
+			&& false !== $current = realpath($path.DS.$language.'.php'))
 		{
-			$lang_file = $path.DS.$language.'.php';
-
-			// Load the file only if it exists.
-			if (is_file($lang_file))
-			{
-				include_once($lang_file);
-
-				// Update our language array.
-				if (isset($this->lang))
-				{
-					$full_lang = array_replace_recursive($full_lang, $lang);
-				}
-			}
+			require_once($current);
+			(isset($lang)) && $full_lang = array_replace_recursive($full_lang, $lang);
 		}
 
 		// Now we add the language array to the global array.
 		if ( ! empty($full_lang))
 		{
-			// Adding an index?
-			if (null !== $index)
+			// Set theme language index.
+			$this->_theme_language_index = apply_filters('theme_translation_index', $index);
+			if (empty($this->_theme_language_index))
 			{
-				// Set theme language index.
-				$this->_theme_language_index = $index;
-
-				// Add the index to translation.
-				$full_lang = array($index => $full_lang);
+				$this->_theme_language_index = $this->_theme;
 			}
 
 			// Merge all.
-			$this->ci->lang->language = array_replace_recursive(
-				$this->ci->lang->language,
-				$full_lang
-			);
+			$this->ci->lang->language[$this->_theme_language_index] = $full_lang;
 		}
 
 		$this->_translation_loaded = true;

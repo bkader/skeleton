@@ -74,7 +74,7 @@ class Kbcore_plugins extends CI_Driver
 
 	/**
 	 * Array of plugin's headers to retrieve.
-	 * @since 	1.4.0
+	 * @since 	1.3.4
 	 * @var 	array
 	 */
 	private $_plugin_headers = array(
@@ -94,7 +94,7 @@ class Kbcore_plugins extends CI_Driver
 
 	/**
 	 * Array of plugins default headers.
-	 * @since 	1.4.0
+	 * @since 	1.3.4
 	 * @var 	array
 	 */
 	private $_default_headers = array(
@@ -184,7 +184,7 @@ class Kbcore_plugins extends CI_Driver
 	 * Reads details about the plugin from the manifest.json file.
 	 *
 	 * @since 	1.0.0
-	 * @since 	1.4.0 	Added a property for whether to check existence.
+	 * @since 	1.3.4 	Added a property for whether to check existence.
 	 * 
 	 * @access 	public
 	 * @param 	string 	$name 	the plugin's name.
@@ -425,7 +425,7 @@ class Kbcore_plugins extends CI_Driver
 	/**
 	 * Method for loading translation for the selected plugin.
 	 *
-	 * @since 	1.4.0
+	 * @since 	1.3.4
 	 * 
 	 * @access 	private
 	 * @param 	string 	$name 	The plugin's name (folder).
@@ -587,7 +587,7 @@ class Kbcore_plugins extends CI_Driver
 	 * Returns TRUE if the selected plugin is valid.
 	 *
 	 * @since 	1.0.0
-	 * @since 	1.4.0 	We no longer need to check for manifest.json file.
+	 * @since 	1.3.4 	We no longer need to check for manifest.json file.
 	 * 
 	 * @access 	private
 	 * @param 	string 	$name

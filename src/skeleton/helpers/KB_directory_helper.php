@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.3.3
- * @version 	1.4.0
+ * @version 	1.3.4
  */
 
 if ( ! function_exists('directory_delete'))
@@ -101,7 +101,7 @@ if ( ! function_exists('directory_files'))
 	 * Returns a list of all files in the selected directory and all its 
 	 * subdirectories up to 100 levels deep.
 	 *
-	 * @since 	1.4.0
+	 * @since 	1.3.4
 	 *
 	 * @param 	string 	$path 	The full path to the directory.
 	 * @param 	int 	$levels 	How deeper we shall go.

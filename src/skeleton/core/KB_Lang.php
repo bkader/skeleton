@@ -50,7 +50,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.4.0
+ * @version 	1.3.4
  */
 class KB_Lang extends CI_Lang
 {
@@ -437,7 +437,7 @@ if ( ! function_exists('line'))
 	 * Alias of Lang::line with optional arguments.
 	 *
 	 * @since 	1.0.0
-	 * @since 	1.4.0 	Added $before and $after.
+	 * @since 	1.3.4 	Added $before and $after.
 	 *
 	 * @param 	string 	$line 	the line the retrieve.
 	 * @param 	string 	$index 	whether to look under an index.
@@ -471,7 +471,7 @@ if ( ! function_exists('__'))
 	 * Alias of Lang::line with optional arguments.
 	 *
 	 * @since 	1.0.0
-	 * @since 	1.4.0 	Added $before and $after.
+	 * @since 	1.3.4 	Added $before and $after.
 	 *
 	 * @param 	string 	$line 	the line the retrieve.
 	 * @param 	string 	$index 	whether to look under an index.
@@ -505,7 +505,7 @@ if ( ! function_exists('_e'))
 	 * Alias of Lang::line with optional arguments.
 	 *
 	 * @since 	1.0.0
-	 * @since 	1.4.0 	Added $before and $after.
+	 * @since 	1.3.4 	Added $before and $after.
 	 *
 	 * @param 	string 	$line 		the line the retrieve.
 	 * @param 	string 	$index 		whether to look under an index.

@@ -11,6 +11,9 @@ pages:
   - Installation Instructions: installation.md
   - CodeIgniter Modifications: modifications.md
   - Hooks System: hooks.md
+  - Custom Classes: custom-classes.md
+  - Custom Libraries: custom-libraries.md
+  - Custom Helpers: custom-helpers.md
   - Tables and Libraries:
     - Kbcore: kbcore.md
     - Entities: entities.md

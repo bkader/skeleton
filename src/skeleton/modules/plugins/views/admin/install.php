@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		1.4.0
+ * @since 		1.3.4
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -46,8 +46,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		1.4.0
- * @version 	1.4.0
+ * @since 		1.3.4
+ * @version 	1.3.4
  */
 ?><h2 class="page-header clearfix"><?php _e('spg_plugin_add'); ?><span class="pull-right"><?php echo admin_anchor('plugins', 'lang:back', 'class="btn btn-default btn-sm"'); ?> <button role="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#theme-install"><?php _e('spg_plugin_upload'); ?></button></span></h2>
 <div class="row<?php if ( ! form_error('pluginzip')): ?> collapse<?php endif; ?>" id="theme-install">

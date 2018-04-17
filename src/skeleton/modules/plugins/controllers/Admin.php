@@ -287,7 +287,7 @@ class Admin extends Admin_Controller
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://github.com/bkader
-	 * @since 	1.4.0
+	 * @since 	1.3.4
 	 *
 	 * @access 	public
 	 * @param 	none
@@ -316,7 +316,7 @@ class Admin extends Admin_Controller
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://github.com/bkader
-	 * @since 	1.4.0
+	 * @since 	1.3.4
 	 *
 	 * @access 	public
 	 * @param 	none

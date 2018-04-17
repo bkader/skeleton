@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.4.0
+ * @version 	1.3.4
  */
 class Admin extends Admin_Controller {
 
@@ -181,7 +181,7 @@ class Admin extends Admin_Controller {
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://github.com/bkader
-	 * @since 	1.4.0
+	 * @since 	1.3.4
 	 *
 	 * @access 	public
 	 * @param 	none
@@ -210,7 +210,7 @@ class Admin extends Admin_Controller {
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://github.com/bkader
-	 * @since 	1.4.0
+	 * @since 	1.3.4
 	 *
 	 * @access 	public
 	 * @param 	none
