@@ -93,6 +93,10 @@ $lang['view_more']    = 'عرض المزيد';
 $lang['no']  = 'لا';
 $lang['yes'] = 'نعم';
 
+// Version and version number.
+$lang['version']     = 'النسخة';
+$lang['version_num'] = 'النسخة: %s';
+
 // ------------------------------------------------------------------------
 // Application buttons.
 // ------------------------------------------------------------------------
@@ -222,8 +226,8 @@ $lang['menu']  = 'القائمة';
 $lang['menus'] = 'القوائم';
 
 // Menus.
-$lang['plugin']  = 'إضافة';
-$lang['plugins'] = 'إضافات';
+$lang['plugin']  = 'الإضافة';
+$lang['plugins'] = 'الإضافات';
 
 // Languages.
 $lang['language']  = 'اللغة';

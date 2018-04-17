@@ -447,6 +447,18 @@ if ( ! function_exists('line'))
 	 */
 	function line($line, $index = '', $before = '', $after = '')
 	{
+		// Shall we translate the before?
+		if ('' !== $before && 1 === sscanf($before, 'lang:%s', $b_line))
+		{
+			$before = line($b_line, $index);
+		}
+
+		// Shall we translate the after?
+		if ('' !== $after && 1 === sscanf($after, 'lang:%s', $a_line))
+		{
+			$after = line($a_line, $index);
+		}
+
 		return $before.get_instance()->lang->line($line, $index).$after;
 	}
 }
@@ -469,6 +481,18 @@ if ( ! function_exists('__'))
 	 */
 	function __($line, $index = '', $before = '', $after = '')
 	{
+		// Shall we translate the before?
+		if ('' !== $before && 1 === sscanf($before, 'lang:%s', $b_line))
+		{
+			$before = line($b_line, $index);
+		}
+
+		// Shall we translate the after?
+		if ('' !== $after && 1 === sscanf($after, 'lang:%s', $a_line))
+		{
+			$after = line($a_line, $index);
+		}
+
 		return $before.get_instance()->lang->line($line, $index).$after;
 	}
 }
@@ -491,6 +515,6 @@ if ( ! function_exists('_e'))
 	 */
 	function _e($line, $index = '', $before = '', $after = '')
 	{
-		echo $before, get_instance()->lang->line($line, $index), $after;
+		echo line($line, $index, $before, $after);
 	}
 }

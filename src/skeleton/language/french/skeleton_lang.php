@@ -93,6 +93,10 @@ $lang['view_more']    = 'Voir plus';
 $lang['no']  = 'Non';
 $lang['yes'] = 'Oui';
 
+// Version and version number.
+$lang['version']     = 'Version';
+$lang['version_num'] = 'Version: %s';
+
 // ------------------------------------------------------------------------
 // Application buttons.
 // ------------------------------------------------------------------------
