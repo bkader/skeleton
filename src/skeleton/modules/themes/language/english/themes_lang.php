@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 
 // Theme: singular and plural forms.
@@ -62,8 +62,10 @@ $lang['sth_theme_activate'] = 'Activate';
 $lang['sth_theme_add']      = 'Add Theme';
 $lang['sth_theme_delete']   = 'Delete';
 $lang['sth_theme_details']  = 'Details';
-$lang['sth_theme_install']  = 'Install';
+$lang['sth_theme_install']  = 'Install Theme';
 $lang['sth_theme_upload']   = 'Upload Theme';
+
+$lang['sth_theme_upload_tip'] = 'If you have a theme in a .zip format, you may install it by uploading it here.';
 
 // Confirmation messages.
 $lang['sth_theme_activate_confirm'] = 'Are you sure you want to activate this theme?';
@@ -99,6 +101,13 @@ $lang['sth_author_uri']   = 'Author URI';
 $lang['sth_author_email'] = 'Author Email';
 $lang['sth_tags']         = 'Tags';
 $lang['sth_screenshot']   = 'Screenshot';
+$lang['sth_theme_zip']   = 'Theme ZIP Archive';
+
+// Theme install filters.
+$lang['sth_theme_featured'] = 'Featured';
+$lang['sth_theme_popular']  = 'Popular';
+$lang['sth_theme_new']      = 'New';
+$lang['sth_theme_search']   = 'Search themes...';
 
 // Details with links:
 $lang['sth_theme_name']         = '<a href="%2$s" target="_blank" rel="nofollow">%1$s</a>';

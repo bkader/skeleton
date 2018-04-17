@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 
 // Theme: singular and plural forms.
@@ -59,11 +59,13 @@ $lang['sth_theme_settings'] = 'إعدادات القوالب';
 
 // Theme actions and buttons.
 $lang['sth_theme_activate'] = 'تفعيل';
-$lang['sth_theme_add']      = 'إضافة قالب';
+$lang['sth_theme_add']      = 'أضف قوالب';
 $lang['sth_theme_delete']   = 'حذف';
 $lang['sth_theme_details']  = 'تفاصيل';
-$lang['sth_theme_install']  = 'تثبت';
-$lang['sth_theme_upload']   = 'تحميل';
+$lang['sth_theme_install']  = 'تثبيت';
+$lang['sth_theme_upload']   = 'رفع قالب';
+
+$lang['sth_theme_upload_tip'] = 'إذا كان لديك قالب بصيغة .zip، فيمكنك تنصيبه عن طريق رفعه من هنا.';
 
 // Confirmation messages.
 $lang['sth_theme_activate_confirm'] = 'هل أنت متأكد من أنك تريد تفعيل هذا القالب؟';
@@ -99,6 +101,13 @@ $lang['sth_author_uri']   = 'رابط المؤلف';
 $lang['sth_author_email'] = 'بريد للمؤلف';
 $lang['sth_tags']         = 'الوسوم';
 $lang['sth_screenshot']   = 'الصورة';
+$lang['sth_theme_zip']   = 'أرشيف ZIP القالب';
+
+// Theme install filters.
+$lang['sth_theme_featured'] = 'المميّزة';
+$lang['sth_theme_popular']  = 'الأكثر شعبية';
+$lang['sth_theme_new']      = 'الأحدث';
+$lang['sth_theme_search']   = 'بحث عن قوالب...';
 
 // Details with links:
 $lang['sth_theme_name']         = '<a href="%2$s" target="_blank" rel="nofollow">%1$s</a>';

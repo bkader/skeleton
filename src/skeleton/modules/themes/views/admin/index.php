@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 ?><h2 class="page-header clearfix"><?php
 
@@ -55,7 +55,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 _e('sth_theme_settings');
 
 // Add theme anchor.
-echo admin_anchor('themes', lang('sth_theme_add'), 'class="btn btn-primary btn-sm pull-right"');
+echo admin_anchor('themes/install', lang('sth_theme_add'), 'class="btn btn-primary btn-sm pull-right"');
 
 ?></h2>
 <?php if ($themes): ?>

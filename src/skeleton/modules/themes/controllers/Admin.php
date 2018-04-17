@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 class Admin extends Admin_Controller {
 
@@ -84,12 +84,18 @@ class Admin extends Admin_Controller {
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Theme settings.
+	 * index
 	 *
+	 * Display available themes.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * 
 	 * @since 	1.0.0
 	 * @since 	1.3.3 	Rewritten for better code readability and performance.
-	 * 
+	 *
 	 * @access 	public
+	 * @param 	none
 	 * @return 	void
 	 */
 	public function index()
@@ -164,6 +170,112 @@ class Admin extends Admin_Controller {
 		$this->theme
 			->set_title(lang('sth_theme_settings'))
 			->render($data);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * install
+	 *
+	 * Method for installing themes from future server or upload ZIP themes.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
+	public function install()
+	{
+		// We prepare form validation.
+		$this->prep_form();
+
+		// Add our CSRF token
+		$data['hidden'] = $this->create_csrf();
+
+		// Set page title and load view.
+		$this->theme
+			->set_title(lang('sth_theme_add'))
+			->render($data);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * upload
+	 *
+	 * Method for uploading themes using ZIP archives.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
+	public function upload()
+	{
+		// We check CSRF token validity.
+		if ( ! $this->check_csrf())
+		{
+			set_alert(lang('error_csrf'), 'error');
+			redirect('admin/themes/install', 'refresh');
+			exit;
+		}
+
+		// Did the user provide a valid file?
+		if (empty($_FILES['themezip']['name']))
+		{
+			set_alert(lang('sth_theme_upload_error'), 'error');
+			redirect('admin/themes/install');
+			exit;
+		}
+
+		// Load our file helper and make sure the "unzip_file" function exists.
+		$this->load->helper('file');
+		if ( ! function_exists('unzip_file'))
+		{
+			set_alert(lang('sth_theme_upload_error'), 'error');
+			redirect('admin/themes/install');
+			exit;
+		}
+
+		// Load upload library.
+		$this->load->library('upload', array(
+			'upload_path'   => FCPATH.'content/uploads/temp/',
+			'allowed_types' => 'zip',
+		));
+
+		// Error uploading?
+		if (false === $this->upload->do_upload('themezip') OR ! class_exists('ZipArchive', false))
+		{
+			set_alert(lang('sth_theme_upload_error'), 'error');
+			redirect('admin/themes/install');
+			exit;
+		}
+
+		// Prepare data for later use.
+		$data = $this->upload->data();
+
+		// Catch the upload status and delete the temporary file anyways.
+		$status = unzip_file($data['full_path'], FCPATH.'content/themes/');
+		@unlink($data['full_path']);
+		
+		// Successfully installed?
+		if (true === $status)
+		{
+			set_alert(lang('sth_theme_upload_success'), 'success');
+			redirect('admin/themes');
+			exit;
+		}
+
+		// Otherwise, the theme could not be installed.
+		set_alert(lang('sth_theme_upload_error'), 'error');
+		redirect('admin/themes/install');
+		exit;
 	}
 
 	// ------------------------------------------------------------------------

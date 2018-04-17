@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 
 // Theme: singular and plural forms.
@@ -59,11 +59,13 @@ $lang['sth_theme_settings'] = 'Paramètres des thèmes';
 
 // Theme actions and buttons.
 $lang['sth_theme_activate'] = 'Activer';
-$lang['sth_theme_add']      = 'Ajouter';
+$lang['sth_theme_add']      = 'Ajouter de thèmes';
 $lang['sth_theme_delete']   = 'Supprimer';
 $lang['sth_theme_details']  = 'Détails';
 $lang['sth_theme_install']  = 'Installer';
-$lang['sth_theme_upload']   = 'Téléverser';
+$lang['sth_theme_upload']   = 'Téléverser un thème';
+
+$lang['sth_theme_upload_tip'] = 'Si vous avez un thème au format .zip, vous pouvez l’installer en le téléversant ici.';
 
 // Confirmation messages.
 $lang['sth_theme_activate_confirm'] = 'Êtes-vous sûr de vouloir activer ce thème?';
@@ -99,6 +101,13 @@ $lang['sth_author_uri']   = 'Auteur URI';
 $lang['sth_author_email'] = 'Email de l\'auteur';
 $lang['sth_tags']         = 'Étiquettes';
 $lang['sth_screenshot']   = 'Capture d\'écran';
+$lang['sth_theme_zip']    = 'Fichier ZIP du thème';
+
+// Theme install filters.
+$lang['sth_theme_featured'] = 'Mise en avant';
+$lang['sth_theme_popular']  = 'Populaires';
+$lang['sth_theme_new']      = 'Nouveau';
+$lang['sth_theme_search']   = 'Rechercher des thèmes...';
 
 // Details with links:
 $lang['sth_theme_name']         = '<a href="%2$s" target="_blank" rel="nofollow">%1$s</a>';
