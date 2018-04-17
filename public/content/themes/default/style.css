@@ -1,26 +1,38 @@
+/**
+ * Theme Name: Default
+ * Theme URI: https://github.com/bkader/skeleton/tree/develop/public/content/themes
+ * Description: The default theme that comes with the CodeIgniter Skeleton.
+ * Version: 1.0.0
+ * License: MIT
+ * License URI: https://opensource.org/licenses/MIT
+ * Author: Kader Bouyakoub
+ * Author URI: https://github.com/bkader/
+ * Author Email: bkader@mail.com
+ * Tags: codeigniter, skeleton, bkader, bootstrap, bootstrap3
+ */
 html,
 body {
-	height: 100%;
+    height: 100%;
 }
 
 body {
-	font: 400 13px/15px "Open Sans", sans-serif;
-	height: 100%;
-	background-color: #eee;
-	padding-top: 72px
+    font: 400 13px/15px "Open Sans", sans-serif;
+    height: 100%;
+    background-color: #eee;
+    padding-top: 72px
 }
 
 .form-control,
 input,
 textarea {
-	font-family: "Open Sans", sans-serif;
-	font-size: 13px;
+    font-family: "Open Sans", sans-serif;
+    font-size: 13px;
 }
 
 .btn {font-size: 1em}
 .user-menu {
-	border-left: 1px solid #eee; /* Fallback */
-	border-left: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 1px solid #eee; /* Fallback */
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .user-menu img {
@@ -29,8 +41,8 @@ textarea {
 }
 
 .navbar {
-	border: none;
-	border-radius: 0;
+    border: none;
+    border-radius: 0;
 }
 
 .avatar-male,

@@ -199,25 +199,25 @@ class Default_theme {
 
 		// Load Font Awesome.
 		if ( ENVIRONMENT === 'development') {
-			add_style( 'opensans', 'assets/css/open-sans.min', null, true );
-			add_style( 'fontawesome', get_common_url( 'css/font-awesome.min' ), null, true );
-			add_style( 'bootstrap', 'assets/css/bootstrap.min', null, true );
-			add_script( 'bootstrap', 'assets/js/bootstrap.min', null, true );
+			add_style( 'opensans', 'assets/css/open-sans.min');
+			add_style( 'fontawesome', get_common_url( 'css/font-awesome.min' ));
+			add_style( 'bootstrap', 'assets/css/bootstrap.min');
+			add_script( 'bootstrap', 'assets/js/bootstrap.min');
 		} else {
-			add_style( 'opensans', 'https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i', null, true );
-			add_style( 'fontawesome', 'https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', null, true );
-			add_style( 'bootstrap', 'https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css', null, true );
-			add_script( 'bootstrap', 'https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js', null, true );
+			add_style( 'opensans', 'https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i');
+			add_style( 'fontawesome', 'https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+			add_style( 'bootstrap', 'https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css');
+			add_script( 'bootstrap', 'https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js');
 		}
 
 		// Load main theme style.
-		add_style( 'style', 'assets/css/style', null, true );
+		add_style( 'style', 'style');
 
 		// Right to left language?
 		if (langinfo('direction' ) === 'rtl' )
 		{
-			add_style( 'bootstrap-rtl', 'assets/css/bootstrap-rtl.min', null, true );
-			add_style( 'style-rtl', 'assets/css/style-rtl', null, true );
+			add_style( 'bootstrap-rtl', 'assets/css/bootstrap-rtl.min');
+			add_style( 'style-rtl', 'style-rtl');
 		}
 	}
 

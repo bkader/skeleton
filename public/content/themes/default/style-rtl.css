@@ -5,16 +5,16 @@
 	font-family: 'Droid Arabic Kufi';
 	font-weight: normal;
 	font-style: normal;
-	src: url(../fonts/droid-arabic-kufi-regular.woff2) format('woff2'),
-		url(../fonts/droid-arabic-kufi-regular.woff) format('woff');
+	src: url(assets/fonts/droid-arabic-kufi-regular.woff2) format('woff2'),
+		url(assets/fonts/droid-arabic-kufi-regular.woff) format('woff');
 } 
 
 @font-face {
 	font-family: 'Droid Arabic Kufi';
 	font-weight: bold;
 	font-style: normal;
-	src: url(../fonts/droid-arabic-kufi-bold.woff2) format('woff2'),
-		url(../fonts/droid-arabic-kufi-bold.woff) format('woff');
+	src: url(assets/fonts/droid-arabic-kufi-bold.woff2) format('woff2'),
+		url(assets/fonts/droid-arabic-kufi-bold.woff) format('woff');
 }
 
 body {

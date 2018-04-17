@@ -212,6 +212,52 @@ EOT;
 	private $_theme = null;
 
 	/**
+	 * Array of headers used to fetch theme's data.
+	 * @since 	1.4.0
+	 * @var 	array
+	 */
+	private $_css_headers = array(
+		'Theme Name',
+		'Theme URI',
+		'Description',
+		'Version',
+		'License',
+		'License URI',
+		'Author',
+		'Author URI',
+		'Author Email',
+		'Tags',
+		'Screenshot',
+	);
+
+	/**
+	 * Array that holds theme details, combined with details got
+	 * from theme's CSS file ($_css_headers).
+	 * @since 	1.4.0
+	 * @var 	array
+	 */
+	private $_default_headers = array(
+		'name',
+		'theme_uri',
+		'description',
+		'version',
+		'license',
+		'license_uri',
+		'author',
+		'author_uri',
+		'author_email',
+		'tags',
+		'screenshot',
+	);
+
+	/**
+	 * Array of extensions allowed for themes previews.
+	 * @since 	1.4.0
+	 * @var 	array
+	 */
+	private $_screenshot_ext = array('.png', '.jpg', '.jpeg', '.gif');
+
+	/**
 	 * Holds the current theme's language index.
 	 * @var string
 	 */
@@ -558,7 +604,8 @@ EOT;
 				'.',
 				'..',
 				'index.html',
-				'.htaccess'
+				'.htaccess',
+				'__MACOSX', // Added as of v1.4.0
 			);
 
 			while (false !== ($file = readdir($handle)))
@@ -576,7 +623,8 @@ EOT;
 			foreach ($folders as $key => $folder)
 			{
 				// A theme is valid ONLY if it has the 'manifest.json' file.
-				if (false !== realpath(FCPATH."{$this->_themes_folder}/{$folder}/manifest.json"))
+				// if (false !== realpath(FCPATH."{$this->_themes_folder}/{$folder}/manifest.json"))
+				if (false !== is_file(FCPATH."{$this->_themes_folder}/{$folder}/style.css"))
 				{
 					$folders[$folder] = $this->_get_theme_details($folder);
 					$this->_themes++;
@@ -593,74 +641,63 @@ EOT;
 
 	/**
 	 * Return details about a given theme.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.4.0 	We no longer need manifest.json, we will use style.css
+	 * 
 	 * @access 	private
 	 * @param 	string 	$theme 	the theme's folder name.
 	 * @return 	object if found or false.
 	 */
 	private function _get_theme_details($folder)
 	{
-		// Prepare the path to the manifest.json file.
-		$theme_info = FCPATH."{$this->_themes_folder}/{$folder}/manifest.json";
-
-		// Make sure the file exists.
-		if ( ! is_file($theme_info))
+		// Prepare the path to the "style.css" file and make sure it exists.
+		$theme_css = realpath(FCPATH."{$this->_themes_folder}/{$folder}/style.css");
+		if (false === $theme_css)
 		{
-			show_error("Unable to locate the theme's info file: {$theme_info}");
+			show_error("Theme missing CSS file: {$folder}.");
 		}
 
-		// Get the manifest.json file content na json_decode it.
-		$manifest = file_get_contents($theme_info);
-		$manifest = json_decode(trim($manifest), true);
+		// Load our custom files helper to get file info.
+		(function_exists('get_file_data')) OR $this->ci->load->helper('file');
+		$css_headers = get_file_data($theme_css, $this->_css_headers);
 
-		// If it's no a valid array.
-		if ( ! is_array($manifest))
+		// We make sure to have at least something.
+		if (empty(array_filter($css_headers)))
 		{
-			show_error("The 'manifest.json' file of the theme '{$folder}' does not contain a valid array.");
+			show_error("Theme CSS file is missing details: {$folder}.");
 		}
 
-		/**
-		 * If the theme preview (default: screenshot.jpg) is
-		 * set but not a valid URL, we set it.
-		 */
-		if (isset($manifest['screenshot']) && false === filter_var($manifest['screenshot'], FILTER_VALIDATE_URL))
+		// Prepare theme file headers and fill them.
+		$headers = array_fill_keys($this->_default_headers, false);
+		foreach ($css_headers as $index => $value)
 		{
-			$manifest['screenshot'] = $this->themes_url("{$folder}/{$manifest['screenshot']}");
-		}
-		/**
-		 * In case it was not set but if preview file
-		 * exists, we add it automatically.
-		 */
-		elseif ( ! isset($manifest['screenshot']) && false !== ($this->theme_path('screenshot.jpg')))
-		{
-			$manifest['screenshot'] = $this->themes_url('screenshot.jpg');
-		}
-		// Otherwise, set it to false for later use.
-		else
-		{
-			$manifest['screenshot'] = false;
+			$headers[$this->_default_headers[$index]] = $value;
 		}
 
-		// Always add the folder name to the array.
-		$manifest['folder'] = $folder;
+		// If the screenshot was not provided, we generate URL for it.
+		if (false === $headers['screenshot'])
+		{
+			$headers['screenshot'] = $this->common_url('img/theme-blank.png');
+			foreach ($this->_screenshot_ext as $ext)
+			{
+				if (is_file(FCPATH."{$this->_themes_folder}/{$folder}/screenshot{$ext}"))
+				{
+					$headers['screenshot'] = $this->themes_url("{$folder}/screenshot{$ext}");
+					break;
+				}
+			}
+		}
+		// If the screenshot was provided, we make sure it points to the URL.
+		elseif (false === filter_var($headers['screenshot'], FILTER_VALIDATE_URL))
+		{
+			$headers['screenshot'] = $this->themes_url($folder.'/'.$headers['screenshot']);
+		}
 
-		// Prepare array of default headers.
-		$defaults = array(
-			'name' => null,
-			'folder' => null,
-			'theme_uri' => null,
-			'description' => null,
-			'version' => null,
-			'license' => null,
-			'license_uri' => null,
-			'author' => null,
-			'author_uri' => null,
-			'author_email' => null,
-			'tags' => null,
-			'screenshot' => null
-		);
-
-		// Replace defaults and return the result.
-		return array_replace($defaults, $manifest);
+		// We make sure to finally add the folder name and path to headers.
+		$headers['folder'] = $folder;
+		$headers['full_pah'] = $this->themes_path($folder).DS;
+		return $headers;
 	}
 
 	// ------------------------------------------------------------------------
@@ -693,16 +730,23 @@ EOT;
 	 */
 	public function theme_details($key = null)
 	{
+		// Already cached? Use it.
 		if (isset($this->_theme_details))
 		{
 			$return = $this->_theme_details;
 		}
 		else
 		{
-			$return = $this->_get_theme_details($this->_theme);
+			$this->_theme_details = $this->_get_theme_details($this->_theme);
+			$return = $this->_theme_details;
 		}
 
-		return (isset($return->{$key})) ? $return->{$key} : $return;
+		if (false !== $return)
+		{
+			return (isset($return[$key])) ? $return[$key] : $return;
+		}
+
+		return false;
 	}
 
 	// --------------------------------------------------------------------
