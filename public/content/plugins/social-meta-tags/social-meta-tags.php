@@ -38,6 +38,14 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
+ * Plugin Name: Social Meta Tags
+ * Description: This plugin adds Open Graph and Twitter meta tags.
+ * Version: 1.0.0
+ * Author: Kader Bouyakoub
+ * Author URI: https://github.com/bkader
+ * Author Email: bkader@mail.com
+ * Tags: skeleton, social, meta, tags
+ * 
  * Social Head Plugin
  *
  * This is a another example plugin that demonstrate the plugins system.

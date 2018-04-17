@@ -38,6 +38,14 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
+ * Plugin Name: Extra Profile Fields
+ * Description: This plugin adds extra fields to users profiles.
+ * Version: 0.3.0
+ * Author: Kader Bouyakoub
+ * Author URI: https://github.com/bkader
+ * Author Email: bkader@mail.com
+ * Tags: skeleton, profile, fields, extra
+ * 
  * Extra Profile Fields
  *
  * This plugin adds extra fields to users profiles.

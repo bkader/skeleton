@@ -38,6 +38,14 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
+ * Plugin Name: Hello World
+ * Description: Dummy plugin to demonstrate plugins system.
+ * Version: 1.0.0
+ * Author: Kader Bouyakoub
+ * Author URI: https://github.com/bkader
+ * Author Email: bkader@mail.com
+ * Tags: skeleton, cache, assets
+ * 
  * Hello World Plugin
  *
  * This is a another example plugin that demonstrate the plugins system.

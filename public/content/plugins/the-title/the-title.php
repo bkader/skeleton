@@ -38,6 +38,15 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
+ * Plugin Name: The Title
+ * Plugin URI: https://github.com/bkader
+ * Description: This a plugin does nothing but adding site name to pages titles.
+ * Version: 1.0.0
+ * Author: Kader Bouyakoub
+ * Author URI: https://github.com/bkader
+ * Author Email: bkader@mail.com
+ * Tags: skeleton, cache, assets
+ * 
  * Site Title Plugin
  *
  * This is a another example plugin that demonstrate the plugins system.

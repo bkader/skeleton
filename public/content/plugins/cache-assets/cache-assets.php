@@ -38,6 +38,17 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
+ * Plugin Name: Cache Assets
+ * Description: This plugins combines all your CSS and JS files into a single CSS file and a single JS file reduce http requests and cache assets. This file is then cached for a period you choose.
+ * Version: 0.3.0
+ * License: MIT
+ * License URI: http://opensource.org/licenses/MIT
+ * Author: Kader Bouyakoub
+ * Author URI: https://github.com/bkader
+ * Author Email: bkader@mail.com
+ * Tags: skeleton, cache, assets
+ * Language Folder: langs
+ * 
  * Cache Assets Plugin
  *
  * This plugins turns theme class assets cache on to reduce
@@ -70,12 +81,6 @@ class Cache_assets
 	private static $cache_time = 172800;
 
 	/**
-	 * Whether to cache dashboard assets.
-	 * @var boolean
-	 */
-	private static $cache_dashboard = false;
-
-	/**
 	 * Where to store cached assets.
 	 * @var string
 	 */
@@ -86,21 +91,12 @@ class Cache_assets
 	 * @var array
 	 */
 	private static $time_dropdown = array(
-		DAY_IN_SECONDS       => '1 day',
-		(DAY_IN_SECONDS*2)   => '2 days',
-		WEEK_IN_SECONDS      => '1 week',
-		(WEEK_IN_SECONDS*2)  => '2 weeks',
-		MONTH_IN_SECONDS     => '1 month',
-		(MONTH_IN_SECONDS*2) => '2 months',
-	);
-
-	/**
-	 * Dashboard cache options.
-	 * @var array
-	 */
-	private static $dashboard_dropdown = array(
-		'true' => 'lang:yes',
-		'false' => 'lang:no',
+		DAY_IN_SECONDS       => '1_day',
+		(DAY_IN_SECONDS*2)   => '2_days',
+		WEEK_IN_SECONDS      => '1_week',
+		(WEEK_IN_SECONDS*2)  => '2_weeks',
+		MONTH_IN_SECONDS     => '1_month',
+		(MONTH_IN_SECONDS*2) => '2_months',
 	);
 
 	// ------------------------------------------------------------------------
@@ -159,48 +155,6 @@ class Cache_assets
 			));
 		}
 
-		// Dashboard cache option.
-		$dashboard_option = $KB->options->get('assets_cache_dashboard');
-
-		// Found? Make sure to format it well.
-		if ($dashboard_option)
-		{
-			// Array of data to update, just in case.
-			$data = array();
-
-			// Let's format few data.
-			(is_numeric($dashboard_option->value)) OR $data['value'] = self::$cache_dashboard;
-
-			// Check the field type.
-			($dashboard_option->field_type === 'dropdown') OR $data['field_type'] = 'dropdown';
-
-			// Make sure available options is always an array.
-			if ( ! is_array($dashboard_option->options) OR empty($dashboard_option->options))
-			{
-				$data['options'] = self::$dashboard_dropdown;
-			}
-
-			// It must be required.
-			($dashboard_option->required == 1) OR $data['required'] = 1;
-
-			// The data is not empty? Update the option.
-			if ( ! empty($data))
-			{
-				return (bool) $KB->options->update('assets_cache_dashboard', $data);
-			}
-		}
-		// Not found? create it.
-		else
-		{
-			$KB->options->create(array(
-				'name'       => 'assets_cache_dashboard',
-				'value'      => self::$cache_dashboard ? 'true' : 'false',
-				'field_type' => 'dropdown',
-				'options'    => self::$dashboard_dropdown,
-				'required'   => 1,
-			));
-		}
-
 		return true;
 	}
 
@@ -214,7 +168,7 @@ class Cache_assets
 	public static function deactivate()
 	{
 		global $KB;
-		return $KB->options->delete_by('name', array('assets_cache_time', 'assets_cache_dashboard'));
+		return $KB->options->delete_by('name', 'assets_cache_time');
 	}
 
 	// ------------------------------------------------------------------------
@@ -226,9 +180,6 @@ class Cache_assets
 	 */
 	public static function install()
 	{
-		// Check plugin translations if there are any.
-		self::_check_translation();
-
 		// Make sure the cache folder exists.
 		if ( ! is_dir(FCPATH.self::$cache_folder))
 		{
@@ -240,7 +191,7 @@ class Cache_assets
 		{
 			if (is_controller('admin'))
 			{
-				set_alert(lang('assets_cache_writable'), 'error');
+				set_alert(line('assets_cache_writable', 'cache-assets'), 'error');
 			}
 			return;
 		}
@@ -249,9 +200,7 @@ class Cache_assets
 
 		// Format options if not formatted.
 		$db_time_option = $KB->options->item('assets_cache_time', false);
-		$db_dash_option = $KB->options->item('assets_cache_dashboard', null);
-		if (( ! $db_time_option OR ! is_numeric($db_time_option))
-			OR ( ! $db_dash_option OR ! is_bool($db_dash_option)))
+		if ( ! $db_time_option OR ! is_numeric($db_time_option))
 		{
 			self::activate();
 		}
@@ -294,6 +243,10 @@ class Cache_assets
 		// Load settings dependencies.
 		self::_load_dependencies();
 
+		self::$time_dropdown = array_map(function($line) {
+			return line($line, 'cache-assets');
+		}, self::$time_dropdown);
+
 		// Before the form is submitted.
 		if ($KB->ci->form_validation->run() == false)
 		{
@@ -305,21 +258,9 @@ class Cache_assets
 			<div class="panel-body">
 				<?php echo form_open('', 'role="form"'); ?>
 				<div class="form-group<?php echo form_error('assets_cache_time') ? ' has-error' : ''; ?>">
-					<label for="assets_cache_time"><?php _e('assets_cache_time'); ?></label>
+					<label for="assets_cache_time"><?php _e('assets_cache_time', 'cache-assets'); ?></label>
 					<?php echo form_dropdown('assets_cache_time', self::$time_dropdown, self::_cache_time(), 'class="form-control" id="assets_cache_time"'); ?>
-					<small class="help-block"><?php echo form_error('assets_cache_time') ?: lang('assets_cache_time_help'); ?></small>
-				</div>
-
-				<div class="form-group">
-					<label for="assets_cache_dashboard"><?php _e('assets_cache_dashboard'); ?></label>
-					<?php echo print_input(array(
-						'type' => 'dropdown',
-						'name' => 'assets_cache_dashboard',
-						'options' => self::$dashboard_dropdown,
-						'selected' => to_bool_or_serialize(self::_cache_dashboard()),
-						'class' => 'form-control',
-						)); ?>
-					<small class="help-block"><?php echo form_error('assets_cache_dashboard') ?: lang('assets_cache_dashboard_help'); ?></small>
+					<small class="help-block"><?php echo form_error('assets_cache_time') ?: line('assets_cache_time_help', 'cache-assets'); ?></small>
 				</div>
 
 				<button class="btn btn-primary btn-sm btn-block" type="submit"><?php _e('save_changes'); ?></button>
@@ -336,17 +277,17 @@ class Cache_assets
 			// Use Input class to secure POST.
 			global $IN;
 			$new_time = $IN->post('assets_cache_time', true);
-			$new_dash = ($IN->post('assets_cache_dashboard') === 'true');
 
 			// Successfully updated?
-			if ( ! $KB->options->set_item('assets_cache_time', $new_time)
-				&& ! $KB->options->set_item('assets_cache_dashboard', $new_dash))
+			if ( ! $KB->options->set_item('assets_cache_time', $new_time))
 			{
 				set_alert(lang('spg_plugin_settings_error'), 'error');
+				redirect(current_url());
+				exit;
 			}
 
 			set_alert(lang('spg_plugin_settings_success'), 'success');
-			redirect(current_url(), 'refresh');
+			redirect(current_url());
 			exit;
 		}
 	}
@@ -366,18 +307,6 @@ class Cache_assets
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Whether to cache dashboard assets as well.
-	 * @return 	boolean
-	 */
-	private static function _cache_dashboard()
-	{
-		global $KB;
-		return $KB->options->item('assets_cache_dashboard', false);
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
 	 * If there are any translations, we make sure to load them.
 	 * NOTE: The default language is loaded first.
 	 * @access 	private
@@ -387,30 +316,35 @@ class Cache_assets
 	{
 		global $KB;
 
-		// Hold the default language file for later use.
-		$default = $KB->options->item('language');
-
 		// Hold the current language file.
-		$current = ($KB->ci->session->language)
-			? $KB->ci->session->language
-			: $KB->options->item('language');
+		$current = $KB->ci->config->item('language');
 
 		// Let's see if the default language file exists.
-		$default_file = $KB->plugins->plugins_path('cache-assets/langs/'.$default.'.php');
+		$default_file = $KB->plugins->plugins_path('cache-assets/langs/english.php');
 
 		// The default language file found? load it.
 		if (is_file($default_file))
 		{
 			include_once($default_file);
 
-			// If the current language is different, load its file.
-			$current_file = $KB->plugins->plugins_path('cache-assets/langs/'.$current.'.php');
+			$full_lang = (isset($lang)) ? $lang : array();
 
-			// The current language file found? load it.
-			if (is_file($current_file))
+			// If the current language is different, load its file.
+			if ('english' !== $current)
 			{
-				include_once($current_file);
+				$current_file = $KB->plugins->plugins_path('cache-assets/langs/'.$current.'.php');
+				// The current language file found? load it.
+				if (is_file($current_file))
+				{
+					include_once($current_file);
+
+					if (isset($lang))
+					{
+						$full_lang = array_replace_recursive($full_lang, $lang);
+					}
+				}
 			}
+
 		}
 
 		// If any translation is found, merge it with global one.
