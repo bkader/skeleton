@@ -119,8 +119,11 @@ class Kbcore extends CI_Driver_Library
 		$this->options->initialize();
 		$KB->options = $this->options;
 
-		// Store language in session.
+		// Store language in session and change config item.
 		$this->_set_language();
+		$this->ci->config->set_item('language', $this->ci->session->language);
+
+		// Initialize library drivers.
 		foreach ($this->valid_drivers as $driver)
 		{
 			// Options already initialized.
