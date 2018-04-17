@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.3.3
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 
 if ( ! function_exists('directory_delete'))
@@ -90,5 +90,75 @@ if ( ! function_exists('directory_delete'))
 		}
 
 		return false;
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('directory_files'))
+{
+	/**
+	 * Returns a list of all files in the selected directory and all its 
+	 * subdirectories up to 100 levels deep.
+	 *
+	 * @since 	1.4.0
+	 *
+	 * @param 	string 	$path 	The full path to the directory.
+	 * @param 	int 	$levels 	How deeper we shall go.
+	 * @param 	array 	$exclude 	Array of folders/files to skip.
+	 * @return 	mixed 	Array of files if found, else false.
+	 */
+	function directory_files($path = '', $levels = 100, $exclude = array())
+	{
+		// Nothing to do if no path or levels provided.
+		if (empty($path) OR ! $levels)
+		{
+			return false;
+		}
+
+		// We format path and prepare an empty files array.
+		$path  = rtrim($path, '/\\').'/';
+		$files = array();
+
+		// We open the directory and make sure it's valid.
+		$dir = @opendir($path);
+		if (false !== $dir)
+		{
+			while (false !== ($file = readdir($dir)))
+			{
+				/**
+				 * We make sure to skip current and parent folders links, as well
+				 * as hidden and excluded files.
+				 */
+				if (in_array($file, array('.', '..'), true) 
+					OR ('.' === $file[0] OR in_array($file, $exclude, true)))
+				{
+					continue;
+				}
+
+				// In case of a directory, we list its files.
+				if (is_dir($path.$file))
+				{
+					$files2 = directory_files($path.$file, $levels - 1);
+					if ( ! empty($files2))
+					{
+						$files = array_merge($files, $files2);
+					}
+					else
+					{
+						$files[] = $path.$file.'/';
+					}
+				}
+				// Is is a file?
+				else
+				{
+					$files[] = $path.$file;
+				}
+			}
+		}
+
+		// We close the directory and return files.
+		@closedir($dir);
+		return $files;
 	}
 }
