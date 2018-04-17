@@ -51,11 +51,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 ?><h2 class="page-header clearfix">
 	<?php _e('spg_manage_plugins'); ?>
-	<span class="pull-right"><?php
-echo admin_anchor('plugins', sprintf(lang('spg_all'), $count_all), 'class="btn btn-'.(null === $filter ? 'primary' : 'default').' btn-sm"').'&nbsp;';
-echo admin_anchor('plugins?status=active', sprintf(lang('spg_active'), $count_active), 'class="btn btn-'.('active' === $filter ? 'primary' : 'default').' btn-sm"').'&nbsp;';
-echo admin_anchor('plugins?status=inactive', sprintf(lang('spg_inactive'), $count_inactive), 'class="btn btn-'.('inactive' === $filter ? 'primary' : 'default').' btn-sm"');
-	?></span>
+	<span class="pull-right"><div class="btn-group btn-group-sm"><?php
+
+echo admin_anchor('plugins', sprintf(lang('spg_all'), $count_all), 'class="btn btn-'.(null === $filter ? 'primary' : 'default').'"').'&nbsp;';
+
+echo admin_anchor('plugins?status=active', sprintf(lang('spg_active'), $count_active), 'class="btn btn-'.('active' === $filter ? 'primary' : 'default').'"').'&nbsp;';
+
+echo admin_anchor('plugins?status=inactive', sprintf(lang('spg_inactive'), $count_inactive), 'class="btn btn-'.('inactive' === $filter ? 'primary' : 'default').'"');
+
+	?></div><?php echo admin_anchor('plugins/install', lang('spg_plugin_add'), 'class="btn btn-primary btn-sm pull-right"'); ?></span>
 </h2>
 <div class="panel panel-default">
 	<div class="table-responsive">
@@ -76,12 +80,7 @@ echo admin_anchor('plugins?status=inactive', sprintf(lang('spg_inactive'), $coun
 					</td>
 					<td>
 						<p><?php echo $plugin['description']; ?></p>
-						<small>
-							<?php echo $plugin['version'] ? 'Version: '.$plugin['version']: ''; ?>&nbsp;&#124;&nbsp;<?php echo ($plugin['author_uri']) ? anchor($plugin['author_uri'], $plugin['author'], 'target="_blank" rel="nofollow"') : $plugin['author']; ?>
-							<?php if ($plugin['license']): ?>&nbsp;&#124;&nbsp;<?php _e('spg_license'); ?>:
-								<?php echo ($plugin['license_uri']) ? anchor($plugin['license_uri'], $plugin['license'], 'target="_blank" rel="nofollow"') : $plugin['license']; ?>
-							<?php endif; ?>
-						</small>
+						<small><?php echo implode(' &#124; ', $plugin['details']); ?></small>
 					</td>
 				</tr>
 		<?php endforeach; ?>

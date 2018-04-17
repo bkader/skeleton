@@ -50,59 +50,89 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @version 	1.3.3
  */
 
+// Plugin: singular and plural forms.
+$lang['spg_plugin']  = 'Extension';
+$lang['spg_plugins'] = 'Extensions';
+
 // Dashboard title.
-$lang['spg_manage_plugins'] = 'Gérer Les extensions';
+$lang['spg_manage_plugins'] = 'Gérer les extensions';
 
 // Plugin' settings page.
 $lang['spg_plugin_settings']      = 'Paramètres de l\'extension';
-$lang['spg_plugin_settings_name'] = 'Paramètres de l\'extension: %s';
+$lang['spg_plugin_settings_name'] = 'Paramètres: %s';
 
-// Plugin: singular and plural forms.
-$lang['spg_plugin']  = 'Plugin';
-$lang['spg_plugins'] = 'Les Plugins';
+// Plugins actions.
+$lang['spg_plugin_activate']   = 'Activer';
+$lang['spg_plugin_add']        = 'Ajouter des extensions';
+$lang['spg_plugin_deactivate'] = 'Désactiver';
+$lang['spg_plugin_delete']     = 'Supprimer';
+$lang['spg_plugin_details']    = 'Détails';
+$lang['spg_plugin_install']    = 'Installer l\'extension';
+$lang['spg_plugin_settings']   = 'Paramètres';
+$lang['spg_plugin_upload']     = 'Téléverser une extension';
+
+$lang['spg_plugin_upload_tip'] = 'Si vous avez une extension au format .zip, vous pouvez l\'installer en la téléversant ici.';
+
+// Confirmation messages.
+$lang['spg_plugin_delete_confirm'] = 'Êtes-vous s$ur de vouloir supprimer cette extension et toutes ses données?';
 
 // Success messages.
-$lang['spg_plugin_activate_success']   = 'Extension activée avec succès.';
+$lang['spg_plugin_activate_success']   = 'Extension activé avec succès.';
 $lang['spg_plugin_deactivate_success'] = 'Extension désactivée avec succès.';
 $lang['spg_plugin_delete_success']     = 'Extension supprimée avec succès.';
-$lang['spg_plugin_uploaded_success']   = 'Extension installée avec succès.';
+$lang['spg_plugin_install_success']    = 'Extension installée avec succès.';
 $lang['spg_plugin_settings_success']   = 'Les paramètres de l\'extension ont été mis à jour.';
+$lang['spg_plugin_upload_success']     = 'Extension téléversée avec succès.';
 
 // Error messages.
 $lang['spg_plugin_activate_error']   = 'Impossible d\'activer l\'extension.';
 $lang['spg_plugin_deactivate_error'] = 'Impossible de désactiver l\'extension.';
-$lang['spg_plugin_delete_error']    = 'Impossible de supprimer l\'extension.';
-$lang['spg_plugin_uploaded_error']   = 'Impossible d\'installer l\'extension.';
+$lang['spg_plugin_delete_error']     = 'Impossible de supprimer l\'extension.';
+$lang['spg_plugin_install_error']    = 'Impossible d\'installer l\'extension.';
 $lang['spg_plugin_settings_error']   = 'Impossible de mettre à jour les paramètres de l\'extension.';
+$lang['spg_plugin_upload_error']     = 'Impossible de téléverer l\'extension.';
 
-// Confirmation messages.
-$lang['spg_plugin_delete_confirm'] = 'Êtes-vous sûr de vouloir supprimer cette extension et toutes ses données?';
-
-// Plugins actions.
-$lang['spg_activate']   = 'Activer';
-$lang['spg_deactivate'] = 'Désactiver';
-$lang['spg_delete']     = 'Supprimer';
-$lang['spg_settings']   = 'Paramètres';
-
-// Plugins filters.
-$lang['spg_all']      = 'Toutes (%s)';
-$lang['spg_active']   = 'Activées (%s)';
-$lang['spg_inactive'] = 'Désactivées (%s)';
-
-// Actions errors
+// Errors when performing actions.
 $lang['spg_plugin_missing']           = 'Cette extension n\'existe pas.';
 $lang['spg_plugin_settings_disabled'] = 'Vous ne pouvez mettre à jour que les paramètres des extensions activées.';
-$lang['spg_plugin_settings_missing']  = 'Cette extension n\'a pas une page de paramètres.';
+$lang['spg_plugin_settings_missing']  = 'Cette extension n\'a pas une page de paramètres';
 
 // Plugin details.
-$lang['spg_name']         = 'Nom';
-$lang['spg_folder']       = 'Dossier';
-$lang['spg_plugin_uri']   = 'Plugin URI';
+$lang['spg_details']      = 'Détails de l\'extension';
+$lang['spg_name']         = 'Nome';
+$lang['spg_folder']       = 'Répertoire';
+$lang['spg_plugin_uri']   = 'Site de l\'extension';
 $lang['spg_description']  = 'Description';
 $lang['spg_version']      = 'Version';
 $lang['spg_license']      = 'Licence';
 $lang['spg_license_uri']  = 'Licence URI';
 $lang['spg_author']       = 'Auteur';
 $lang['spg_author_uri']   = 'Site de l\'auteur';
-$lang['spg_author_email'] = 'E-mail de l\'auteur';
-$lang['spg_tags']         = 'Mots-clés';
+$lang['spg_author_email'] = 'Email de l\'auteur';
+$lang['spg_tags']         = 'Étiquettes';
+$lang['spg_plugin_zip']   = 'Fichier ZIP de l\'extension';
+
+// With extra string after.
+$lang['spg_details_name'] = 'Détails de l\'extension: %s';
+$lang['spg_version_num']  = 'Version: %s';
+$lang['spg_license_name'] = 'Licence: %s';
+$lang['spg_author_name']  = 'par %s';
+$lang['spg_tags_list']    = 'Étiquettes: %s';
+
+// Plugins filters.
+$lang['spg_all']     = 'Toutes (%s)';
+$lang['spg_active']  = 'Activées (%s)';
+$lang['spg_inactive'] = 'Désactivées (%s)';
+
+// Plugin install filters.
+$lang['spg_featured']    = 'Mises en avant';
+$lang['spg_popular']     = 'Populaires';
+$lang['spg_recommended'] = 'Recommandées';
+$lang['spg_new']         = 'Nouvelles';
+$lang['spg_search']      = 'Rechercher des extensions...';
+
+// Plugin details with links.
+$lang['spg_plugin_author_uri']   = '<a href="%1$s" target="_blank" rel="nofollow">Site Web</a>';
+$lang['spg_plugin_license']      = '<a href="%2$s" target="_blank" rel="nofollow">%1$s</a>';
+$lang['spg_plugin_author']       = '<a href="%2$s" target="_blank" rel="nofollow">%1$s</a>';
+$lang['spg_plugin_author_email'] = '<a href="mailto:%1$s?subject=%2$s" target="_blank" rel="nofollow">Support</a>';

@@ -50,6 +50,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @version 	1.3.3
  */
 
+// Plugin: singular and plural forms.
+$lang['spg_plugin']  = 'الإضافة';
+$lang['spg_plugins'] = 'الإضافات';
+
 // Dashboard title.
 $lang['spg_manage_plugins'] = 'إدارة الإضافات';
 
@@ -57,52 +61,78 @@ $lang['spg_manage_plugins'] = 'إدارة الإضافات';
 $lang['spg_plugin_settings']      = 'إعدادات الإضافة';
 $lang['spg_plugin_settings_name'] = 'إعدادات الإضافة: %s';
 
-// Plugin: singular and plural forms.
-$lang['spg_plugin']  = 'الإضافة';
-$lang['spg_plugins'] = 'الإضافات';
+// Plugins actions.
+$lang['spg_plugin_activate']   = 'تفعيل';
+$lang['spg_plugin_add']        = 'إضافة جديدة';
+$lang['spg_plugin_deactivate'] = 'تعطيل';
+$lang['spg_plugin_delete']     = 'حذف';
+$lang['spg_plugin_details']    = 'تفاصيل';
+$lang['spg_plugin_install']    = 'تنصيب الاضافة';
+$lang['spg_plugin_settings']   = 'إعدادات';
+$lang['spg_plugin_upload']     = 'رفع إضافة';
 
-// Success messages.
-$lang['spg_plugin_activate_success']   = 'تم تفعيل الاضافة بنجاح.';
-$lang['spg_plugin_deactivate_success'] = 'تم إلغاء تفعيل الاضافة بنجاح.';
-$lang['spg_plugin_delete_success']    = 'تم حذف الاضافة بنجاح.';
-$lang['spg_plugin_uploaded_success']   = 'تم تحميل الاضافة بنجاح.';
-$lang['spg_plugin_settings_success']   = 'تم تحديث إعدادات الاضافة بنجاح.';
-
-// Error messages.
-$lang['spg_plugin_activate_error']   = 'تعذر تفعيل الاضافة.';
-$lang['spg_plugin_deactivate_error'] = 'تعذر إلغاء تفعيل الاضافة.';
-$lang['spg_plugin_delete_error']    = 'تعذر حذف الاضافة.';
-$lang['spg_plugin_uploaded_error']   = 'تعذر تحميل الاضافة.';
-$lang['spg_plugin_settings_error']   = 'تعذر تحديث إعدادات الاضافة.';
+$lang['spg_plugin_upload_tip'] = 'إذا كانت الإضافة في ملف .zip مضغوط, يمكنك تنصيبها بواسطة رفعها هنا.';
 
 // Confirmation messages.
 $lang['spg_plugin_delete_confirm'] = 'هل أنت متأكد من أنك تريد حذف هذه الاضافة وبياناتها؟';
 
-// Plugins actions.
-$lang['spg_activate']   = 'تفعيل';
-$lang['spg_deactivate'] = 'تعطيل';
-$lang['spg_delete']     = 'حذف';
-$lang['spg_settings']   = 'إعدادات';
+// Success messages.
+$lang['spg_plugin_activate_success']   = 'تم تفعيل الاضافة بنجاح.';
+$lang['spg_plugin_deactivate_success'] = 'تم إلغاء تفعيل الاضافة بنجاح.';
+$lang['spg_plugin_delete_success']     = 'تم حذف الاضافة بنجاح.';
+$lang['spg_plugin_install_success']    = 'تم تنصيب الاضافة بنجاح.';
+$lang['spg_plugin_settings_success']   = 'تم تحديث إعدادات الاضافة بنجاح.';
+$lang['spg_plugin_upload_success']     = 'تم تحميل الاضافة بنجاح.';
 
-// Plugins filters.
-$lang['spg_all']     = 'الكل (%s)';
-$lang['spg_active']  = 'مفعّلة (%s)';
-$lang['spg_inactive'] = 'غير مفعّلة (%s)';
+// Error messages.
+$lang['spg_plugin_activate_error']   = 'تعذر تفعيل الاضافة.';
+$lang['spg_plugin_deactivate_error'] = 'تعذر إلغاء تفعيل الاضافة.';
+$lang['spg_plugin_delete_error']     = 'تعذر حذف الاضافة.';
+$lang['spg_plugin_install_error']    = 'تعذر تنصيب الاضافة.';
+$lang['spg_plugin_settings_error']   = 'تعذر تحديث إعدادات الاضافة.';
+$lang['spg_plugin_upload_error']     = 'تعذر تحميل الاضافة.';
 
-// Actions errors
+// Errors when performing actions.
 $lang['spg_plugin_missing']           = 'هذه الاضافة غير موجود.';
-$lang['spg_plugin_settings_disabled'] = 'يمكنك فقط تحديث إعدادات الإضافات المفعلة.';
-$lang['spg_plugin_settings_missing']  = 'لا يحتوي هذه الاضافة على صفحة إعدادات.';
+$lang['spg_plugin_settings_disabled'] = 'يمكنك فقط تحديث إعدادات الإضافات المفعّلة.';
+$lang['spg_plugin_settings_missing']  = 'لا تحتوي هذه الاضافة على صفحة إعدادات.';
 
 // Plugin details.
+$lang['spg_details']      = 'تفاصيل الاضافة';
 $lang['spg_name']         = 'الاسم';
 $lang['spg_folder']       = 'المجلد';
 $lang['spg_plugin_uri']   = 'موقع الاضافة';
 $lang['spg_description']  = 'الوصف';
-$lang['spg_version']      = 'الإصدار';
+$lang['spg_version']      = 'النسخة';
 $lang['spg_license']      = 'الرخصة';
-$lang['spg_license_uri']  = 'موقع ترخيص';
+$lang['spg_license_uri']  = 'موقع الرخصة';
 $lang['spg_author']       = 'المؤلف';
 $lang['spg_author_uri']   = 'موقع المؤلف';
-$lang['spg_author_email'] = 'البريد الإلكتروني للمؤلف';
+$lang['spg_author_email'] = 'بريد للمؤلف';
 $lang['spg_tags']         = 'الوسوم';
+$lang['spg_plugin_zip']   = 'أرشيف ZIP الاضافة';
+
+// With extra string after.
+$lang['spg_details_name'] = 'تفاصيل الاضافة: %s';
+$lang['spg_version_num']  = 'النسخة: %s';
+$lang['spg_license_name'] = 'الرخصة: %s';
+$lang['spg_author_name']  = 'بواسطة %s';
+$lang['spg_tags_list']    = 'الوسوم: %s';
+
+// Plugins filters.
+$lang['spg_all']      = 'الكل (%s)';
+$lang['spg_active']   = 'مفعّلة (%s)';
+$lang['spg_inactive'] = 'غير مفعّلة (%s)';
+
+// Plugin install filters.
+$lang['spg_featured']    = 'البارزة';
+$lang['spg_popular']     = 'الأكثر شعبية';
+$lang['spg_recommended'] = 'موصى به';
+$lang['spg_new']         = 'جديدة';
+$lang['spg_search']      = 'بحث في الإضافات...';
+
+// Plugin details with links.
+$lang['spg_plugin_author_uri']   = '<a href="%1$s" target="_blank" rel="nofollow">لموقع</a>';
+$lang['spg_plugin_license']      = '<a href="%2$s" target="_blank" rel="nofollow">%1$s</a>';
+$lang['spg_plugin_author']       = '<a href="%2$s" target="_blank" rel="nofollow">%1$s</a>';
+$lang['spg_plugin_author_email'] = '<a href="mailto:%1$s?subject=%2$s" target="_blank" rel="nofollow">الدعم</a>';
