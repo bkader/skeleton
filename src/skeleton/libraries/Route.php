@@ -493,6 +493,7 @@ class Route {
         call_user_func($callback);
 
         // Remove the prefix.
+        self::$prefix = null;
     }
 
     // ------------------------------------------------------------------------
