@@ -189,6 +189,12 @@ if ( ! function_exists('get_file_data'))
 
 if ( ! function_exists('unzip_file'))
 {
+	/**
+	 * Unzips a specified ZIP file to a location on the disk.
+	 * @param 	string 	$file 	Full path and filename of zip archive.
+	 * @param	string 	$path 	Full path to extract archive to.
+	 * @return 	bool 	TRUE if everything is okey, else false.
+	 */
 	function unzip_file($file, $path)
 	{
 		// Prepare an array directories to be created.
