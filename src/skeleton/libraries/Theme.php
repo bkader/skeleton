@@ -676,7 +676,7 @@ EOT;
 		}
 
 		// If the screenshot was not provided, we generate URL for it.
-		if (false === $headers['screenshot'])
+		if (empty($headers['screenshot']))
 		{
 			$headers['screenshot'] = $this->common_url('img/theme-blank.png');
 			foreach ($this->_screenshot_ext as $ext)
