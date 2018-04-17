@@ -1,6 +1,7 @@
 # Ignore unnecessary folders.
 .DS_Store
 .phpintel
+license.txt
 
 # Ignore cache files.
 !src/application/cache/*

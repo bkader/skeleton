@@ -106,7 +106,7 @@ $lang['sth_theme_zip']    = 'Fichier ZIP du thème';
 // Theme install filters.
 $lang['sth_theme_featured'] = 'Mise en avant';
 $lang['sth_theme_popular']  = 'Populaires';
-$lang['sth_theme_new']      = 'Nouveau';
+$lang['sth_theme_new']      = 'Nouveaux';
 $lang['sth_theme_search']   = 'Rechercher des thèmes...';
 
 // Details with links:
