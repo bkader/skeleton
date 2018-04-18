@@ -370,8 +370,7 @@ class Kbcore_relations extends CI_Driver implements CRUD_interface
 		}
 
 		// Proceed to update.
-		$this->ci->db->update('relations');
-		return ($this->ci->db->affected_rows() > 0);
+		return $this->ci->db->update('relations');
 	}
 
 	// ------------------------------------------------------------------------

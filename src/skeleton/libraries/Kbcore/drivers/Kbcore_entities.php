@@ -382,8 +382,7 @@ class Kbcore_entities extends CI_Driver implements CRUD_interface
 		}
 
 		// Proceed to update.
-		$this->ci->db->update('entities');
-		return ($this->ci->db->affected_rows() > 0);
+		return $this->ci->db->update('entities');
 	}
 
 	// ------------------------------------------------------------------------

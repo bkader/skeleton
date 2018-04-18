@@ -373,8 +373,7 @@ class Kbcore_metadata extends CI_Driver implements CRUD_interface
 		}
 
 		// Proceed to update an return true if all went good.
-		$this->ci->db->update('metadata');
-		return ($this->ci->db->affected_rows() > 0);
+		return $this->ci->db->update('metadata');
 	}
 
 	// ------------------------------------------------------------------------
