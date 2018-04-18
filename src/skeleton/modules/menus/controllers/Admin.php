@@ -56,6 +56,7 @@ class Admin extends Admin_Controller {
 	 *
 	 * @since 	1.0.0
 	 * @since 	1.3.0 	Added AJAX methods and changes language file name.
+	 * @since 	1.4.0 	Dashboard assets enqueue is handled by parent methods.
 	 * 
 	 * @return 	void
 	 */
@@ -73,12 +74,7 @@ class Admin extends Admin_Controller {
 		// We add our language lines to head tag.
 		add_filter('admin_head', array($this, '_admin_head'));
 
-		if ('items' === $this->router->fetch_method())
-		{
-			// Add needed StyleSheets.
-			array_splice($this->styles, 1, 0, array('jquery-ui'));
-			array_splice($this->scripts, 2, 0, array('jquery-ui', 'jquery.ui.touch-punch'));
-		}
+		('items' === $this->router->fetch_method()) && $this->_jquery_ui(true);
 
 		// Add our menus JS file.
 		array_push($this->scripts, 'menus');
