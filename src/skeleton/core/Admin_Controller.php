@@ -218,6 +218,8 @@ class Admin_Controller extends User_Controller
 	}
 
 	// ------------------------------------------------------------------------
+	// Private Methods.
+	// ------------------------------------------------------------------------
 
 	/**
 	 * Prepare dashboard sidebar menu.
@@ -244,6 +246,121 @@ class Admin_Controller extends User_Controller
 		}
 
 		return $menu;
+	}
+
+	// ------------------------------------------------------------------------
+	// Scripts Enqueue.
+	// ------------------------------------------------------------------------
+
+	/**
+	 * _dropzone
+	 *
+	 * Method to enqueue Dropzone files with optional LazyLoad use.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @access 	protected
+	 * @param 	bool 	$lazyload 	Whether to enqueue LazyLoad.
+	 * @return 	void
+	 */
+	protected function _dropzone($lazyload = false)
+	{
+		// We push Dropzone CSS and JS file.
+		array_push($this->styles, 'dropzone');
+		array_push($this->scripts, 'dropzone');
+
+		// Shall we enqueue LazyLoad?
+		(true === $lazyload) && $this->_lazyload();
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * _lazyload
+	 *
+	 * Method to enqueue LazyLoad library.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @access 	protected
+	 * @param 	none
+	 * @return 	void
+	 */
+	protected function _lazyload()
+	{
+		array_push($this->scripts, 'lazyload');
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * _jquery_ui
+	 *
+	 * Method to enqueue jQuery UI assets with option use of jQuery TouchPunch.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @access 	protected
+	 * @param 	none
+	 * @return 	void
+	 */
+	protected function _jquery_ui($touch_punch = true)
+	{
+		// jQuery UI CSS file.
+		array_splice($this->styles, 1, 0, array('jquery-ui'));
+
+		// Prepare scripts to be added.
+		$scripts = array('jquery-ui');
+		(true === $touch_punch) && $scripts[] = 'jquery.ui.touch-punch';
+		array_splice($this->scripts, 2, 0, $scripts);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * _summernote
+	 *
+	 * Method for queuing Summernote JS.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @access 	protected
+	 * @param 	none
+	 * @return 	void
+	 */
+	protected function _summernote()
+	{
+		array_splice($this->styles, 2, 0, 'summernote');
+		array_splice($this->scripts, 3, 0, 'summernote');
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * _zoom
+	 *
+	 * Method to enqueue ZoomJS files.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @access 	protected
+	 * @param 	none
+	 * @return 	void
+	 */
+	protected function _zoom()
+	{
+		array_push($this->styles, 'zoom');
+		array_push($this->scripts, 'zoom');
 	}
 
 }
