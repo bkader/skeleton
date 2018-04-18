@@ -484,6 +484,10 @@ textarea {
   font-size: .83em;
 }
 
+label {
+  font-weight: 400;
+}
+
 .status {
   font-family: "Ruda", "Fira Sans", sans-serif;
 }
