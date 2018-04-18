@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.3.3
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 class Ajax extends AJAX_Controller {
 
@@ -87,12 +87,22 @@ class Ajax extends AJAX_Controller {
 	 * @link 	https://github.com/bkader
 	 * @since 	1.3.3
 	 *
+	 * @since 	1.4.0 	Change the response to return the URL of the uploaded image.
+	 *
 	 * @access 	public
 	 * @param 	none
 	 * @return 	void
 	 */
 	public function upload()
 	{
+		// Default message to return.
+		$response = array(
+			'uploaded' => false,
+			'fileName' => null,
+			'url'      => null,
+			'message'  => null,
+		);
+
 		// Make sure to create the upload folder if not found.
 		if ( ! is_dir(FCPATH.'content/uploads/'.date('Y/m/')))
 		{
@@ -112,8 +122,9 @@ class Ajax extends AJAX_Controller {
 		// An error occured? Return it to browser.
 		if ( ! $this->upload->do_upload('file'))
 		{
-			$this->response->header = 406;
-			$this->response->message = $this->upload->display_errors();
+			$this->response->header  = 406;
+			$response['message']      = $this->upload->display_errors();
+			$this->response->message = $response;
 		}
 		// File uploaded? Proceed.
 		else
@@ -147,7 +158,8 @@ class Ajax extends AJAX_Controller {
 			if ( ! $media_id)
 			{
 				$this->response->header = 406;
-				$this->response->message = lang('smd_media_upload_error');
+				$response['message'] = lang('smd_media_upload_error');
+				$this->response->message = $response;
 				return;
 			}
 
@@ -249,8 +261,13 @@ class Ajax extends AJAX_Controller {
 			log_activity($this->c_user->id, 'lang:act_media_upload::'.$media_id);
 
 			// Simple message that's is return to use.
+			$message['uploaded'] = true;
+			$message['fileName'] = $data['file_name'];
+			$message['url']      = $media['content'];
+			$message['message']  = lang('smd_media_upload_success');
+			
 			$this->response->header  = 200;
-			$this->response->message = lang('smd_media_upload_success');
+			$this->response->message = $message;
 		}
 	}
 

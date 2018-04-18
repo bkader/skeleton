@@ -72,8 +72,8 @@ class Admin extends Admin_Controller {
 		add_filter('admin_head', array($this, '_admin_head'));
 
 		// Add require assets files.
-		array_push($this->styles, 'dropzone');
-		array_push($this->scripts, 'dropzone', 'lazyload', 'media');
+		$this->_dropzone(true);
+		array_push($this->scripts, 'media');
 	}
 
 	// ------------------------------------------------------------------------

@@ -101,10 +101,10 @@
                 url: droparea.attr("data-upload-url"),
                 success: function (file, response) {
                     droparea.load(window.location.href + " [data-dropzone] .attachments");
-                    toastr.success(response);
+                    toastr.success(response.message);
                 },
                 error: function (file, error, xhr) {
-                    toastr.error(error);
+                    toastr.error(error.message);
                 }
             });
         }
