@@ -1955,7 +1955,11 @@ EOT;
 		// If $name is not set, we take the last string.
 		(empty($name)) && $name = basename($view);
 
-		$this->_partials[$name] = $this->_load_file($view, $data, 'partial');
+		// Add it only if it's not set.
+		if ( ! isset($this->_partials[$name]))
+		{
+			$this->_partials[$name] = $this->_load_file($view, $data, 'partial');
+		}
 
 		return $this;
 	}
@@ -2940,7 +2944,7 @@ EOT;
 				 * By default, it should be an index.php inside
 				 * the theme's folder.
 				 */
-				$alt_file = apply_filters('theme_layout_fallback', 'index.php');
+				$alt_file = apply_filters('theme_layout_fallback', $this->theme_path('index.php'));
 
 				// The fallback is $_template_layout property.
 				$fallback = 'layout';
@@ -3017,6 +3021,12 @@ EOT;
 			 */
 			$file_path     = realpath("{$full_path}/{$file}");
 			$alt_file_path = realpath("{$alt_path}/{$file}");
+
+			if (false === $alt_file && null !== $this->module)
+			{
+				$alt_file_path = $this->ci->router->module_path($this->module);
+				$alt_file_path .= 'views/'.('view' === $type ? '' : plural($type).'/').$file;
+			}
 		}
 		// $file is a full path? Use as-is.
 		else
@@ -3138,9 +3148,7 @@ EOT;
 		 * It is possible to change the layout on functions.php
 		 * by using the 'theme_layout' filter.
 		 */
-		$this->_layout = ('admin' === $this->controller)
-			? apply_filters('admin_layout', $this->_layout)
-			: apply_filters('theme_layout', $this->_layout);
+		(isset($this->_layout)) OR $this->_layout = $this->get_layout();
 
 		// Use the default layout if not found.
 		(null === $this->_layout) && $this->_layout = 'default';
