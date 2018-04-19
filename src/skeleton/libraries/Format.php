@@ -152,14 +152,14 @@ class Format
 
     /**
      * Create an instance of the format class
-     * e.g: echo $this->format->factory(['foo' => 'bar'])->to_csv();
+     * e.g: echo $this->format->forge(['foo' => 'bar'])->to_csv();
      *
      * @param mixed $data Data to convert/parse
      * @param string $from_type Type to convert from e.g. json, csv, html
      *
      * @return object Instance of the format class
      */
-    public function factory($data, $from_type = NULL)
+    public function forge($data, $from_type = NULL)
     {
         // $class = __CLASS__;
         // return new $class();
