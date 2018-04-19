@@ -164,7 +164,7 @@ class Admin_Controller extends User_Controller
 
 			$this->theme
 				->no_extension()
-				->add('css', site_url("load/styles?load=".$this->styles), null, null, true);
+				->add('css', site_url("load/styles?load=".rawurlencode($this->styles)), null, null, true);
 		}
 
 		// Do we have any JS files to laod?
@@ -176,7 +176,7 @@ class Admin_Controller extends User_Controller
 			$this->scripts = implode(',', $this->scripts);
 			$this->theme
 				->no_extension()
-				->add('js', site_url("load/scripts?load=".$this->scripts), null, null, true);
+				->add('js', site_url("load/scripts?load=".rawurlencode($this->scripts)), null, null, true);
 		}
 
 		// We call the method.
@@ -340,6 +340,11 @@ class Admin_Controller extends User_Controller
 	{
 		array_splice($this->styles, 2, 0, 'summernote');
 		array_splice($this->scripts, 3, 0, 'summernote');
+		if ('english' !== $this->config->item('language'))
+		{
+			$locale = $this->lang->lang('locale');
+			array_splice($this->scripts, 4, 0, 'summernote/summernote-'.$locale);
+		}
 	}
 
 	// ------------------------------------------------------------------------

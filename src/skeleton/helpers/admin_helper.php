@@ -71,3 +71,26 @@ if ( ! function_exists('label_condition'))
 			: sprintf($label, 'danger', $false);
 	}
 }
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('fa_icon'))
+{
+	/**
+	 * fa_icon
+	 *
+	 * Function for generating FontAwesome icons.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
+	function fa_icon($class = '')
+	{
+		return "<i class=\"fa fa-{$class}\"></i>";
+	}
+}
