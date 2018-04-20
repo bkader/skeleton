@@ -235,3 +235,89 @@ if ( ! function_exists('safe_form_open_multipart'))
 		return safe_form_open($action, $attributes, $hidden);
 	}
 }
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('ajax_form_open'))
+{
+	/**
+	 * Function for creating the opening portion of the form, but with
+	 * a AJAX URL as action.
+	 *
+	 * @since 	1.4.0
+	 *
+	 * @param 	string 	The URI segments of the form destination.
+	 * @param 	array 	A key/value pair of attributes.
+	 * @param 	array 	A key/value pair hidden data.
+	 * @return 	string
+	 */
+	function ajax_form_open($action = '', $attributes = array(), $hidden = array())
+	{
+		$CI =& get_instance();
+
+		// We make sure to load the URL helper.
+		(function_exists('ajax_url')) OR $CI->load->helper('url');
+
+		// If the "ajax" function was not found, we use default function.
+		if ( ! function_exists('ajax_url'))
+		{
+			return form_open($action, $attributes, $hidden);
+		}
+
+		// No action provided? Use the current URL.
+		if ( ! $action)
+		{
+			$action = ajax_url(uri_string());
+		}
+		// If an action is not a full URL then turn it into one
+		elseif (false === strpos($action, '://'))
+		{
+			$action = ajax_url($action);
+		}
+
+		return form_open($action, $attributes	, $hidden);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('safe_ajax_form_open'))
+{
+	/**
+	 * Function for creating the opening portion of the form, but with
+	 * a secured action using "safe_url" and AJAX URL as action.
+	 *
+	 * @since 	1.4.0
+	 *
+	 * @param 	string 	The URI segments of the form destination.
+	 * @param 	array 	A key/value pair of attributes.
+	 * @param 	array 	A key/value pair hidden data.
+	 * @return 	string
+	 */
+	function safe_ajax_form_open($action = '', $attributes = array(), $hidden = array())
+	{
+		$CI =& get_instance();
+
+		// We make sure to load the URL helper.
+		(function_exists('safe_ajax_url')) OR $CI->load->helper('url');
+
+		// If the "ajax" function was not found, we use default function.
+		if ( ! function_exists('safe_ajax_url'))
+		{
+			return form_open($action, $attributes, $hidden);
+		}
+
+		// No action provided? Use the current URL.
+		if ( ! $action)
+		{
+			$action = safe_ajax_url(uri_string());
+		}
+		// If an action is not a full URL then turn it into one
+		elseif (false === strpos($action, '://'))
+		{
+			$action = safe_ajax_url($action);
+		}
+
+		return form_open($action, $attributes	, $hidden);
+	}
+}
