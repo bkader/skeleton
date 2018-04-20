@@ -198,6 +198,10 @@ class Ajax extends AJAX_Controller {
 			$this->response->header  = 200;
 			$this->response->message = lang('sth_theme_delete_success');
 
+			// we delete theme options.
+			delete_option('theme_images_'.$name);
+			delete_option('theme_menus_'.$name);
+
 			// We log the activity.
 			log_activity($this->c_user->id, 'lang:act_themes_delete::'.$theme['name']);
 			return;
