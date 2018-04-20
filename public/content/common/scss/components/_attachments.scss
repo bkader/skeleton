@@ -16,8 +16,11 @@
             display: block;
             width: 100%;
             height: 100%;
+            background-color: transparent;
+            background-repeat: no-repeat;
             background-size: cover;
             position: relative;
+            border: 3px solid transparent;
 
             > .attachment-action {
                 text-align: center;
@@ -36,6 +39,10 @@
             &:hover > .attachment-action {
                 opacity: 1;
             }
+        }
+
+        &.selected .attachment-inner {
+            border-color: $color__blue;
         }
 
         @include screen-max-xs {
