@@ -124,6 +124,17 @@ class Ajax extends AJAX_Controller {
 			$this->response->header  = 200;
 			$this->response->message = lang('sth_theme_activate_success');
 
+			// Delete other themes menus and images sizes.
+			foreach ($db_themes->value as $_name => $details)
+			{
+				// Only for others, not the one we are activating.
+				if ($_name <> $name)
+				{
+					delete_option('theme_images_'.$_name);
+					delete_option('theme_menus_'.$_name);
+				}
+			}
+
 			// We log the activity.
 			log_activity($this->c_user->id, 'lang:act_themes_activate::'.$theme['name']);
 			return;
