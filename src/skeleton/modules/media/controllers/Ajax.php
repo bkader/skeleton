@@ -193,9 +193,10 @@ class Ajax extends AJAX_Controller {
 					$config['new_image']      = $config['upload_path'].$data['raw_name'].'-'.$details['width'].'x'.$details['height'].$data['file_ext'];
 					$config['maintain_ratio'] = true;
 
-					if ($details['crop'])
+					if (true === $details['crop'])
 					{
-						if ($data['image_width'] > $data['image_height']) {
+						if ($data['image_width'] > $data['image_height'])
+						{
 							$config['height'] = $details['height'];
 							$config['width']  = ($config['height'] * $data['image_height']) / $data['image_width'];
 						} else {
@@ -218,8 +219,14 @@ class Ajax extends AJAX_Controller {
 						$config2['height']         = $details['height'];
 						$config2['maintain_ratio'] = false;
 
-						$config2['x_axis'] = ($config['width'] > $config['height']) ? (($config['width'] - $details['width']) / 2) : 0;
-						$config2['y_axis'] = ($config['height'] > $details['width']) ? (($config['height'] - $details['height']) / 2) : 0;
+						if ($data['image_width'] > $data['image_height'])
+						{
+							$config2['x_axis'] = ($config['width'] + $details['width']) / 2;
+						}
+						else
+						{
+							$config2['y_axis'] = ($config['height'] + $details['height']) / 2;
+						}
 
 						$this->image_lib->initialize($config2);
 
@@ -321,7 +328,7 @@ class Ajax extends AJAX_Controller {
 			// Make sure to delete the file.
 			@array_map(
 				'unlink',
-				glob(FCPATH.'content/uploads/'.date('Y/m/', $media->created_at).$media->content.'*.*')
+				glob(FCPATH.'content/uploads/'.date('Y/m/', $media->created_at).$media->username.'*.*')
 			);
 
 			// Log the activity.
