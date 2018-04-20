@@ -423,13 +423,7 @@ class Kbcore_media extends CI_Driver implements CRUD_interface
 			}
 
 			// Update the option.
-			(is_array($option->value)) OR $option->value = array();
-
-			// Merge things before updating.
-			$sizes = array_replace_recursive($this->_images_sizes, $option->value);
-
-			// Update the option.
-			return $option->update('value', $sizes);
+			return $option->update('value', $this->_images_sizes);
 		}
 
 		// Otherwise, we create the option.
