@@ -3118,7 +3118,18 @@ EOT;
 	{
 		// Done after theme setup and theme menus.
 		do_action('after_theme_setup');
-		do_action('theme_menus');
+
+		// We add theme menus.
+		(false !== has_action('theme_menus')) && do_action('theme_menus');
+
+		// We add themes images sizes.
+		if (has_action('theme_images'))
+		{
+			do_action('theme_images');
+
+			// INTERNAL ACTION! DON'T REMOVE IT AND NEVER USE IT.
+			do_action('_set_images_sizes');
+		}
 
 		// Prepare our empty layout array.
 		$layout = array();

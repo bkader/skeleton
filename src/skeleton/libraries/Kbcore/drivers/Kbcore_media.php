@@ -49,10 +49,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 class Kbcore_media extends CI_Driver implements CRUD_interface
 {
+	/**
+	 * Array of images sizes set by plugins/themes.
+	 * @since 	1.4.0
+	 * @var 	array
+	 */
+	private $_images_sizes = array();
+
 	/**
 	 * Initialize class.
 	 * @access 	public
@@ -60,6 +67,9 @@ class Kbcore_media extends CI_Driver implements CRUD_interface
 	 */
 	public function initialize()
 	{
+		// We register themes images action.
+		add_action('_set_images_sizes', array($this, '_set_images_sizes'));
+
 		log_message('info', 'Kbcore_media Class Initialized');
 	}
 
@@ -347,36 +357,85 @@ class Kbcore_media extends CI_Driver implements CRUD_interface
 	// Themes images sizes methods.
 	// ------------------------------------------------------------------------
 
+	/**
+	 * add_image_size
+	 *
+	 * Method for adding thumbnails sizes for the currently active theme.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.0.0
+	 *
+	 * @access 	public
+	 * @param 	string 	$name 		The name of the thumbnail.
+	 * @param 	int 	$width 		The width of the thumbnail.
+	 * @param 	int 	$height 	The height of the thumbnail.
+	 * @param  	bool 	$crop 		Whether to crop the image.
+	 * @return 	void
+	 */
 	public function add_image_size($name, $width = 0, $height = 0, $crop = false)
 	{
-		return $this->_set_theme_sizes(array(
-			$name => array(
-				'width'  => (int) $width,
-				'height' => (int) $height,
-				'crop'   => (bool) $crop,
-			),
-		));
+		$this->_images_sizes[$name] = array(
+			'width'  => (int) $width,
+			'height' => (int) $height,
+			'crop'   => (bool) $crop,
+		);
 	}
 
-	private function _set_theme_sizes($sizes)
+	// ------------------------------------------------------------------------
+
+	/**
+	 * _set_images_sizes
+	 *
+	 * Method for adding thumbnails sizes for the currently active theme.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.0.0
+	 *
+	 * @since 	1.4.0 	Updated so we can handle images sizes correctly.
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
+	public function _set_images_sizes($sizes)
 	{
+		// No images sizes set? Noting to do.
+		if (empty($this->_images_sizes))
+		{
+			return false;
+		}
+
+		// Prepare the option name.
 		$option_name = 'theme_images_'.$this->_parent->options->item('theme');
 
+		// Get the option from database.
 		$option = $this->_parent->options->get($option_name);
 
-		if ($option && $option->value == $sizes)
+		// Did we find the option?
+		if (false !== $option)
 		{
-			return true;
+			// Did sizes change?
+			if ($this->_images_sizes == $option->value)
+			{
+				return true;
+			}
+
+			// Update the option.
+			(is_array($option->value)) OR $option->value = array();
+
+			// Merge things before updating.
+			$sizes = array_replace_recursive($this->_images_sizes, $option->value);
+
+			// Update the option.
+			return $option->update('value', $sizes);
 		}
 
-		if ($option)
-		{
-			return $this->_parent->options->set_item($option_name, array_merge($option->value, $sizes));
-		}
-
+		// Otherwise, we create the option.
 		return $this->_parent->options->create(array(
 			'name'     => $option_name,
-			'value'    => $sizes,
+			'value'    => $this->_images_sizes,
 			'tab'      => 'theme',
 			'required' => 0,
 		));
@@ -388,6 +447,22 @@ class Kbcore_media extends CI_Driver implements CRUD_interface
 
 if ( ! function_exists('add_image_size'))
 {
+	/**
+	 * add_image_size
+	 *
+	 * Function for adding thumbnails sizes for the currently active theme.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.0.0
+	 *
+	 * @access 	public
+	 * @param 	string 	$name 		The name of the thumbnail.
+	 * @param 	int 	$width 		The width of the thumbnail.
+	 * @param 	int 	$height 	The height of the thumbnail.
+	 * @param  	bool 	$crop 		Whether to crop the image.
+	 * @return 	void
+	 */
 	function add_image_size($name, $width = 0, $height = 0, $crop = false)
 	{
 		return get_instance()->kbcore->media->add_image_size($name, $width, $height, $crop);
@@ -396,31 +471,50 @@ if ( ! function_exists('add_image_size'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('get_media_url'))
+if ( ! function_exists('get_media_src'))
 {
-	function get_media_url($id, $size = null)
+	/**
+	 * get_media_src
+	 *
+	 * Function for returning the URL of the selected media with optional size;
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.3.3
+	 *
+	 * @access 	public
+	 * @param 	int 	$id 	The media ID.
+	 * @param 	strong 	$size 	The requested size as set by the current theme.
+	 * @return 	string
+	 */
+	function get_media_src($id, $size = null)
 	{
+		// Initial URL.
+		$src = '';
+
+		// Grab the media from database and make sure it exists.
 		$media = get_instance()->kbcore->media->get($id);
-
-		if ( ! $media)
+		if (false !== $media)
 		{
-			return null;
-		}
+			// We fill the source.
+			$src = $media->content;
 
-		$url = $media->username;
-
-		if ($size !== null && $meta = get_meta($id, 'media_meta', true))
-		{
-			if ($meta && isset($meta['sizes'][$size]))
+			// Requested a specific size?
+			if (null !== $size && false !== $meta = get_meta($id, 'media_meta', true))
 			{
-				$url = str_replace(
-					basename($media->username),
-					$meta['sizes'][$size]['file'],
-					$media->username
-				);
+				// Is the desired size available?
+				if (isset($meta['sizes'][$size]))
+				{
+					$src = str_replace(
+						basename($media->content),
+						$meta['sizes'][$size]['file'],
+						$src
+					);
+				}
 			}
 		}
 
-		return $url;
+		// Return the final result.
+		return $src;
 	}
 }
