@@ -273,14 +273,16 @@ class Admin_Controller extends User_Controller
 
 		// Shall we enqueue LazyLoad?
 		(true === $lazyload) && $this->_lazyload();
+
+		return $this;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * _lazyload
+	 * _handlebars
 	 *
-	 * Method to enqueue LazyLoad library.
+	 * Method to enqueue handlebars file.
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://github.com/bkader
@@ -290,9 +292,11 @@ class Admin_Controller extends User_Controller
 	 * @param 	none
 	 * @return 	void
 	 */
-	protected function _lazyload()
+	protected function _handlebars()
 	{
-		array_push($this->scripts, 'lazyload');
+		array_splice($this->scripts, 2, 0, array('handlebars'));
+
+		return $this;
 	}
 
 	// ------------------------------------------------------------------------
@@ -319,6 +323,30 @@ class Admin_Controller extends User_Controller
 		$scripts = array('jquery-ui');
 		(true === $touch_punch) && $scripts[] = 'jquery.ui.touch-punch';
 		array_splice($this->scripts, 2, 0, $scripts);
+
+		return $this;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * _lazyload
+	 *
+	 * Method to enqueue LazyLoad library.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @access 	protected
+	 * @param 	none
+	 * @return 	void
+	 */
+	protected function _lazyload()
+	{
+		array_push($this->scripts, 'lazyload');
+
+		return $this;
 	}
 
 	// ------------------------------------------------------------------------
@@ -345,6 +373,8 @@ class Admin_Controller extends User_Controller
 			$locale = $this->lang->lang('locale');
 			array_splice($this->scripts, 4, 0, 'summernote/summernote-'.$locale);
 		}
+
+		return $this;
 	}
 
 	// ------------------------------------------------------------------------
@@ -366,6 +396,8 @@ class Admin_Controller extends User_Controller
 	{
 		array_push($this->styles, 'zoom');
 		array_push($this->scripts, 'zoom');
+
+		return $this;
 	}
 
 }
