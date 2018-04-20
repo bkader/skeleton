@@ -83,6 +83,9 @@ $lang['smd_media_upload_error'] = 'Unable to upload media.';
 $lang['smd_media_delete_error'] = 'Unable to delete media item.';
 $lang['smd_media_update_error'] = 'Unable to update media item.';
 
+// Missing media.
+$lang['smd_media_missing'] = 'No media file found.';
+
 // Media permissions.
 $lang['smd_media_update_permission'] = 'Only an admin or the owner of this item can update it.';
 $lang['smd_media_delete_permission'] = 'Only an admin or the owner of this item can delete it.';

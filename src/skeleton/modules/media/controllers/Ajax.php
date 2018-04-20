@@ -73,7 +73,7 @@ class Ajax extends AJAX_Controller {
 		$this->load->language('media/media');
 
 		// We add our safe AJAX methods.
-		array_push($this->safe_methods, 'upload', 'delete', 'update');
+		array_push($this->safe_methods, 'upload', 'delete', 'update', 'get');
 	}
 
 	// ------------------------------------------------------------------------
@@ -423,20 +423,20 @@ class Ajax extends AJAX_Controller {
 	 */
 	public function get()
 	{
-		$media = array();
 		$db_media = $this->kbcore->media->get_all();
 		if (false === $db_media)
 		{
-			$this->response->header = 404;
+			$this->response->header  = 404;
+			$this->response->message = line('smd_media_missing');
+			return;
 		}
-		else
+
+		$media = array();
+		foreach ($db_media as $item)
 		{
-			$this->response->header = 200;
-			foreach ($db_media as $item)
-			{
-				$media['media'][] = $item->to_array();
-			}
+			$media['media'][] = $item->to_array();
 		}
+		$this->response->header = 200;
 		$this->response->message = $media;
 	}
 

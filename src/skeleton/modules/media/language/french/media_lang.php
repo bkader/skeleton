@@ -83,6 +83,9 @@ $lang['smd_media_upload_error'] = 'Impossible de téléverser le fichier.';
 $lang['smd_media_delete_error'] = 'Impossible de supprimer le fichier.';
 $lang['smd_media_update_error'] = 'Impossible de mettre à jour le fichier.';
 
+// Missing media.
+$lang['smd_media_missing'] = 'Aucun fichier trouvé.';
+
 // Media permissions.
 $lang['smd_media_update_permission'] = 'Seul un administrateur ou le propriétaire de ce fichier peuvent le mettre à jour.';
 $lang['smd_media_delete_permission'] = 'Seul un administrateur ou le propriétaire de ce fichier peuvent le supprimer.';

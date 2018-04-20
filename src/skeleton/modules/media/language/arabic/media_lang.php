@@ -83,6 +83,9 @@ $lang['smd_media_upload_error'] = 'تعذر تحميل المرفقات.';
 $lang['smd_media_delete_error'] = 'تعذر حذف عنصر المرفقات.';
 $lang['smd_media_update_error'] = 'تعذر تحديث عنصر المرفقات.';
 
+// Missing media.
+$lang['smd_media_missing'] = 'لم يتم العثور على المرفقات.';
+
 // Media permissions.
 $lang['smd_media_update_permission'] = 'يمكن تحديث هذا المرفق من طرف مالكه أو مشرف الموقع.';
 $lang['smd_media_delete_permission'] = 'يمكن حذف هذا المرفق من طرف مالكه أو مشرف الموقع.';
