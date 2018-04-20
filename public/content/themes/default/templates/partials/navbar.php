@@ -28,7 +28,7 @@
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?php echo $current_language['name']; ?> <span class="caret"></span></a>
 						<ul class="dropdown-menu">
 						<?php foreach($site_languages as $folder => $lang): ?>
-							<li><a href="<?php echo site_url('language/switch/'.$folder); ?>"><small class="text-muted pull-right"><?php echo $lang['name']; ?></small><?php echo $lang['name_en']; ?></a></li>
+							<li><a href="<?php echo site_url('language/change/'.$folder); ?>"><small class="text-muted pull-right"><?php echo $lang['name']; ?></small><?php echo $lang['name_en']; ?></a></li>
 						<?php endforeach; unset($folder, $lang); ?>
 						</ul>
 					</li>

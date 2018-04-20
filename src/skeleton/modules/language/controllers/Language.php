@@ -82,7 +82,7 @@ class Language extends KB_Controller
 	 * @param 	string 	$folder The language's folder name.
 	 * @return 	void
 	 */
-	public function switch($folder = null)
+	public function change($folder = null)
 	{
 		// Prepare redirection.
 		$redirect = ($this->input->get_post('next'))
