@@ -91,7 +91,7 @@ class Ajax extends AJAX_Controller {
 	 *
 	 * @access 	public
 	 * @param 	none
-	 * @return 	void
+	 * @return 	AJAX_Controller::response().
 	 */
 	public function upload()
 	{
@@ -347,7 +347,7 @@ class Ajax extends AJAX_Controller {
 	 *
 	 * @access 	public
 	 * @param 	int 	$id 	The media ID.
-	 * @return 	void
+	 * @return 	AJAX_Controller::response()
 	 */
 	public function update($id = 0)
 	{
@@ -397,6 +397,40 @@ class Ajax extends AJAX_Controller {
 
 		// Otherwise, media could not be updated.
 		$this->response->message = lang('smd_media_update_error');
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * get
+	 *
+	 * Method for retrieving all media from the server.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	AJAX_Controller::response().
+	 */
+	public function get()
+	{
+		$media = array();
+		$db_media = $this->kbcore->media->get_all();
+		if (false === $db_media)
+		{
+			$this->response->header = 404;
+		}
+		else
+		{
+			$this->response->header = 200;
+			foreach ($db_media as $item)
+			{
+				$media['media'][] = $item->to_array();
+			}
+		}
+		$this->response->message = $media;
 	}
 
 }
