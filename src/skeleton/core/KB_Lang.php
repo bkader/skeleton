@@ -364,39 +364,64 @@ class KB_Lang extends CI_Lang
 
 	/**
 	 * Returns an array of languages details.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.4.0 	Possibility to retrieve multiple languages.
+	 * 
 	 * @access 	public
-	 * @param 	string 	$single 	The language to return.
+	 * @param 	mixed 	$langs 	String, comma-separated strings or array.
 	 * @return 	array
 	 */
-	public function languages($single = null)
+	public function languages($langs = null)
 	{
-		// If they are already cached, use them.
-		if (isset($this->_languages))
+		// Not cached? Cache them if found.
+		if ( ! isset($this->_languages))
 		{
-			return ($single && isset($this->_languages[$single]))
-				? $this->_languages[$single]
-				: $this->_languages;
+			// User's file has the priority.
+			if (is_file(APPPATH.'third_party/languages.php'))
+			{
+				$this->_languages = require_once(APPPATH.'third_party/languages.php');
+			}
+			// If not found, use our.
+			elseif (is_file(KBPATH.'third_party/languages.php'))
+			{
+				$this->_languages = require_once(KBPATH.'third_party/languages.php');
+			}
+			// Otherwise, use an empty array.
+			else
+			{
+				$this->_languages = array();
+			}
 		}
 
-		// User's file has the priority.
-		if (is_file(APPPATH.'third_party/languages.php'))
+		// No argument? return all languages.
+		if (null === $langs)
 		{
-			$this->_languages = include(APPPATH.'third_party/languages.php');
-		}
-		// If not found, use our.
-		elseif (is_file(KBPATH.'third_party/languages.php'))
-		{
-			$this->_languages = include(KBPATH.'third_party/languages.php');
-		}
-		// Otherwise, use an empty array.
-		else
-		{
-			$this->_languages = array();
+			return $this->_languages;
 		}
 
-		return ($single && isset($this->_languages[$single]))
-			? $this->_languages[$single]
-			: $this->_languages;
+		// Format our requested languages.
+		( ! is_array($langs)) && $langs = array_map('trim', explode(',', $langs));
+
+
+		// A single language is requested? Return it.
+		if (count($langs) == 1 && isset($this->_languages[$langs[0]]))
+		{
+			return $this->_languages[$langs[0]];
+		}
+
+		// Build requested languages array.
+		$languages = array();
+		foreach ($langs as $lang)
+		{
+			if (isset($this->_languages[$lang]))
+			{
+				$languages[$lang] = $this->_languages[$lang];
+			}
+		}
+
+		// If found any, return them. Otherwise, we return the full array.
+		return (empty($languages)) ? $this->_languages : $languages;
 	}
 
 }
