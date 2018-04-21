@@ -1065,7 +1065,7 @@ class KB_Variable
 
 		// If there are enqueued changes, apply them.
 		if ( ! empty($this->queue)) {
-			$status = update_var($this->id, array($key => $value));
+			$status = update_var($this->id, $this->queue);
 
 			// If the update was successful, we reset $queue array.
 			if ($status === true) {

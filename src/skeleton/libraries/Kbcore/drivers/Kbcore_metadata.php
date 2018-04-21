@@ -1193,10 +1193,7 @@ class KB_Meta
 
 		// If there are enqueued changes, apply them.
 		if ( ! empty($this->queue)) {
-			$status = update_meta_by(
-				array('id' => $this->id),
-				array($key => $value)
-			);
+			$status = update_meta_by(array('id' => $this->id), $this->queue);
 
 			// If the update was successful, we reset $queue array.
 			if ($status === true) {
