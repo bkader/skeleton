@@ -1,3 +1,9 @@
+/**
+ * zoom.js - It's the best way to zoom an image
+ * @version v0.0.2
+ * @link https://github.com/fat/zoom.js
+ * @license MIT
+ */
 img[data-action="zoom"] {
   cursor: pointer;
   cursor: -webkit-zoom-in;

@@ -261,19 +261,44 @@ class Admin_Controller extends User_Controller
 	 * @link 	https://github.com/bkader
 	 * @since 	1.4.0
 	 *
+	 * @copyright 	Matias Meno (https://github.com/enyo)
+	 * @link 		https://github.com/enyo/dropzone
+	 *
 	 * @access 	protected
 	 * @param 	bool 	$lazyload 	Whether to enqueue LazyLoad.
 	 * @return 	void
 	 */
 	protected function _dropzone($lazyload = false)
 	{
-		// We push Dropzone CSS and JS file.
-		array_push($this->styles, 'dropzone');
-		array_push($this->scripts, 'dropzone');
-
-		// Shall we enqueue LazyLoad?
+		$this->styles[]  = 'dropzone';
+		$this->scripts[] = 'dropzone';
+		
 		(true === $lazyload) && $this->_lazyload();
+		
+		return $this;
+	}
 
+	// ------------------------------------------------------------------------
+
+	/**
+	 * _garlic
+	 *
+	 * Method to enqueue Garlic.js file.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @copyright 	Guillaume Potier (https://github.com/guillaumepotier)
+	 * @link 		https://github.com/guillaumepotier/Garlic.js
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
+	protected function _garlic()
+	{
+		$this->scripts[] = 'garlic';
 		return $this;
 	}
 
@@ -288,14 +313,16 @@ class Admin_Controller extends User_Controller
 	 * @link 	https://github.com/bkader
 	 * @since 	1.4.0
 	 *
+	 * @copyright 	Yehuda Katz (https://github.com/wycats)
+	 * @link 		https://github.com/wycats/handlebars.js/
+	 *
 	 * @access 	protected
 	 * @param 	none
 	 * @return 	void
 	 */
 	protected function _handlebars()
 	{
-		array_splice($this->scripts, 2, 0, array('handlebars'));
-
+		$this->scripts[] = 'handlebars';
 		return $this;
 	}
 
@@ -310,20 +337,18 @@ class Admin_Controller extends User_Controller
 	 * @link 	https://github.com/bkader
 	 * @since 	1.4.0
 	 *
+	 * @copyright 	jQuery (https://github.com/jquery)
+	 * @link 		https://github.com/jquery/jquery-ui
+	 *
 	 * @access 	protected
 	 * @param 	none
 	 * @return 	void
 	 */
 	protected function _jquery_ui($touch_punch = true)
 	{
-		// jQuery UI CSS file.
-		array_splice($this->styles, 1, 0, array('jquery-ui'));
-
-		// Prepare scripts to be added.
-		$scripts = array('jquery-ui');
-		(true === $touch_punch) && $scripts[] = 'jquery.ui.touch-punch';
-		array_splice($this->scripts, 2, 0, $scripts);
-
+		$this->styles[]  = 'jquery-ui';
+		$this->scripts[] = 'jquery-ui';
+		(true === $touch_punch) && $this->scripts[] = 'jquery.ui.touch-punch';
 		return $this;
 	}
 
@@ -338,13 +363,48 @@ class Admin_Controller extends User_Controller
 	 * @link 	https://github.com/bkader
 	 * @since 	1.4.0
 	 *
+	 * @copyright 	Andrea Verlicchi (https://github.com/verlok)
+	 * @link 		https://github.com/verlok/lazyload
+	 *
 	 * @access 	protected
 	 * @param 	none
 	 * @return 	void
 	 */
 	protected function _lazyload()
 	{
-		array_push($this->scripts, 'lazyload');
+		$this->scripts[] = 'lazyload';
+		return $this;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * _select2
+	 *
+	 * Method to enqueue Select2 files with optional Bootstrap theme.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @copyright 	Select2 (https://github.com/select2)
+	 * @link 		https://github.com/select2/select2
+	 *
+	 * @access 	public
+	 * @param 	bool 	$bootstrap 	Whether to enqueue Bootstrap theme.
+	 * @return 	void
+	 */
+	protected function _select2($bootstrap = true)
+	{
+		$this->styles[]  = 'select2';
+		$this->scripts[] = 'select2';
+
+		if ('english' !== $this->config->item('language'))
+		{
+			$this->scripts[] = 'select2/'.$this->lang->lang('code');
+		}
+
+		(true === $bootstrap) && $this->styles[] = 'select2-bootstrap';
 
 		return $this;
 	}
@@ -360,18 +420,20 @@ class Admin_Controller extends User_Controller
 	 * @link 	https://github.com/bkader
 	 * @since 	1.4.0
 	 *
+	 * @copyright 	Summernote (https://github.com/summernote)
+	 * @link 		https://github.com/summernote/summernote
+	 *
 	 * @access 	protected
 	 * @param 	none
 	 * @return 	void
 	 */
 	protected function _summernote()
 	{
-		array_splice($this->styles, 2, 0, 'summernote');
-		array_splice($this->scripts, 3, 0, 'summernote');
+		$this->styles[]  = 'summernote';
+		$this->scripts[] = 'summernote';
 		if ('english' !== $this->config->item('language'))
 		{
-			$locale = $this->lang->lang('locale');
-			array_splice($this->scripts, 4, 0, 'summernote/summernote-'.$locale);
+			$this->scripts[] = 'summernote/summernote-'.$this->lang->lang('locale');
 		}
 
 		return $this;
@@ -388,15 +450,17 @@ class Admin_Controller extends User_Controller
 	 * @link 	https://github.com/bkader
 	 * @since 	1.4.0
 	 *
+	 * @copyright 	fat (https://github.com/fat)
+	 * @link 		https://github.com/fat/zoom.js/
+	 *
 	 * @access 	protected
 	 * @param 	none
 	 * @return 	void
 	 */
 	protected function _zoom()
 	{
-		array_push($this->styles, 'zoom');
-		array_push($this->scripts, 'zoom');
-
+		$this->styles[]  = 'zoom';
+		$this->scripts[] = 'zoom';
 		return $this;
 	}
 
