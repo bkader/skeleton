@@ -313,7 +313,7 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
   position: relative;
-  border: 3px solid transparent;
+  border: 5px solid transparent;
 }
 .attachments > .attachment > .attachment-inner > .attachment-action {
   text-align: center;
