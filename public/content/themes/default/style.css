@@ -22,6 +22,8 @@ body {
     padding-top: 72px
 }
 
+.wrapper { margin-bottom: 65px; }
+
 .form-control,
 input,
 textarea {
