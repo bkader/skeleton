@@ -63,7 +63,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @var	string
  *
  */
-	const KB_VERSION = '1.3.4';
+	const KB_VERSION = '1.4.0';
 
 /*
  * ------------------------------------------------------
