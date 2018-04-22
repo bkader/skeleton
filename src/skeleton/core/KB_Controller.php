@@ -189,16 +189,31 @@ class KB_Controller extends CI_Controller {
 	 *
 	 * @access 	protected
 	 * @param 	string 	$action 	The action attached (Optional).
+	 * @param 	bool 	$referrer	Whether to check referrer.
 	 * @param 	string 	$name 		The name of the field used as nonce.
 	 * @return 	bool
 	 */
-	protected function check_nonce($action = null, $name = '_csknonce')
+	protected function check_nonce($action = null, $referrer = true, $name = '_csknonce')
 	{
 		// If the action is not provided, get if from the request.
 		$real_action = (null !== $req = $this->input->post_get('action')) ? $req : -1;
 		(null === $action) && $action = $real_action;
 
-		return verify_nonce($this->input->post_get($name), $action);
+		// Initial status.
+		$status = verify_nonce($this->input->post_get($name), $action);
+
+		// We check referrer only if set and nonce passed test.
+		if (true === $status && true === $referrer)
+		{
+			/**
+			 * because till this line, the $status is set to TRUE,
+			 * its value is changed according the referrer check status.
+			 */
+			$status = $this->check_referrer();
+		}
+
+		// Otherwise, return only nonce status.
+		return $status;
 	}
 
 	// ------------------------------------------------------------------------
