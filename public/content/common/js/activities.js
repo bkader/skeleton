@@ -11,23 +11,27 @@
     csk.i18n = csk.i18n || {};
     csk.i18n.activities = csk.i18n.activities || {};
 
-    // =======================================================
-    // Activities object.
-    // =======================================================
+    /**
+     * Activities Object.
+     * Handles all operations done on activities module.
+     * @since   1.4.0
+     */
     csk.activities = {
 
-        // ---------------------------------------------------
-        // Delete a single activity.
-        // ---------------------------------------------------
+        // Delete the targeted activity.
         delete: function (el) {
             var that = $(el),
                 href = that.attr("ajaxify"),
                 id = that.data("activity-id");
 
-            if (!href.length) { return; }
-            var message = csk.i18n.activities.delete || "Are you sure you want to delete this activity?",
-                logCount = $(".activity-log").children(".activity-item").length;
-            return csk.ui.confirm(message, function () {
+            // We cannot proceed if the URL is not provided.
+            if (!href.length) {
+                return false;
+            }
+            
+            var logCount = $(".activity-log").children(".activity-item").length;
+
+            return csk.ui.confirm(csk.i18n.activities.delete, function () {
                 var data = {action: 'delete_activity_' + id}, _html = that.html();
                 csk.ajax.request(href, {
                     type: "POST",
@@ -38,7 +42,7 @@
                             window.location.href = csk.config.adminURL + "/activities";
                         } else {
                             $("#activity-" + id).animate({opacity: 0}, function () {
-                                // $("#wrapper").load(csk.config.currentURL + " #wrapper > *");
+                                $("#wrapper").load(csk.config.currentURL + " #wrapper > *");
                             });
                         }
                     }
@@ -47,9 +51,6 @@
         }
     };
 
-    // =======================================================
-    // Only when the DOM is ready.
-    // =======================================================
     $(document).ready(function () {
         $(document).on("click", ".activity-delete", function (e) {
             e.preventDefault();
