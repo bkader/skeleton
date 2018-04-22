@@ -153,7 +153,7 @@ class AJAX_Controller extends KB_Controller
 		// The method does not exist?
 		if ( ! method_exists($this, $method))
 		{
-			$this->response->header  = 401;
+			$this->response->header  = self::HTTP_UNAUTHORIZED;
 			return $this->response();
 		}
 
@@ -176,7 +176,7 @@ class AJAX_Controller extends KB_Controller
 		if (in_array($method, $this->safe_methods) 
 			&& ( ! check_safe_url(null, $action) OR true !== $this->auth->online()))
 		{
-			$this->response->header  = 401;
+			$this->response->header  = self::HTTP_UNAUTHORIZED;
 			$this->response->message = lang('error_action_permission');
 		}
 
@@ -184,7 +184,7 @@ class AJAX_Controller extends KB_Controller
 		elseif (in_array($method, $this->admin_methods) 
 			&& true !== $this->auth->is_admin())
 		{
-			$this->response->header  = 401;
+			$this->response->header  = self::HTTP_UNAUTHORIZED;
 			$this->response->message = lang('error_action_permission');
 		}
 
@@ -192,7 +192,7 @@ class AJAX_Controller extends KB_Controller
 		elseif (in_array($method, $this->safe_admin_methods) 
 			&& ( ! check_safe_url(null, $action) OR true !== $this->auth->is_admin()))
 		{
-			$this->response->header  = 401;
+			$this->response->header  = self::HTTP_UNAUTHORIZED;
 			$this->response->message = lang('error_action_permission');
 		}
 		// Otherwise, call the method.
