@@ -76,8 +76,11 @@ class Admin extends Admin_Controller {
 
 		('items' === $this->router->fetch_method()) && $this->_jquery_ui(true);
 
+		// We add garlic to hold inputs values.
+		$this->_garlic();
+
 		// Add our menus JS file.
-		array_push($this->scripts, 'menus');
+		$this->scripts[] = 'menus';
 	}
 
 	// ------------------------------------------------------------------------
@@ -120,30 +123,18 @@ class Admin extends Admin_Controller {
 					'rules' => 'required')
 		));
 
-		// Store form in flashdata to retrieve in case of an error.
-		$name        = '';
-		$description = '';
-		
-		if ($this->session->flashdata('form'))
-		{
-			extract($this->session->flashdata('form'));
-		}
-
 		// Before the form is processed.
 		if ($this->form_validation->run() == false)
 		{
 			// Prepare form fields.
 			$data['name'] = array_merge(
 				$this->config->item('name', 'inputs'),
-				array('value' => set_value('name', $name))
+				array('value' => set_value('name'))
 			);
 			$data['description'] = array_merge(
 				$this->config->item('description', 'inputs'),
-				array('value' => set_value('description', $description))
+				array('value' => set_value('description'))
 			);
-
-			// Add CSRF security layer.
-			$data['hidden'] = $this->create_csrf();
 
 			// Set page title and render view.
 			$this->theme
@@ -153,15 +144,12 @@ class Admin extends Admin_Controller {
 		// After the form is processed.
 		else
 		{
-			// Check CSRF.
-			if ( ! $this->check_csrf())
+			// Check the nonce and referrer first.
+			if (true !== $this->check_nonce('add_new_menu') 
+				OR true !== $this->check_referrer())
 			{
-				// Store the details in session.
-				$this->session->set_flashdata('form', $this->input->post());
-
-				// Set alert and redirect back.
 				set_alert(lang('error_csrf'), 'error');
-				redirect('admin/menus/add', 'refresh');
+				redirect('admin/menus/add');
 				exit;
 			}
 
@@ -175,7 +163,6 @@ class Admin extends Admin_Controller {
 			if ($status === false)
 			{
 				// Store the details in session.
-				$this->session->set_flashdata('form', $this->input->post());
 
 				// Set alert and redirect back.
 				set_alert(lang('smn_add_menu_error'), 'error');
@@ -256,9 +243,6 @@ class Admin extends Admin_Controller {
 				array('value' => set_value('description', $data['menu']->description))
 			);
 
-			// Add CSRF security layer.
-			$data['hidden'] = $this->create_csrf();
-
 			// Set page title and render view.
 			$this->theme
 				->set_title(sprintf(lang('smn_edit_menu_name'), $data['menu']->name))
@@ -267,12 +251,12 @@ class Admin extends Admin_Controller {
 		// After the form is processed.
 		else
 		{
-			// Check CSRF.
-			if ( ! $this->check_csrf())
+			// Check the nonce and referrer first.
+			if (true !== $this->check_nonce('edit_menu_'.$id) 
+				OR true !== $this->check_referrer())
 			{
-				// Set alert and redirect back.
 				set_alert(lang('error_csrf'), 'error');
-				redirect('admin/menus/add', 'refresh');
+				redirect('admin/menus/edit/'.$id);
 				exit;
 			}
 
@@ -335,23 +319,21 @@ class Admin extends Admin_Controller {
 		// Before the form is processed.
 		if ($this->form_validation->run() == false)
 		{
-			// Add CSRF security.
-			$data['hidden'] = $this->create_csrf();
-
 			// Set page title and render view.
 			$this->theme
 				->set_title(lang('smn_manage_locations'))
 				->render($data);
 		}
+
 		// After the form is processed.
 		else
 		{
-			// Check CSRF.
-			if ( ! $this->check_csrf())
+			// Check the nonce and referrer first.
+			if (true !== $this->check_nonce('edit_locations') 
+				OR true !== $this->check_referrer())
 			{
-				// Set alert and redirect back.
 				set_alert(lang('error_csrf'), 'error');
-				redirect('admin/menus/locations', 'refresh');
+				redirect('admin/menus/locations');
 				exit;
 			}
 
@@ -425,9 +407,6 @@ class Admin extends Admin_Controller {
 				array('value' => set_value('description'))
 			);
 
-			// Add CSRF token.
-			$data['hidden'] = $this->create_csrf();
-
 			// Set page title and render view.
 			$this->theme
 				->set_title(sprintf(lang('smn_menu_items_name'), $data['menu']->name))
@@ -436,12 +415,11 @@ class Admin extends Admin_Controller {
 		// The form has been processed?
 		else
 		{
-			// Check CSRF.
-			if ( ! $this->check_csrf())
+			if (true !== $this->check_nonce('add_menu_item_'.$id) 
+				OR true !== $this->check_referrer())
 			{
-				// Set alert and redirect back.
 				set_alert(lang('error_csrf'), 'error');
-				redirect('admin/menus/items/'.$id, 'refresh');
+				redirect('admin/menus/items/'.$id);
 				exit;
 			}
 
@@ -485,6 +463,7 @@ class Admin extends Admin_Controller {
 	 * Update menu items order and details all in one function.
 	 *
 	 * @since 	1.3.3
+	 * @since 	1.4.0 	Updated to use the new nonce system.
 	 *
 	 * @access 	public
 	 * @param 	int 	$id 	The menu's ID.
@@ -497,6 +476,14 @@ class Admin extends Admin_Controller {
 		{
 			set_alert(lang('smn_inexistent_menu'), 'error');
 			redirect('admin/menus');
+			exit;
+		}
+
+		if (true !== $this->check_nonce('update_items_order_'.$id) 
+			OR true !== $this->check_referrer())
+		{
+			set_alert(lang('error_csrf'), 'error');
+			redirect('admin/menus/items/'.$id);
 			exit;
 		}
 
@@ -542,14 +529,16 @@ class Admin extends Admin_Controller {
 	 */
 	public function _admin_head($output)
 	{
-		// Confirmation messages.
 		$lines = array(
 			'delete_menu' => lang('smn_delete_menu_confirm'),
 			'delete_item' => lang('smn_delete_item_confirm'),
 		);
 
-		// We append it then return the final output.
-		$output .= '<script type="text/javascript">var i18n=i18n||{};i18n.menus='.json_encode($lines).';</script>';
+		$output = '<script type="text/javascript">';
+		$output .= 'csk.i18n = csk.i18n || {};';
+		$output .= ' csk.i18n.menus = '.json_encode($lines).';';
+		$output .= '</script>';
+
 		return $output;
 	}
 

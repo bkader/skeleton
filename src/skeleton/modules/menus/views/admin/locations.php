@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 ?><h3 class="page-header clearfix"><?php
 
@@ -62,11 +62,18 @@ echo admin_anchor('menus', lang('smn_manage_menus'), 'class="btn btn-default btn
 	<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
 		<div class="panel panel-default">
 			<div class="panel-body">
-<?php if (count($locations) > 0): ?>
+			<?php if (count($locations) > 0): ?>
 				<p><?php printf(lang('smn_theme_locations'), count($locations)); ?></p>
 				<br />
 				<?php echo validation_errors('<div class="alert alert-danger">', '</div>'); ?>
-				<?php echo form_open('admin/menus/locations', 'role="form" class="form-horizontal"', $hidden); ?>
+				<?php
+
+				// Form opening tag.
+				echo form_open('admin/menus/locations', 'role="form" rel="persist" class="form-horizontal"');
+
+				// Security nonce.
+				echo form_nonce('edit_locations');
+				?>
 				<?php foreach ($locations as $slug => $location): ?>
 					<div class="form-group">
 						<label for="location-<?php echo $slug; ?>" class="col-sm-4 control-label"><?php echo $location; ?></label>
@@ -86,9 +93,9 @@ echo admin_anchor('menus', lang('smn_manage_menus'), 'class="btn btn-default btn
 					</div>
 				</div>
 				<?php echo form_close(); ?>
-<?php else: ?>
+			<?php else: ?>
 				<p><?php printf(lang('smn_theme_locations_none'), count($locations)); ?></p>
-<?php endif; ?>
+			<?php endif; ?>
 			</div>
 		</div>
 	</div>

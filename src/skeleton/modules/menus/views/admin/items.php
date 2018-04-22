@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 ?><h2 class="page-header clearfix"><?php
 
@@ -60,7 +60,13 @@ echo admin_anchor('menus', lang('smn_manage_menus'), 'class="btn btn-default btn
 ?></h2>
 <div class="row">
 	<div class="col-sm-12 col-md-9 col-md-push-3">
-		<?php echo form_open('admin/menus/update/'.$menu->id, 'class="panel panel-default"'); ?>
+		<?php
+		// Form opening tag.
+		echo form_open('admin/menus/update/'.$menu->id, 'class="panel panel-default" rel="persist"');
+
+		// Security nonce.
+		echo form_nonce('update_items_order_'.$menu->id);
+		?>
 			<div class="panel-body">
 				<h4 class="clearfix">
 					<?php _e('smn_menu_structure'); ?> &nbsp;<small><?php _e('smn_menu_structure_tip'); ?></small>
@@ -76,7 +82,7 @@ echo admin_anchor('menus', lang('smn_manage_menus'), 'class="btn btn-default btn
 							<span class="menu-item-title"><?php echo $item->name; ?></span>
 							<span class="menu-item-controls">
 								<a href="#" class="item-edit" data-toggle="collapse" data-target="#menu-item-settings-<?php echo $item->id; ?>" title="<?php _e('smn_edit_item'); ?>"><i class="fa fa-edit"></i></a>
-								<a href="<?php echo safe_ajax_url('menus/delete/item/'.$item->id); ?>" data-item-id="<?php echo $item->id; ?>" class="item-delete" title="<?php _e('smn_delete_item'); ?>" tabindex="-1"><i class="fa fa-trash-o"></i></a>
+								<a href="<?php echo safe_ajax_url('menus/delete/item/'.$item->id, 'delete_item_'.$item->id); ?>" data-item-id="<?php echo $item->id; ?>" class="item-delete" title="<?php _e('smn_delete_item'); ?>" tabindex="-1"><i class="fa fa-trash-o"></i></a>
 							</span>
 						</div>
 						<div class="menu-item-settings collapse" id="menu-item-settings-<?php echo $item->id; ?>">
@@ -138,7 +144,10 @@ echo admin_anchor('menus', lang('smn_manage_menus'), 'class="btn btn-default btn
 				</div>
 			</div>
 			<div class="panel-body">
-				<?php echo form_open('admin/menus/items/'.$menu->id, 'role="form"', $hidden); ?>
+				<?php
+				echo form_open('admin/menus/items/'.$menu->id, 'role="form" rel="persist"'),
+				form_nonce('add_menu_item_'.$menu->id);
+				?>
 					<div class="form-group<?php echo form_error('name') ? ' has-error' : ''; ?>">
 						<label for="name" class="sr-only"><?php _e('smn_item_title'); ?></label>
 						<?php echo print_input($title, array('class' => 'form-control input-sm')); ?>

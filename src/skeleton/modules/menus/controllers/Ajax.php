@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.3.3
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 class Ajax extends AJAX_Controller {
 
@@ -96,13 +96,17 @@ class Ajax extends AJAX_Controller {
 	 */
 	public function delete($target, $id = 0)
 	{
-		// Default response header.
-		$this->response->header = 406;
+		if (true !== $this->check_nonce("delete_{$target}_{$id}"))
+		{
+			$this->response->header = self::HTTP_BAD_REQUEST;
+			$this->response->message = lang('error_safe_url');
+			return;
+		}
 
 		// We make sure only "menu" or "item" are provided.
 		if ( ! $target OR ! in_array($target, array('menu', 'item')))
 		{
-			$this->response->header  = 412;
+			$this->response->header  = self::HTTP_NOT_ACCEPTABLE;
 			$this->response->message = lang('error_safe_url');
 			return;
 		}
@@ -110,7 +114,7 @@ class Ajax extends AJAX_Controller {
 		// We make sure we provided a valid id.
 		if ( ! is_numeric($id) OR $id < 0)
 		{
-			$this->response->header  = 412;
+			$this->response->header  = self::HTTP_NOT_ACCEPTABLE;
 			$this->response->message = lang('error_safe_url');
 			return;
 		}
@@ -118,7 +122,7 @@ class Ajax extends AJAX_Controller {
 		// Successfully deleted?
 		if (false !== $this->kbcore->menus->{"delete_{$target}"}($id))
 		{
-			$this->response->header = 200;
+			$this->response->header = self::HTTP_OK;
 			$this->response->message = lang("smn_delete_{$target}_success");
 
 			// We log the activity.

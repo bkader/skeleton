@@ -3,68 +3,65 @@
  * Copyright 2018 Kader Bouyakoub (https://github.com/bkader)
  * Licensed under MIT (https://github.com/bkader/skeleton/blob/develop/LICENSE.md)
  */
-(function($, window, document, undefined) {
-
-    $.noConflict();
+(function ($, window, document, undefined) {
     "use strict";
 
-    // ========================================================
-    // Delete menu action.
-    // ========================================================
-    $(document).on("click", ".menu-delete", function (e) {
-        e.preventDefault();
-        var that = $(this), href = that.attr("href"), id = that.attr("data-menu-id");
-        if (!href.length) { return; }
-        bootbox.confirm({
-            message: i18n.menus.delete_menu,
-            callback: function (result) {
-                bootbox.hideAll();
-                if (result !== true) { return; }
-                $.get(href, function (response) {
-                    toastr.success(response);
-                }).done(function () {
-                    $("#menu-" + id).fadeOut(function () {
-                        $(this).remove();
-                    });
-                }).fail(function (response) {
-                    toastr.error(response.responseJSON);
-                });
-            }
-        });
-        return Kbcore.menus.delete_menu(this);
-    });
+    // Prepare globals.
+    var csk = window.csk = window.csk || {};
+    csk.i18n = csk.i18n || {};
+    csk.i18n.menus = csk.i18n.menus || {};
 
-    // ========================================================
-    // Delete menu item action.
-    // ========================================================
-    $(document).on("click", ".item-delete", function (e) {
-        e.preventDefault();
-        var that = $(this), href = that.attr("href"), id = that.attr("data-item-id");
-        if (!href.length) { return; }
-        bootbox.confirm({
-            message: i18n.menus.delete_item,
-            callback: function (result) {
-                bootbox.hideAll();
-                if (result !== true) { return; }
-                $.get(href, function (response) {
-                    toastr.success(response);
-                }).done(function () {
-                    $("#menu-item-" + id).slideUp(function () {
-                        $(this).remove();
-                    });
-                }).fail(function (response) {
-                    toastr.error(response.responseJSON);
-                });
-            }
-        });
-    });
+    /**
+     * Menus Object.
+     * Handles all operations done on menus module.
+     * @since   1.4.0
+     */
+    csk.menus = {
+        delete: function (el, type) {
+            var $this = $(el),
+                href = $this.attr("href");
 
-    // ========================================================
-    // When DOM is ready.
-    // ========================================================
+            if (!href.length || !type.length) {
+                return false;
+            }
+
+            var id = (type === "menu") ?
+                $this.attr("data-menu-id") :
+                $this.attr("data-item-id");
+
+            return csk.ui.confirm(csk.i18n.menus["delete_" + type], function () {
+                csk.ajax.request(href, {
+                    type: "POST",
+                    data: {
+                        action: "delete_" + type + "_" + id
+                    },
+                    complete: function (response) {
+                        var target = (type === "menu") ? "menu-" : "menu-item-";
+                        $("#" + target + id).fadeOut(function () {
+                            $(this).remove();
+                        });
+                    }
+                })
+            });
+        }
+    };
+
     $(document).ready(function () {
+        // Delete menu.
+        $(document).on("click", ".menu-delete", function (e) {
+            e.preventDefault();
+            return csk.menus.delete(this, "menu");
+        });
+
+        // Delete item.
+        $(document).on("click", ".item-delete", function (e) {
+            e.preventDefault();
+            return csk.menus.delete(this, "item");
+        });
+
+        // Menu items order.
         var itemsList = $("#menu-order");
-        if (itemsList.length) {
+        if (itemsList.length && typeof $.fn.sortable !== "undefined") {
             $("#menu-order").sortable({
                 stop: function (event, ui) {
                     var itemsOrder = $("#menu-order").sortable('toArray');

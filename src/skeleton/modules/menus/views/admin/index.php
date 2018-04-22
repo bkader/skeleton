@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 ?><h2 class="page-header clearfix"><?php _e('smn_manage_menus'); ?><span class="pull-right"><?php
 
@@ -81,7 +81,7 @@ echo '&nbsp;'.admin_anchor('menus/locations', lang('smn_manage_locations'), 'cla
 					<td class="text-right">
 						<a class="btn btn-default btn-xs" href="<?php echo admin_url('menus/edit/'.$menu->id) ?>" title="<?php _e('smn_edit_menu') ?>"><i class="fa fa-edit"></i></a>&nbsp;
 						<a class="btn btn-primary btn-xs" href="<?php echo admin_url('menus/items/'.$menu->id) ?>" title="<?php _e('smn_menu_items') ?>"><i class="fa fa-list-ul"></i></a>&nbsp;
-						<a href="<?php echo safe_ajax_url('menus/delete/menu/'.$menu->id) ?>" data-menu-id="<?php echo $menu->id; ?>" class="btn btn-danger btn-xs menu-delete" title="<?php _e('smn_delete_menu') ?>"><i class="fa fa-trash-o"></i></a>
+						<a href="<?php echo safe_ajax_url('menus/delete/menu/'.$menu->id, 'delete_menu_'.$menu->id) ?>" data-menu-id="<?php echo $menu->id; ?>" class="btn btn-danger btn-xs menu-delete" title="<?php _e('smn_delete_menu') ?>"><i class="fa fa-trash-o"></i></a>
 					</td>
 				</tr>
 			<?php endforeach; ?>
