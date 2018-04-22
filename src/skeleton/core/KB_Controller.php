@@ -90,11 +90,11 @@ class KB_Controller extends CI_Controller {
 		$this->theme->set('c_user', $this->c_user, true);
 
 		// Always hold the redirection URL for eventual use.
-		if ($this->input->get('next'))
+		if ($this->input->get_post('next'))
 		{
 			$this->session->set_flashdata(
 				'redirect',
-				rawurldecode($this->input->get('next'))
+				rawurldecode($this->input->get_post('next'))
 			);
 		}
 
