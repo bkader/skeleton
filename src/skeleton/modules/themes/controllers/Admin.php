@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.3.4
+ * @version 	1.4.0
  */
 class Admin extends Admin_Controller {
 
@@ -61,7 +61,9 @@ class Admin extends Admin_Controller {
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://github.com/bkader
+	 * 
 	 * @since 	1.0.0
+	 * @since 	1.4.0 	Included Handlebars and removed array_push for better performance.
 	 *
 	 * @access 	public
 	 * @param 	none
@@ -77,8 +79,11 @@ class Admin extends Admin_Controller {
 		// Add language lines to head part.
 		add_filter('admin_head', array($this, '_admin_head'));
 
+		// We need handlebars.
+		$this->_handlebars();
+
 		// Add our needed JS file.
-		array_push($this->scripts, 'themes');
+		$this->scripts[] = 'themes';
 	}
 
 	// ------------------------------------------------------------------------
@@ -156,7 +161,7 @@ class Admin extends Admin_Controller {
 		}
 
 		// Displaying a single theme details?
-		$theme = $this->input->get('theme');
+		$theme = $this->input->get('theme', true);
 		if (null !== $theme)
 		{
 			$theme = (isset($themes[$theme])) ? $themes[$theme] : null;
@@ -181,7 +186,9 @@ class Admin extends Admin_Controller {
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://github.com/bkader
+	 * 
 	 * @since 	1.3.4
+	 * @since 	1.4.0 	Updated to use newly created nonce system.
 	 *
 	 * @access 	public
 	 * @param 	none
@@ -192,13 +199,10 @@ class Admin extends Admin_Controller {
 		// We prepare form validation.
 		$this->prep_form();
 
-		// Add our CSRF token
-		$data['hidden'] = $this->create_csrf();
-
 		// Set page title and load view.
 		$this->theme
 			->set_title(lang('sth_theme_add'))
-			->render($data);
+			->render();
 	}
 
 	// ------------------------------------------------------------------------
@@ -210,7 +214,9 @@ class Admin extends Admin_Controller {
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://github.com/bkader
+	 * 
 	 * @since 	1.3.4
+	 * @since 	1.4.0 	Updated to use newly created nonce system.
 	 *
 	 * @access 	public
 	 * @param 	none
@@ -218,11 +224,11 @@ class Admin extends Admin_Controller {
 	 */
 	public function upload()
 	{
-		// We check CSRF token validity.
-		if ( ! $this->check_csrf())
+		if (true !== $this->check_nonce('theme_upload') 
+			OR true !== $this->check_referrer())
 		{
 			set_alert(lang('error_csrf'), 'error');
-			redirect('admin/themes/install', 'refresh');
+			redirect('admin/themes/install');
 			exit;
 		}
 
@@ -286,6 +292,7 @@ class Admin extends Admin_Controller {
 	 * Method for adding some JS lines to the head part.
 	 *
 	 * @since 	1.3.3
+	 * @since 	1.4.0 	Update because CSK object was updated.
 	 *
 	 * @access 	public
 	 * @param 	string
@@ -300,9 +307,10 @@ class Admin extends Admin_Controller {
 			'install'  => lang('sth_theme_install_confirm'),
 			'upload'   => lang('sth_theme_upload_confirm'),
 		);
-
-		// We add our lines and return the final output.
-		$output .= '<script type="text/javascript">var i18n=i18n||{};i18n.themes='.json_encode($lines).';</script>';
+		$output .= '<script type="text/javascript">';
+		$output .= 'csk.i18n = csk.i18n || {};';
+		$output .= ' csk.i18n.themes = '.json_encode($lines).';';
+		$output .= '</script>';
 		return $output;
 	}
 

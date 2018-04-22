@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.3.3
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 class Ajax extends AJAX_Controller {
 
@@ -93,9 +93,6 @@ class Ajax extends AJAX_Controller {
 	 */
 	public function activate($name = null)
 	{
-		// Default header status code.
-		$this->response->header = 406;
-
 		// We grab themes stored in database.
 		$db_themes = $this->kbcore->options->get('themes');
 		$db_theme  = $this->kbcore->options->get('theme');
@@ -110,7 +107,7 @@ class Ajax extends AJAX_Controller {
 			OR $name === $db_theme->value 
 			OR ! isset($db_themes->value[$name]))
 		{
-			$this->response->header  = 412;
+			$this->response->header  = self::HTTP_FORBIDDEN;
 			$this->response->message = lang('error_safe_url');
 			return;
 		}
@@ -121,7 +118,7 @@ class Ajax extends AJAX_Controller {
 		// Successfully updated?
 		if (false !== $db_theme->update('value', $name))
 		{
-			$this->response->header  = 200;
+			$this->response->header  = self::HTTP_OK;
 			$this->response->message = lang('sth_theme_activate_success');
 
 			// Delete other themes menus and images sizes.
@@ -161,9 +158,6 @@ class Ajax extends AJAX_Controller {
 	 */
 	public function delete($name = null)
 	{
-		// Default header status code.
-		$this->response->header = 406;
-
 		// We grab themes stored in database.
 		$db_themes = $this->kbcore->options->get('themes');
 
@@ -177,7 +171,7 @@ class Ajax extends AJAX_Controller {
 			OR false === $db_themes 
 			OR ! isset($db_themes->value[$name]))
 		{
-			$this->response->header  = 412;
+			$this->response->header  = self::HTTP_FORBIDDEN;
 			$this->response->message = lang('error_safe_url');
 			return;
 		}
@@ -206,7 +200,7 @@ class Ajax extends AJAX_Controller {
 		if (false !== directory_delete($this->theme->themes_path($name)) 
 			&& false !== $db_themes->update('value', $themes))
 		{
-			$this->response->header  = 200;
+			$this->response->header  = self::HTTP_OK;
 			$this->response->message = lang('sth_theme_delete_success');
 
 			// we delete theme options.
@@ -220,6 +214,83 @@ class Ajax extends AJAX_Controller {
 
 		// Otherwise, the theme could not be deleted.
 		$this->response->mesage = lang('sth_theme_delete_error');
+	}
+
+	// ------------------------------------------------------------------------
+
+	public function details($name = null)
+	{
+		// We grab themes stored in database.
+		$db_themes = $this->kbcore->options->get('themes');
+
+		/**
+		 * We make sure that:
+		 * 1. The $name is provided and valid.
+		 * 2. We have themes stored in database.
+		 * 3. The selected theme is available.
+		 */
+		if (null === $name 
+			OR false === $db_themes 
+			OR ! isset($db_themes->value[$name]))
+		{
+			$this->response->header  = self::HTTP_FORBIDDEN;
+			$this->response->message = lang('error_safe_url');
+			return;
+		}
+
+		// Prepare the theme and add some details.
+		$theme = $db_themes->value[$name];
+
+		// Is the theme enabled?
+		$theme['enabled'] = ($name === get_option('theme', 'default'));
+
+		// The theme has a URI?
+		$theme['name_uri'] = (empty($theme['theme_uri']))
+			? $theme['name']
+			: sprintf(lang('sth_theme_name'), $theme['name'], $theme['theme_uri']);
+
+		// Does the license have a URI?
+		$theme['license'] = (empty($theme['license_uri']))
+			? $theme['license']
+			: sprintf(lang('sth_theme_license'), $theme['license'], $theme['license_uri']);
+
+		// Does the author have a URI?
+		$theme['author'] = (empty($theme['author_uri']))
+			? $theme['author']
+			: sprintf(lang('sth_theme_author'), $theme['author'], $theme['author_uri']);
+
+		// Did the user provide a support email address?
+		$theme['author_email'] = (empty($theme['author_email']))
+			? null
+			: sprintf(lang('sth_theme_author_email'), $theme['author_email']);
+
+		// Actions buttons.
+		$theme['action_activate'] = null;
+		$theme['action_delete'] = null;
+		if (true !== $theme['enabled'])
+		{
+			$theme['action_activate'] = safe_ajax_anchor(
+				'themes/activate/'.$name,
+				'activate_theme_'.$name,
+				line('sth_theme_activate'),
+				array(
+					'class'      => 'theme-activate btn btn-primary btn-sm',
+					'data-theme' => $name,
+				)
+			);
+			$theme['action_delete'] = safe_ajax_anchor(
+				'themes/delete/'.$name,
+				'delete_theme_'.$name,
+				line('sth_theme_delete'),
+				array(
+					'class'      => 'theme-delete btn btn-danger btn-sm pull-right',
+					'data-theme' => $name,
+				)
+			);
+		}
+
+		$this->response->header  = self::HTTP_OK;
+		$this->response->results = $theme;
 	}
 
 }

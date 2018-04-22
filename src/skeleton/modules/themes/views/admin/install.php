@@ -47,14 +47,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.3.4
- * @version 	1.3.4
+ * @version 	1.4.0
  */
 ?><h2 class="page-header clearfix"><?php _e('sth_theme_add'); ?><span class="pull-right"><?php echo admin_anchor('themes', 'lang:back', 'class="btn btn-default btn-sm"'); ?> <button role="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#theme-install"><?php _e('sth_theme_upload'); ?></button></span></h2>
 <div class="row<?php if ( ! form_error('themezip')): ?> collapse<?php endif; ?>" id="theme-install">
 	<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 text-center">
 		<p><?php _e('sth_theme_upload_tip'); ?></p><br>
 		<div class="well">
-			<?php echo form_open_multipart('admin/themes/upload', 'class="form-inline'.(form_error('themezip') ? ' has-error' : '').'" id="theme-upload"', $hidden); ?>
+			<?php echo form_open_multipart(
+				'admin/themes/upload',
+				array( // Attributes.
+					'class' => 'form-inline'.(has_error('themezip') ? ' has_error' : ''),
+					'id' => 'theme-upload',
+				)
+			); ?>
+			<?php echo form_nonce('theme_upload'); ?>
 				<div class="form-group"><?php echo form_upload('themezip', null, 'id="themezip"'); ?></div><?php
 				echo form_error('themezip', '<div class="help-block">', '</div>');
 				?><button type="submit" name="theme-install" class="btn btn-primary btn-sm theme-install"><?php _e('sth_theme_install'); ?></button>
