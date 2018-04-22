@@ -132,6 +132,7 @@ class Admin_Controller extends User_Controller
 		}
 
 		// Print admin head part.
+		add_filter('after_admin_styles', array($this, 'csk_globals'));
 		add_filter('admin_head', array($this, 'admin_head'));
 
 		// Prepare dashboard sidebar.
@@ -188,17 +189,22 @@ class Admin_Controller extends User_Controller
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Added some needed scripts to the head section.
+	 * csk_globals
 	 *
-	 * @since 	1.3.3
+	 * Method for adding JS global before anything else.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
 	 *
 	 * @access 	public
-	 * @param 	string 	$output
-	 * @return 	string
+	 * @param 	string 	$output 	StyleSheets output.
+	 * @return 	void
 	 */
-	public function admin_head($output)
+	public function csk_globals($output)
 	{
 		// Adding configuration.
+		$time = time();
 		$config = json_encode(array(
 			'siteURL'    => site_url(),
 			'baseURL'    => base_url(),
@@ -208,12 +214,35 @@ class Admin_Controller extends User_Controller
 			'lang'       => $this->lang->languages($this->session->language),
 		));
 
-		$output .= "\t<script type=\"text/javascript\">var Kbcore=Kbcore||{},Config=Config||{},i18n=i18n||{};Object.assign(Config, {$config});</script>\n";
+		$output .= '<script type="text/javascript">';
+		$output .= 'var csk = window.csk = window.csk || {};';
+		$output .= ' csk.i18n = csk.i18n || {};';
+		$output .= ' csk.config = '.$config.';';
+		$output .= '</script>';
 
-		// Add support for older browser.
+		return $output;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * admin_head
+	 *
+	 * Method for adding extra stuff to admin output before closing </head> tag.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.3.3
+	 *
+	 * @since 	1.4.0 	Left only iE9 support and other things moved to "csk_globals".
+	 *
+	 * @access 	public
+	 * @param 	string 	$output 	The admin head output.
+	 * @return 	void
+	 */
+	public function admin_head($output)
+	{
 		add_ie9_support($output, (ENVIRONMENT === 'production'));
-
-		// Return the final output.
 		return $output;
 	}
 
