@@ -62,6 +62,8 @@ class Admin extends Admin_Controller
 
 		// We add translations lines to head.
 		add_filter('admin_head', array($this, '_admin_head'));
+
+		$this->scripts[] = 'activities';
 	}
 
 	// ------------------------------------------------------------------------
@@ -113,51 +115,57 @@ class Admin extends Admin_Controller
 		$activities = $this->kbcore->activities->get_many($where, null, $limit, $offset);
 
 		// Loop through activities to complete data.
-		foreach ($activities as &$activity)
+		if ($activities)
 		{
-			// User anchor
-			$activity->user_anchor = admin_anchor(
-				'activities?user='.$activity->user_id.(isset($get['module']) ? '&module='.$get['module'] : ''),
-				$activity->user->full_name
-			);
-
-			// Module anchor
-			$activity->module_anchor = '';
-			if ( ! empty($activity->module))
+			foreach ($activities as &$activity)
 			{
-				$activity->module_anchor = admin_anchor(
-					'activities?'.(isset($get['user']) ? 'user='.$get['user'].'&' : '').'module='.$activity->module,
-					$activity->module
+				// User anchor
+				if (false !== $activity->user)
+				{
+					$activity->user_anchor = admin_anchor(
+						'activities?user='.$activity->user_id.(isset($get['module']) ? '&module='.$get['module'] : ''),
+						$activity->user->full_name
+					);
+				}
+
+				// Module anchor
+				$activity->module_anchor = '';
+				if ( ! empty($activity->module))
+				{
+					$activity->module_anchor = admin_anchor(
+						'activities?'.(isset($get['user']) ? 'user='.$get['user'].'&' : '').'module='.$activity->module,
+						$activity->module
+					);
+				}
+
+				// IP location link.
+				$activity->ip_address = anchor(
+					'https://www.iptolocation.net/trace-'.$activity->ip_address,
+					$activity->ip_address,
+					'target="_blank"'
 				);
-			}
 
-			// IP location link.
-			$activity->ip_address = anchor(
-				'https://www.iptolocation.net/trace-'.$activity->ip_address,
-				$activity->ip_address,
-				'target="_blank"'
-			);
-
-			// Does the activity have a translation?
-			$string = $activity->activity;
-			if (0 === strpos($string, 'lang:'))
-			{
-				// we remove the "lang:" part first.
-				$string = str_replace('lang:', '', $string);
-
-				// Does it need arguments passed?
-				if (false !== strpos($string, '::'))
+				// Does the activity have a translation?
+				$string = $activity->activity;
+				if (0 === strpos($string, 'lang:'))
 				{
-					$exp    = explode('::', $string);
-					$line   = lang(array_shift($exp));
-					$string = vsprintf($line, $exp);
+					// we remove the "lang:" part first.
+					$string = str_replace('lang:', '', $string);
+
+					// Does it need arguments passed?
+					if (false !== strpos($string, '::'))
+					{
+						$exp    = explode('::', $string);
+						$line   = lang(array_shift($exp));
+						$string = vsprintf($line, $exp);
+					}
+					else
+					{
+						$string = lang($string);
+					}
 				}
-				else
-				{
-					$string = lang($string);
-				}
+				$activity->activity = $string;
 			}
-			$activity->activity = $string;
 		}
 
 		// Add activities to view.
@@ -182,7 +190,10 @@ class Admin extends Admin_Controller
 	public function _admin_head($output)
 	{
 		$lines['delete'] = lang('sac_activity_delete_confirm');
-		$output .= '<script type="text/javascript">var i18n=i18n||{};i18n.activities='.json_encode($lines).';</script>';
+		$output .= '<script type="text/javascript">';
+		$output .= 'csk.i18n = csk.i18n || {};';
+		$output .= ' csk.i18n.activities = '.json_encode($lines).';';
+		$output .= '</script>';
 		return $output;
 	}
 
