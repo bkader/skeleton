@@ -21,7 +21,7 @@
         // Delete the targeted activity.
         delete: function (el) {
             var that = $(el),
-                href = that.attr("ajaxify"),
+                href = that.attr("href"),
                 id = that.data("activity-id");
 
             // We cannot proceed if the URL is not provided.

@@ -191,7 +191,7 @@
         // AJAXify anchors with rel attributes.
         // ---------------------------------------------------
         $(document).on("click", "a[rel]", function (e) {
-            var $this = $(this), rel = $this.attr("rel"), href = $this.attr("ajaxify");
+            var $this = $(this), rel = $this.attr("rel"), href = $this.attr("href");
 
             if (typeof href === "undefined") {
                 e.preventDefault();
