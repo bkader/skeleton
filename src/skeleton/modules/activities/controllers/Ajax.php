@@ -77,13 +77,10 @@ class Ajax extends AJAX_Controller
 	 */
 	public function delete($id = 0)
 	{
-		// Default response header status code.
-		$this->response->header = 406;
-
 		// Did we provide an invalid id?
 		if ( ! is_numeric($id) OR $id < 0)
 		{
-			$this->response->header  = 412;
+			$this->response->header  = self::HTTP_NOT_ACCEPTABLE;
 			$this->response->message = lang('error_safe_url');
 			return;
 		}
@@ -91,7 +88,7 @@ class Ajax extends AJAX_Controller
 		// Successfully deleted?
 		if (false !== $this->kbcore->activities->delete($id))
 		{
-			$this->response->header  = 200;
+			$this->response->header  = self::HTTP_OK;
 			$this->response->message = lang('sac_activity_delete_success');
 			return;
 		}

@@ -73,7 +73,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					<td><?php echo $activity->ip_address; ?></td>
 					<td><?php echo date('Y/m/d H:i', $activity->created_at); ?></td>
 					<td class="text-right">
-						<a href="<?php echo safe_ajax_url('activities/delete/'.$activity->id); ?>" data-activity-id="<?php echo $activity->id; ?>" class="btn btn-danger btn-xs activity-delete"><i class="fa fa-trash-o"></i></a>
+						<!--a href="<?php echo safe_ajax_url('activities/delete/'.$activity->id, 'delete_activity_'.$activity->id); ?>" data-activity-id="<?php echo $activity->id; ?>" class="btn btn-danger btn-xs activity-delete"><i class="fa fa-fw fa-trash-o"></i></a-->
+						<a href="#" ajaxify="<?php echo safe_ajax_url('activities/delete/'.$activity->id, 'delete_activity_'.$activity->id); ?>" data-activity-id="<?php echo $activity->id; ?>" class="btn btn-danger btn-xs activity-delete"><i class="fa fa-fw fa-trash-o"></i></a>
 					</td>
 				</tr>
 				<?php endforeach; ?>
