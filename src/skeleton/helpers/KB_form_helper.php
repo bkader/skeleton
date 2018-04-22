@@ -138,15 +138,32 @@ if ( ! function_exists('print_input'))
 		// Merge all attributes if there any.
 		if ( ! empty($attrs))
 		{
-			$input = array_merge($input, $attrs);
+			foreach ($attrs as $key => $val)
+			{
+				if (is_int($key))
+				{
+					$input[$val] = $val;
+				}
+				else
+				{
+					$input[$key] = $val;
+				}
+			}
 		}
 
-		// Should placeholder be translated?
-		if (isset($input['placeholder']) 
-			&& sscanf($input['placeholder'], 'lang:%s', $line) === 1)
-		{
-			$input['placeholder'] = line($line);
-		}
+		// Array of attributes not to transfigure.
+		$_ignored = array(
+			'autocomplete', 'autofocus',
+			'disabled',
+			'form', 'formaction', 'formenctype', 'formmethod', 'formtarget',
+			'list',
+			'multiple',
+			'readonly', 'rel', 'required',
+			'step',
+		);
+		array_walk($input, function(&$val, $key) use ($_ignored) {
+			(in_array($key, $_ignored)) OR $val = _transfigure($val);
+		});
 
 		/**
 		 * Here we loop through all input elements only if it's found,
@@ -215,15 +232,80 @@ if ( ! function_exists('validation_errors_list'))
 if ( ! function_exists('_translate'))
 {
 	/**
-	 * This function simply attempts to translate
-	 * a string if it finds "lang:" at the start
-	 * of it.
-	 * @param 	string 	$str 	The string to translate.
+	 * _translate
+	 *
+	 * Function for translating the selected string if it contains the
+	 * "lang:" keyword at the beginning.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.0.0
+	 *
+	 * @param 	string 	$string
 	 * @return 	string
 	 */
-	function _translate($str)
+	function _translate($string)
 	{
-		return (sscanf($str, 'lang:%s', $line) === 1) ? line($line) : $str;
+		return (is_string($string) && sscanf($string, 'lang:%s', $line) === 1) ? line($line) : $string;
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('_configure'))
+{
+	/**
+	 * _configure
+	 *
+	 * Function for getting the config value of the selected string if 
+	 * it contains the "config:" keyword at the beginning.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @param 	string 	$string 	The string to run test on.
+	 * @return 	string
+	 */
+	function _configure($string)
+	{
+		return (is_string($string) && sscanf($string, 'config:%s', $config) === 1) 
+			? get_option($config, $string)
+			: $string;
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('_transfigure'))
+{
+	/**
+	 * _transfigure
+	 *
+	 * This function's name doesn't really mean the verb "transfigure", yet,
+	 * it does transfigure the string. It checks if the string contains the
+	 * "config:" keywords first, then the "lang:" if the first one was not
+	 * found. In fact, it does both "_translate" and "_configure" functions.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @param 	string 	$string 	The string to run test on.
+	 * @return 	string
+	 */
+	function _transfigure($string)
+	{
+		if (is_string($string) && sscanf($string, 'config:%s', $config) === 1)
+		{
+			$string = get_option($config, $string);
+		}
+		elseif (is_string($string) && sscanf($string, 'lang:%s', $lang) === 1)
+		{
+			$string = line($lang);
+		}
+
+		return $string;
 	}
 }
 
