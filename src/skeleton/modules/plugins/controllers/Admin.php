@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 class Admin extends Admin_Controller
 {
@@ -163,12 +163,20 @@ class Admin extends Admin_Controller
 
 				// Activate/Deactivate plugin.
 				$_status = (true === $p['enabled']) ? 'deactivate' : 'activate';
-				$p['actions'][] = safe_ajax_anchor("plugins/{$_status}/{$slug}", lang('spg_plugin_'.$_status), "class=\"plugin-{$_status}\"");
+				$p['actions'][] = safe_ajax_anchor(
+					"plugins/{$_status}/{$slug}", // The URL.
+					"{$_status}_plugin_{$slug}", // Action for security.
+					line('spg_plugin_'.$_status), // The test.
+					array( // Anchor attributes.
+						'class' => 'plugin-'.$_status,
+						'data-plugin' => $slug,
+					)
+				);
 
 				// Does the plugin have a settings page?
 				if (true === $p['has_settings'])
 				{
-					$p['actions'][] = admin_anchor('plugins/settings/'.$slug, lang('spg_plugin_settings'));
+					$p['actions'][] = admin_anchor('plugins/settings/'.$slug, line('spg_plugin_settings'));
 				}
 
 				// We add the delete plugin only if the plugin is not enabled.
@@ -176,8 +184,12 @@ class Admin extends Admin_Controller
 				{
 					$p['actions'][] = safe_ajax_anchor(
 						"plugins/delete/{$slug}",
-						lang('spg_plugin_delete'),
-						'class="plugin-delete text-danger" data-plugin="'.$slug.'"'
+						"delete_plugin_{$slug}",
+						line('spg_plugin_delete'),
+						array( // Anchor attributes.
+							'class' => 'text-danger plugin-delete',
+							'data-plugin' => $slug,
+						)
 					);
 				}
 
@@ -199,7 +211,7 @@ class Admin extends Admin_Controller
 				if ( ! empty($p['license']))
 				{
 					$license = (empty($p['license_uri'])) ? $p['license'] : sprintf(line('spg_plugin_license'), $p['license'], $p['license_uri']);
-					$p['details'][] = sprintf(lang('spg_license_name'), $license);
+					$p['details'][] = sprintf(line('spg_license_name'), $license);
 					// Reset license.
 					$license = null;
 				}
@@ -207,13 +219,13 @@ class Admin extends Admin_Controller
 				// Did the user provide external details link?
 				if ( ! empty($p['plugin_uri']))
 				{
-					$p['details'][] = sprintf(lang('spg_plugin_author_uri'), $p['plugin_uri']);
+					$p['details'][] = sprintf(line('spg_plugin_author_uri'), $p['plugin_uri']);
 				}
 
 				// Does the user provide a support email address?
 				if ( ! empty($p['author_email']))
 				{
-					$p['details'][] = sprintf(lang('spg_plugin_author_email'), $p['author_email'], rawurlencode('Support: '.$p['name']));
+					$p['details'][] = sprintf(line('spg_plugin_author_email'), $p['author_email'], rawurlencode('Support: '.$p['name']));
 				}
 			}
 		}
@@ -229,7 +241,7 @@ class Admin extends Admin_Controller
 
 		// Set page title and load view.
 		$this->theme
-			->set_title(lang('spg_manage_plugins'))
+			->set_title(line('spg_manage_plugins'))
 			// ->set_view('index')
 			->render($data);
 	}
@@ -250,7 +262,7 @@ class Admin extends Admin_Controller
 		// The plugin does not exists?
 		if ( ! $plugin)
 		{
-			set_alert(lang('spg_plugin_missing'), 'error');
+			set_alert(line('spg_plugin_missing'), 'error');
 			redirect('admin/plugins');
 			exit;
 		}
@@ -258,7 +270,7 @@ class Admin extends Admin_Controller
 		// Disabled? It needs to be enabled first.
 		if ( ! $plugin['enabled'])
 		{
-			set_alert(lang('spg_plugin_settings_disabled'), 'error');
+			set_alert(line('spg_plugin_settings_disabled'), 'error');
 			redirect('admin/plugins');
 			exit;
 		}
@@ -266,14 +278,14 @@ class Admin extends Admin_Controller
 		// It does not have a settings page?
 		if ( ! $plugin['has_settings'])
 		{
-			set_alert(lang('spg_plugin_settings_missing'), 'error');
+			set_alert(line('spg_plugin_settings_missing'), 'error');
 			redirect('admin/plugins');
 			exit;
 		}
 
 		// Set page title and render view.
 		$this->theme
-			->set_title(sprintf(lang('spg_plugin_settings_name'), $plugin['name']))
+			->set_title(sprintf(line('spg_plugin_settings_name'), $plugin['name']))
 			->render(array('plugin' => $plugin));
 
 	}
@@ -303,7 +315,7 @@ class Admin extends Admin_Controller
 
 		// Set page title and load view.
 		$this->theme
-			->set_title(lang('spg_plugin_add'))
+			->set_title(line('spg_plugin_add'))
 			->render($data);
 	}
 
@@ -327,7 +339,7 @@ class Admin extends Admin_Controller
 		// We check CSRF token validity.
 		if ( ! $this->check_csrf())
 		{
-			set_alert(lang('error_csrf'), 'error');
+			set_alert(line('error_csrf'), 'error');
 			redirect('admin/plugins/install', 'refresh');
 			exit;
 		}
@@ -335,7 +347,7 @@ class Admin extends Admin_Controller
 		// Did the user provide a valid file?
 		if (empty($_FILES['pluginzip']['name']))
 		{
-			set_alert(lang('spg_plugin_upload_error'), 'error');
+			set_alert(line('spg_plugin_upload_error'), 'error');
 			redirect('admin/plugins/install');
 			exit;
 		}
@@ -344,7 +356,7 @@ class Admin extends Admin_Controller
 		$this->load->helper('file');
 		if ( ! function_exists('unzip_file'))
 		{
-			set_alert(lang('spg_plugin_upload_error'), 'error');
+			set_alert(line('spg_plugin_upload_error'), 'error');
 			redirect('admin/plugins/install');
 			exit;
 		}
@@ -358,7 +370,7 @@ class Admin extends Admin_Controller
 		// Error uploading?
 		if (false === $this->upload->do_upload('pluginzip') OR ! class_exists('ZipArchive', false))
 		{
-			set_alert(lang('spg_plugin_upload_error'), 'error');
+			set_alert(line('spg_plugin_upload_error'), 'error');
 			redirect('admin/plugins/install');
 			exit;
 		}
@@ -373,13 +385,13 @@ class Admin extends Admin_Controller
 		// Successfully installed?
 		if (true === $status)
 		{
-			set_alert(lang('spg_plugin_upload_success'), 'success');
+			set_alert(line('spg_plugin_upload_success'), 'success');
 			redirect('admin/plugins');
 			exit;
 		}
 
 		// Otherwise, the theme could not be installed.
-		set_alert(lang('spg_plugin_upload_error'), 'error');
+		set_alert(line('spg_plugin_upload_error'), 'error');
 		redirect('admin/plugins/install');
 		exit;
 	}
@@ -399,8 +411,11 @@ class Admin extends Admin_Controller
 	 */
 	public function _admin_head($output)
 	{
-		$lines = array('delete' => lang('spg_plugin_delete_confirm'));
-		$output .= '<script type="text/javascript">var i18n=i18n||{};i18n.plugins='.json_encode($lines).';</script>';
+		$lines = array('delete' => line('spg_plugin_delete_confirm'));
+		$output .= '<script type="text/javascript">';
+		$output .= 'csk.i18n = csk.i18n || {};';
+		$output .= ' csk.i18n.plugins = '.json_encode($lines).';';
+		$output .= '</script>';
 		return $output;
 	}
 

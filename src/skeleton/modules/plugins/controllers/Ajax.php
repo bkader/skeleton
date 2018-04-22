@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.3.3
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 class Ajax extends AJAX_Controller {
 
@@ -94,13 +94,9 @@ class Ajax extends AJAX_Controller {
 	 */
 	public function activate($plugin = null)
 	{
-		// Default header status code.
-		$this->response->header = 406;
-
 		// No plugin slug provided?
 		if (empty($plugin) OR ! is_string($plugin))
 		{
-			$this->response->header  = 412;
 			$this->response->message = lang('spg_plugin_missing');
 			return;
 		}
@@ -108,7 +104,7 @@ class Ajax extends AJAX_Controller {
 		// Successfully activated?
 		if ($this->kbcore->plugins->activate($plugin))
 		{
-			$this->response->header   = 200;
+			$this->response->header  = self::HTTP_OK;
 			$this->response->message = lang('spg_plugin_activate_success');
 
 			// Get the plugin data from database to log the activity.
@@ -139,13 +135,9 @@ class Ajax extends AJAX_Controller {
 	 */
 	public function deactivate($plugin)
 	{
-		// Default header status code.
-		$this->response->header = 406;
-
 		// No plugin slug provided?
 		if (empty($plugin) OR ! is_string($plugin))
 		{
-			$this->response->header  = 412;
 			$this->response->message = lang('spg_plugin_missing');
 			return;
 		}
@@ -153,7 +145,7 @@ class Ajax extends AJAX_Controller {
 		// Successfully activated?
 		if ($this->kbcore->plugins->deactivate($plugin))
 		{
-			$this->response->header   = 200;
+			$this->response->header  = self::HTTP_OK;
 			$this->response->message = lang('spg_plugin_deactivate_success');
 
 			// Get the plugin data from database to log the activity.
@@ -183,13 +175,9 @@ class Ajax extends AJAX_Controller {
 	 */
 	public function delete($plugin)
 	{
-		// Default header status code.
-		$this->response->header = 406;
-
 		// No plugin slug provided?
 		if (empty($plugin) OR ! is_string($plugin))
 		{
-			$this->response->header  = 412;
 			$this->response->message = lang('spg_plugin_missing');
 			return;
 		}
@@ -197,7 +185,7 @@ class Ajax extends AJAX_Controller {
 		// Successfully deleted?
 		if ($this->kbcore->plugins->delete($plugin))
 		{
-			$this->response->header   = 200;
+			$this->response->header  = self::HTTP_OK;
 			$this->response->message = lang('spg_plugin_delete_success');
 
 			// Get the plugin data from database to log the activity.
