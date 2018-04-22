@@ -188,6 +188,16 @@
         }
 
         // ---------------------------------------------------
+        // Avoid multiple form submission.
+        // ---------------------------------------------------
+        $(document).on("submit", "form", function (e) {
+            $(this).submit(function () {
+                return false;
+            });
+            return true;
+        });
+
+        // ---------------------------------------------------
         // AJAXify anchors with rel attributes.
         // ---------------------------------------------------
         $(document).on("click", "a[rel]", function (e) {
