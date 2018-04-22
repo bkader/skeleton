@@ -223,10 +223,14 @@ class AJAX_Controller extends KB_Controller
 		$this->output->parse_exec_vars = false;
 
 		$response['code'] = $this->response->header;
+
 		$response['status'] = (isset($this->response->status))
 			? $this->response->status
 			: $this->http_status_codes[$this->response->header];
-		$response['message'] = $this->response->message;
+
+		$response['message'] = ('' !== $this->response->message)
+			? $this->response->message
+			: $response['status'];
 
 		if ( ! empty($this->response->scripts))
 		{
