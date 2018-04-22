@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -48,6 +48,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
  * @version 	1.3.3
+ * @version 	1.4.0
  */
 ?><h2 class="page-header clearfix"><?php _e('sln_manage_languages'); ?></h2>
 <div class="panel panel-default">
@@ -66,24 +67,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			</thead>
 		<?php if ($languages): ?>
 			<tbody>
-			<?php foreach ($languages as $lang): ?>
-				<tr>
+			<?php foreach ($languages as $folder => $lang): ?>
+				<tr id="lang-<?php echo $folder; ?>">
 					<?php if (true === $lang['available']): ?>
 					<td><?php echo $lang['name_en']; ?>&nbsp;<small class="text-muted"><?php echo $lang['name']; ?></small></td>
 					<?php else: ?>
 					<td><del title="<?php _e('sln_language_missing_folder'); ?>" class="text-danger"><?php echo $lang['name_en']; ?>&nbsp;<small class="text-muted"><?php echo $lang['name']; ?></small></del></td>
 					<?php endif; ?>
 					<td><?php echo $lang['code']; ?>&nbsp;<small class="text-muted"><?php echo $lang['locale']; ?></small></td>
-					<td><?php echo $lang['folder']; ?></td>
-					<td><?php echo label_condition($lang['folder'] === $language); ?></td>
-					<td><?php echo label_condition(in_array($lang['folder'], $available_languages)); ?></td>
+					<td><?php echo $folder; ?></td>
+					<td><?php echo label_condition($folder === $language); ?></td>
+					<td><?php echo label_condition(in_array($folder, $available_languages)); ?></td>
 					<td class="text-right">
-						<?php if ($lang['folder'] !== $language): ?>
+						<?php if ($folder <> $language): ?>
 						<!-- Make default action -->
-						<a href="<?php echo safe_ajax_url('language/make_default/'.$lang['folder']); ?>" class="btn btn-xs btn-default lang-default"><?php _e('sln_make_default'); ?></a>&nbsp;
+						<a href="#" ajaxify="<?php echo safe_ajax_url('language/make_default/'.$folder, 'default_language_'.$folder); ?>" data-lang="<?php echo $folder; ?>" class="btn btn-xs btn-default lang-default"><?php _e('sln_make_default'); ?></a>&nbsp;
 						<?php endif; ?>
 						<?php if (null !== $lang['action']): ?>
-							<a href="<?php echo safe_ajax_url("language/{$lang['action']}/{$lang['folder']}"); ?>" class="btn btn-xs <?php echo ('enable' == $lang['action']) ? 'btn-success lang-enable' : 'btn-danger lang-disable'; ?>"><?php _e($lang['action']); ?></a>&nbsp;
+							<a href="#" ajaxify="<?php echo safe_ajax_url("language/{$lang['action']}/{$folder}", $lang['action'].'_language_'.$folder); ?>" data-lang="<?php echo $folder; ?>" class="btn btn-xs <?php echo ('enable' == $lang['action']) ? 'btn-success lang-enable' : 'btn-danger lang-disable'; ?>"><?php _e($lang['action']); ?></a>&nbsp;
 						<?php endif; ?>
 					</td>
 				</tr>

@@ -92,13 +92,10 @@ class Ajax extends AJAX_Controller
 	 */
 	public function enable($name = null)
 	{
-		// Default process status header code.
-		$this->response->header = 409;
-
 		// No valid language provided?
 		if (empty($name) OR ! array_key_exists($name, $this->lang->languages()))
 		{
-			$this->response->header  = 406;
+			$this->response->header  = self::HTTP_NOT_ACCEPTABLE;
 			$this->response->message = lang('sln_language_enable_missing');
 			return;
 		}
@@ -109,6 +106,7 @@ class Ajax extends AJAX_Controller
 		// The language already enabled?
 		if (in_array($name, $db_langs))
 		{
+			$this->response->header  = self::HTTP_NOT_MODIFIED;
 			$this->response->message = lang('sln_language_enable_already');
 			return;
 		}
@@ -120,7 +118,7 @@ class Ajax extends AJAX_Controller
 		// We update languages in database.
 		if ($this->kbcore->options->set_item('languages', $db_langs))
 		{
-			$this->response->header  = 200;
+			$this->response->header  = self::HTTP_OK;
 			$this->response->message = lang('sln_language_enable_success');
 
 			// We log the activity.
@@ -150,13 +148,10 @@ class Ajax extends AJAX_Controller
 	 */
 	public function disable($name = null)
 	{
-		// Default status header code.
-		$this->response->header = 409;
-
 		// No valid language provided?
 		if (empty($name) OR ! array_key_exists($name, $this->lang->languages()))
 		{
-			$this->response->header  = 406;
+			$this->response->header  = self::HTTP_NOT_ACCEPTABLE;
 			$this->response->message = lang('sln_language_disable_missing');
 			return;
 		}
@@ -167,6 +162,7 @@ class Ajax extends AJAX_Controller
 		// The language is already disabled?
 		if ( ! in_array($name, $db_langs))
 		{
+			$this->response->header  = self::HTTP_NOT_MODIFIED;
 			$this->response->message = lang('sln_language_disable_already');
 			return;
 		}
@@ -193,7 +189,7 @@ class Ajax extends AJAX_Controller
 				$this->kbcore->options->set_item('language', 'english');
 			}
 
-			$this->response->header  = 200;
+			$this->response->header  = self::HTTP_OK;
 			$this->response->message = lang('sln_language_disable_success');
 
 			// Log the activity.

@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		1.0.0
  * @since 		1.3.3 	Added languages JS file.
  * 
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 class Admin extends Admin_Controller
 {
@@ -98,7 +98,7 @@ class Admin extends Admin_Controller
 	public function index()
 	{
 		// Get site's current language.
-		$data['language'] = $this->config->item('language');
+		$data['language'] = $this->kbcore->options->item('language');
 
 		// Get site's available languages.
 		$data['available_languages'] = $this->config->item('languages') ?: array();
