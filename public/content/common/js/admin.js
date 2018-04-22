@@ -201,6 +201,7 @@
             switch (rel) {
                 case "async":
                 case "async-post":
+                    e.preventDefault();
                     var type = (rel === "async") ? "GET" : "POST";
                     csk.ajax.request(href, {
                         el: this,
@@ -218,10 +219,9 @@
                             $this.attr("disabled", false).removeClass("disabled");
                         }
                     }, (rel === "async-post") ? "POST" : "GET");
+                    return false;
                     break;
             }
-
-            return false;
         });
 
         // ---------------------------------------------------
@@ -237,6 +237,7 @@
 
             switch (rel) {
                 case "async":
+                    e.preventDefault();
                     csk.ajax.request(href, {
                         el: this,
                         data: $this.serializeArray(),
@@ -254,9 +255,9 @@
                             $this.find("[type=submit]").removeClass("disabled");
                         }
                     }, "POST");
+                    return false;
                     break;
             }
-            e.preventDefault();
         });
         
         // ---------------------------------------------------
