@@ -429,7 +429,7 @@ class Kbcore_options extends CI_Driver implements CRUD_interface
 		}
 
 		// Try to get it.
-		if ($item = $this->get_by('name', $name))
+		if (false !== $item = $this->get_by('name', $name))
 		{
 			// Cached it first.
 			$this->cached[$name] = $item->value;
@@ -437,7 +437,7 @@ class Kbcore_options extends CI_Driver implements CRUD_interface
 		}
 
 		// Found in CodeIgniter config?
-		if ($item = $this->ci->config->item($name))
+		if (null !== $item = $this->ci->config->item($name))
 		{
 			// Cached it first.
 			$this->cached[$name] = $item;
