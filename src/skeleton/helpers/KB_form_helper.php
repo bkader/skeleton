@@ -169,40 +169,34 @@ if ( ! function_exists('safe_form_open'))
 {
 	/**
 	 * Function for creating the opening portion of the form, but with
-	 * a secured action using "safe_url" from KB_url_helper.
+	 * a secured hidden inputs.
 	 *
 	 * @since 	1.3.3
+	 * @since 	1.4.0 	Changed to use hidden form input.
 	 *
 	 * @param 	string 	The URI segments of the form destination.
 	 * @param 	array 	A key/value pair of attributes.
 	 * @param 	array 	A key/value pair hidden data.
 	 * @return 	string
 	 */
-	function safe_form_open($action = '', $attributes = array(), $hidden = array())
+	function safe_form_open($action = '', $nonce_action = -1, $attrs = array(), $hidden = array())
 	{
 		$CI =& get_instance();
 
-		// We make sure to load the URL helper.
-		(function_exists('site_url')) OR $CI->load->helper('url');
-
 		// If the "safe_url" function was not found, we use default function.
-		if ( ! function_exists('safe_url'))
+		if ( ! function_exists('create_nonce'))
 		{
-			return form_open($action, $attributes, $hidden);
+			return form_open($action, $attrs, $hidden);
 		}
 
-		// No action provided? Use the current URL.
-		if ( ! $action)
-		{
-			$action = safe_url(uri_string());
-		}
-		// If an action is not a full URL then turn it into one
-		elseif (false === strpos($action, '://'))
-		{
-			$action = safe_url($action);
-		}
+		// Add hidden inputs.
+		$hidden['_csknonce'] = create_nonce($nonce_action);
+		$hidden['action']    = $nonce_action;
 
-		return form_open($action, $attributes	, $hidden);
+		// See if we need to add the user.
+		(class_exists('Auth', false)) && $hidden['user_id'] = $CI->auth->user_id() ?: -1;
+
+		return form_open($action, $attrs, $hidden);
 	}
 }
 
@@ -212,16 +206,17 @@ if ( ! function_exists('safe_form_open_multipart'))
 {
 	/**
 	 * Function for creating the opening portion of the form, but with
-	 * "multipart/form-data" and a secured action using "safe_url".
+	 * "multipart/form-data" and a secured hidden inputs.
 	 *
 	 * @since 	1.3.3
+	 * @since 	1.4.0 	Changed to use hidden form input.
 	 *
 	 * @param	string	the URI segments of the form destination
 	 * @param	array	a key/value pair of attributes
 	 * @param	array	a key/value pair hidden data
 	 * @return	string
 	 */
-	function safe_form_open_multipart($action = '', $attributes = array(), $hidden = array())
+	function safe_form_open_multipart($action = '', $nonce_action = -1, $attributes = array(), $hidden = array())
 	{
 		if (is_string($attributes))
 		{
@@ -232,7 +227,7 @@ if ( ! function_exists('safe_form_open_multipart'))
 			$attributes['enctype'] = 'multipart/form-data';
 		}
 
-		return safe_form_open($action, $attributes, $hidden);
+		return safe_form_open($action, $nonce_action, $attributes, $hidden);
 	}
 }
 
@@ -251,7 +246,7 @@ if ( ! function_exists('ajax_form_open'))
 	 * @param 	array 	A key/value pair hidden data.
 	 * @return 	string
 	 */
-	function ajax_form_open($action = '', $attributes = array(), $hidden = array())
+	function ajax_form_open($action = '', $attrs = array(), $hidden = array())
 	{
 		$CI =& get_instance();
 
@@ -261,7 +256,7 @@ if ( ! function_exists('ajax_form_open'))
 		// If the "ajax" function was not found, we use default function.
 		if ( ! function_exists('ajax_url'))
 		{
-			return form_open($action, $attributes, $hidden);
+			return form_open($action, $attrs, $hidden);
 		}
 
 		// No action provided? Use the current URL.
@@ -275,7 +270,7 @@ if ( ! function_exists('ajax_form_open'))
 			$action = ajax_url($action);
 		}
 
-		return form_open($action, $attributes	, $hidden);
+		return form_open($action, $attrs	, $hidden);
 	}
 }
 
@@ -294,30 +289,30 @@ if ( ! function_exists('safe_ajax_form_open'))
 	 * @param 	array 	A key/value pair hidden data.
 	 * @return 	string
 	 */
-	function safe_ajax_form_open($action = '', $attributes = array(), $hidden = array())
+	function safe_ajax_form_open($action = '', $nonce_action = -1, $attrs = array(), $hidden = array())
 	{
 		$CI =& get_instance();
 
 		// We make sure to load the URL helper.
-		(function_exists('safe_ajax_url')) OR $CI->load->helper('url');
+		(function_exists('create_nonce')) OR $CI->load->helper('url');
 
 		// If the "ajax" function was not found, we use default function.
-		if ( ! function_exists('safe_ajax_url'))
+		if ( ! function_exists('create_nonce'))
 		{
-			return form_open($action, $attributes, $hidden);
+			return form_open($action, $attrs, $hidden);
 		}
 
 		// No action provided? Use the current URL.
 		if ( ! $action)
 		{
-			$action = safe_ajax_url(uri_string());
+			$action = ajax_url(uri_string());
 		}
 		// If an action is not a full URL then turn it into one
 		elseif (false === strpos($action, '://'))
 		{
-			$action = safe_ajax_url($action);
+			$action = ajax_url($action);
 		}
 
-		return form_open($action, $attributes	, $hidden);
+		return safe_form_open($action, $nonce_action, $attrs, $hidden);
 	}
 }
