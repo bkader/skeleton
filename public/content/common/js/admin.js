@@ -198,6 +198,13 @@
         });
 
         // ---------------------------------------------------
+        // Make form inputs keep values even after refresh.
+        // ---------------------------------------------------
+        if (typeof $.fn.garlic !== "undefined") {
+            $("[rel=persist]").garlic();
+        }
+
+        // ---------------------------------------------------
         // AJAXify anchors with rel attributes.
         // ---------------------------------------------------
         $(document).on("click", "a[rel]", function (e) {
