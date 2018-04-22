@@ -36,14 +36,16 @@
                 csk.ajax.request(href, {
                     type: "POST",
                     data: data,
-                    complete: function () {
-                        logCount--;
-                        if (logCount <= 0) {
-                            window.location.href = csk.config.adminURL + "/activities";
-                        } else {
-                            $("#activity-" + id).animate({opacity: 0}, function () {
-                                $("#wrapper").load(csk.config.currentURL + " #wrapper > *");
-                            });
+                    complete: function (jqXHR, textStatus) {
+                        if (textStatus === "success") {
+                            logCount--;
+                            if (logCount <= 0) {
+                                window.location.href = csk.config.adminURL + "/activities";
+                            } else {
+                                $("#activity-" + id).animate({opacity: 0}, function () {
+                                    $("#wrapper").load(csk.config.currentURL + " #wrapper > *");
+                                });
+                            }
                         }
                     }
                 });
