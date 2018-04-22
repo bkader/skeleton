@@ -52,6 +52,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		1.0.0
  * @since 		1.3.3 	Added both AJAX and API functions.
  * @since 		1.3.4 	Anchor are automatically translated if the title contains "lang:" at the beginning.
+ * @since 		1.4.0 	Safe URL and anchors were rewritten for better security.
  * 
  * @version 	1.3.4
  */
@@ -252,38 +253,42 @@ if ( ! function_exists('trace_anchor'))
 if ( ! function_exists('safe_url'))
 {
 	/**
-	 * Safe URL
+	 * safe_url
 	 *
-	 * Generate Safe URL with timestamp and a security token.
+	 * Function for generating site URLs with appended security nonce.
 	 *
-	 * @param   string
-	 * @return  string
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 *
+	 *  @since 	1.0.0
+	 *  @since 	1.4.0 	Rewritten to use new KB_Security methods.
+	 *
+	 * @param 	string 	$uri 		The URI used to generate the URL.
+	 * @param 	mixed 	$action 	Action to attach to the URL.
+	 * @return 	string
 	 */
-	function safe_url($uri = '')
+	function safe_url($uri = '', $action = -1)
 	{
-		// Make sure security helper is loaded
-		if ( ! function_exists('generate_safe_token'))
-		{
-			get_instance()->load->helper('security');
-		}
-
+		$uri    = str_replace('&amp;', '&', $uri);
 		$url    = site_url($uri);
 		$params = parse_url($url);
+
+		// Prepare URL query string then add the nonce token.
 		$query  = array();
+		(isset($params['query'])) && parse_str($params['query'], $query);
+		$query['_csknonce'] = create_nonce($action);
 
-		if (isset($params['query']))
-		{
-			parse_str($params['query'], $query);
-		}
-
-		$time           = time();
-		$token['token'] = generate_safe_token($time);
-		$token['ts']    = $time;
-		$token          = array_merge($query, $token);
-		$query          = http_build_query($token);
-
+		// Build the query then add it to params group.
+		$query = http_build_query($query);
 		$params['query'] = $query;
-		return build_safe_url($params);
+
+		// We build the final URL.
+		$output = (isset($params['scheme'])) ? "{$params['scheme']}://": '';
+		$output .= (isset($params['host'])) ? "{$params['host']}": '';
+		$output .= (isset($params['port'])) ? ":{$params['port']}": '';
+		$output .= (isset($params['path'])) ? "{$params['path']}": '';
+		$output .= (isset($params['query'])) ? "?{$params['query']}": '';
+		return htmlentities($output, ENT_QUOTES, 'UTF-8');
 	}
 }
 
@@ -292,32 +297,45 @@ if ( ! function_exists('safe_url'))
 if ( ! function_exists('safe_anchor'))
 {
 	/**
-	 * Safe Anchor
+	 * safe_anchor
 	 *
-	 * Generates a safe anchor using codeigniter built in
-	 * 'anchor' function combined with our safe url builder.
+	 * Function for generating anchor using CodeIgniter built-in anchor
+	 * function but using our custom "safe_url" function generate a full
+	 * URL with security nonce.
 	 *
-	 * @param   string
-	 * @param   string
-	 * @param   mixed
-	 * @retur   string
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 *
+	 *  @since 	1.0.0
+	 *  @since 	1.4.0 	Rewritten because the "safe_url" was rewritten as well.
+	 *
+	 * @param 	string 	$uri 	The URI used to generate the URL.
+	 * @param 	string 	$action The action to attach to the URL.
+	 * @param 	string 	$title 	The anchor text.
+	 * @param 	mixed 	$attrs 	Links attributes.
+	 * @return 	string 	The full anchor tag.
 	 */
-	function safe_anchor($uri = '', $title = '', $attrs = '')
+	function safe_anchor($uri = '', $action = -1, $title = '', $attrs = '')
 	{
-		$title = (string) $title;
-		$safe_url = (preg_match('#^(\w+:)?//#i', $uri)) ? $uri : safe_url($uri);
+		// Prepare the URL first.
+		$url = safe_url($uri, $action);
 
+		// Format the title an see if it should be translated.
+		$title = (string) $title;
 		if ($title === '')
 		{
-			$title = $safe_url;
+			$title = $url;
 		}
 		elseif (1 === sscanf($title, 'lang:%s', $line))
 		{
-			$title = (function_exists('lang')) ? lang($line) : get_instance()->lang->line($line);
+			$title = (function_exists('line')) 
+				? line($line)
+				: get_instance()->lang->line($line);
 		}
 
-		($attrs !== '') && $attrs = _stringify_attributes($attrs);
-		return '<a href="'.$safe_url.'"'.$attrs.'>'.$title.'</a>';
+		$attrs = (is_array($attrs)) ? _stringify_attributes($attrs) : ' '.$attrs;
+
+		return '<a href="'.$url.'"'.$attrs.'>'.$title.'</a>';
 	}
 }
 
@@ -366,17 +384,23 @@ if ( ! function_exists('admin_anchor'))
 if ( ! function_exists('safe_admin_url'))
 {
 	/**
-	 * Safe Admin URL
+	 * safe_admin_url
 	 *
-	 * Generates a secured URL with prepended admin URI
+	 * Function for creating safe URLs for the dashboard area.
 	 *
-	 * @param 	string 	$uri
-	 * @return 	string
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * 
+	 * @since 	1.0.0
+	 * @since 	1.4.0 	Rewritten because "safe_url" was rewritten as well.
+	 *
+	 * @param 	string 	$uri 	The URI used to generate the URL.
+	 * @return 	string 	$action The action to attach to the URL.
 	 */
-	function safe_admin_url($uri = '')
+	function safe_admin_url($uri = '', $action = -1)
 	{
 		$uri = ($uri == '') ? 'admin' : 'admin/'.$uri;
-		return safe_url($uri);
+		return safe_url($uri, $action);
 	}
 }
 
@@ -385,19 +409,26 @@ if ( ! function_exists('safe_admin_url'))
 if ( ! function_exists('safe_admin_anchor'))
 {
 	/**
-	 * Safe Admin Anchor
+	 * safe_admin_anchor
 	 *
-	 * Generates a secured admin anchor.
+	 * Function for creating secured anchor tags for the dashboard area.
 	 *
-	 * @param 	string 	$uri
-	 * @param 	string 	$title
-	 * @param 	string 	$attrs
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * 
+	 * @since 	1.0.0
+	 * @since 	1.4.0 	Rewritten because "safe_url" was rewritten as well.
+	 *
+	 * @param 	string 	$uri 	The URI used to generate the URL.
+	 * @param 	mixed 	$action The action attached to the URL.
+	 * @param 	string 	$title 	The anchor text.
+	 * @param 	mixed 	$attrs 	Anchor html attributes.
 	 * @return 	string
 	 */
-	function safe_admin_anchor($uri = '', $title = '', $attrs = '')
+	function safe_admin_anchor($uri = '', $action = -1, $title = '', $attrs = '')
 	{
 		$uri = ($uri == '') ? 'admin' : 'admin/'.$uri;
-		return safe_anchor($uri, $title, $attrs);
+		return safe_anchor($uri, $action, $title, $attrs);
 	}
 }
 
@@ -446,17 +477,24 @@ if ( ! function_exists('process_anchor'))
 if ( ! function_exists('safe_process_url'))
 {
 	/**
-	 * Safe Process URL
+	 * safe_process_url
 	 *
-	 * Generates a secured URL with prepended process URI
+	 * Function for creating safe URLs for the process context.
 	 *
-	 * @param 	string 	$uri
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * 
+	 * @since 	1.0.0
+	 * @since 	1.4.0 	Rewritten because "safe_url" was rewritten as well.
+	 *
+	 * @param 	string 	$uri 	The URI used to generate the URL
+	 * @param 	mixed 	$action The action to attach to the URL.
 	 * @return 	string
 	 */
-	function safe_process_url($uri = '')
+	function safe_process_url($uri = '', $action = -1)
 	{
 		$uri = ($uri == '') ? 'process' : 'process/'.$uri;
-		return safe_url($uri);
+		return safe_url($uri, $action);
 	}
 }
 
@@ -465,19 +503,26 @@ if ( ! function_exists('safe_process_url'))
 if ( ! function_exists('safe_process_anchor'))
 {
 	/**
-	 * Safe Process Anchor
+	 * safe_process_anchor
 	 *
-	 * Generates a secured process anchor.
+	 * Function for create safe process anchor.
 	 *
-	 * @param 	string 	$uri
-	 * @param 	string 	$title
-	 * @param 	string 	$attrs
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * 
+	 * @since 	1.0.0
+	 * @since 	1.4.0 	Rewritten because "safe_url" was rewritten as well.
+	 *
+	 * @param 	string 	$uri 	The URI used to generate the URL.
+	 * @param 	mixed 	$action The action to attach to the URL.
+	 * @param 	string 	$title 	The anchor text.
+	 * @param 	mixed 	$attrs 	The anchor attributes.
 	 * @return 	string
 	 */
-	function safe_process_anchor($uri = '', $title = '', $attrs = '')
+	function safe_process_anchor($uri = '', $action = -1, $title = '', $attrs = '')
 	{
 		$uri = ($uri == '') ? 'process' : 'process/'.$uri;
-		return safe_anchor($uri, $title, $attrs);
+		return safe_anchor($uri, $action, $title, $attrs);
 	}
 }
 
@@ -526,17 +571,24 @@ if ( ! function_exists('ajax_anchor'))
 if ( ! function_exists('safe_ajax_url'))
 {
 	/**
-	 * Safe AJAX URL
+	 * safe_ajax_anchor
 	 *
-	 * Generates a secured URL with prepended ajax URI
+	 * Function for creating safe URLs for Ajax context.
 	 *
-	 * @param 	string 	$uri
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * 
+	 * @since 	1.0.0
+	 * @since 	1.4.0 	Rewritten because "safe_url" was rewritten as well.
+	 *
+	 * @param 	string 	$uri 	The URI used to generate the URL.
+	 * @param 	mixed 	$action The action to attach to the URL.
 	 * @return 	string
 	 */
-	function safe_ajax_url($uri = '')
+	function safe_ajax_url($uri = '', $action = -1)
 	{
 		$uri = ($uri == '') ? 'ajax' : 'ajax/'.$uri;
-		return safe_url($uri);
+		return safe_url($uri, $action);
 	}
 }
 
@@ -545,120 +597,26 @@ if ( ! function_exists('safe_ajax_url'))
 if ( ! function_exists('safe_ajax_anchor'))
 {
 	/**
-	 * Safe AJAX Anchor
+	 * safe_ajax_anchor
 	 *
-	 * Generates a secured ajax anchor.
+	 * Function for creating safe anchors for the AJAX context.
 	 *
-	 * @param 	string 	$uri
-	 * @param 	string 	$title
-	 * @param 	string 	$attrs
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * 
+	 * @since 	1.0.0
+	 * @since 	Rewritten because "safe_url" was rewritten as well.
+	 *
+	 * @param 	string 	$uri 	The URI used to generate the URL.
+	 * @param 	mixed 	$action The action to attach to the URL.
+	 * @param 	string 	$title 	The anchor text.
+	 * @param 	mixed 	$attrs 	The anchor attributes.
 	 * @return 	string
 	 */
-	function safe_ajax_anchor($uri = '', $title = '', $attrs = '')
+	function safe_ajax_anchor($uri = '', $action = -1, $title = '', $attrs = '')
 	{
 		$uri = ($uri == '') ? 'ajax' : 'ajax/'.$uri;
-		return safe_anchor($uri, $title, $attrs);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('api_url'))
-{
-	/**
-	 * API URL
-	 *
-	 * Returns the full URL to api sections of the site.
-	 *
-	 * @param 	string 	$uri
-	 * @return 	string
-	 */
-	function api_url($uri = '')
-	{
-		$uri = ($uri == '') ? 'api' : 'api/'.$uri;
-		return site_url($uri);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('api_anchor'))
-{
-	/**
-	 * API Anchor
-	 *
-	 * Creates and anchor that links to an api section.
-	 *
-	 * @param  string 	$uri 	the section to link to.
-	 * @param  string 	$title 	the string to display.
-	 * @param  string 	$attrs 	attribites to add to anchor.
-	 * @return string
-	 */
-	function api_anchor($uri = '', $title = '', $attrs = '')
-	{
-		$uri = ($uri == '') ? 'api' : 'api/'.$uri;
-		return anchor($uri, $title, $attrs);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('safe_api_url'))
-{
-	/**
-	 * Safe API URL
-	 *
-	 * Generates a secured URL with prepended api URI
-	 *
-	 * @param 	string 	$uri
-	 * @return 	string
-	 */
-	function safe_api_url($uri = '')
-	{
-		$uri = ($uri == '') ? 'api' : 'api/'.$uri;
-		return safe_url($uri);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('safe_api_anchor'))
-{
-	/**
-	 * Safe API Anchor
-	 *
-	 * Generates a secured api anchor.
-	 *
-	 * @param 	string 	$uri
-	 * @param 	string 	$title
-	 * @param 	string 	$attrs
-	 * @return 	string
-	 */
-	function safe_api_anchor($uri = '', $title = '', $attrs = '')
-	{
-		$uri = ($uri == '') ? 'api' : 'api/'.$uri;
-		return safe_anchor($uri, $title, $attrs);
-	}
-}
-
-// --------------------------------------------------------------------
-
-if ( ! function_exists('build_safe_url'))
-{
-	/**
-	 * Build a safe URL
-	 *
-	 * @param   array
-	 * @return  string
-	 */
-	function build_safe_url($args)
-	{
-		$string = isset($args['scheme']) ? "{$args['scheme']}://": '';
-		$string .= isset($args['host']) ? "{$args['host']}": '';
-		$string .= isset($args['port']) ? ":{$args['port']}": '';
-		$string .= isset($args['path']) ? "{$args['path']}": '';
-		$string .= isset($args['query']) ? "?{$args['query']}": '';
-		return htmlentities($string, ENT_QUOTES, 'UTF-8');
+		return safe_anchor($uri, $action, $title, $attrs);
 	}
 }
 
@@ -667,30 +625,33 @@ if ( ! function_exists('build_safe_url'))
 if ( ! function_exists('check_safe_url'))
 {
 	/**
-	 * Check Safe URL
+	 * check_safe_url
 	 *
-	 * Checks a safe url
+	 * Function for checking the selected URL safety.
 	 *
-	 * @param   string
-	 * @return  boolean
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * 
+	 * @since 	1.0.0
+	 * @since 	1.4.0 	Rewritten for better security.
+	 *
+	 * @param 	string
+	 * @return 	bool
 	 */
-	function check_safe_url($url = null)
+	function check_safe_url($url = null, $action = -1)
 	{
-		($url === null) && $url = current_url();
-		// Make sure security helper is loaded
-		if ( ! function_exists('generate_safe_token'))
-		{
-			get_instance()->load->helper('security');
-		}
+		// If no URL provided, we use the current one, then format it.
+		(null === $url) && $url = current_url();
+		$url = str_replace('&amp;', '&', $url);
 
 		$args = parse_url($url, PHP_URL_QUERY);
-		parse_str($args);
-		if (empty($ts) OR empty($token))
+		parse_str($args, $query);
+
+		if ( ! isset($query['_csknonce']))
 		{
 			return false;
 		}
 
-		$_token = generate_safe_token($ts);
-		return ($token === $_token);
+		return verify_nonce($query['_csknonce'], $action);
 	}
 }

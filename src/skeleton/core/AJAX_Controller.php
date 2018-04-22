@@ -77,6 +77,43 @@ class AJAX_Controller extends KB_Controller
 	 */
 	protected $response;
 
+	/**
+	 * List of HTTP status codes.
+	 */
+	const HTTP_OK                    = 200;
+	const HTTP_CREATED               = 201;
+	const HTTP_NO_CONTENT            = 204;
+	const HTTP_NOT_MODIFIED          = 304;
+	const HTTP_BAD_REQUEST           = 400;
+	const HTTP_UNAUTHORIZED          = 401;
+	const HTTP_FORBIDDEN             = 403;
+	const HTTP_NOT_FOUND             = 404;
+	const HTTP_METHOD_NOT_ALLOWED    = 405;
+	const HTTP_NOT_ACCEPTABLE        = 406;
+	const HTTP_CONFLICT              = 409;
+	const HTTP_INTERNAL_SERVER_ERROR = 500;
+	const HTTP_NOT_IMPLEMENTED       = 501;
+
+	/**
+	 * Array of most used HTTP status codes and their message.
+	 * @var array
+	 */
+    protected $http_status_codes = array(
+		self::HTTP_OK                    => 'OK',
+		self::HTTP_CREATED               => 'CREATED',
+		self::HTTP_NO_CONTENT            => 'NO CONTENT',
+		self::HTTP_NOT_MODIFIED          => 'NOT MODIFIED',
+		self::HTTP_BAD_REQUEST           => 'BAD REQUEST',
+		self::HTTP_UNAUTHORIZED          => 'UNAUTHORIZED',
+		self::HTTP_FORBIDDEN             => 'FORBIDDEN',
+		self::HTTP_NOT_FOUND             => 'NOT FOUND',
+		self::HTTP_METHOD_NOT_ALLOWED    => 'METHOD NOT ALLOWED',
+		self::HTTP_NOT_ACCEPTABLE        => 'NOT ACCEPTABLE',
+		self::HTTP_CONFLICT              => 'CONFLICT',
+		self::HTTP_INTERNAL_SERVER_ERROR => 'INTERNAL SERVER ERROR',
+		self::HTTP_NOT_IMPLEMENTED       => 'NOT IMPLEMENTED'
+    );
+
 	// ------------------------------------------------------------------------
 
 	/**
@@ -96,9 +133,10 @@ class AJAX_Controller extends KB_Controller
 
 		// Prepare $response property object.
 		$this->response          = new stdClass();
-		$this->response->header  = 400;
-		$this->response->type    = 'json';
-		$this->response->message = 'Bad Request';
+		$this->response->header  = self::HTTP_BAD_REQUEST;
+		$this->response->message = '';
+		$this->response->scripts = array();
+		$this->response->results = array();
 	}
 
 	// ------------------------------------------------------------------------
@@ -127,12 +165,16 @@ class AJAX_Controller extends KB_Controller
 		if (in_array($method, $this->safe_methods) 
 			&& in_array($method, $this->admin_methods))
 		{
-			array_push($this->safe_admin_methods, $method);
+			$this->safe_admin_methods[] = $method;
 		}
+
+		// Hold the action for later use.
+		$action = $this->input->post_get('action', true);
+		(null === $action) && $action = -1;
 
 		// Does the requested methods require a safety check?
 		if (in_array($method, $this->safe_methods) 
-			&& ( ! check_safe_url() OR true !== $this->auth->online()))
+			&& ( ! check_safe_url(null, $action) OR true !== $this->auth->online()))
 		{
 			$this->response->header  = 401;
 			$this->response->message = lang('error_action_permission');
@@ -148,7 +190,7 @@ class AJAX_Controller extends KB_Controller
 
 		// Does the method require an admin user AND a safety check?
 		elseif (in_array($method, $this->safe_admin_methods) 
-			&& ( ! check_safe_url() OR true !== $this->auth->is_admin()))
+			&& ( ! check_safe_url(null, $action) OR true !== $this->auth->is_admin()))
 		{
 			$this->response->header  = 401;
 			$this->response->message = lang('error_action_permission');
@@ -180,21 +222,26 @@ class AJAX_Controller extends KB_Controller
 		 */
 		$this->output->parse_exec_vars = false;
 
-		// Make sure to always have a message and content type.
-		(isset($this->response->message)) OR $this->response->message = 'Bad Request';
-		(isset($this->response->type)) OR $this->response->type = 'json';
+		$response['code'] = $this->response->header;
+		$response['status'] = (isset($this->response->status))
+			? $this->response->status
+			: $this->http_status_codes[$this->response->header];
+		$response['message'] = $this->response->message;
 
-		// Make sure to json_encode message if using JSON.
-		if ($this->response->type === 'json')
+		if ( ! empty($this->response->scripts))
 		{
-			$this->response->message = json_encode($this->response->message);
+			$response['scripts'] = $this->response->scripts;
+		}
+		if ( ! empty($this->response->results))
+		{
+			$response['results'] = $this->response->results;
 		}
 
 		// Return the final output.
 		return $this->output
-			->set_content_type($this->response->type)
+			->set_content_type('json')
 			->set_status_header($this->response->header)
-			->set_output($this->response->message);
+			->set_output(json_encode($response));
 	}
 
 }
