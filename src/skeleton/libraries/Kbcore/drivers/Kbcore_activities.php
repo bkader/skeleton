@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 class Kbcore_activities extends CI_Driver implements CRUD_interface
 {
@@ -967,12 +967,16 @@ class KB_Activity
 
 	/**
 	 * Method for updating the activity in database.
+	 *
+	 * @since 	1.3.0
+	 * @since 	1.4.0 	$value can be null if $key is an array
+	 * 
 	 * @access 	public
 	 * @param 	string 	$key 	The field name.
 	 * @param 	mixed 	$value 	The field value.
 	 * @return 	bool 	true if updated, else false.
 	 */
-	public function update($key, $value) {
+	public function update($key, $value = null) {
 		// We make sure things are an array.
 		$data = (is_array($key)) ? $key : array($key => $value);
 
