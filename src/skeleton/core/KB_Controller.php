@@ -187,30 +187,58 @@ class KB_Controller extends CI_Controller {
 	 * @link 	https://github.com/bkader
 	 * @since 	1.4.0
 	 *
-	 * @access 	public
+	 * @access 	protected
 	 * @param 	string 	$action 	The action attached (Optional).
 	 * @param 	string 	$name 		The name of the field used as nonce.
 	 * @return 	bool
 	 */
-	public function check_nonce($action = null, $name = '_csknonce')
+	protected function check_nonce($action = null, $name = '_csknonce')
 	{
 		// If the action is not provided, get if from the request.
 		$real_action = (null !== $req = $this->input->post_get('action')) ? $req : -1;
 		(null === $action) && $action = $real_action;
 
-		return verify_nonce($this->input->post($name), $action);
+		return verify_nonce($this->input->post_get($name), $action);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * check_referrer
+	 *
+	 * Method for comparing the request referrer to the hidden referrer field.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @uses 	CI_User_agent
+	 *
+	 * @access 	public
+	 * @param 	string 	$referrer 	The hidden field value (optional).
+	 * @param 	string 	$name 		The name of the referrer field.
+	 * @return 	bool
+	 */
+	protected function check_referrer($referrer = null, $name = '_csk_http_referrer')
+	{
+		(class_exists('CI_User_agent', false)) OR $this->load->library('user_agent');
+
+		$real_referrer = $this->agent->referrer();
+		(null === $referrer) && $referrer = $this->input->post($name, true);
+
+		return (1 === preg_match("#{$referrer}$#", $real_referrer));
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Generate a CSRF protection token.
-	 * @access 	public
+	 * @access 	protected
 	 * @author 	Kader Bouyakoub
 	 * @version 1.0
 	 * @return array
 	 */
-	public function create_csrf()
+	protected function create_csrf()
 	{
 		// Make sure to load string helper.
 		(function_exists('random_string')) OR $this->load->helper('string');
@@ -233,12 +261,12 @@ class KB_Controller extends CI_Controller {
 
 	/**
 	 * Checks a CSRF protection token.
-	 * @access 	public
+	 * @access 	protected
 	 * @author 	Kader Bouyakoub
 	 * @version 1.0
 	 * @return array
 	 */
-	public function check_csrf()
+	protected function check_csrf()
 	{
 		$csrf_key = $this->input->post($_SESSION['csrf_key']);
 
@@ -252,11 +280,11 @@ class KB_Controller extends CI_Controller {
 
 	/**
 	 * Generate a captcha field.
-	 * @access 	public
+	 * @access 	protected
 	 * @param 	int 	$guid 	the user's ID.
 	 * @return 	array 	captcha image URL and form details.
 	 */
-	public function create_captcha($guid = 0)
+	protected function create_captcha($guid = 0)
 	{
 		// Not using captcha at all?
 		if (get_option('use_captcha', false) === false)
@@ -329,11 +357,11 @@ class KB_Controller extends CI_Controller {
 
 	/**
 	 * Check captcha.
-	 * @access 	public
+	 * @access 	protected
 	 * @param 	string 	$str 	captcha word
 	 * @return 	bool
 	 */
-	public function check_captcha($str)
+	protected function check_captcha($str)
 	{
 		// Return true if captcha is disabled.
 		if (get_option('use_captcha', false) === false)
