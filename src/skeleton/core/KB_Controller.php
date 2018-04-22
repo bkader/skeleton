@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -51,8 +51,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @since 		1.0.0
+ * @version 	1.4.0
  */
 class KB_Controller extends CI_Controller {
 
@@ -174,6 +174,29 @@ class KB_Controller extends CI_Controller {
 		{
 			$this->load->config('inputs', true);
 		}
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * check_nonce
+	 *
+	 * Method for checking forms with added security nonce.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @access 	public
+	 * @param 	string 	$name 	The name of the field used as nonce.
+	 * @return 	bool
+	 */
+	public function check_nonce($name = '_csknonce')
+	{
+		return verify_nonce(
+			$this->input->post($name),
+			$this->input->post('action')
+		);
 	}
 
 	// ------------------------------------------------------------------------
