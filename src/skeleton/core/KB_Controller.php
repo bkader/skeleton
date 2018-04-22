@@ -247,11 +247,19 @@ class KB_Controller extends CI_Controller {
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Generate a CSRF protection token.
-	 * @access 	protected
+	 * create_csrf
+	 *
+	 * Method for creating CSRF token for form. You may add it as hidden field.
+	 *
 	 * @author 	Kader Bouyakoub
-	 * @version 1.0
-	 * @return array
+	 * @link 	https://github.com/bkader
+	 * 
+	 * @since 	1.0.0
+	 * @since 	1.4.0 	DEPRECATED: you may want to use [create/verify]_nonce.
+	 *
+	 * @access 	protected
+	 * @param 	none
+	 * @return 	array
 	 */
 	protected function create_csrf()
 	{
@@ -263,10 +271,10 @@ class KB_Controller extends CI_Controller {
 		$csrf_value = random_string('alnum', 32);
 
 		// Store flash data.
-		$this->session->set_tempdata(array(
+		$this->session->set_flashdata(array(
 			'csrf_key'   => $csrf_key,
 			'csrf_value' => $csrf_value,
-		), null, 300);
+		));
 
 		// Return the array for later use.
 		return array($csrf_key => $csrf_value);
@@ -275,18 +283,30 @@ class KB_Controller extends CI_Controller {
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Checks a CSRF protection token.
-	 * @access 	protected
+	 * create_csrf
+	 *
+	 * Method for checking CSRF token.
+	 * 
+	 * @example:
+	 * 	$data[hidden] = $this->create_csrf();	// Create the CSRF.
+	 * 	$this->theme->render($data);			// Pass it to views.
+	 * 	echo form_open($uri, $attrs, $hidden);
+	 *
 	 * @author 	Kader Bouyakoub
-	 * @version 1.0
-	 * @return array
+	 * @link 	https://github.com/bkader
+	 * 
+	 * @since 	1.0.0
+	 * @since 	1.4.0 	DEPRECATED. You may want to use verify_nonce.
+	 *
+	 * @access 	protected
+	 * @param 	none
+	 * @return 	array
 	 */
 	protected function check_csrf()
 	{
-		$csrf_key = $this->input->post($_SESSION['csrf_key']);
-
-		// It returns true only of the key is set and the value is valid.
-		return ($csrf_key && $_SESSION['csrf_value'] === $csrf_key);
+		$user_value = $this->input->post($this->session->flashdata('csrf_key'));
+		$csrf_value = $this->session->flashdata('csrf_value');
+		return ($user_value && $csrf_value && $user_value === $csrf_value);
 	}
 
 	// ------------------------------------------------------------------------
