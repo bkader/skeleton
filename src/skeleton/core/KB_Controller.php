@@ -188,15 +188,17 @@ class KB_Controller extends CI_Controller {
 	 * @since 	1.4.0
 	 *
 	 * @access 	public
-	 * @param 	string 	$name 	The name of the field used as nonce.
+	 * @param 	string 	$action 	The action attached (Optional).
+	 * @param 	string 	$name 		The name of the field used as nonce.
 	 * @return 	bool
 	 */
-	public function check_nonce($name = '_csknonce')
+	public function check_nonce($action = null, $name = '_csknonce')
 	{
-		return verify_nonce(
-			$this->input->post($name),
-			$this->input->post('action')
-		);
+		// If the action is not provided, get if from the request.
+		$real_action = (null !== $req = $this->input->post_get('action')) ? $req : -1;
+		(null === $action) && $action = $real_action;
+
+		return verify_nonce($this->input->post($name), $action);
 	}
 
 	// ------------------------------------------------------------------------

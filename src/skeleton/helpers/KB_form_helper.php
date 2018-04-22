@@ -191,10 +191,6 @@ if ( ! function_exists('safe_form_open'))
 
 		// Add hidden inputs.
 		$hidden['_csknonce'] = create_nonce($nonce_action);
-		$hidden['action']    = $nonce_action;
-
-		// See if we need to add the user.
-		(class_exists('Auth', false)) && $hidden['user_id'] = $CI->auth->user_id() ?: -1;
 
 		return form_open($action, $attrs, $hidden);
 	}
