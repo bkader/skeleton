@@ -168,13 +168,9 @@ class AJAX_Controller extends KB_Controller
 			$this->safe_admin_methods[] = $method;
 		}
 
-		// Hold the action for later use.
-		$action = $this->input->post_get('action', true);
-		(null === $action) && $action = -1;
-
 		// Does the requested methods require a safety check?
 		if (in_array($method, $this->safe_methods) 
-			&& ( ! check_safe_url(null, $action) OR true !== $this->auth->online()))
+			&& (true !== $this->check_nonce() OR true !== $this->auth->online()))
 		{
 			$this->response->header  = self::HTTP_UNAUTHORIZED;
 			$this->response->message = lang('error_action_permission');
@@ -190,7 +186,7 @@ class AJAX_Controller extends KB_Controller
 
 		// Does the method require an admin user AND a safety check?
 		elseif (in_array($method, $this->safe_admin_methods) 
-			&& ( ! check_safe_url(null, $action) OR true !== $this->auth->is_admin()))
+			&& (true !== $this->check_nonce() OR true !== $this->auth->is_admin()))
 		{
 			$this->response->header  = self::HTTP_UNAUTHORIZED;
 			$this->response->message = lang('error_action_permission');
