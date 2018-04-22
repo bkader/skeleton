@@ -48,11 +48,75 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * 
  * @since 		1.0.0
  * @since 		1.3.3 	Added extra functions.
+ * @since 		1.4.0 	More useful functions were added and useless ones remove.
  * 
- * @version 	1.3.3
+ * @version 	1.4.0
  */
+
+if ( ! function_exists('form_nonce'))
+{
+	/**
+	 * form_nonce
+	 *
+	 * Function for creating hidden nonce fields for form.
+	 *
+	 * The once field is used to make sure that the contents of the form came
+	 * from the location on the current site and not from somewhere else. This
+	 * is not an absolute protection option, but bu should protect against most
+	 * cases. Make sure to always use it for forms you want to protect.
+	 *
+	 * Both $action and $name are optional, but it is highly recommended that
+	 * you provide them. Anyone who inspects your code (PHP) would simply guess
+	 * what should be used to cause damage. So please, provide them.
+	 *
+	 * Make sure to always check again your fields values after submission before
+	 * your process.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @param 	string 	$action 	The action used to generate nonce.
+	 * @param 	string 	$name 		The name of the nonce field.
+	 * @param 	bool 	$referrer 	Whether to add the referrer field.
+	 * @return 	string
+	 */
+	function form_nonce($action = -1, $name = '_csknonce', $referrer = true)
+	{
+		$output = '<input type="hidden" id="'.$name.'" name="'.$name.'" value="'.html_escape(create_nonce($action)).'" />';
+
+		(true === $referrer) && $output .= form_referrer();
+
+		return $output;
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('form_referrer'))
+{
+	/**
+	 * form_referrer
+	 *
+	 * Function for creating HTTP referrer hidden field for forms.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @param 	string 	$name 	Optional field name.
+	 * @return 	string
+	 */
+	function form_referrer($name = '_csk_http_referrer')
+	{
+		return form_hidden($name, $_SERVER['REQUEST_URI']);
+	}
+}
+
+// ------------------------------------------------------------------------
 
 if ( ! function_exists('print_input'))
 {
@@ -165,150 +229,28 @@ if ( ! function_exists('_translate'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('safe_form_open'))
+if ( ! function_exists('has_error'))
 {
 	/**
-	 * Function for creating the opening portion of the form, but with
-	 * a secured hidden inputs.
+	 * has_error
 	 *
-	 * @since 	1.3.3
-	 * @since 	1.4.0 	Changed to use hidden form input.
+	 * Function for checking whether the selected field has any errors.
 	 *
-	 * @param 	string 	The URI segments of the form destination.
-	 * @param 	array 	A key/value pair of attributes.
-	 * @param 	array 	A key/value pair hidden data.
-	 * @return 	string
-	 */
-	function safe_form_open($action = '', $nonce_action = -1, $attrs = array(), $hidden = array())
-	{
-		$CI =& get_instance();
-
-		// If the "safe_url" function was not found, we use default function.
-		if ( ! function_exists('create_nonce'))
-		{
-			return form_open($action, $attrs, $hidden);
-		}
-
-		// Add hidden inputs.
-		$hidden['_csknonce'] = create_nonce($nonce_action);
-
-		return form_open($action, $attrs, $hidden);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('safe_form_open_multipart'))
-{
-	/**
-	 * Function for creating the opening portion of the form, but with
-	 * "multipart/form-data" and a secured hidden inputs.
-	 *
-	 * @since 	1.3.3
-	 * @since 	1.4.0 	Changed to use hidden form input.
-	 *
-	 * @param	string	the URI segments of the form destination
-	 * @param	array	a key/value pair of attributes
-	 * @param	array	a key/value pair hidden data
-	 * @return	string
-	 */
-	function safe_form_open_multipart($action = '', $nonce_action = -1, $attributes = array(), $hidden = array())
-	{
-		if (is_string($attributes))
-		{
-			$attributes .= ' enctype="multipart/form-data"';
-		}
-		else
-		{
-			$attributes['enctype'] = 'multipart/form-data';
-		}
-
-		return safe_form_open($action, $nonce_action, $attributes, $hidden);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('ajax_form_open'))
-{
-	/**
-	 * Function for creating the opening portion of the form, but with
-	 * a AJAX URL as action.
-	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
 	 * @since 	1.4.0
 	 *
-	 * @param 	string 	The URI segments of the form destination.
-	 * @param 	array 	A key/value pair of attributes.
-	 * @param 	array 	A key/value pair hidden data.
-	 * @return 	string
+	 * @access 	public
+	 * @param 	string 	$field 	The field's name to check.
+	 * @return 	bool 	true if there are error, else false.
 	 */
-	function ajax_form_open($action = '', $attrs = array(), $hidden = array())
+	function has_error($field = NULL)
 	{
-		$CI =& get_instance();
-
-		// We make sure to load the URL helper.
-		(function_exists('ajax_url')) OR $CI->load->helper('url');
-
-		// If the "ajax" function was not found, we use default function.
-		if ( ! function_exists('ajax_url'))
+		if (FALSE !== ($OBJ =& _get_validation_object()))
 		{
-			return form_open($action, $attrs, $hidden);
+			return FALSE;
 		}
 
-		// No action provided? Use the current URL.
-		if ( ! $action)
-		{
-			$action = ajax_url(uri_string());
-		}
-		// If an action is not a full URL then turn it into one
-		elseif (false === strpos($action, '://'))
-		{
-			$action = ajax_url($action);
-		}
-
-		return form_open($action, $attrs	, $hidden);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('safe_ajax_form_open'))
-{
-	/**
-	 * Function for creating the opening portion of the form, but with
-	 * a secured action using "safe_url" and AJAX URL as action.
-	 *
-	 * @since 	1.4.0
-	 *
-	 * @param 	string 	The URI segments of the form destination.
-	 * @param 	array 	A key/value pair of attributes.
-	 * @param 	array 	A key/value pair hidden data.
-	 * @return 	string
-	 */
-	function safe_ajax_form_open($action = '', $nonce_action = -1, $attrs = array(), $hidden = array())
-	{
-		$CI =& get_instance();
-
-		// We make sure to load the URL helper.
-		(function_exists('create_nonce')) OR $CI->load->helper('url');
-
-		// If the "ajax" function was not found, we use default function.
-		if ( ! function_exists('create_nonce'))
-		{
-			return form_open($action, $attrs, $hidden);
-		}
-
-		// No action provided? Use the current URL.
-		if ( ! $action)
-		{
-			$action = ajax_url(uri_string());
-		}
-		// If an action is not a full URL then turn it into one
-		elseif (false === strpos($action, '://'))
-		{
-			$action = ajax_url($action);
-		}
-
-		return safe_form_open($action, $nonce_action, $attrs, $hidden);
+		return $OBJ->has_error($field);
 	}
 }
