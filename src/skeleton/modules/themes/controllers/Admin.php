@@ -224,8 +224,7 @@ class Admin extends Admin_Controller {
 	 */
 	public function upload()
 	{
-		if (true !== $this->check_nonce('theme_upload') 
-			OR true !== $this->check_referrer())
+		if (true !== $this->check_nonce('theme_upload'))
 		{
 			set_alert(lang('error_csrf'), 'error');
 			redirect('admin/themes/install');

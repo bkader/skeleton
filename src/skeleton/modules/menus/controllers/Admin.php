@@ -145,8 +145,7 @@ class Admin extends Admin_Controller {
 		else
 		{
 			// Check the nonce and referrer first.
-			if (true !== $this->check_nonce('add_new_menu') 
-				OR true !== $this->check_referrer())
+			if (true !== $this->check_nonce('add_new_menu'))
 			{
 				set_alert(lang('error_csrf'), 'error');
 				redirect('admin/menus/add');
@@ -252,8 +251,7 @@ class Admin extends Admin_Controller {
 		else
 		{
 			// Check the nonce and referrer first.
-			if (true !== $this->check_nonce('edit_menu_'.$id) 
-				OR true !== $this->check_referrer())
+			if (true !== $this->check_nonce('edit_menu_'.$id))
 			{
 				set_alert(lang('error_csrf'), 'error');
 				redirect('admin/menus/edit/'.$id);
@@ -329,8 +327,7 @@ class Admin extends Admin_Controller {
 		else
 		{
 			// Check the nonce and referrer first.
-			if (true !== $this->check_nonce('edit_locations') 
-				OR true !== $this->check_referrer())
+			if (true !== $this->check_nonce('edit_locations'))
 			{
 				set_alert(lang('error_csrf'), 'error');
 				redirect('admin/menus/locations');
@@ -415,8 +412,7 @@ class Admin extends Admin_Controller {
 		// The form has been processed?
 		else
 		{
-			if (true !== $this->check_nonce('add_menu_item_'.$id) 
-				OR true !== $this->check_referrer())
+			if (true !== $this->check_nonce('add_menu_item_'.$id))
 			{
 				set_alert(lang('error_csrf'), 'error');
 				redirect('admin/menus/items/'.$id);
