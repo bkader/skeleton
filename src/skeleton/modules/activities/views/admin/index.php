@@ -72,10 +72,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					<td><?php echo $activity->activity; ?></td>
 					<td><?php echo $activity->ip_address; ?></td>
 					<td><?php echo date('Y/m/d H:i', $activity->created_at); ?></td>
-					<td class="text-right">
-						<!--a href="<?php echo safe_ajax_url('activities/delete/'.$activity->id, 'delete_activity_'.$activity->id); ?>" data-activity-id="<?php echo $activity->id; ?>" class="btn btn-danger btn-xs activity-delete"><i class="fa fa-fw fa-trash-o"></i></a-->
-						<a href="#" ajaxify="<?php echo safe_ajax_url('activities/delete/'.$activity->id, 'delete_activity_'.$activity->id); ?>" data-activity-id="<?php echo $activity->id; ?>" class="btn btn-danger btn-xs activity-delete"><i class="fa fa-fw fa-trash-o"></i></a>
-					</td>
+					<td class="text-right"><?php echo safe_ajax_anchor(
+						'activities/delete/'.$activity->id, // URL.
+						'delete_activity_'.$activity->id, // Action for security.
+						fa_icon('trash-o fa-fw'), // FontWesome Icon.
+						array(	// Attributes.
+							'class' => 'btn btn-danger btn-xs activity-delete',
+							'title' => line('delete'),
+							'data-activity-id' => $activity->id,
+						)); ?></td>
 				</tr>
 				<?php endforeach; ?>
 			</tbody>
