@@ -120,7 +120,7 @@ echo admin_anchor('menus', lang('smn_manage_menus'), 'class="btn btn-default btn
 							<div class="form-group">
 								<a href="#" data-toggle="collapse" data-target="#menu-item-advanced-<?php echo $item->id; ?>" class="btn btn-default btn-sm pull-right"><?php _e('advanced'); ?></a>
 								</span>
-								<a href="<?php echo safe_ajax_url('menus/delete/item/'.$item->id); ?>" data-item-id="<?php echo $item->id; ?>" class="btn btn-danger btn-sm item-delete" tabindex="-1"><?php _e('delete'); ?></a>
+								<a href="<?php echo safe_ajax_url('menus/delete/item/'.$item->id, 'delete_item_'.$item->id); ?>" data-item-id="<?php echo $item->id; ?>" class="btn btn-danger btn-sm item-delete" tabindex="-1"><?php _e('delete'); ?></a>
 							</div>
 						</div>
 					</div>
