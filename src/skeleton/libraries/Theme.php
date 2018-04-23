@@ -576,7 +576,10 @@ EOT;
 			show_error("Unable to locate the theme's 'functions.php' file.");
 		}
 
-		include_once $this->_theme_path.'functions.php';
+		require_once($this->theme_path('functions.php'));
+
+		// Possibility to change upload directory.
+		$this->_uploads_folder = apply_filters('upload_dir', $this->_uploads_folder);
 
 		/**
 		 * Here we are some default variables that you can
@@ -626,8 +629,7 @@ EOT;
 		{
 			foreach ($folders as $key => $folder)
 			{
-				// A theme is valid ONLY if it has the 'manifest.json' file.
-				// if (false !== realpath(FCPATH."{$this->_themes_folder}/{$folder}/manifest.json"))
+				// Change to use style.css file instead of manifest.json.
 				if (false !== is_file(FCPATH."{$this->_themes_folder}/{$folder}/style.css"))
 				{
 					$folders[$folder] = $this->_get_theme_details($folder);
