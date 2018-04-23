@@ -52,8 +52,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @since 		1.0.0
  * @since 		1.3.3 	changed "metadata" to "meta_tags" to avoid conflict with
  *          			the "Kbcore_metadata" library and added themes count.
- *
- * @version 	1.3.3
+ * @since 		1.4.0 	Added "the_doctype" filter and moved down body class filters.
+ * @version 	1.4.0
  */
 class Theme
 {
@@ -72,7 +72,7 @@ EOT;
 	 * @var string
 	 */
 	private $_template_header = <<<EOT
-<!DOCTYPE html>{skeleton_copyright}
+{doctype}{skeleton_copyright}
 <html{html_class}{language_attributes}>
 <head>
     {charset}
@@ -2035,6 +2035,9 @@ EOT;
 		 */
 		else
 		{
+			// New filter to dynamically generate the DOCTYPE.
+			$replace['doctype'] = apply_filters('the_doctype', '<!DOCTYPE html>');
+
 			// Skeleton Copyright.
 			$replace['skeleton_copyright'] = apply_filters('skeleton_copyright', $this->_skeleton_copyright);
 
@@ -2309,11 +2312,6 @@ EOT;
 		// Initial output.
 		$output = '';
 
-		// Apply any filters targeting this class.
-		$this->_body_classes = ('admin' === $this->controller)
-			? apply_filters('admin_body_class', $this->_body_classes)
-			: apply_filters('body_class', $this->_body_classes);
-
 		// If any class is provided, add it.
 		(null !== $class) && array_unshift($this->_body_classes, $class);
 
@@ -2357,6 +2355,11 @@ EOT;
 		$this->_body_classes = array_map('trim', $this->_body_classes);
 		$this->_body_classes = array_filter($this->_body_classes);
 		$this->_body_classes = array_unique($this->_body_classes);
+
+		// Apply any filters targeting this class.
+		$this->_body_classes = ('admin' === $this->controller)
+			? apply_filters('admin_body_class', $this->_body_classes)
+			: apply_filters('body_class', $this->_body_classes);
 
 		// Stile not empty? Add everything.
 		if ( ! empty($this->_body_classes))
