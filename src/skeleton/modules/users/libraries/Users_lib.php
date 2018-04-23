@@ -105,7 +105,7 @@ class Users_lib
 			// Requires manual activation?
 			if (true === $require_activation && true === $manual_activation)
 			{
-				$this->_send_email('manual', $guid, array('name' => $data['first_name']));
+				$this->send_email('manual', $guid, array('name' => $data['first_name']));
 				set_alert(lang('us_register_info_manual'), 'info');
 			}
 			// Require an email activation?
@@ -117,7 +117,7 @@ class Users_lib
 				$this->ci->kbcore->variables->add_var($guid, 'activation_code', $code, $this->ci->input->ip_address());
 
 				// We send the email to user.
-				$this->_send_email('activation', $guid, array(
+				$this->send_email('activation', $guid, array(
 					'name' => $data['first_name'],
 					'link' => process_anchor('users/activate/'.$code, '', 'target="_blank"')
 				));
@@ -128,7 +128,7 @@ class Users_lib
 			// Otherwise, the user may log in.
 			else
 			{
-				$this->_send_email('welcome', $guid);
+				$this->send_email('welcome', $guid);
 				set_alert(lang('us_register_success'), 'success');
 			}
 
@@ -231,7 +231,7 @@ class Users_lib
 
 			// Send email to use.
 			$ip_address = $this->ci->input->ip_address();
-			$this->_send_email('new_activation', $user, array(
+			$this->send_email('new_activation', $user, array(
 				'link'    => process_anchor('users/activate/'.$activation_code, '', 'target="_blank"'),
 				'ip_link' => anchor('https://www.iptolocation.net/trace-'.$ip_address, $ip_address, 'target="_blank"'),
 			));
@@ -288,7 +288,7 @@ class Users_lib
 		{
 			// Send email to user
 			$ip_address = $this->ci->input->ip_address();
-			$this->_send_email('restore', $user, array(
+			$this->send_email('restore', $user, array(
 				'ip_link' => anchor('https://www.iptolocation.net/trace-'.$ip_address, $ip_address, 'target="_blank"'),
 			));
 
@@ -339,7 +339,7 @@ class Users_lib
 		if (true === $status)
 		{
 			// Send email to user.
-			$this->_send_email('activated', $var->guid, array('login_url' => site_url('login')));
+			$this->send_email('activated', $var->guid, array('login_url' => site_url('login')));
 
 			// Set alert message.
 			set_alert(lang('us_activate_success'), 'success');
@@ -447,7 +447,7 @@ class Users_lib
 		{
 			// Send email to user.
 			$ip_address = $this->ci->input->ip_address();
-			$this->_send_email('recover', $user, array(
+			$this->send_email('recover', $user, array(
 				'link'    => anchor('login/reset/'.$password_code, '', 'target="_blank"'),
 				'ip_link' => anchor('https://www.iptolocation.net/trace-'.$ip_address, $ip_address, 'target="_blank"'),
 			));
@@ -521,7 +521,7 @@ class Users_lib
 		{
 			// Send email to user.
 			$ip_address = $this->ci->input->ip_address();
-			$this->_send_email('password', $user_id, array(
+			$this->send_email('password', $user_id, array(
 				'login_url' => site_url('login'),
 				'ip_link'    => anchor('https://www.iptolocation.net/trace-'.$ip_address, $ip_address, 'target="_blank"'),
 			));
@@ -653,14 +653,15 @@ class Users_lib
 	 * Method for sending emails to users.
 	 *
 	 * @since 	1.3.3
+	 * @since 	1.4.0 	This method is set to public.
 	 *
-	 * @access 	private
+	 * @access 	public
 	 * @param 	string 	$type 	The message type to send.
 	 * @param 	mixed 	$user 	The user object, ID, username or email address.
 	 * @param 	array 	$data 	Array of data to pass to subject and message.
 	 * @return 	bool 	true if the email was sent, else false.
 	 */
-	private function _send_email($type, $user, $data = array())
+	public function send_email($type, $user, $data = array())
 	{
 		// Nothing provided? Nothing to do.
 		if (empty($type) OR empty($user))
