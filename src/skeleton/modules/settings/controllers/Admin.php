@@ -71,6 +71,10 @@ class Admin extends Admin_Controller
 
 	/**
 	 * General site settings.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.4.0 	Updated to use the new nonce system and better performance.
+	 * 
 	 * @access 	public
 	 * @return 	void
 	 */
@@ -84,9 +88,6 @@ class Admin extends Admin_Controller
 		// Before form processing.
 		if ($this->form_validation->run() == false)
 		{
-			// Extra security layer.
-			$data['hidden'] = $this->create_csrf();
-
 			// Set page title and load view.
 			$this->theme
 				->set_title(lang('site_settings'))
@@ -94,20 +95,39 @@ class Admin extends Admin_Controller
 		}
 		else
 		{
-			// Check CSRF.
-			if ( ! $this->check_csrf())
+			if (true !== $this->check_nonce('admin_settings_general'))
 			{
 				set_alert(lang('error_csrf'), 'error');
 				redirect('admin/settings', 'refresh');
 				exit;
 			}
 
+			// Collect data and remove unchanged ones to avoid updating everything.
 			$settings = $this->input->post(array_keys($data), true);
+			foreach ($settings as $key => $val)
+			{
+				if (to_bool_or_serialize($data[$key]['value']) === $val)
+				{
+					unset($settings[$key]);
+				}
+			}
 
+			// Empty $settings? Say that we updated things ;) .
+			if (empty($settings))
+			{
+				set_alert(lang('set_update_success'), 'success');
+				redirect('admin/settings', 'refresh');
+				exit;
+			}
+			
+			// Update everything a stop in case of an error.
 			foreach ($settings as $key => $val)
 			{
 				if ( ! $this->kbcore->options->set_item($key, $val))
 				{
+					// Log the error.
+					log_message('error', 'Unable to update general setting: '.$key);
+
 					set_alert(lang('set_update_error'), 'error');
 					redirect('admin/settings', 'refresh');
 					exit;
@@ -115,7 +135,7 @@ class Admin extends Admin_Controller
 			}
 
 			// Log the activity.
-			log_activity($this->c_user->id, 'updated site settings: general');
+			log_activity($this->c_user->id, 'lang:act_settings_admin::general');
 
 			set_alert(lang('set_update_success'), 'success');
 			redirect('admin/settings', 'refresh');
@@ -140,9 +160,6 @@ class Admin extends Admin_Controller
 		// Before form processing.
 		if ($this->form_validation->run() == false)
 		{
-			// Extra security layer.
-			$data['hidden'] = $this->create_csrf();
-
 			// Set page title and load view.
 			$this->theme
 				->set_title(lang('users_settings'))
@@ -150,27 +167,39 @@ class Admin extends Admin_Controller
 		}
 		else
 		{
-			// Check CSRF.
-			if ( ! $this->check_csrf())
+			if (true !== $this->check_nonce('admin_settings_users'))
 			{
 				set_alert(lang('error_csrf'), 'error');
 				redirect('admin/settings/users', 'refresh');
 				exit;
 			}
 
-			$settings = $this->input->post(array(
-				'allow_registration',
-				'email_activation',
-				'manual_activation',
-				'login_type',
-				'allow_multi_session',
-				'use_gravatar'
-			), true);
+			// Collect data and remove unchanged ones to avoid updating everything.
+			$settings = $this->input->post(array_keys($data), true);
+			foreach ($settings as $key => $val)
+			{
+				if (to_bool_or_serialize($data[$key]['value']) === $val)
+				{
+					unset($settings[$key]);
+				}
+			}
 
+			// Empty $settings? Say that we updated things ;) .
+			if (empty($settings))
+			{
+				set_alert(lang('set_update_success'), 'success');
+				redirect('admin/settings/users', 'refresh');
+				exit;
+			}
+
+			// Update everything a stop in case of an error.
 			foreach ($settings as $key => $val)
 			{
 				if ( ! $this->kbcore->options->set_item($key, $val))
 				{
+					// Log the error.
+					log_message('error', 'Unable to update users setting: '.$key);
+
 					set_alert(lang('set_update_error'), 'error');
 					redirect('admin/settings/users', 'refresh');
 					exit;
@@ -178,7 +207,7 @@ class Admin extends Admin_Controller
 			}
 
 			// Log the activity.
-			log_activity($this->c_user->id, 'updated site settings: users');
+			log_activity($this->c_user->id, 'lang:act_settings_admin::users');
 
 			set_alert(lang('set_update_success'), 'success');
 			redirect('admin/settings/users', 'refresh');
@@ -243,9 +272,6 @@ class Admin extends Admin_Controller
 		// Before form processing.
 		if ($this->form_validation->run() == false)
 		{
-			// Extra security layer.
-			$data['hidden'] = $this->create_csrf();
-
 			// Set page title and load view.
 			$this->theme
 				->set_title(lang('email_settings'))
@@ -253,30 +279,39 @@ class Admin extends Admin_Controller
 		}
 		else
 		{
-			// Check CSRF.
-			if ( ! $this->check_csrf())
+			if (true !== $this->check_nonce('admin_settings_email'))
 			{
 				set_alert(lang('error_csrf'), 'error');
 				redirect('admin/settings/email', 'refresh');
 				exit;
 			}
 
-			$settings = $this->input->post(array(
-				'admin_email',
-				'mail_protocol',
-				'sendmail_path',
-				'server_email',
-				'smtp_host',
-				'smtp_port',
-				'smtp_crypto',
-				'smtp_user',
-				'smtp_pass'
-			), true);
+			// Collect data and remove unchanged ones to avoid updating everything.
+			$settings = $this->input->post(array_keys($data), true);
+			foreach ($settings as $key => $val)
+			{
+				if (to_bool_or_serialize($data[$key]['value']) === $val)
+				{
+					unset($settings[$key]);
+				}
+			}
 
+			// Empty $settings? Say that we updated things ;) .
+			if (empty($settings))
+			{
+				set_alert(lang('set_update_success'), 'success');
+				redirect('admin/settings/email', 'refresh');
+				exit;
+			}
+
+			// Update everything a stop in case of an error.
 			foreach ($settings as $key => $val)
 			{
 				if ( ! $this->kbcore->options->set_item($key, $val))
 				{
+					// Log the error.
+					log_message('error', 'Unable to update email setting: '.$key);
+
 					set_alert(lang('set_update_error'), 'error');
 					redirect('admin/settings/email', 'refresh');
 					exit;
@@ -284,7 +319,7 @@ class Admin extends Admin_Controller
 			}
 
 			// Log the activity.
-			log_activity($this->c_user->id, 'updated site settings: email');
+			log_activity($this->c_user->id, 'lang:act_settings_admin::email');
 
 			set_alert(lang('set_update_success'), 'success');
 			redirect('admin/settings/email', 'refresh');
@@ -309,9 +344,6 @@ class Admin extends Admin_Controller
 		// Before form processing.
 		if ($this->form_validation->run() == false)
 		{
-			// Extra security layer.
-			$data['hidden'] = $this->create_csrf();
-
 			// Set page title and load view.
 			$this->theme
 				->set_title(lang('upload_settings'))
@@ -319,20 +351,39 @@ class Admin extends Admin_Controller
 		}
 		else
 		{
-			// Check CSRF.
-			if ( ! $this->check_csrf())
+			if (true !== $this->check_nonce('admin_settings_uploads'))
 			{
 				set_alert(lang('error_csrf'), 'error');
 				redirect('admin/settings/uploads', 'refresh');
 				exit;
 			}
 
-			$settings = $this->input->post(array('upload_path', 'allowed_types'), true);
+			// Collect data and remove unchanged ones to avoid updating everything.
+			$settings = $this->input->post(array_keys($data), true);
+			foreach ($settings as $key => $val)
+			{
+				if (to_bool_or_serialize($data[$key]['value']) === $val)
+				{
+					unset($settings[$key]);
+				}
+			}
 
+			// Empty $settings? Say that we updated things ;) .
+			if (empty($settings))
+			{
+				set_alert(lang('set_update_success'), 'success');
+				redirect('admin/settings/uploads', 'refresh');
+				exit;
+			}
+
+			// Update everything a stop in case of an error.
 			foreach ($settings as $key => $val)
 			{
 				if ( ! $this->kbcore->options->set_item($key, $val))
 				{
+					// Log the error.
+					log_message('error', 'Unable to update uploads setting: '.$key);
+
 					set_alert(lang('set_update_error'), 'error');
 					redirect('admin/settings/uploads', 'refresh');
 					exit;
@@ -340,7 +391,7 @@ class Admin extends Admin_Controller
 			}
 
 			// Log the activity.
-			log_activity($this->c_user->id, 'updated site settings: uploads');
+			log_activity($this->c_user->id, 'lang:act_settings_admin::uploads');
 
 			set_alert(lang('set_update_success'), 'success');
 			redirect('admin/settings/uploads', 'refresh');
@@ -383,9 +434,6 @@ class Admin extends Admin_Controller
 		// Before form processing.
 		if ($this->form_validation->run() == false)
 		{
-			// Extra security layer.
-			$data['hidden'] = $this->create_csrf();
-
 			// Set page title and load view.
 			$this->theme
 				->set_title(lang('captcha_settings'))
@@ -393,20 +441,39 @@ class Admin extends Admin_Controller
 		}
 		else
 		{
-			// Check CSRF.
-			if ( ! $this->check_csrf())
+			if (true !== $this->check_nonce('admin_settings_captcha'))
 			{
 				set_alert(lang('error_csrf'), 'error');
 				redirect('admin/settings/captcha', 'refresh');
 				exit;
 			}
 
-			$settings = $this->input->post(array('use_captcha', 'use_recaptcha', 'recaptcha_site_key', 'recaptcha_private_key'), true);
+			// Collect data and remove unchanged ones to avoid updating everything.
+			$settings = $this->input->post(array_keys($data), true);
+			foreach ($settings as $key => $val)
+			{
+				if (to_bool_or_serialize($data[$key]['value']) === $val)
+				{
+					unset($settings[$key]);
+				}
+			}
 
+			// Empty $settings? Say that we updated things ;) .
+			if (empty($settings))
+			{
+				set_alert(lang('set_update_success'), 'success');
+				redirect('admin/settings/captcha', 'refresh');
+				exit;
+			}
+
+			// Update everything a stop in case of an error.
 			foreach ($settings as $key => $val)
 			{
 				if ( ! $this->kbcore->options->set_item($key, $val))
 				{
+					// Log the error.
+					log_message('error', 'Unable to update captcha setting: '.$key);
+
 					set_alert(lang('set_update_error'), 'error');
 					redirect('admin/settings/captcha', 'refresh');
 					exit;
@@ -414,7 +481,7 @@ class Admin extends Admin_Controller
 			}
 
 			// Log the activity.
-			log_activity($this->c_user->id, 'updated site settings: captcha');
+			log_activity($this->c_user->id, 'lang:act_settings_admin::captcha');
 
 			set_alert(lang('set_update_success'), 'success');
 			redirect('admin/settings/captcha', 'refresh');
@@ -492,11 +559,12 @@ class Admin extends Admin_Controller
 					'.',
 					'..',
 					'.gitkeep',
-					'index.html',
 					'.htaccess',
 					'Admin.php',
 					'Ajax.php',
+					'index.html',
 					'Process.php',
+					'Settings.php',
 				);
 
 				// Fill controllers.

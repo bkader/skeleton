@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.3.3
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 
 $lang['sac_activity'] = 'Activity';
@@ -119,3 +119,7 @@ $lang['act_themes_activate'] = 'Activated theme: %s';
 $lang['act_themes_delete']   = 'Delete theme: %s';
 $lang['act_themes_install']  = 'Installed theme: %s';
 $lang['act_themes_upload']   = 'Uploaded theme: %s';
+
+// Settings Module.
+$lang['act_settings_admin'] = 'Updated site settings: %s';
+$lang['act_settings_user']  = 'Updated account settings: %s';

@@ -3,7 +3,10 @@
 		<div class="panel panel-default">
 			<div class="panel-heading"><h1 class="panel-title"><?php _e('set_email_title') ?></h1></div>
 			<div class="panel-body">
-				<?php echo form_open('settings/email', 'role="form" class="form-horizontal"', $hidden) ?>
+				<?php
+				echo form_open('settings/email', 'role="form" class="form-horizontal"');
+				echo form_nonce('update_settings_email_'.$c_user->id);
+				?>
 
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><?php _e('email_address'); ?></label>

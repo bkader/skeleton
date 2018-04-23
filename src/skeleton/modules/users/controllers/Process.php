@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.3.3
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 class Process extends Process_Controller {
 
@@ -99,6 +99,78 @@ class Process extends Process_Controller {
 
 		// The redirection depends on the activation status.
 		redirect(($status === true ? 'login' : ''), 'refresh');
+		exit;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * email
+	 *
+	 * Method for processing user's email change.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @access 	public
+	 * @param 	string
+	 * @return 	void
+	 */
+	public function email($code = null)
+	{
+		if (strlen($code) !== 40)
+		{
+			set_alert(line('set_email_invalid_key'), 'error');
+			redirect('settings/email');
+			exit;
+		}
+
+		// Get the variable and make sure it exists.
+		$var = $this->kbcore->variables->get_by(array(
+			'name' => 'email_code',
+			'value' => $code,
+			'created_at >' => time() - (DAY_IN_SECONDS * 2)
+		));
+
+		if (false === $var)
+		{
+			set_alert(line('set_email_invalid_key'), 'error');
+			redirect('settings/email');
+			exit;
+		}
+
+		// Get user and make sure he/she exists;
+		$user = $this->kbcore->users->get($var->guid);
+		if (false === $user)
+		{
+			set_alert(line('us_account_missing'), 'error');
+			redirect('settings/email');
+			exit;
+		}
+
+		// Successfully proceed?
+		if (false !== $user->update('email', $var->params))
+		{
+			// Delete the variable and log the activity.
+			$this->kbcore->variables->delete($var->id);
+			log_activity($user->id, 'lang:act_settings_user::'.__FUNCTION__);
+
+			// Send email to user.
+			$ip_address = $this->input->ip_address();
+			$this->users->send_email('email', $user, array(
+				'ip_link' => anchor('https://www.iptolocation.net/trace-'.$ip_address, $ip_address, 'target="_blank"'),
+			));
+
+			// Set flash alert and redirect to email settings.
+			set_alert(line('set_email_success'), 'success');
+			redirect('settings/email');
+			exit;
+		}
+
+		// Otherwise, email could not be changed.
+		set_alert(line('set_email_error'), 'error');
+		redirect('settings/email');
 		exit;
 	}
 

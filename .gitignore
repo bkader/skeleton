@@ -39,6 +39,7 @@ public/content/uploads/*
 public/content/uploads/temp/*
 !public/content/uploads/temp/index.html
 
+!public/content/uploads/avatars/
 public/content/uploads/avatars/*
 !public/content/uploads/avatars/index.html
 

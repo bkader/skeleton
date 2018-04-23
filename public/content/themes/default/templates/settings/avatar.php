@@ -1,10 +1,12 @@
 <div class="row">
 	<div class="col-xs-12 col-sm-8 col-sm-push-4 col-md-9 col-md-push-3">
 		<div class="panel panel-default">
-			<div class="panel-heading"><h1 class="panel-title"><?php _e('set_profile_heading') ?></h1></div>
+			<div class="panel-heading"><h1 class="panel-title"><?php _e('set_avatar_heading') ?></h1></div>
 			<div class="panel-body">
-				<?php echo form_open_multipart('settings/up_avatar', 'role="form" class="form-horizontal"', $hidden) ?>
-
+				<?php
+				echo form_open_multipart('settings/avatar', 'role="form" class="form-horizontal"');
+				echo form_nonce('update_settings_avatar_'.$c_user->id);
+				?>
 					<!-- Avatar field. -->
 					<div class="form-group">
 						<label for="avatar" class="col-sm-2 control-label"><?php _e('avatar'); ?></label>

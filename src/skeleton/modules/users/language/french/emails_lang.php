@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.3.3
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 
 // ========================================================================
@@ -166,7 +166,7 @@ Salut {name},
 
 Cet e-mail confirme que votre mot de passe sur {site_link} a bien été modifié. Vous pouvez maintenant <a href="{login_url}" target="_blank">vous connecter</a> en utilisant le nouveau.
 
-Si vous n'avez pas effectué cette action, veuillez nous contacter le plus rapidement possible pour résoudre ce problème.
+Si vous n'avez pas effectué cette action, veuillez nous contacter le plus vite possible pour résoudre ce problème.
 
 Cette action a été effectuée à partir de cette adresse IP: {ip_link}.
 
@@ -184,6 +184,43 @@ Salut {name},
 Cet e-mail confirme que votre compte sur {site_link} a bien été restauré.
 
 Bienvenue à nouveau avec nous et nous espérons que cette fois vous apprécierez votre séjour.
+
+Amicalement,
+- Équipe {site_name}.
+EOT;
+
+// ------------------------------------------------------------------------
+// Email change request.
+// ------------------------------------------------------------------------
+$lang['us_email_prep_email_subject'] = 'changement de l\'adresse e-mail';
+$lang['us_email_prep_email_message'] = <<<EOT
+Salut {name},
+
+Vous recevez cet e-mail, car nous avons reçu une demande de changement d'adresse e-mail pour votre compte sur {site_link}.
+
+Cliquez sur le lien suivant ou copiez-collez-le dans votre navigateur si vous souhaitez continuer:
+{link}
+
+Si vous n'avez pas demandé à changer votre adresse e-mail, aucune autre action n'est requise.
+
+Cette action a été demandée à partir de cette adresse IP: {ip_link}.
+
+Amicalement,
+- Équipe {site_name}.
+EOT;
+
+// ------------------------------------------------------------------------
+// Email changed.
+// ------------------------------------------------------------------------
+$lang['us_email_email_subject'] = 'Adresse e-mail changée';
+$lang['us_email_email_message'] = <<<EOT
+Salut {name},
+
+Cet e-mail confirme que votre adrese e-mail utilisée sur {site_link} a bien été modifiée.
+
+Si vous n'avez pas effectué cette action, veuillez nous contacter le plus vite possible pour résoudre ce problème.
+
+Cette action a été effectuée à partir de cette adresse IP: {ip_link}.
 
 Amicalement,
 - Équipe {site_name}.

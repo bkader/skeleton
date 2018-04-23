@@ -50,7 +50,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 class Settings extends User_Controller
 {
@@ -62,7 +62,9 @@ class Settings extends User_Controller
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->library('settings/settings_lib', null, 'settings');
+
+		// Make sure to load settings language file.
+		$this->load->language('settings/settings');
 	}
 
 	// ------------------------------------------------------------------------
@@ -98,16 +100,7 @@ class Settings extends User_Controller
 		));
 
 		// Clone the current user.
-		$user = clone $this->c_user;
-
-		// Get user's metadata.
-		if ( ! empty($meta = $this->kbcore->metadata->get_many('guid', $user->id)))
-		{
-			foreach ($meta as $single)
-			{
-				$user->{$single->name} = $single->value;
-			}
-		}
+		$user = $this->c_user;
 
 		// Before the form is processed.
 		if ($this->form_validation->run() == false)
@@ -123,31 +116,36 @@ class Settings extends User_Controller
 			);
 			$data['company'] = array_merge(
 				$this->config->item('company', 'inputs'),
-				array('value' => set_value('company', @$user->company))
+				array('value' => set_value('company', $user->company))
 			);
 			$data['phone'] = array_merge(
 				$this->config->item('phone', 'inputs'),
-				array('value' => set_value('phone', @$user->phone))
+				array('value' => set_value('phone', $user->phone))
 			);
 			$data['location'] = array_merge(
 				$this->config->item('location', 'inputs'),
-				array('value' => set_value('location', @$user->location))
+				array('value' => set_value('location', $user->location))
 			);
 
 			// Use any filter targeting these fields.
 			$data = apply_filters('user_profile_form_fields', $data);
 
-			// CSRF security.
-			$data['hidden'] = $this->create_csrf();
-
 			// Set page title and load view.
 			$this->theme
-				->set_title(lang('set_profile_title'))
+				->set_title(line('set_profile_title'))
 				->render($data);
 		}
 		// After form processing.
 		else
 		{
+			if (true !== $this->check_nonce('update_settings_profile_'.$user->id))
+			{
+				set_alert(line('error_csrf'), 'error');
+				redirect('settings/profile');
+				exit;
+			}
+
+			// Allow hooks alter this.
 			$post = apply_filters('user_profile_update_fields', array(
 				'first_name',
 				'last_name',
@@ -156,13 +154,36 @@ class Settings extends User_Controller
 				'location',
 			));
 
-			$data = $this->input->post($post, true);
+			// Collect data and hold only unchanged ones.
+			$user_data = $this->input->post($post, true);
+			foreach ($user_data as $key => $val)
+			{
+				if (to_bool_or_serialize($user->{$key}) === $val)
+				{
+					unset($user_data[$key]);
+				}
+			}
 
-			$this->settings->update_profile($user->id, $data);
-
-			// Log the activity.
-			log_activity($this->c_user->id, 'updated profile');
-
+			/**
+			 * We say that things were updated in case nothing is left;
+			 * of everything was successfully updated.
+			 */
+			if (empty($user_data))
+			{
+				set_alert(line('set_profile_success'), 'success');
+			}
+			elseif (false !== $user->update($user_data))
+			{
+				set_alert(line('set_profile_success'), 'success');
+				log_activity($this->c_user->id, 'lang:act_settings_user::'.__FUNCTION__);
+			}
+			// Otherwise, we set the error message.
+			else
+			{
+				log_message('error', "User {$user->id} could not update profile.");
+				set_alert(line('set_profile_error'), 'error');
+			}
+			
 			redirect('settings/profile', 'refresh');
 			exit;
 		}
@@ -215,29 +236,55 @@ class Settings extends User_Controller
 
 			// Set page title and render view.
 			$this->theme
-				->set_title(lang('set_password_title'))
+				->set_title(line('set_password_title'))
 				->render($data);
 		}
 		else
 		{
-			// Check CSRF.
-			if ( ! $this->check_csrf())
+			if (true !== $this->check_nonce('update_settings_password_'.$this->c_user->id))
 			{
-				set_alert(lang('error_csrf'), 'error');
-			}
-			// Proceed to update.
-			else
-			{
-				$this->settings->change_password(
-					$this->auth->user_id(),
-					$this->input->post('npassword', true)
-				);
-
-				// Log the activity.
-				log_activity($this->c_user->id, 'changed password');
+				set_alert(line('error_csrf'), 'error');
+				redirect('settings/password', 'refresh');
+				exit;
 			}
 
-			// Redirect back to same page.
+			/**
+			 * If the user is using the same old password, we don't have to update
+			 * or log the activity. Otherwise, catch the process status returned
+			 * by the update method.
+			 */
+			$password = $this->input->post('npassword', true);
+			if (false !== password_verify($password, $this->c_user->password))
+			{
+				set_alert(line('set_password_success'), 'success');
+				redirect('settings/password', 'refresh');
+				exit;
+			}
+
+			// Successfully updated?
+			if (false !== $this->c_user->update('password', $password))
+			{
+				// Log the activity and send email to user.
+				log_activity($this->c_user->id, 'lang:act_settings_user::'.__FUNCTION__);
+				// Send email to user.
+				$ip_address = $this->input->ip_address();
+				$this->users->send_email('password', $this->c_user, array(
+					'login_url' => site_url('login'),
+					'ip_link'    => anchor(
+						'https://www.iptolocation.net/trace-'.$ip_address,
+						$ip_address,
+						'target="_blank"'
+					)
+				));
+
+				set_alert(line('set_password_success'), 'success');
+				redirect('settings/password', 'refresh');
+				exit;
+			}
+
+			// Log the error for debugging.
+			log_message('error', "User {$user->id} could not change password.");
+			set_alert(line('set_password_error'), 'error');
 			redirect('settings/password', 'refresh');
 			exit;
 		}
@@ -252,17 +299,31 @@ class Settings extends User_Controller
 	 */
 	public function email()
 	{
-		// Prepare form validation.
-		$this->prep_form(array(
+		// Just to clear old email codes.
+		$this->_purge_email_codes();
+
+		$rules = array(
 			// New email field.
 			array(	'field' => 'nemail',
 					'label' => 'lang:new_email_address',
-					'rules' => 'trim|required|valid_email|unique_email'),
+					'rules' => 'trim|required|valid_email'),
 			// Current password field.
 			array(	'field' => 'opassword',
 					'label' => 'lang:current_password',
 					'rules' => 'required|current_password'),
-		));
+		);
+
+		/**
+		 * If the user provided a different email address then his/hers, 
+		 * we make sure it is a unique email address.
+		 */
+		if (null !== $set_email = $this->input->post('nemail'))
+		{
+			$rules[0]['rules'] .= '|unique_email';
+		}
+		
+		// Prepare form validation.
+		$this->prep_form($rules);
 
 		// Before the form is processed.
 		if ($this->form_validation->run() == false)
@@ -277,34 +338,40 @@ class Settings extends User_Controller
 				array('value' => set_value('opassword'))
 			);
 
-			// Add CSRF protected.
-			$data['hidden'] = $this->create_csrf();
-
 			// Set page title and render view.
 			$this->theme
-				->set_title(lang('set_email_title'))
+				->set_title(line('set_email_title'))
 				->render($data);
 		}
 		else
 		{
-			// We first check CSRF.
-			if ( ! $this->check_csrf())
+			if ( ! $this->check_nonce('update_settings_email_'.$this->c_user->id))
 			{
-				set_alert(lang('error_csrf'), 'error');
-			}
-			// Prepare email change.
-			else
-			{
-				$this->settings->prep_change_email(
-					$this->auth->user_id(),
-					$this->input->post('nemail', true)
-				);
-
-				// Log the activity.
-				log_activity($this->c_user->id, 'changed email address');
+				set_alert(line('error_csrf'), 'error');
+				redirect('settings/email');
+				exit;
 			}
 
-			// Redirect back to same page.
+			/**
+			 * If the user is attempting to use the same email address, we
+			 * do like we updated. Otherwise, prepare email change.
+			 */
+			$email = $this->input->post('nemail', true);
+			if ($email === $this->c_user->email)
+			{
+				set_alert(line('set_email_success'), 'success');
+				redirect('settings/email', 'refresh');
+				exit;
+			}
+
+			if (false !== $this->prep_email($email))
+			{
+				set_alert(line('set_email_info'), 'info');
+				redirect('settings/email', 'refresh');
+				exit;
+			}
+
+			set_alert(line('set_email_error'), 'error');
 			redirect('settings/email', 'refresh');
 			exit;
 		}
@@ -321,22 +388,18 @@ class Settings extends User_Controller
 	{
 		// Prepare form validation.
 		$this->prep_form(array(
-			array(	'field' => 'user_id',
-					'label' => 'ID',
-					'rules' => 'required')
+			array(	'field' => 'avatar',
+					'label' => 'avatar',
+					'rules' => 'trim')
 		));
 
 		// Before submitting the form.
 		if ($this->form_validation->run() == false)
 		{
-			// Add data to form.
-			$data['hidden'] = $this->create_csrf();
-			$data['hidden']['user_id'] = $this->c_user->id;
-
 			// Set page title and render view.
 			$this->theme
-				->set_title(lang('update_avatar'))
-				->render($data);
+				->set_title(line('update_avatar'))
+				->render();
 		}
 		else
 		{
@@ -354,35 +417,23 @@ class Settings extends User_Controller
 	 */
 	public function up_avatar()
 	{
-		// Make sure CSRF if valid.
-		if ( ! $this->check_csrf())
+		if (true !== $this->check_nonce('update_settings_avatar_'.$this->c_user->id))
 		{
-			set_alert(lang('error_csrf'), 'error');
+			set_alert(line('error_csrf'), 'error');
 			redirect('settings/avatar');
 			exit;
 		}
 
 		// Collect data first.
-		$user_id = (int) $this->input->post('user_id', true);
 		$use_gravatar = ($this->input->post('gravatar') == '1');
-
-		// Make sure the user is updating his/her avatar.
-		if ($user_id !== $this->c_user->id)
-		{
-			set_alert(lang('error_csrf'), 'error');
-			redirect('settings/avatar');
-			exit;
-		}
 
 		// Using gravatar instead? Simply delete uploaded avatar.
 		if ($use_gravatar === true)
 		{
 			@unlink(FCPATH."content/uploads/avatars/{$this->c_user->avatar}.jpg");
-			set_alert(lang('set_avatar_success'), 'success');
+			log_activity($this->c_user->id, 'lang:act_settings_user::use_gravatar');
 
-			// Log the activity.
-			log_activity($this->c_user->id, 'updated avatar to use gravatar');
-
+			set_alert(line('set_avatar_success'), 'success');
 			redirect('settings/avatar');
 			exit;
 		}
@@ -402,7 +453,7 @@ class Settings extends User_Controller
 		if ( ! $this->upload->do_upload('avatar'))
 		{
 			log_message('error', $this->upload->display_errors());
-			set_alert(lang('set_avatar_error'), 'error');
+			set_alert(line('set_avatar_error'), 'error');
 			redirect('settings/avatar');
 			exit;
 		}
@@ -431,32 +482,149 @@ class Settings extends User_Controller
 		// Error resizing?
 		if ( ! $this->image_lib->resize())
 		{
-			set_alert(lang('set_avatar_error'), 'error');
+			set_alert(line('set_avatar_error'), 'error');
 			redirect('settings/avatar');
 			exit;
 		}
 
 		// Continue.
 		$this->image_lib->clear();
+		$_config = $config;
+		unset($config);
 
-		$config['width']  = 100;
-		$config['height'] = 100;
+		$config['image_library']  = 'GD2';
+		$config['source_image']   = $data['full_path'];
+		$config['maintain_ratio'] = false;
+		$config['width']          = 100;
+		$config['height']         = 100;
+
+		if ($_config['width'] > $_config['height'])
+		{
+			$config['x_axis'] = ($_config['width'] - 100) / 2;
+		}
+		else
+		{
+			$config['y_axis'] = ($_config['height'] - 100) / 2;
+		}
+
 		$this->image_lib->initialize($config);
 
 		if ( ! $this->image_lib->crop())
 		{
 			log_message('error', $this->upload->display_errors());
-			set_alert(lang('set_avatar_error'), 'error');
+			set_alert(line('set_avatar_error'), 'error');
 			redirect('settings/avatar');
 			exit;
 		}
 
 		// Log the activity.
-		log_activity($this->c_user->id, 'updated avatar');
+		log_activity($this->c_user->id, 'lang:act_settings_user::'.__FUNCTION__);
 
-		set_alert(lang('set_avatar_success'), 'success');
+		set_alert(line('set_avatar_success'), 'success');
 		redirect('settings/avatar');
 		exit;
+	}
+
+	// ------------------------------------------------------------------------
+	// Private methods.
+	// ------------------------------------------------------------------------
+
+	/**
+	 * prep_email
+	 *
+	 * Method for preparing email change.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @access 	protected
+	 * @param 	string 	$email 	The new email address.
+	 * @return 	bool 	True if the process is successful.
+	 */
+	protected function prep_email($email)
+	{
+		if (false === $this->c_user)
+		{
+			return false;
+		}
+
+		$status = false;
+
+		$var = $this->kbcore->variables->get_by(array(
+			'guid' => $this->c_user->id,
+			'name' => 'email_code',
+		));
+
+		// Variable found and still alive?
+		if (false !== $var 
+			&& $var->created_at > time() - (DAY_IN_SECONDS * 2) 
+			&& $var->params === $email)
+		{
+			$email_code = $var->value;
+			$status = true;
+		}
+		else
+		{
+			(function_exists('random_string')) OR $this->load->helper('string');
+			$email_code = random_string('alnum', 40);
+
+			if (false !== $var)
+			{
+				$status = $var->update(array(
+					'value'      => $email_code,
+					'params'     => $email,
+					'created_at' => time(),
+				));
+			}
+			else
+			{
+				$status = (bool) $this->kbcore->variables->create(array(
+					'guid'   => $this->c_user->id,
+					'name'   => 'email_code',
+					'value'  => $email_code,
+					'params' => $email,
+				));
+			}
+		}
+
+		if (false !== $status)
+		{
+			log_activity($this->c_user->id, 'lang:act_settings_user::'.__FUNCTION__);
+
+			$ip_address = $this->input->ip_address();
+			$this->users->send_email('prep_email', $this->c_user, array(
+				'link'    => process_anchor('users/email/'.$email_code),
+				'ip_link' => anchor('https://www.iptolocation.net/trace-'.$ip_address, $ip_address, 'target="_blank"'),
+			));
+			
+			return true;
+		}
+
+		return false;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * _purge_email_codes
+	 *
+	 * Method for deleting old email codes.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @access 	private
+	 * @param 	none
+	 * @return 	void
+	 */
+	private function _purge_email_codes()
+	{
+		$this->kbcore->variables->delete_by(array(
+			'name'         => 'email_code',
+			'created_at <' => time() - (DAY_IN_SECONDS * 2),
+		));
 	}
 
 }

@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.3.3
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 
 // ========================================================================
@@ -184,6 +184,43 @@ Hello {name},
 This email confirms that your account at {site_link} has been successfully restored.
 
 Welcome back with us and we hope this time you will enjoy your stay.
+
+Kind regards,
+-- {site_name} Team.
+EOT;
+
+// ------------------------------------------------------------------------
+// Email change request.
+// ------------------------------------------------------------------------
+$lang['us_email_prep_email_subject'] = 'Email Change Request';
+$lang['us_email_prep_email_message'] = <<<EOT
+Hello {name},
+
+You are receiving this email because we received an email change request for your account on {site_link}.
+
+Click on the following link or copy-paste it in your browser if you wish to proceed:
+{link}
+
+If you did not request an email change, no further action is required.
+
+This action was requested from this IP address: {ip_link}.
+
+Kind regards,
+-- {site_name} Team.
+EOT;
+
+// ------------------------------------------------------------------------
+// Email changed.
+// ------------------------------------------------------------------------
+$lang['us_email_email_subject'] = 'Email Address changed';
+$lang['us_email_email_message'] = <<<EOT
+Hello {name},
+
+This email confirms that your email address userd on {site_link} has been successfully changed.
+
+If you did not perform this action, please contact us as quick as possible to resolve this issue.
+
+This action was performed from this IP address: {ip_link}.
 
 Kind regards,
 -- {site_name} Team.

@@ -3,8 +3,10 @@
 		<div class="panel panel-default">
 			<div class="panel-heading"><h1 class="panel-title"><?php _e('set_profile_heading') ?></h1></div>
 			<div class="panel-body">
-				<?php echo form_open('settings/profile', 'role="form" class="form-horizontal"', $hidden) ?>
-
+				<?php
+				echo form_open('settings/profile', 'role="form" class="form-horizontal"');
+				echo form_nonce('update_settings_profile_'.$c_user->id);
+				?>
 					<!-- First name and last name fields. -->
 					<div class="form-group">
 						<label class="col-sm-2 control-label"><?php _e('full_name') ?></label>
