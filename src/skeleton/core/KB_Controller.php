@@ -196,11 +196,11 @@ class KB_Controller extends CI_Controller {
 	protected function check_nonce($action = null, $referrer = true, $name = '_csknonce')
 	{
 		// If the action is not provided, get if from the request.
-		$real_action = (null !== $req = $this->input->post_get('action')) ? $req : -1;
+		$real_action = (null !== $req = $this->input->request('action')) ? $req : -1;
 		(null === $action) && $action = $real_action;
 
 		// Initial status.
-		$status = verify_nonce($this->input->post_get($name), $action);
+		$status = verify_nonce($this->input->request($name), $action);
 
 		// We check referrer only if set and nonce passed test.
 		if (true === $status && true === $referrer)
@@ -239,7 +239,7 @@ class KB_Controller extends CI_Controller {
 		(class_exists('CI_User_agent', false)) OR $this->load->library('user_agent');
 
 		$real_referrer = $this->agent->referrer();
-		(null === $referrer) && $referrer = $this->input->post($name, true);
+		(null === $referrer) && $referrer = $this->input->request($name, true);
 
 		return (1 === preg_match("#{$referrer}$#", $real_referrer));
 	}

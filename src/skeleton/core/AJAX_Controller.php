@@ -168,9 +168,19 @@ class AJAX_Controller extends KB_Controller
 			$this->safe_admin_methods[] = $method;
 		}
 
+		/**
+		 * The reason behind this is that sometime we don't need to create 
+		 * the referrer field. So we see if one is provided. If it is not,
+		 * we simply check the nonce without referrer.
+		 */
+		$referrer = $this->input->request('_csk_http_referrer');
+		$nonce_status = (null !== $referrer) 
+			? $this->check_nonce() 
+			: $this->check_nonce(null, false);
+
 		// Does the requested methods require a safety check?
 		if (in_array($method, $this->safe_methods) 
-			&& (true !== $this->check_nonce() OR true !== $this->auth->online()))
+			&& (true !== $nonce_status OR true !== $this->auth->online()))
 		{
 			$this->response->header  = self::HTTP_UNAUTHORIZED;
 			$this->response->message = lang('error_action_permission');
@@ -186,7 +196,7 @@ class AJAX_Controller extends KB_Controller
 
 		// Does the method require an admin user AND a safety check?
 		elseif (in_array($method, $this->safe_admin_methods) 
-			&& (true !== $this->check_nonce() OR true !== $this->auth->is_admin()))
+			&& (true !== $nonce_status OR true !== $this->auth->is_admin()))
 		{
 			$this->response->header  = self::HTTP_UNAUTHORIZED;
 			$this->response->message = lang('error_action_permission');
