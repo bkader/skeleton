@@ -42,19 +42,23 @@
         // ---------------------------------------------------
         // Confirmation using BootBox or JavaScript alert.
         // ---------------------------------------------------
-        confirm: function (message, callback) {
+        confirm: function (message, trueCallback, falseCallback) {
             if (typeof bootbox !== "undefined") {
                 bootbox.confirm({
                     message: message,
                     callback: function (result) {
                         bootbox.hideAll();
-                        if (result === true && typeof callback === "function") {
-                            callback(true);
+                        if (result === true && typeof trueCallback === "function") {
+                            trueCallback(true);
+                        } else if (typeof falseCallback === "function") {
+                            falseCallback(true);
                         }
                     }
                 });
-            } else if (confirm(message) && typeof callback === "function") {
-                callback(true);
+            } else if (confirm(message) && typeof trueCallback === "function") {
+                trueCallback(true);
+            } else if (typeof falseCallback === "function") {
+                falseCallback(true);
             }
         },
 
@@ -123,7 +127,7 @@
             csk.ajax.el = el;
 
             // Did we receive a message?
-            if (typeof data.message !== "undefined") {
+            if (typeof data.message !== "undefined" && data.message.length) {
                 csk.ui.alert(data.message, "success");
             }
 
@@ -191,9 +195,16 @@
         // Avoid multiple form submission.
         // ---------------------------------------------------
         $(document).on("submit", "form", function (e) {
-            $(this).submit(function () {
+            var $form = $(this);
+
+            // Disable submit buttons.
+            $form.children("[type=submit]").data("disabled", true).addClass("disabled");
+
+            // Stop.
+            $form.submit(function () {
                 return false;
             });
+
             return true;
         });
 
