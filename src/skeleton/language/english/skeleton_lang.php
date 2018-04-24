@@ -203,7 +203,8 @@ $lang['view_site']   = 'View Site';
 $lang['are_you_sure'] = 'Are you sure you want to %s?';
 
 // Dashboard footer.
-$lang['admin_footer_text'] = 'Thank your for creating with <a href="https://goo.gl/jb4nQC" target="_blank">CodeIgniter Skeleton</a>.';
+$lang['admin_footer_text']  = 'Thank your for creating with <a href="%s" target="_blank">CodeIgniter Skeleton</a>.';
+$lang['admin_version_text'] = 'Version: <strong>%s</strong> &#124; {elapsed_time}';
 
 // ------------------------------------------------------------------------
 // Dashboard sections (singular and plural forms).

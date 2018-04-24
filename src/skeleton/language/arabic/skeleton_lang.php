@@ -203,7 +203,8 @@ $lang['view_site']   = 'زيارة الموقع';
 $lang['are_you_sure'] = 'هل أنت متأكد أنك تريد %s?';
 
 // Dashboard footer.
-$lang['admin_footer_text'] = 'شكرًا لك لاستخدامك <a href="https://goo.gl/jb4nQC" target="_blank">كوديجنتر سكلتون</a>.';
+$lang['admin_footer_text']  = 'شكرًا لك لاستخدامك <a href="%s" target="_blank">كوديجنتر سكلتون</a>.';
+$lang['admin_version_text'] = 'النسخة: <strong>%s</strong> &#124; {elapsed_time}';
 
 // ------------------------------------------------------------------------
 // Dashboard sections (singular and plural forms).
