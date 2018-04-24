@@ -210,7 +210,7 @@ class Admin_Controller extends User_Controller
 			'baseURL'    => base_url(),
 			'adminURL'   => admin_url(),
 			'currentURL' => current_url(),
-			'ajaxURL'    => ajax_url('admin'),
+			'ajaxURL'    => ajax_url(),
 			'lang'       => $this->lang->languages($this->session->language),
 		));
 
