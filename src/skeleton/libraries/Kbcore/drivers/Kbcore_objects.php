@@ -131,6 +131,18 @@ class Kbcore_objects extends CI_Driver implements CRUD_interface
 		// Add the id to object.
 		$object['guid'] = $guid;
 
+		/**
+		 * Always "htmlspecialchars" the content.
+		 * @since 	1.4.0
+		 */
+		if (isset($object['content']) && ! empty($object['content']))
+		{
+			$object['content'] = htmlspecialchars(
+				$object['content'],
+				ENT_QUOTES,
+				$this->ci->config->item('charset'));
+		}
+
 		// Insert the object.
 		$this->ci->db->insert('objects', $object);
 
@@ -1208,6 +1220,17 @@ class KB_Object
 	public function init($object) {
 		$this->data = $object;
 		$this->id   = (int) $object->id;
+
+		/**
+		 * We make sure to "htmlspecialchars_decode" the content.
+		 * @since 	1.4.0
+		 */
+		if (isset($this->data->content) && ! empty($this->data->content)) {
+			$this->data->content_html = htmlspecialchars_decode(
+				$this->data->content,
+				ENT_QUOTES
+			);
+		}
 	}
 
 	// ------------------------------------------------------------------------
