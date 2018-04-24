@@ -364,7 +364,9 @@ class Kbcore_media extends CI_Driver implements CRUD_interface
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://github.com/bkader
+	 * 
 	 * @since 	1.0.0
+	 * @since 	1.4.0 	Some names are reserved, so ignored.
 	 *
 	 * @access 	public
 	 * @param 	string 	$name 		The name of the thumbnail.
@@ -375,11 +377,14 @@ class Kbcore_media extends CI_Driver implements CRUD_interface
 	 */
 	public function add_image_size($name, $width = 0, $height = 0, $crop = false)
 	{
-		$this->_images_sizes[$name] = array(
-			'width'  => (int) $width,
-			'height' => (int) $height,
-			'crop'   => (bool) $crop,
-		);
+		if ( ! in_array($name, array('thumbnail', 'medium', 'large')))
+		{
+			$this->_images_sizes[$name] = array(
+				'width'  => (int) $width,
+				'height' => (int) $height,
+				'crop'   => (bool) $crop,
+			);
+		}
 	}
 
 	// ------------------------------------------------------------------------
