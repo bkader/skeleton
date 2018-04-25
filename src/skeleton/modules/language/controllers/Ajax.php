@@ -184,7 +184,7 @@ class Ajax extends AJAX_Controller
 			 * If the language folder is the default selected 
 			 * language, we make sure to fallback to english.
 			 */
-			if ($name === $this->config->item('language'))
+			if ($name === $this->kbcore->options->item('language'))
 			{
 				$this->kbcore->options->set_item('language', 'english');
 			}
