@@ -210,6 +210,11 @@ $lang['admin_version_text'] = 'Version: <strong>%s</strong> &#124; {elapsed_time
 // Dashboard sections (singular and plural forms).
 // ------------------------------------------------------------------------
 
+// Updates page.
+$lang['updates']        = 'Mises à jour';
+$lang['updates_recent'] = 'Vous avez la dernière version de Codeigniter Skeleton.';
+$lang['updates_old']    = 'Une nouvelle version de CodeIgniter Skeleton a été publiée. Téléchargez-la depuis <a href="%s" target="_blank">Github</a>.';
+
 // Users.
 $lang['user']  = 'Utilisateur';
 $lang['users'] = 'Utilisateurs';

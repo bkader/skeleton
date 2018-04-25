@@ -210,6 +210,11 @@ $lang['admin_version_text'] = 'النسخة: <strong>%s</strong> &#124; {elapsed
 // Dashboard sections (singular and plural forms).
 // ------------------------------------------------------------------------
 
+// Updates page.
+$lang['updates']        = 'التحديثات';
+$lang['updates_recent'] = 'لديك أحدث إصدار من كوديجنتر سكلتون';
+$lang['updates_old']    = 'تم إصدار نسخة جديدة من كوديجنتر سكلتون. حمل البرنامج من <a href="%s" target="_blank">جيثب</a>.';
+
 // Users.
 $lang['user']  = 'العضو';
 $lang['users'] = 'الأعضاء';
