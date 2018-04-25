@@ -530,7 +530,7 @@ class Admin extends Admin_Controller {
 			'delete_item' => lang('smn_delete_item_confirm'),
 		);
 
-		$output = '<script type="text/javascript">';
+		$output .= '<script type="text/javascript">';
 		$output .= 'csk.i18n = csk.i18n || {};';
 		$output .= ' csk.i18n.menus = '.json_encode($lines).';';
 		$output .= '</script>';
