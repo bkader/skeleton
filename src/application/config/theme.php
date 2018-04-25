@@ -47,17 +47,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 
 /**
  * Set the path to where themes are located. They must be
  * somewhere next to FCPATH with you mush not include.
  */
-$config['themes_folder']  = 'content/themes';
-$config['uploads_folder'] = 'content/uploads';
-$config['common_folder']  = 'content/common';
-$config['cache_folder']   = 'content/cache';
+$config['themes_dir']  = 'content/themes';
+$config['common_dir']  = 'content/common';
+$config['cache_dir']   = 'content/cache';
 
 // Site default theme
 $config['theme'] = 'default';

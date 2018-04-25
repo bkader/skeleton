@@ -75,7 +75,7 @@ EOT;
 {doctype}{skeleton_copyright}
 <html{html_class}{language_attributes}>
 <head>
-    {charset}
+	<meta charset="{charset}">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{title}</title>
@@ -195,7 +195,7 @@ EOT;
 	 * Holds the full path to themes.
 	 * @var string
 	 */
-	private $_themes_folder = 'themes';
+	private $_themes_dir = 'themes';
 
 	/**
 	 * Holds the count of available valid themes.
@@ -331,12 +331,6 @@ EOT;
 	private $_lang_attrs = array();
 
 	/**
-	 * Array of site's charsets.
-	 * @var  array
-	 */
-	private $_charsets = array();
-
-	/**
 	 * Holds the current page's title.
 	 * @var  string
 	 */
@@ -467,19 +461,18 @@ EOT;
 	 * @var array
 	 */
 	private $_defaults = array(
-		'themes_folder'     => 'content/themes',
-		'uploads_folder'    => 'content/uploads',
-		'common_folder'     => 'content/common',
-		'cache_folder'      => 'content/cache',
-		'theme'             => 'default',
-		'title_sep'         => '&#150;',
-		'compress'          => false,
-		'cache_lifetime'    => 0,
-		'cdn_enabled'       => false,
-		'cdn_server'        => null,
-		'site_name'         => 'CI-Theme',
-		'site_description'  => 'Simply makes your CI-based applications themable. Easy and fun to use.',
-		'site_keywords'     => 'codeigniter, themes, libraries, bkader, bouyakoub'
+		'themes_dir'       => 'content/themes',
+		'common_dir'       => 'content/common',
+		'cache_dir'        => 'content/cache',
+		'theme'            => 'default',
+		'title_sep'        => '&#150;',
+		'compress'         => false,
+		'cache_lifetime'   => 0,
+		'cdn_enabled'      => false,
+		'cdn_server'       => null,
+		'site_name'        => 'CI-Theme',
+		'site_description' => 'Simply makes your CI-based applications themable. Easy and fun to use.',
+		'site_keywords'    => 'codeigniter, themes, libraries, bkader, bouyakoub'
 	);
 
 	/**
@@ -512,10 +505,7 @@ EOT;
 		$this->ci->benchmark->mark('theme_initialize_start');
 
 		// Make sure URL helper is load then we load our helper
-		(function_exists('base_url')) or $this->ci->load->helper('url');
-
-		// Initialize preferences.
-		$this->_charsets[] = $this->ci->config->item('charset');
+		(function_exists('base_url')) OR $this->ci->load->helper('url');
 
 		// Let's set class preferences.
 		$this->_config = array_replace_recursive($this->_defaults, $config);
@@ -551,15 +541,14 @@ EOT;
 		$this->method     = $this->ci->router->fetch_method();
 
 		// We store the real path to theme's folder.
-		$this->_theme_path = realpath(FCPATH."{$this->_themes_folder}/{$this->_theme}");
-
-		// If the path to the theme was not found!
-		if (false === $this->_theme_path)
+		$theme_path = FCPATH.$this->_themes_dir.'/'.$this->_theme;
+		if (true !== is_dir($theme_path) 
+			&& false === mkdir($theme_path, 0755, true))
 		{
-			return;
+			return false;
 		}
 
-		$this->_theme_path .= DS;
+		$this->_theme_path = realpath($theme_path).DS;
 
 		// Define a constant that can be used everywhere.
 		defined('THEME_PATH') OR define('THEME_PATH', $this->_theme_path);
@@ -571,20 +560,18 @@ EOT;
 		// Let's detect client browser's details.
 		$this->_detect_browser();
 
-		if ( ! is_file($this->_theme_path.'functions.php'))
+		if (false === ($functions = $this->theme_path('functions.php')))
 		{
+			log_message('error', "Unable to locate the theme's 'functions.php' file: {$this->_theme}");
 			show_error("Unable to locate the theme's 'functions.php' file.");
 		}
 
-		require_once($this->theme_path('functions.php'));
+		require_once($functions);
 
-		// Possibility to change upload directory.
-		$this->_uploads_folder = apply_filters('upload_dir', $this->_uploads_folder);
+		$this->_uploads_dir = $this->ci->config->item('upload_path');
+		$this->_common_dir  = apply_filters('common_dir', $this->_common_dir);
 
-		/**
-		 * Here we are some default variables that you can
-		 * use on yout views.
-		 */
+		// A default variables that you can use on your views.
 		$this->set('uri_string', uri_string(), true);
 
 		// Benchmark for eventual use.
@@ -605,7 +592,8 @@ EOT;
 		$folders = array();
 
 		// Let's go through folders and check if there are any.
-		if ($handle = opendir($this->_themes_folder))
+		$themes_path = $this->themes_path();
+		if ($handle = opendir($themes_path))
 		{
 			$_to_eliminate = array(
 				'.',
@@ -617,7 +605,8 @@ EOT;
 
 			while (false !== ($file = readdir($handle)))
 			{
-				if ( ! in_array($file, $_to_eliminate))
+				if (true === is_dir($themes_path.DS.$file) 
+					&& ! in_array($file, $_to_eliminate))
 				{
 					$folders[] = $file;
 				}
@@ -627,16 +616,22 @@ EOT;
 		// If there are any folders present, we get themes details.
 		if ( ! empty($folders))
 		{
-			foreach ($folders as $key => $folder)
+			foreach ($folders as $index => $folder)
 			{
 				// Change to use style.css file instead of manifest.json.
-				if (false !== is_file(FCPATH."{$this->_themes_folder}/{$folder}/style.css"))
+				if (false !== is_file($themes_path.DS.$folder.DS.'style.css'))
 				{
 					$folders[$folder] = $this->_get_theme_details($folder);
 					$this->_themes++;
 				}
-				unset($folders[$key]);
+				unset($folders[$index]);
 			}
+
+			/**
+			 * Fires onces all themes details were retrieved.
+			 * @since 	1.4.0
+			 */
+			$folders = apply_filters('get_themes', $folders);
 		}
 
 		// Now we return the final result.
@@ -658,7 +653,7 @@ EOT;
 	private function _get_theme_details($folder)
 	{
 		// Prepare the path to the "style.css" file and make sure it exists.
-		$theme_css = realpath(FCPATH."{$this->_themes_folder}/{$folder}/style.css");
+		$theme_css = realpath(FCPATH."{$this->_themes_dir}/{$folder}/style.css");
 		if (false === $theme_css)
 		{
 			show_error("Theme missing CSS file: {$folder}.");
@@ -669,8 +664,10 @@ EOT;
 		$css_headers = get_file_data($theme_css, $this->_css_headers);
 
 		// We make sure to have at least something.
-		if (empty(array_filter($css_headers)))
+		array_clean($css_headers);
+		if (empty($css_headers))
 		{
+			log_message('error', 'Theme CSS file is missing details: {$folder}.');
 			show_error("Theme CSS file is missing details: {$folder}.");
 		}
 
@@ -687,7 +684,7 @@ EOT;
 			$headers['screenshot'] = $this->common_url('img/theme-blank.png');
 			foreach ($this->_screenshot_ext as $ext)
 			{
-				if (is_file(FCPATH."{$this->_themes_folder}/{$folder}/screenshot{$ext}"))
+				if (false !== $this->themes_path($folder.'/screenshot'.$ext))
 				{
 					$headers['screenshot'] = $this->themes_url("{$folder}/screenshot{$ext}");
 					break;
@@ -841,12 +838,9 @@ EOT;
 	 */
 	public function themes_path($uri = '')
 	{
-		if ($uri == '')
-		{
-			return realpath(FCPATH."{$this->_themes_folder}/{$uri}").DS;
-		}
-
-		return realpath(FCPATH."{$this->_themes_folder}/{$uri}");
+		$path = FCPATH.$this->_themes_dir;
+		(empty($uri)) OR $path .= '/'.$uri;
+		return realpath($path);
 	}
 
 	// --------------------------------------------------------------------
@@ -859,7 +853,7 @@ EOT;
 	 */
 	public function themes_url($uri = '')
 	{
-		return base_url("{$this->_themes_folder}/{$uri}");
+		return base_url("{$this->_themes_dir}/{$uri}");
 	}
 
 	// --------------------------------------------------------------------
@@ -902,25 +896,25 @@ EOT;
 	 */
 	public function theme_url($uri = '')
 	{
-		if (true === $this->cdn_enabled())
-		{
-			return "{$this->_cdn_server}{$this->_themes_folder}/{$this->_theme}/{$uri}";
-		}
-
-		return base_url("{$this->_themes_folder}/{$this->_theme}/{$uri}");
+		$base_url = ($this->cdn_enabled()) ? $this->_cdn_server : base_url();
+		$base_url .= $this->_themes_dir.'/'.$this->_theme.'/'.$uri;
+		return $base_url;
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
 	 * Returns a path to a folder or file in theme's folder.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.4.0 	No need to use realpath again, if was already used all above.
 	 * @access 	protected
 	 * @param 	string 	$uri
 	 * @return 	string if found, else false.
 	 */
 	public function theme_path($uri = '')
 	{
-		return realpath("{$this->_theme_path}/$uri");
+		return realpath($this->_theme_path.$uri);
 	}
 
 	// --------------------------------------------------------------------
@@ -935,25 +929,35 @@ EOT;
 	 */
 	public function upload_url($uri = '')
 	{
-		if (true === $this->cdn_enabled())
-		{
-			return "{$this->_cdn_server}{$this->_uploads_folder}/{$uri}";
-		}
-
-		return base_url("{$this->_uploads_folder}/{$uri}");
+		$base_url = ($this->cdn_enabled()) ? $this->_cdn_server : base_url();
+		$base_url .= $this->_uploads_dir.'/'.$uri;
+		return $base_url;
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
 	 * Returns the realpath to the uploads folder.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.4.0 	Because we added "upload_dir" filter, we make sure 
+	 *         			to create the directory if it does not exits.
 	 * @access 	protected
 	 * @param 	string 	$uri
 	 * @return 	string if found, else false.
 	 */
 	public function upload_path($uri = '')
 	{
-		return realpath(FCPATH."{$this->_uploads_folder}/{$uri}");
+		$upload_path = FCPATH.$this->_uploads_dir;
+
+		// Attempt to create the directory.
+		if (true !== is_dir($upload_path) 
+			&& false === mkdir($upload_path, 0755, true))
+		{
+			return false;
+		}
+
+		return realpath($upload_path.'/'.$uri);
 	}
 
 	// --------------------------------------------------------------------
@@ -966,12 +970,9 @@ EOT;
 	 */
 	public function common_url($uri = '')
 	{
-		if (true === $this->cdn_enabled())
-		{
-			return "{$this->_cdn_server}{$this->_common_folder}/{$uri}";
-		}
-
-		return base_url("{$this->_common_folder}/{$uri}");
+		$base_url = ($this->cdn_enabled()) ? $this->_cdn_server : base_url();
+		$base_url .= $this->_common_dir.'/'.$uri;
+		return $base_url;
 	}
 
 	// --------------------------------------------------------------------
@@ -984,7 +985,7 @@ EOT;
 	 */
 	public function common_path($uri = '')
 	{
-		return realpath(FCPATH."{$this->_common_folder}/{$uri}");
+		return realpath(FCPATH.$this->_common_dir.'/'.$uri);
 	}
 
 	// --------------------------------------------------------------------
@@ -1183,7 +1184,7 @@ EOT;
 		$this->_title = implode($this->_title_sep, $this->_title);
 
 		// We add "Skeleton" to the end only on the dashboard.
-		if ('admin' === $this->controller)
+		if ('admin' === $this->controller OR 'admin' === $this->module)
 		{
 			$this->_title .= apply_filters('skeleton_title', ' &lsaquo; Skeleton');
 
@@ -1974,24 +1975,25 @@ EOT;
 	 * @param 	string 	$view 	the partial view name
 	 * @param 	array 	$data 	array of data to pass
 	 * @param 	bool 	$load 	load it if not cached?
-	 * @param 	bool 	$return whether to return or output
 	 * @return 	mixed
 	 */
 	public function get_partial($view, $data = array(), $load = true)
 	{
-		// If partial view is already loaded, return it.
 		$name = basename($view);
+
+		/**
+		 * Fires before a partial is loaded.
+		 * @since 	1.4.0
+		 */
+		do_action('get_partial', $name);
+
+		// Already cached? Use it
 		if (isset($this->_partials[$name]))
 		{
 			return $this->_partials[$name];
 		}
 
-		if ($load === true)
-		{
-			return $this->_load_file($view, $data, 'partial');
-		}
-
-		return null;
+		return (true !== $load) ? null : $this->_load_file($view, $data, 'partial');
 	}
 
 	// --------------------------------------------------------------------
@@ -2001,28 +2003,39 @@ EOT;
 	/**
 	 * Returns or ouputs the header file or provided template.
 	 * @access 	protected
-	 * @param 	string 	$file 	optional header file.
+	 * @param 	string 	$name 	optional header file.
 	 * @param 	bool 	$echo 	whether to echo our return.
 	 * @return 	string
 	 */
-	public function get_header($file = null)
+	public function get_header($name = null)
 	{
+		/**
+		 * Fires before the header template file is loaded.
+		 * @since 	1.4.0
+		 * @param 	string 	
+		 */
+		do_action('get_header', $name);
+
 		/**
 		 * If the header file exists, we use it.
 		 * This allows the user to override the default
 		 * header template provided by the theme
 		 */
-		(null === $file) && $file = 'header';
+		$file = $backup_file = 'header.php';
+		(null !== $name) && $file = 'header-'.$name;
 		$file = preg_replace('/.php$/', '', $file).'.php';
 
-		// On front-end?
-		if ('admin' !== $this->controller)
+		// Depending on the context.
+		$header_file = ('admin' !== $this->controller && 'admin' !== $this->module)
+			? $this->theme_path($file)
+			: realpath(KBPATH.'views/admin/partials/'.$file);
+
+		// If the file is not found, fallback to "header.php".
+		if ($file === $backup_file && false === $header_file)
 		{
-			$header_file = $this->theme_path($file);
-		}
-		else
-		{
-			$header_file = realpath(KBPATH.'views/admin/partials/header.php');
+			$header_file = ('admin' !== $this->controller && 'admin' !== $this->module)
+				? $this->theme_path($backup_file)
+				: realpath(KBPATH.'views/admin/partials/'.$backup_file);
 		}
 
 		// The file exists? Load it.
@@ -2053,7 +2066,7 @@ EOT;
 			$replace['language_attributes'] = $this->language_attributes();
 
 			// Charset.
-			$replace['charset'] = $this->charset();
+			$replace['charset'] = $this->ci->config->item('charset');
 
 			// Page title.
 			$replace['title'] = $this->get_title();
@@ -2089,11 +2102,11 @@ EOT;
 	/**
 	 * Returns or ouputs the footer file or provided template.
 	 * @access 	protected
-	 * @param 	string 	$file 	optional footer file.
+	 * @param 	string 	$name 	optional footer file.
 	 * @param 	bool 	$echo 	whether to echo our return.
 	 * @return 	string
 	 */
-	public function get_footer($file = null)
+	public function get_footer($name = null)
 	{
 		/**
 		 * Let's first add our default JavaScripts which
@@ -2125,25 +2138,35 @@ EOT;
 				}
 				$this->add('js', $jquery_url, 'jquery', null, true);
 			}
-
 		}
+
+		/**
+		 * Fires before the footer template file is loaded.
+		 * @since 	1.4.0
+		 * @param 	string 	
+		 */
+		do_action('get_footer', $name);
 
 		/**
 		 * If the footer file exists, we use it.
 		 * This allows the user to override the default
-		 * footer template provided by the class.
+		 * footer template provided by the theme
 		 */
-		(null === $file) && $file = 'footer';
+		$file = $backup_file = 'footer.php';
+		(null !== $name) && $file = 'footer-'.$name;
 		$file = preg_replace('/.php$/', '', $file).'.php';
 
-		// On front-end?
-		if ('admin' !== $this->controller)
+		// Depending on the context.
+		$footer_file = ('admin' !== $this->controller && 'admin' !== $this->module)
+			? $this->theme_path($file)
+			: realpath(KBPATH.'views/admin/partials/'.$file);
+
+		// If the file is not found, fallback to "footer.php".
+		if ($file === $backup_file && false === $footer_file)
 		{
-			$footer_file = $this->theme_path($file);
-		}
-		else
-		{
-			$footer_file = realpath(KBPATH.'views/admin/partials/footer.php');
+			$footer_file = ('admin' !== $this->controller && 'admin' !== $this->module)
+				? $this->theme_path($backup_file)
+				: realpath(KBPATH.'views/admin/partials/'.$backup_file);
 		}
 
 		// The file exists? Load it.
@@ -2297,6 +2320,11 @@ EOT;
 			$output .= ' lang="'.implode(' ', $attrs).'"';
 		}
 
+		if ('rtl' === $this->language('direction'))
+		{
+			$output .= ' dir="rtl"';
+		}
+
 		// Return the final output.
 		return $output;
 	}
@@ -2327,41 +2355,39 @@ EOT;
 		$classes = array();
 
 		// Are we on the home page?
-		(null === $this->ci->uri->segment(1)) && $classes[] = 'home';
-
-		// We add the module, controller and method.
-		$classes[] = (null === $this->module) ? $this->controller : $this->module;
-		('index' !== $this->method) && $classes[] = $this->method;
-
-		// We add the current language.
-		('rtl' === $this->language('direction')) && $classes[] = 'rtl';
-		if ('admin' === $this->controller)
-		{
-			$classes[] = 'locale-'.strtolower($this->language('locale'));
-		}
+		(null === $this->ci->uri->segment(1)) && $classes[] = 'csk-home';
 
 		// Are we on the dashboard?
 		if ('admin' === $this->controller)
 		{
-			// We put "admin" first.
-			array_unshift($classes, 'admin');
+			$classes[] = 'csk-admin';
+			$classes[] = 'ver-'.str_replace('.', '-', KB_VERSION);
+			$classes[] = 'locale-'.strtolower($this->language('locale'));
 
-			// Then we add Skeleton version.
-			$classes[] = 'version-'.str_replace('.', '-', KB_VERSION);
+			(null !== $this->module) && $classes[] = 'csk-'.$this->module;
+		}
+		else
+		{
+			(null !== $this->module) && $classes[] = 'csk-'.$this->module;
+			$classes[] = 'csk-'.$this->controller;
 		}
 
-		// Merge things.
-		$this->_body_classes = array_merge($classes, $this->_body_classes);
+		// We add the module, controller and method.
+		('index' !== $this->method) && $classes[] = 'csk-'.$this->method;
 
-		// We trim spaces, remove empty elements, and keep only unique classes.
-		$this->_body_classes = array_map('trim', $this->_body_classes);
-		$this->_body_classes = array_filter($this->_body_classes);
-		$this->_body_classes = array_unique($this->_body_classes);
+		('rtl' === $this->language('direction')) && $classes[] = 'rtl';
+		// We add the current language.
+		
+		// Merge things.
+		$this->_body_classes = array_merge($this->_body_classes, $classes);
 
 		// Apply any filters targeting this class.
-		$this->_body_classes = ('admin' === $this->controller)
+		$this->_body_classes = ('admin' === $this->controller OR 'admin' === $this->module)
 			? apply_filters('admin_body_class', $this->_body_classes)
 			: apply_filters('body_class', $this->_body_classes);
+
+		// We make sure to clear classes.
+		array_clean($this->_body_classes);
 
 		// Stile not empty? Add everything.
 		if ( ! empty($this->_body_classes))
@@ -2411,62 +2437,6 @@ EOT;
 		}
 
 		return $this;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Returns the <meta> charset tag.
-	 * @access 	protected
-	 * @param 	string 	$charset
-	 * @return 	string 	the full <meta> tag.
-	 */
-	public function charset($charset = null)
-	{
-		// Initial output.
-		$output = '';
-
-		// Let's apply filters targeting it.
-		$this->_charsets = ('admin' === $this->controller)
-			? apply_filters('admin_charset', $this->_charsets)
-			: apply_filters('the_charset', $this->_charsets);
-
-		// If there are any additional $charset,add it.
-		(null === $charset) OR array_unshift($this->_charsets, $charset);
-
-		// We have some charsets?
-		if ( ! empty($this->_charsets))
-		{
-			// Make sure it's an array.
-			(is_array($this->_charsets)) OR $this->_charsets = (array) $this->_charsets;
-
-			// We remove empty elements, trim spaces and remove duplicates.
-			$this->_charsets = array_filter($this->_charsets);
-			$this->_charsets = array_map('trim', $this->_charsets);
-			$this->_charsets = array_unique($this->_charsets);
-			
-			// Still some charset? Use them.
-			if ( ! empty($this->_charsets))
-			{
-				$output .= '<meta charset="'.implode(' ', $this->_charsets).'">';
-			}
-		}
-
-		// Return the final output.
-		return $output;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Returns the array of site's charsets.
-	 * @access 	protected
-	 * @param 	none
-	 * @return 	array
-	 */
-	public function get_charset()
-	{
-		return $this->_charsets;
 	}
 
 	// --------------------------------------------------------------------
@@ -3671,35 +3641,6 @@ if ( ! function_exists('language_attributes'))
 
 // --------------------------------------------------------------------
 
-if ( ! function_exists('the_charset'))
-{
-	/**
-	 * Outputs the meta charset tag.
-	 * @param   string  $charset    in case you want to override it.
-	 * @param   bool    $echo       whether to echo or not.
-	 */
-	function the_charset($charset = null)
-	{
-		echo get_instance()->theme->charset($charset);
-	}
-}
-
-// --------------------------------------------------------------------
-
-if ( ! function_exists('get_the_charset'))
-{
-	/**
-	 * Returns the array of site's charset.
-	 * @return array
-	 */
-	function get_the_charset()
-	{
-		return get_instance()->theme->get_charset();
-	}
-}
-
-// --------------------------------------------------------------------
-
 if ( ! function_exists('body_class'))
 {
 	/**
@@ -4251,14 +4192,14 @@ if ( ! function_exists('css'))
 
 // --------------------------------------------------------------------
 
-if ( ! function_exists('the_StyleSheets'))
+if ( ! function_exists('the_stylesheets'))
 {
 	/**
 	 * Outputs css link tags and in-line stypes.
 	 * @param   bool    $echo   whether to echo or not
 	 * @return  string
 	 */
-	function the_StyleSheets($echo = true)
+	function the_stylesheets($echo = true)
 	{
 		if ($echo === false)
 		{
@@ -4380,14 +4321,14 @@ if ( ! function_exists('js'))
 
 // --------------------------------------------------------------------
 
-if ( ! function_exists('the_JavaScripts'))
+if ( ! function_exists('the_javascripts'))
 {
 	/**
 	 * Returns or echoes all JavaScripts files and in-line scrips.
 	 * @param   bool    $echo   whether to echo or not.
 	 * @return  string
 	 */
-	function the_JavaScripts($echo = true)
+	function the_javascripts($echo = true)
 	{
 		if ($echo === false)
 		{
@@ -4652,5 +4593,36 @@ if ( ! function_exists('print_alert'))
 		}
 
 		echo $alert;
+	}
+}
+
+// ------------------------------------------------------------------------
+// Utilities.
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('array_clean'))
+{
+	/**
+	 * array_clean
+	 *
+	 * Create specially for this library but it can be used anywhere.
+	 * It make sure to trim array elements first, them remove empty
+	 * element and final keep only unique ones.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 * 
+	 * @param 	array
+	 * @return 	void
+	 */
+	function array_clean(&$array)
+	{
+		if (is_array($array))
+		{
+			$array = array_map('trim', $array);
+			$array = array_filter($array);
+			$array = array_unique($array);
+		}
 	}
 }
