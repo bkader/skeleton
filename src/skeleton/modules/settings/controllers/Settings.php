@@ -441,7 +441,7 @@ class Settings extends User_Controller
 		// We generate the file name based on user's email address.
 		$file_name = $this->c_user->avatar.'.jpg';
 
-		$config['upload_path']   = './content/uploads/avatars/';
+		$config['upload_path']   = 'content/uploads/avatars/';
 		$config['file_name']     = $file_name;
 		$config['allowed_types'] = 'gif|jpg|png';
 		$config['overwrite']     = true;
