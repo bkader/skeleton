@@ -12,8 +12,9 @@ insert_final_newline = true
 charset = utf-8
 
 # Tab indentation (no size specified)
+[*.{php,html}]
 indent_style = tab
 
 # Spaces for markdown and assets files.
-[*.{md,js,ts,css,scss}]
+[*.{md,js,ts,css,scss,json}]
 indent_style = space
