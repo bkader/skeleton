@@ -196,8 +196,7 @@ class Ajax extends AJAX_Controller {
 		$sizes = get_option('theme_images_'.get_option('theme'), array());
 		$sizes = array_merge($sizes, $db_sizes);
 
-		// Load Image_lib library.
-		$this->load->library('image_lib');
+		class_exists('CI_Image_lib', false) OR $this->load->library('image_lib');
 
 		// Prepare media sizes.
 		$media_sizes = array();
