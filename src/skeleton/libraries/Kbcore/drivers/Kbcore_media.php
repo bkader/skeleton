@@ -138,7 +138,10 @@ class Kbcore_media extends CI_Driver implements CRUD_interface
 	public function get_by($field, $match = null)
 	{
 		// Make sure to add the "attachment subtype".
-		$this->ci->db->where('entities.subtype', 'attachment');
+		$this->ci->db
+			->where('entities.subtype', 'attachment')
+			->order_by('entities.id', 'DESC');
+
 		return $this->_parent->objects->get_by($field, $match);
 	}
 
@@ -156,7 +159,10 @@ class Kbcore_media extends CI_Driver implements CRUD_interface
 	public function get_many($field = null, $match = null, $limit = 0, $offset = 0)
 	{
 		// Make sure to add the "attachment subtype".
-		$this->ci->db->where('entities.subtype', 'attachment');
+		$this->ci->db
+			->where('entities.subtype', 'attachment')
+			->order_by('entities.id', 'DESC');
+
 		return $this->_parent->objects->get_many($field, $match, $limit, $offset);
 	}
 
@@ -171,9 +177,7 @@ class Kbcore_media extends CI_Driver implements CRUD_interface
 	 */
 	public function get_all($limit = 0, $offset = 0)
 	{
-		// Make sure to add the "attachment subtype".
-		$this->ci->db->where('entities.subtype', 'attachment');
-		return $this->_parent->objects->get_all($limit, $offset);
+		return $this->get_many(null, null, $limit, $offset);
 	}
 
 	// ------------------------------------------------------------------------
@@ -229,17 +233,49 @@ class Kbcore_media extends CI_Driver implements CRUD_interface
 
 	/**
 	 * Delete a single media item by its primary key.
+	 *
+	 * @since 	1.4.0 	Files are deleted if the media is successfully removed.
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$id 	The primary key value.
 	 * @return 	boolean
 	 */
 	public function delete($id)
 	{
-		return $this->_parent->objects->remove($id);
+		// To handle calls from delete_by.
+		if ($id instanceof KB_Object OR is_object($id))
+		{
+			$media = $id;
+		}
+		// We make sure the media exists first.
+		elseif (false === ($media = $this->get($id)))
+		{
+			return false;
+		}
+
+		// Fallback to old fashion if "file_path" is not set.
+		if ( ! isset($media->media_meta['file_path']))
+		{
+			return $this->_parent->objects->remove($id);
+		}
+
+		// Get the path then once removed from database we delete its files.
+		$file_path = $media->media_meta['file_path'];
+		if (false !== $this->_parent->objects->remove($id))
+		{
+			@array_map('unlink', glob($file_path.$media->username.'*.*'));
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
 	 * Delete multiple or all media items by arbitrary WHER clause.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.4.0 	It will simply use the "delete" method on each item.
+	 * 
 	 * @access 	public
 	 * @param 	mixed 	$field 	Column name or associative array.
 	 * @param 	mixed 	$match 	Comparison value.
@@ -250,63 +286,19 @@ class Kbcore_media extends CI_Driver implements CRUD_interface
 		// See if items exist.
 		$items = $this->get_many($field, $match);
 
-		// If there are any, we collect their IDs to send only one request.
-		if ($items)
+		// Found any? Proceed to delete.
+		if (false !== $items)
 		{
-			$ids = array();
 			foreach ($items as $item)
 			{
-				$ids[] = $item->id;
-			}
-
-			return $this->_parent->entities->remove('id', $ids);
-		}
-
-		return false;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Restore a previously soft-deleted object.
-	 * @access 	public
-	 * @param 	int 	$id 	The object's ID.
-	 * @return 	boolean
-	 */
-	public function restore($id)
-	{
-		return $this->_parent->entities->restore($id);
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Restore multiple or all soft-deleted items.
-	 * @access 	public
-	 * @param 	mixed 	$field
-	 * @param 	mixed 	$match
-	 * @return 	boolean
-	 */
-	public function restore_by($field = null, $match = null)
-	{
-		// Collect items.
-		$items = $this->get_many($field, $match);
-
-		if ($items)
-		{
-			$ids = array();
-			foreach ($items as $item)
-			{
-				if ($item->deleted > 0)
+				// Could not be delete? Stop the script.
+				if (true !== $this->delete($item))
 				{
-					$ids[] = $item->id;
+					return false;
 				}
 			}
 
-			// Restore items in IDS.
-			return ( ! empty($ids))
-				? $this->_parent->entities->restore_by('id', $ids)
-				: false;
+			return true;
 		}
 
 		return false;
@@ -470,6 +462,114 @@ if ( ! function_exists('add_image_size'))
 
 // ------------------------------------------------------------------------
 
+if ( ! function_exists('get_media'))
+{
+	/**
+	 * get_media
+	 *
+	 * Retrieve a single media by its ID or username (file name).
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @param 	mixed 	$id 	It can be the ID or username.
+	 * @return 	mixed 	KB_Object instance if found, else false.
+	 */
+	function get_media($id)
+	{
+		return ($id instanceof KB_Object) 
+			? $id
+			: get_instance()->kbcore->media->get($id);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_attached_media_id'))
+{
+	/**
+	 * get_attached_media_id
+	 *
+	 * Function for retrieving the attached media ID for the selected entity.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @param 	mixed 	The entity's ID or username.
+	 * @return 	mixed 	KB_Object instance of found, else false;
+	 */
+	function get_attached_media_id($id)
+	{
+		// The passed ID is already an instance of once of these?
+		if ($id instanceof KB_Object 
+			OR $id instanceof KB_Group 
+			OR $id instanceof KB_User)
+		{
+			return $id->attached_media_id;
+		}
+
+		// Make sure to find the entity.
+		if (false !== ($ent = get_instance()->kbcore->entities->get($id)))
+		{
+			return $ent->attached_media_id;
+		}
+
+		// Sorry, nothing found.
+		return false;
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_attached_media'))
+{
+	/**
+	 * get_attached_media
+	 *
+	 * Function for retrieving the attached media object for the
+	 * selected entity.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @param 	mixed 	$id 	The entity's ID or username.
+	 * @return 	mixed 	KB_Object instance if found, else false;
+	 */
+	function get_attached_media($id)
+	{
+		return (false !== ($media_id = get_attached_media_id($d)))
+			? get_instance()->kbcore->media->get($media_id)
+			: false;
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('has_attached_media'))
+{
+	/**
+	 * has_attached_media
+	 *
+	 * function for checking whether the selected entity has an attached media.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @param 	mixed 	$id 	The entity's ID, username or object.
+	 * @return 	bool
+	 */
+	function has_attached_media($id)
+	{
+		return (false !== get_attached_media_id($id));
+	}
+}
+
+// ------------------------------------------------------------------------
+
 if ( ! function_exists('get_media_src'))
 {
 	/**
@@ -488,32 +588,19 @@ if ( ! function_exists('get_media_src'))
 	 */
 	function get_media_src($id, $size = null)
 	{
-		// Initial URL.
-		$src = '';
+		$src   = '';
 
-		// Grab the media from database and make sure it exists.
-		$media = get_instance()->kbcore->media->get($id);
-		if (false !== $media)
+		if (false !== ($media = get_media($id)))
 		{
-			// We fill the source.
 			$src = $media->content;
 
-			// Requested a specific size?
-			if (null !== $size && false !== $meta = get_meta($id, 'media_meta', true))
+			if (null !== $size && isset($media->media_meta['sizes'][$size]['file_name']))
 			{
-				// Is the desired size available?
-				if (isset($meta['sizes'][$size]))
-				{
-					$src = str_replace(
-						basename($media->content),
-						$meta['sizes'][$size]['file'],
-						$src
-					);
-				}
+				$src = $media->media_meta['file_url'];
+				$src .= $media->media_meta['sizes'][$size]['file_name'];
 			}
 		}
 
-		// Return the final result.
 		return $src;
 	}
 }
