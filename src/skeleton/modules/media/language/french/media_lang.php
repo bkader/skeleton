@@ -91,4 +91,11 @@ $lang['smd_media_update_permission'] = 'Seul un administrateur ou le propriétai
 $lang['smd_media_delete_permission'] = 'Seul un administrateur ou le propriétaire de ce fichier peuvent le supprimer.';
 
 // Confirmation messages.
-$lang['smd_media_delete_confirm'] = "Vous êtes sur le point de supprimer définitivement cet élément à partir de votre site.<br />Cette action est irréversible.<br />'Annuler' pour arrêter, 'Confirmer' pour supprimer.";
+$lang['smd_media_delete_confirm']      = 'Vous êtes en train de supprimer définitivement cet élément de votre site.<br />Cette action ne peut pas être annulée.<br />"Annuler" pour arrêter, "Confirmer" pour supprimer.';
+$lang['smd_media_delete_bulk_confirm'] = 'Vous êtes sur le point de supprimer définitivement ces éléments de votre site.<br />Cette action en peut pas être annulée.<br />"Annuler" pour arrêter, "Confirmer" pour supprimer.';
+
+// Add and selection action.
+$lang['smd_media_add']     = 'Ajouter';
+$lang['smd_select_toggle'] = 'Sélection en masse';
+$lang['smd_select_cancel'] = 'Annuler la sélection';
+$lang['smd_select_delete'] = 'Supprimer la sélection';

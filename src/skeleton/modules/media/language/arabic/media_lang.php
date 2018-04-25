@@ -91,4 +91,11 @@ $lang['smd_media_update_permission'] = 'يمكن تحديث هذا المرفق 
 $lang['smd_media_delete_permission'] = 'يمكن حذف هذا المرفق من طرف مالكه أو مشرف الموقع.';
 
 // Confirmation messages.
-$lang['smd_media_delete_confirm'] = "أنت على وشك حذف العناصر المحددة من موقعك بشكل دائم.<br />هذا الإجراء لا يمكن التراجع عنه.<br />'إلغاء' لإيقاف الإجراء، 'موافق' لتنفيذه.";
+$lang['smd_media_delete_confirm'] = 'أنت على وشك حذف العناصر المحددة من موقعك بشكل دائم.<br />هذا الإجراء لا يمكن التراجع عنه.<br />"إلغاء" لإيقاف الإجراء، "تأكيد" لتنفيذه.';
+$lang['smd_media_delete_bulk_confirm'] = 'أنت على وشك حذف العناصر المحددة من موقعك بشكل دائم.<br />هذا الإجراء لا يمكن التراجع عنه.<br />"إلغاء" لإيقاف الإجراء، "تأكيد" لتنفيذه.';
+
+// Add and selection action.
+$lang['smd_media_add']     = 'أضف جديد';
+$lang['smd_select_toggle'] = 'تحديد متعدد';
+$lang['smd_select_cancel'] = 'إلغاء التحديد';
+$lang['smd_select_delete'] = 'حذف المحدد';

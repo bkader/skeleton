@@ -91,4 +91,11 @@ $lang['smd_media_update_permission'] = 'Only an admin or the owner of this item 
 $lang['smd_media_delete_permission'] = 'Only an admin or the owner of this item can delete it.';
 
 // Confirmation messages.
-$lang['smd_media_delete_confirm'] = "You are about to permanently delete this item from your site.<br />This action cannot be undone.<br />'Cancel' to stop, 'OK' to delete.";
+$lang['smd_media_delete_confirm']      = "You are about to permanently delete this item from your site.<br />This action cannot be undone.<br />'Cancel' to stop, 'OK' to delete.";
+$lang['smd_media_delete_bulk_confirm'] = "You are about to permanently delete these items from your site.<br />This action cannot be undone.<br />'Cancel' to stop, 'OK' to delete.";
+
+// Add and selection action.
+$lang['smd_media_add']     = 'Add Media';
+$lang['smd_select_toggle'] = 'Bulk Select';
+$lang['smd_select_cancel'] = 'Cancel Selection';
+$lang['smd_select_delete'] = 'Delete Selected';

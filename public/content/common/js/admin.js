@@ -78,53 +78,102 @@
         }
     };
 
-    // =======================================================
-    // Skeleton AJAX Handler.
-    // =======================================================
+    /**
+     * Skeleton AJAX handler.
+     * @since   1.4.0
+     */
     csk.ajax = {
-        
-        // ---------------------------------------------------
-        // The last context that was set by the request.
-        // ---------------------------------------------------
-        el: undefined,
+        /**
+         * Array of queued AJAX requests.
+         * @type {Array}
+         */
+        requests: [],
 
-        // ---------------------------------------------------
-        // Performing AJAX request.
-        // ---------------------------------------------------
+        /**
+         * Flag to check whether a request is being processed.
+         * @type {Boolean}
+         */
+        requesting: false,
+        
+        /**
+         * The last context that was set by the request.
+         * @type {object}
+         */
+        context: undefined,
+
+        /**
+         * Queues an AJAX request and fires if needed.
+         * @param  {string}     url     The URL to send AJAX to.
+         * @param  {array}      params  Objec of AJAX settings.
+         */
         request: function (url, params) {
             params = params || {};
-            var el = params.el || this,
+            var context = params.context || this,
                 type = params.type || "GET";
 
             // Merge parameters with default ones.
             params = $.extend({
+                url: url,
                 method: type,
                 type: type, // Backward compatibility.
                 async: true,
                 cache: false,
                 dataType: "json",
-                success: function (response) {
-                    csk.ajax.response(response);
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    if (typeof jqXHR.responseJSON.message !== "undefined") {
-                        csk.ui.alert(jqXHR.responseJSON.message, "error");
-                    }
+                success: function (data, textStatus, jqXHR) {
+                    csk.ajax._response(data);
                 }
             }, params);
 
-            // Perform the request.
-            $.ajax(url, params);
+            this.requests.push(params);
+            this._execute();
         },
 
-        // ---------------------------------------------------
-        // Handle JSON data response sent by csk.ajax.request
-        // ---------------------------------------------------
-        response: function (data) {
-            var data = data || {}, el = this;
+        // Stops AJAX requests and dequeue them all.
+        stop: function () {
+            this.requests = [];
+        },
+
+        /**
+         * Handles the queue an run AJAX requests.
+         */
+        _execute: function () {
+            if (this.requests.length == 0) {
+                return;
+            }
+            if (this.requesting == true) {
+                return;
+            }
+
+            var request = this.requests.splice(0, 1)[0],
+                complete = request.complete;
+
+            var self = this;
+
+            if (request._execute) {
+                request._execute(request);
+            }
+
+            request.complete = function () {
+                if (complete) {
+                    complete.apply(this, arguments);
+                }
+                self.requesting = false;
+                self._execute();
+            }
+
+            this.requesting = true;
+            $.ajax(request);
+        },
+
+        /**
+         * Handle JSON data response sent by csk.ajax.request
+         * @param  {strng} data Normally, it should be a JSON encoded response.
+         */
+        _response: function (data) {
+            var data = data || {}, context = this;
 
             // Cache the used element.
-            csk.ajax.el = el;
+            csk.ajax.context = context;
 
             // Did we receive a message?
             if (typeof data.message !== "undefined" && data.message.length) {
@@ -140,7 +189,7 @@
             var _scripts = data.scripts.length;
             for (var i = 0; i < _scripts; i++) {
                 try {
-                    (new Function(data.scripts[i])).call(el);
+                    (new Function(data.scripts[i])).call(context);
                 } catch(e) {
                     console.log(e);
                 }
@@ -148,14 +197,9 @@
         }
     };
 
-    // =======================================================
-    // To when DOM is ready.
-    // =======================================================
     $(document).ready(function () {
 
-        // ---------------------------------------------------
         // Toastr Configuration.
-        // ---------------------------------------------------
         if (typeof toastr !== "undefined") {
             toastr.options = {
                 "closeButton": true,
@@ -174,16 +218,12 @@
             }
         }
 
-        // ---------------------------------------------------
-        // Sidebar toggle.
-        // ---------------------------------------------------
+        //Sidebar toggle.
         $(".sidebar-toggle").on("click", function (e) {
             return csk.ui.toggleSidebar(e);
         });
 
-        // ---------------------------------------------------
         // Bootstrap tooltip and popover.
-        // ---------------------------------------------------
         if (typeof $.fn.tooltip !== "undefined") {
             $("[data-toggle=tooltip], [rel=tooltip]").tooltip();
         }
@@ -191,16 +231,11 @@
             $("[data-toggle=popover], [rel=popover]").popover();
         }
 
-        // ---------------------------------------------------
         // Avoid multiple form submission.
-        // ---------------------------------------------------
         $(document).on("submit", "form", function (e) {
             var $form = $(this);
-
-            // Disable submit buttons.
-            $form.children("[type=submit]").data("disabled", true).addClass("disabled");
-
-            // Stop.
+            $form.children("[type=submit]").prop("disabled", true).addClass("disabled");
+            
             $form.submit(function () {
                 return false;
             });
@@ -208,16 +243,12 @@
             return true;
         });
 
-        // ---------------------------------------------------
         // Make form inputs keep values even after refresh.
-        // ---------------------------------------------------
         if (typeof $.fn.garlic !== "undefined") {
             $("[rel=persist]").garlic();
         }
 
-        // ---------------------------------------------------
         // AJAXify anchors with rel attributes.
-        // ---------------------------------------------------
         $(document).on("click", "a[rel]", function (e) {
             var $this = $(this), rel = $this.attr("rel"), href = $this.attr("href");
 
@@ -235,26 +266,24 @@
                         el: this,
                         type: type,
                         beforeSend: function () {
-                            if ($this.data("disabled")) {
+                            if ($this.prop("disabled")) {
                                 return;
                             }
 
                             // We disable the element before proceeding.
-                            $this.attr("disabled", true).addClass("disabled");
+                            $this.prop("disabled", true).addClass("disabled");
                         },
                         complete: function () {
                             // We enable back the element.
-                            $this.attr("disabled", false).removeClass("disabled");
+                            $this.prop("disabled", false).removeClass("disabled");
                         }
-                    }, (rel === "async-post") ? "POST" : "GET");
+                    });
                     return false;
                     break;
             }
         });
 
-        // ---------------------------------------------------
         // AJAXify forms with rel attributes.
-        // ---------------------------------------------------
         $(document).on("submit", "form[rel]", function (e) {
             var $this = $(this), rel = $this.attr("rel"), href = $this.attr("action");
 
@@ -268,21 +297,25 @@
                     e.preventDefault();
                     csk.ajax.request(href, {
                         el: this,
+                        type: "POST",
                         data: $this.serializeArray(),
                         beforeSend: function () {
-                            if ($this.data("disabled")) {
+                            if ($this.prop("disabled")) {
                                 return;
                             }
 
-                            // We disable the form and its buttons.
-                            $this.data("disable", true);
-                            $this.find("[type=submit]").addClass("disabled");
+                            $this
+                                .find("[type=submit]")
+                                .prop("disabled", true)
+                                .addClass("disabled");
                         },
                         complete: function () {
-                            $this.data("disabled", false);
-                            $this.find("[type=submit]").removeClass("disabled");
+                            $this
+                                .find("[type=submit]")
+                                .prop("disabled", false)
+                                .removeClass("disabled");
                         }
-                    }, "POST");
+                    });
                     return false;
                     break;
             }
