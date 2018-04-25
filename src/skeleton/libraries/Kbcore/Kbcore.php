@@ -625,6 +625,103 @@ class Kbcore extends CI_Driver_Library
 	}
 
 	// ------------------------------------------------------------------------
+	// Update methods.
+	// ------------------------------------------------------------------------
+
+
+	/**
+	 * update_check
+	 *
+	 * Method for checking for new releases of CodeIgniter SKeleton on Github.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	array
+	 */
+	public function update_check()
+	{
+		$option_key = '_csk_update';
+		$option = $this->options->get($option_key);
+
+		// Just to avoid calling Github, we check only once every two days.
+		if (false !== $option && $option->options > (time() - 172800))
+		{
+			$return = $option->value;
+		}
+		else
+		{
+			$git_url = 'https://api.github.com/repos/bkader/skeleton/releases/latest';
+
+			if (function_exists('curl_init'))
+			{
+				$curl = curl_init(); 
+				curl_setopt($curl, CURLOPT_URL, $git_url); 
+				curl_setopt($curl, CURLOPT_USERAGENT, 'Awesome-Octocat-App');
+				curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1); 
+				$content = curl_exec($curl); 
+				curl_close($curl);   
+			}
+			else
+			{
+				$params = array(
+					'http' => array(
+						'method' => 'GET',
+						'header' => 'User-Agent: Awesome-Octocat-App',
+					)
+				);
+
+				$context = stream_context_create($params);
+				$content = file_get_contents($git_url, false, $context);
+			}
+
+			$content = json_decode($content, true);
+
+			$return = array(
+				// The currently used version.
+				'current'     => KB_VERSION,
+				'current_num' => intval(str_replace('.', '', KB_VERSION)),
+
+				// The latest release on Github.
+				'latest'      => $content['tag_name'],
+				'latest_num'  => intval(str_replace('.', '', $content['tag_name'])),
+				'release'     => array(
+					'id'          => $content['id'],
+					'url'         => $content['html_url'],
+					'tag'         => $content['tag_name'],
+					'tarball_url' => $content['tarball_url'],
+					'zipball_url' => $content['zipball_url'],
+					'description' => $content['body'],
+
+				),
+			);
+
+			if (false !== $option)
+			{
+				$option->update(array(
+					'value' => $return,
+					'options' => time(),
+				));
+			}
+			else
+			{
+				$this->options->create(array(
+					'name'       => $option_key,
+					'value'      => $return,
+					'tab'        => '',
+					'field_type' => '',
+					'required'   => false,
+				));
+			}
+		}
+
+		return $return;
+	}
+
+	// ------------------------------------------------------------------------
 	// Private methods.
 	// ------------------------------------------------------------------------
 
