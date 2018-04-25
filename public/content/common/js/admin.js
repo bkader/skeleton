@@ -234,7 +234,7 @@
         // Avoid multiple form submission.
         $(document).on("submit", "form", function (e) {
             var $form = $(this);
-            $form.children("[type=submit]").prop("disabled", true).addClass("disabled");
+            $form.find("[type=submit]").prop("disabled", true).addClass("disabled");
             
             $form.submit(function () {
                 return false;
