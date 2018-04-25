@@ -132,7 +132,7 @@ class Admin_Controller extends User_Controller
 		}
 
 		// Print admin head part.
-		add_filter('after_admin_styles', array($this, 'csk_globals'));
+		add_filter('admin_head', array($this, 'csk_globals'), 0);
 		add_filter('admin_head', array($this, 'admin_head'));
 
 		// Prepare dashboard sidebar.
@@ -203,21 +203,19 @@ class Admin_Controller extends User_Controller
 	 */
 	public function csk_globals($output)
 	{
-		// Adding configuration.
-		$time = time();
-		$config = json_encode(array(
+		$config = array(
 			'siteURL'    => site_url(),
 			'baseURL'    => base_url(),
 			'adminURL'   => admin_url(),
 			'currentURL' => current_url(),
 			'ajaxURL'    => ajax_url(),
 			'lang'       => $this->lang->languages($this->session->language),
-		));
+		);
 
 		$output .= '<script type="text/javascript">';
 		$output .= 'var csk = window.csk = window.csk || {};';
 		$output .= ' csk.i18n = csk.i18n || {};';
-		$output .= ' csk.config = '.$config.';';
+		$output .= ' csk.config = '.json_encode($config).';';
 		$output .= '</script>';
 
 		return $output;
