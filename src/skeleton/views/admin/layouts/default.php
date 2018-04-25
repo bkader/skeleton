@@ -63,7 +63,22 @@
 
 <main class="wrapper" id="wrapper" role="main">
 	<div class="container-fluid">
-		<?php the_content(); ?>
+		<?php
+		/**
+		 * Fires at the top of page content.
+		 * @since 	1.4.0
+		 */
+		do_action('admin_page_header');
+
+		// Display the page content.
+		the_content();
+
+		/**
+		 * Fires at the end of page content.
+		 * @since 	1.4.0
+		 */
+		do_action('admin_page_footer');
+		?>
 		<div class="footer clearfix" id="kbfooter" role="contentinfo">
 			<?php
 			/**
