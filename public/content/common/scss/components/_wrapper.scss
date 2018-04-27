@@ -9,9 +9,5 @@
         padding: 20px;
     }
 
-    @include screen-sm {
-        margin-left: $sidebar__width;
-
-        .footer { left: $sidebar__width; }
-    }
+    @include screen-sm { margin-left: $sidebar__width; }
 }

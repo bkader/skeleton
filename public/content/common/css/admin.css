@@ -227,9 +227,6 @@ body {
   .wrapper {
     margin-left: 225px;
   }
-  .wrapper .footer {
-    left: 225px;
-  }
 }
 
 .sidebar {
