@@ -7,42 +7,6 @@
   "author_email": "bkade@mail.com",
   "license": "MIT",
   "enabled": true,
-
   "admin_menu": "Settings",
-  "admin_order": 89,
-
-  "submenu": {
-    "general": "General",
-    "users": "Users",
-    "email": "Email",
-    "uploads": "uploads",
-    "captcha": "Captcha"
-  },
-
-  "translations": {
-    "admin_menu": {
-        "french": "Param&egrave;tres",
-        "arabic": "الإعدادات"
-    },
-    "general": {
-      "french": "G&eacute;n&eacute;ral",
-      "arabic": "الاعدادات العامة"
-    },
-    "users": {
-      "french": "Utilisateurs",
-      "arabic": "المستخدمون"
-    },
-    "email": {
-      "french": "E-mail",
-      "arabic": "البريد"
-    },
-    "uploads": {
-      "french": "T&eacute;l&eacute;chargement",
-      "arabic": "التحميل"
-    },
-    "captcha": {
-      "french": "Captcha",
-      "arabic": "كابتشا"
-    }
-  }
+  "admin_order": 89
 }
