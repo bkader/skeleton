@@ -225,7 +225,7 @@ body {
 }
 @media screen and (min-width: 768px) {
   .wrapper {
-    padding-left: 225px;
+    margin-left: 225px;
   }
   .wrapper .footer {
     left: 225px;

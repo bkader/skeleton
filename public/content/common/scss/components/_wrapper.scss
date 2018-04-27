@@ -10,7 +10,7 @@
     }
 
     @include screen-sm {
-        padding-left: $sidebar__width;
+        margin-left: $sidebar__width;
 
         .footer { left: $sidebar__width; }
     }

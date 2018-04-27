@@ -57,10 +57,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	</span>
 </h2>
 <?php echo form_open_multipart('ajax/media/upload', 'id="media-dropzone"'); ?>
-<div class="attachments clearfix">
+<div tabindex="-1" class="attachments clearfix">
 <?php if ($media): ?>
 <?php foreach ($media as $m): ?>
-	<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 attachment" id="media-<?php echo $m->id; ?>" data-id="<?php echo $m->id; ?>" data-nonce="<?php echo $m->delete_nonce; ?>">
+	<div tabindex="0" class="col-xs-6 col-sm-4 col-md-3 col-lg-2 attachment" id="media-<?php echo $m->id; ?>" data-id="<?php echo $m->id; ?>" data-nonce="<?php echo $m->delete_nonce; ?>">
 		<div class="attachment-inner">
 			<a class="media-view" href="<?php echo admin_url('media?item='.$m->id); ?>"><img src="<?php echo get_media_src($m, 'thumbnail'); ?>" alt="<?php echo $m->name; ?>"></a>
 		</div>
