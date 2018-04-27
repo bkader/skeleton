@@ -69,6 +69,13 @@ class KB_Controller extends CI_Controller {
 	protected $redirect = '';
 
 	/**
+	 * Holds the current module's details.
+	 * @since 	1.4.0
+	 * @var 	array
+	 */
+	protected $module;
+
+	/**
 	 * Array of data to pass to views.
 	 * @var array
 	 */
@@ -84,6 +91,12 @@ class KB_Controller extends CI_Controller {
 
 		// Load application main library.
 		$this->load->driver('kbcore');
+
+		// Load modules "init.php" files.
+		$this->router->load_modules();
+
+		// Get current module's details.
+		$this->module = $this->router->module_details($this->router->fetch_module());
 
 		// Load authentication library.
 		$this->c_user = $this->auth->user();

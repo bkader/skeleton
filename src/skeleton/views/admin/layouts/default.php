@@ -1,17 +1,23 @@
 <nav class="navbar navbar-default navbar-fixed-top navbar-admin">
 	<div class="container-fluid">
 		<div class="navbar-header">
-		<button type="button" class="navbar-toggle sidebar-toggle">
-			<span class="sr-only">Toggle Sidebar</span>
-			<i class="fa fa-toggle-right"></i>
-		</button>
-		<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-			<span class="sr-only">Toggle navigation</span>
-			<i class="fa fa-bars"></i>
-		</button>
-		<a href="<?php echo admin_url() ?>" class="navbar-brand"><?php echo get_option('site_name') ?></a>
+			<button type="button" class="navbar-toggle sidebar-toggle">
+				<span class="sr-only">Sidebar</span>
+				<i class="fa fa-toggle-right"></i>
+			</button>
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+				<span class="sr-only">Menu</span>
+				<i class="fa fa-bars"></i>
+			</button>
+			<?php
+			/**
+			 * Apply filter on the displayed brand on dashboard.
+			 * @since 	1.4.0
+			 */
+			$brand = apply_filters('admin_logo', get_option('site_name', 'Skeleton'));
+			echo admin_anchor('', $brand, 'class="navbar-brand"');
+			?>
 		</div>
-
 		<div id="navbar" class="navbar-collapse collapse">
 			<?php
 			/**
@@ -113,35 +119,28 @@
 <aside class="sidebar" id="sidebar" role="complementay">
 	<?php
 	/**
-	 * Fires before the admin sidebar navigation.
+	 * Fires before the admin sidebar menu.
 	 * @since 	1.4.0
 	 */
-	do_action('before_admin_sidebar');
+	do_action('before_admin_menu');
 	?>
 	<ul class="nav nav-sidebar">
 		<li<?php echo (get_the_module() == null) ? ' class="active"' : '' ?>><?php echo admin_anchor('', lang('dashboard')) ?></li>
 		<?php
-		// Display automatic links.
-		foreach ($admin_menu as $uri => $title)
-		{
-			$active = (true === is_module($uri)) ? ' class="active"' : '';
-			$active = apply_filters('admin_active_uri', $active, $uri);
-			echo '<li', $active, '>', admin_anchor($uri, $title), '</li>';
-		}
 		/**
-		 * Fires inside the admin navigation.
+		 * Fires inside the admin menu.
 		 * Useful if you want to add links.
 		 * @since 	1.4.0
 		 */
-		do_action('in_admin_sidebar');
+		do_action('admin_menu');
 		?>
 	</ul>
 	<?php
 	/**
-	 * Fires after the admin sidebar navigation.
+	 * Fires after the admin sidebar menu.
 	 * @since 	1.4.0
 	 */
-	do_action('after_admin_sidebar');
+	do_action('after_admin_menu');
 	?>
 </aside>
 

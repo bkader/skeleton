@@ -215,30 +215,10 @@ $lang['updates']        = 'Updates';
 $lang['updates_recent'] = 'You have the latest version of CodeIgniter Skeleton.';
 $lang['updates_old']    = 'A new version of CodeIgniter Skeleton has been released. Download it from <a href="%s" target="_blank">Github</a>.';
 
-// Users.
-$lang['user']  = 'User';
-$lang['users'] = 'Users';
+// manifest.json error.
+$lang['manifest_missing_heading'] = 'Manifest File Error';
+$lang['manifest_missing_message'] = 'This module\'s "manifest.json" file is either missing or badly formatted.';
 
-// Media.
-$lang['media']   = 'Media';
-$lang['library'] = 'Library';
-
-// Themes.
-$lang['theme']  = 'Theme';
-$lang['themes'] = 'Themes';
-
-// Menus.
-$lang['menu']  = 'Menu';
-$lang['menus'] = 'Menus';
-
-// Menus.
-$lang['plugin']  = 'Plugin';
-$lang['plugins'] = 'Plugins';
-
-// Languages.
-$lang['language']  = 'Language';
-$lang['languages'] = 'Languages';
-
-// Activities.
-$lang['activity']   = 'Activity';
-$lang['activities'] = 'Activities';
+// Module disabled.
+$lang['module_disabled_heading'] = 'Module Disabled';
+$lang['module_disabled_message'] = 'This module is disabled. Enable it on the dashboard in order to use it.';

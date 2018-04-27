@@ -98,7 +98,6 @@ class Admin_Controller extends User_Controller
 	{
 		parent::__construct();
 
-		// Make sure the user is an administrator.
 		if ( ! $this->auth->is_admin())
 		{
 			set_alert(lang('error_permission'), 'error');
@@ -106,8 +105,25 @@ class Admin_Controller extends User_Controller
 			exit;
 		}
 
-		// Load admin helper.
+		if (null !== $this->router->fetch_module())
+		{
+			if (false === $this->module)
+			{
+				show_error(line('manifest_missing_message'), 500, line('manifest_missing_heading'));
+			}
+			// Disabled module.
+			if (true !== $this->module['enabled'])
+			{
+				set_alert(line('module_disabled_message'), 'warning');
+				redirect('admin');
+				exit;
+			}
+		}
+		
+		add_filter('admin_head', array($this, 'csk_globals'), 0);
+		add_filter('admin_head', array($this, 'admin_head'));
 		$this->load->helper('admin');
+		$this->_admin_menu();
 	}
 
 	// ------------------------------------------------------------------------
@@ -131,57 +147,55 @@ class Admin_Controller extends User_Controller
 			show_404();
 		}
 
-		// Print admin head part.
-		add_filter('admin_head', array($this, 'csk_globals'), 0);
-		add_filter('admin_head', array($this, 'admin_head'));
-
-		// Prepare dashboard sidebar.
-		$this->theme->set('admin_menu', $this->_admin_menu(), true);
-
-		// We add favicon.
-		$this->theme->add_meta(
-			'icon',
-			$this->theme->common_url('img/favicon.ico'),
-			'rel',
-			'type="image/x-icon"'
-		);
-
-		// We remove Modernizr and jQuery to dynamically load them.
-		$this->theme->remove('js', 'modernizr', 'jquery');
-
-		// Do we have any CSS files to load?
-		if ( ! empty($this->styles))
+		if ( ! $this->input->is_ajax_request())
 		{
-			// Are we using a right-to-left language? Add RTL files.
-			if ('rtl' === langinfo('direction'))
+			// We add favicon.
+			$this->theme->add_meta(
+				'icon',
+				$this->theme->common_url('img/favicon.ico'),
+				'rel',
+				'type="image/x-icon"'
+			);
+
+			// We remove Modernizr and jQuery to dynamically load them.
+			$this->theme->remove('js', 'modernizr', 'jquery');
+
+			// Do we have any CSS files to load?
+			if ( ! empty($this->styles))
 			{
-				array_push($this->styles, 'bootstrap-rtl', 'admin-rtl');
+				// Are we using a right-to-left language? Add RTL files.
+				if ('rtl' === langinfo('direction'))
+				{
+					array_push($this->styles, 'bootstrap-rtl', 'admin-rtl');
+				}
+
+				$this->styles = array_map('trim', $this->styles);
+				$this->styles = array_filter($this->styles);
+				$this->styles = array_unique($this->styles);
+				$this->styles = implode(',', $this->styles);
+
+				$this->theme
+					->no_extension()
+					->add('css', site_url("load/styles?load=".rawurlencode($this->styles)), null, null, true);
 			}
 
-			$this->styles = array_map('trim', $this->styles);
-			$this->styles = array_filter($this->styles);
-			$this->styles = array_unique($this->styles);
-			$this->styles = implode(',', $this->styles);
+			// Do we have any JS files to laod?
+			if ( ! empty($this->scripts))
+			{
+				$this->scripts = array_map('trim', $this->scripts);
+				$this->scripts = array_filter($this->scripts);
+				$this->scripts = array_unique($this->scripts);
+				$this->scripts = implode(',', $this->scripts);
+				$this->theme
+					->no_extension()
+					->add('js', site_url("load/scripts?load=".rawurlencode($this->scripts)), null, null, true);
+			}
 
-			$this->theme
-				->no_extension()
-				->add('css', site_url("load/styles?load=".rawurlencode($this->styles)), null, null, true);
+			// We call the method.
+			return call_user_func_array(array($this, $method), $params);
 		}
 
-		// Do we have any JS files to laod?
-		if ( ! empty($this->scripts))
-		{
-			$this->scripts = array_map('trim', $this->scripts);
-			$this->scripts = array_filter($this->scripts);
-			$this->scripts = array_unique($this->scripts);
-			$this->scripts = implode(',', $this->scripts);
-			$this->theme
-				->no_extension()
-				->add('js', site_url("load/scripts?load=".rawurlencode($this->scripts)), null, null, true);
-		}
-
-		// We call the method.
-		return call_user_func_array(array($this, $method), $params);
+		return parent::_remap($method, $params);
 	}
 
 	// ------------------------------------------------------------------------
@@ -256,23 +270,21 @@ class Admin_Controller extends User_Controller
 	 */
 	protected function _admin_menu()
 	{
-		$menu = array();
 		$modules = $this->router->list_modules(true);
+		if ( ! $modules)
+		{
+			return;
+		}
 
-		// Sort modules.
-		uasort($modules, function($a, $b) {
-			return $a['admin_order'] - $b['admin_order'];
-		});
-
-		foreach ($modules as $folder => $details)
+		foreach ($modules as $folder => $module)
 		{
 			if ($this->router->has_admin($folder))
 			{
-				$menu[$folder] = $details['admin_menu'];
+				add_action('admin_menu', function() use ($module) {
+					return module_menu($module);
+				}, $module['admin_order'], 1);
 			}
 		}
-
-		return $menu;
 	}
 
 	// ------------------------------------------------------------------------

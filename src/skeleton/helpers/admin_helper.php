@@ -94,3 +94,90 @@ if ( ! function_exists('fa_icon'))
 		return "<i class=\"fa fa-{$class}\"></i>";
 	}
 }
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('module_menu'))
+{
+	/**
+	 * module_menu
+	 *
+	 * Function for generating an admin menu link for the selected module.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @param 	mixed 	$module 	The module's name or array.
+	 * @param 	bool 	$echo 		Whether to echo the output.
+	 * @return 	string
+	 */
+	function module_menu($module, $echo = true)
+	{
+		// We make sure we have the module's details array.
+		if ( ! is_array($module))
+		{
+			$module = get_instance()->router->module_details($module);
+			if ( ! is_array($module))
+			{
+				return '';
+			}
+		}
+		
+		// Start the output.
+		$output = '<li';
+
+		// Add the "active" class if needed.
+		if (strpos(uri_string(), $module['folder']) !== false)
+		{
+			$output .= ' class="active"';
+		}
+
+		// Close the opening tag.
+		$output .= '>';
+
+		// Get the current language to see if we need to translate things.
+		$lang = config_item('language');
+
+		// Shall we translate the link text?
+		$p_title = (isset($module['translations']['admin_menu'][$lang]))
+			? $module['translations']['admin_menu'][$lang]
+			: $module['admin_menu'];
+
+		// Add the admin anchor.
+		$output .= admin_anchor($module['folder'], $p_title);
+
+		// Does it have a sub-elements?
+		if (isset($module['submenu']))
+		{
+			// The list opening tag.
+			$output .= '<ul class="submenu">';
+
+			// Loop through items and display them.
+			foreach ($module['submenu'] as $uri => $c_title)
+			{
+				// Do we need to translate the title?
+				$c_title = (isset($module['translations'][$uri][$lang]))
+					? $module['translations'][$uri][$lang]
+					: $c_title;
+
+				// Add the anchor.
+				$output .= '<li>'.admin_anchor($module['folder'].'/'.$uri, $c_title).'</li>';
+			}
+
+			// Close the child menu item.
+			$output .= '</ul>';
+		}
+
+		// The menu link closing tag.
+		$output .= '</li>';
+
+		// Return instead of echo?
+		if (true !== $echo)
+		{
+			return $output;
+		}
+
+		echo $output;
+	}
+}

@@ -408,11 +408,17 @@ class Route {
     	if (is_array($controller))
     	{
 			$options    = $controller;
-			$controller = $name;
+			$controller = null;
     	}
 
     	// Hold the controller in case it is still not set.
-        (empty($controller)) && $controller = $name;
+    	if (isset($options['controller']))
+    	{
+    		$controller = $options['controller'];
+    		unset($options['controller']);
+    	}
+
+    	(empty($controller)) && $controller = $name;
 
         // Was an offset provided?
         $offset = (isset($options['offset'])) ? (int) $options['offset'] : 0;

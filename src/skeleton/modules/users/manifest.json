@@ -1,10 +1,28 @@
 {
-	"name": "Users Module",
-	"description": "Allows users to exist on the website",
-	"version": "1.0.0",
-	"author": "Kader Bouyakoub",
-	"author_uri": "https://github.com/bkader",
-	"author_email": "bkade@mail.com",
-	"admin_menu": "lang:users",
-	"admin_order": 0
+  "name": "Users Module",
+  "description": "Allows users to exist on the website",
+  "version": "1.0.0",
+  "author": "Kader Bouyakoub",
+  "author_uri": "https://github.com/bkader",
+  "author_email": "bkade@mail.com",
+  "license": "MIT",
+  "enabled": true,
+
+  "routes": {
+    "login": "users/login",
+    "login/restore": "users/restore",
+    "login/recover": "users/recover",
+    "login/reset(.*)": "users/reset$1",
+    "register": "users/register",
+    "register/resend": "users/resend",
+    "logout": "users/logout",
+    "users(.*)": null
+  },
+
+  "translations": {
+    "admin_menu": {
+        "french": "Utilisateurs",
+        "arabic": "الأعضاء"
+    }
+  }
 }

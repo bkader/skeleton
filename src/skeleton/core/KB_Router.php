@@ -66,6 +66,51 @@ class KB_Router extends CI_Router
 	protected $_locations;
 
 	/**
+	 * Caches the array of available modules.
+	 * @var array
+	 */
+	protected $_modules;
+
+	/**
+	 * Cache the array of available modules paths.
+	 * @since 1.4.0
+	 * @var array
+	 */
+	protected $_modules_paths;
+
+	/**
+	 * Cache modules details in case they are called again.
+	 * @since 	1.4.0
+	 * @var 	array
+	 */
+	protected $_modules_details = array();
+
+	/**
+	 * To avoid creating the variable each time we get 
+	 * a single module details, we create it here.
+	 * @since 	1.4.0
+	 * @var 	array
+	 */
+	protected $_headers = array(
+		'name'         => null,
+		'module_uri'   => null,
+		'description'  => null,
+		'version'      => null,
+		'license'      => null,
+		'license_uri'  => null,
+		'author'       => null,
+		'author_uri'   => null,
+		'author_email' => null,
+		'tags'         => null,
+		'enabled'      => false,
+		'routes'       => array(),
+		'admin_menu'   => null,
+		'admin_order'  => 0,
+		'submenu'      => array(),
+		'translations' => array(),
+	);
+
+	/**
 	 * The current module's name.
 	 * @var string
 	 */
@@ -77,41 +122,56 @@ class KB_Router extends CI_Router
 	 */
 	public function __construct()
 	{
-		// Make sure to load config class.
 		$this->config =& load_class('Config', 'core');
-
-		// Let's first format modules locations.
-		$locations = $this->config->item('modules_locations');
-
-		// If it's not set, we set it.
-		($locations) OR $locations = array(APPPATH.'modules/', KBPATH.'modules/');
+		$this->_prep_locations();
+		$this->config->set_item('modules_locations', $this->_locations);
 		
-		// If set, make sure it's an array.
-		(is_array($locations)) OR $locations = (array) $locations;
+		log_message('info', 'KB_Router Class Initialized');
+		
+		parent::__construct();
+	}
 
-		// If our custom path is not found, add it!
-		(in_array(KBPATH.'modules/', $locations)) OR $locations[] = KBPATH.'modules/';
+	// ------------------------------------------------------------------------
 
-		// Now we format paths.
-		foreach ($locations as $key => &$location)
+	/**
+	 * _prep_locations
+	 *
+	 * Method for formatting paths to modules directories.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @access 	protected
+	 * @param 	none
+	 * @return 	void
+	 */
+	protected function _prep_locations()
+	{
+		if ( ! isset($this->_locations))
 		{
-			if (realpath($location) === FALSE)
+			$this->_locations = $this->config->item('modules_locations');
+
+			if (null === $this->_locations)
 			{
-				unset($locations[$key]);
+				$this->_locations = array(APPPATH.'modules/', KBPATH.'modules/');
 			}
-			else
+			elseif ( ! in_array(KBPATH.'modules/', $this->_locations))
 			{
-				$location = rtrim(str_replace('\\', '/', realpath($location)), '/').'/';
+				$this->_locations[] = KBPATH.'modules/';
+			}
+			
+			foreach ($this->_locations as $i => &$location)
+			{
+				if (false !== ($path = realpath($location)))
+				{
+					$location = rtrim(str_replace('\\', '/', $path), '/').'/';
+					continue;
+				}
+
+				unset($this->_locations[$i]);
 			}
 		}
-
-		// Now we set back config iteM
-		$this->config->set_item('modules_locations', $locations);
-
-		log_message('info', 'KB_Router Class Initialized');
-
-		// Call parent's constructor.
-		parent::__construct();
 	}
 
     // ------------------------------------------------------------------------
@@ -126,25 +186,93 @@ class KB_Router extends CI_Router
      */
     protected function _set_routing()
     {
-    	// Let's loop through respective folders.
-    	foreach (array(APPPATH, KBPATH) as $path)
+    	$modules = $this->list_modules(true);
+    	foreach ($modules as $folder => $details)
     	{
-    		if (is_dir($path.'routes'))
+    		// Set module routing.
+    		if ( ! empty($details['routes']))
     		{
-    			$file_list = scandir($path.'routes');
-    			foreach ($file_list as $file)
-    			{
-    				if (is_file($path.'routes/'.$file) 
-    					&& pathinfo($file, PATHINFO_EXTENSION) == 'php')
-    				{
-    					include($path.'routes/'.$file);
-    				}
-    			}
+    			$this->_set_module_routes($details['routes']);
     		}
     	}
 
 		// We now let the parent do the heavy work.
 		parent::_set_routing();
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * _set_module_routes
+     *
+     * Method for automatically register module routes stored in manifest file.
+     *
+     * @author 	Kader Bouyakoub
+     * @link 	https://github.com/bkader
+     * @since 	1.4.0
+     *
+     * @access 	protected
+     * @param 	array 	$routes 	Module routes stored in manifest.json file.
+     * @return 	void
+     */
+    protected function _set_module_routes($routes = array())
+    {
+    	if (empty($routes))
+    	{
+    		return;
+    	}
+
+    	foreach ($routes as $route => $original)
+    	{
+    		if (sscanf($route, 'resources:%s', $new_route))
+    		{
+    			Route::resources($new_route, $original);
+    		}
+    		elseif (sscanf($route, 'context:%s', $new_route))
+    		{
+    			Route::context($new_route, $original);
+    		}
+    		elseif (empty($original))
+    		{
+    			Route::block($route);
+    		}
+    		elseif (sscanf($route, 'any:%s', $new_route))
+			{
+    			Route::any($new_route, $original);
+			}
+    		elseif (sscanf($route, 'get:%s', $new_route))
+			{
+    			Route::get($new_route, $original);
+			}
+    		elseif (sscanf($route, 'post:%s', $new_route))
+			{
+    			Route::post($new_route, $original);
+			}
+			elseif (sscanf($route, 'put:%s', $new_route))
+			{
+    			Route::put($new_route, $original);
+			}
+			elseif (sscanf($route, 'delete:%s', $new_route))
+			{
+    			Route::delete($new_route, $original);
+			}
+			elseif (sscanf($route, 'head:%s', $new_route))
+			{
+    			Route::head($new_route, $original);
+			}
+			elseif (sscanf($route, 'patch:%s', $new_route))
+			{
+    			Route::patch($new_route, $original);
+			}
+			elseif (sscanf($route, 'options:%s', $new_route))
+			{
+    			Route::options($new_route, $original);
+			}
+			else
+			{
+				Route::any($route, $original);
+			}
+    	}
     }
 
     // ------------------------------------------------------------------------
@@ -316,28 +444,18 @@ class KB_Router extends CI_Router
 
 	/**
 	 * Returns the real path to the selected module.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.4.0 	Rewritten for better code.
+	 * 
 	 * @access 	public
 	 * @param 	string 	$module 	Module name.
 	 * @return 	the full path if found, else FALSE.
 	 */
 	public function module_path($module = null)
 	{
-		if (empty($module))
-		{
-			return NULL;
-		}
-
-		// Loop through all locations and try to find the module.
-		foreach ($this->modules_locations() as $location)
-		{
-			// If found, return the path.
-			if (is_dir($location.$module))
-			{
-				return $location.$module.'/';
-			}
-		}
-
-		return NULL;
+		$paths = $this->modules_paths();
+		return (isset($paths, $paths[$module])) ? $paths[$module] : null;
 	}
 
 	// ------------------------------------------------------------------------
@@ -355,67 +473,47 @@ class KB_Router extends CI_Router
 			return false;
 		}
 
-		// Prepare the module's path first and make sure it's valid.
-		$module_path = $this->module_path($module);
-		if (false === $module_path)
+		if (isset($this->_modules_details[$module]))
+		{
+			return $this->_modules_details[$module];
+		}
+
+		$module_path    = $this->module_path($module);
+		$manifest_file = $module_path.'manifest.json';
+
+		if (null === $module_path OR false === is_file($manifest_file))
 		{
 			return false;
 		}
 
-		// Let's see if the manifest.json is found.
-		if ( ! is_file($module_path.'manifest.json'))
+		$content = file_get_contents($manifest_file);
+		$headers = json_decode($content, true);
+
+		if ( ! is_array($headers))
 		{
 			return false;
 		}
 
-		// Get the content of the file and make sure it's well formatted.
-		$manifest = file_get_contents($module_path.'manifest.json');
-		$manifest = json_decode(trim($manifest), true);
-		if ( ! is_array($manifest))
+		$headers = array_replace_recursive($this->_headers, $headers);
+
+		// Added things:
+		$headers['folder']    = $module;
+		$headers['full_path'] = $module_path;
+
+
+		if (false !== $this->has_admin($module) && empty($headers['admin_menu']))
 		{
-			return false;
+			$headers['admin_menu'] = ucwords($module);
 		}
 
-		// Default headers.
-		$defaults = array(
-			'name'         => null,
-			'folder'       => $module_path,
-			'module_uri'   => null,
-			'description'  => null,
-			'version'      => null,
-			'license'      => null,
-			'license_uri'  => null,
-			'author'       => null,
-			'author_uri'   => null,
-			'author_email' => null,
-			'tags'         => null,
-			'admin_menu'   => null,
-			'admin_order'  => 0
-		);
-
-		// Replace all keys.
-		$manifest = array_replace_recursive($defaults, $manifest);
-
-		// Add dashboard menu label.
-		if ($this->has_admin($module))
+		if ($headers['license'] == 'MIT' && empty($headers['license_uri']))
 		{
-			if (empty($manifest['admin_menu']))
-			{
-				$manifest['admin_menu'] = ucwords($module);
-			}
-			elseif (sscanf($manifest['admin_menu'], 'lang:%s', $line))
-			{
-				$manifest['admin_menu'] = lang($line);
-			}
+			$headers['license_uri'] = 'http://opensource.org/licenses/MIT';
 		}
 
-		// Add URI to MIT license.
-		if ($manifest['license'] == 'MIT' && empty($manifest['license_uri']))
-		{
-			$manifest['license_uri'] = 'http://opensource.org/licenses/MIT';
-		}
+		$this->_modules_details[$module] = $headers;
 
-		return $manifest;
+		return $this->_modules_details[$module];
 	}
 
 	// ------------------------------------------------------------------------
@@ -428,43 +526,94 @@ class KB_Router extends CI_Router
 	 */
 	public function list_modules($details = false)
 	{
-		// Prepare an empty array of modules.
-		$modules = array();
-		
-		// Let's go through folders and check if there are any.
-		foreach ($this->modules_locations() as $location)
+		if ( ! $this->_modules)
 		{
-			if ($handle = opendir($location))
+			// Prepare an empty array of modules.
+			$this->_modules = array();
+			
+			// Let's go through folders and check if there are any.
+			foreach ($this->modules_locations() as $location)
 			{
-				$_to_eliminate = array(
-					'.',
-					'..',
-					'.gitkeep',
-					'index.html',
-					'.htaccess'
-				);
-				
-				while (false !== ($file = readdir($handle)))
+				if ($handle = opendir($location))
 				{
-					if ( ! in_array($file, $_to_eliminate))
+					$_to_eliminate = array(
+						'.',
+						'..',
+						'.gitkeep',
+						'index.html',
+						'.htaccess'
+					);
+					
+					while (false !== ($file = readdir($handle)))
 					{
-						$modules[] = $file;
+						if ( ! in_array($file, $_to_eliminate))
+						{
+							$this->_modules[] = $file;
+						}
 					}
 				}
 			}
 		}
 
-		if ( ! empty($modules) && $details === true)
+		$return = $this->_modules;
+
+		if (true === $details)
 		{
-			foreach ($modules as $key => $module)
+			$_modules_details = array();
+
+			foreach ($this->_modules as $i => $module)
 			{
-				$modules[$module] = $this->module_details($module);
-				unset($modules[$key]);
+				if (isset($this->_modules_details[$module]))
+				{
+					$_modules_details[$module] = $this->_modules_details[$module];
+				}
+				elseif (false !== ($details = $this->module_details($module)))
+				{
+					$_modules_details[$module] = $details;
+				}
+				unset($details);
+			}
+
+			empty($_modules_details) OR $return = $_modules_details;
+		}
+
+		return $return;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * load_modules
+	 *
+	 * Because modules are loaded ONLY when they are requested via HTTP and 
+	 * there tons of ways to make them load. We created the "init.php" file
+	 * method.
+	 * You can put anything inside that file and it is loaded as long as it
+	 * exists. This way, not only themes and plugins can affect the website, 
+	 * but even modules. Cool isn't it?
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
+	public function load_modules()
+	{
+		foreach ($this->modules_paths() as $i => $module)
+		{
+			if (false !== is_file($init = $module.'init.php'))
+			{
+				require_once($module.'init.php');
+				/**
+				 * Fetches right after the module's "init.php" file is loaded.
+				 * @since 	1.4.0
+				 */
+				do_action('loaded_module_'.$module);
 			}
 		}
-		
-		// Now we return the final result.
-		return $modules;
 	}
 
 	// ------------------------------------------------------------------------
@@ -476,15 +625,49 @@ class KB_Router extends CI_Router
 	 */
 	public function modules_locations()
 	{
-		// Already cached? Return it.
-		if (isset($this->_locations))
+		if ( ! isset($this->_locations))
 		{
-			return $this->_locations;
+			$this->_locations = $this->config->item('modules_locations');
 		}
 
-		// Get modules locations from config, cache it then return it.
-		$this->_locations = $this->config->item('modules_locations');
 		return $this->_locations;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * modules_paths
+	 *
+	 * Method for retrieving an array of all modules and their paths.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.0
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	array
+	 */
+	public function modules_paths()
+	{
+		if ( ! isset($this->_modules_paths))
+		{
+			$modules = $this->list_modules();
+			foreach ($modules as $module)
+			{
+				foreach ($this->modules_locations() as $location)
+				{
+					if (false !== is_dir($location.$module))
+					{
+						$path = str_replace('\\', '/', $location.$module);
+						$this->_modules_paths[$module] = rtrim($path, '/').'/';
+						break;
+					}
+				}
+			}
+		}
+
+		return $this->_modules_paths;
 	}
 
 	// ------------------------------------------------------------------------
@@ -501,12 +684,8 @@ class KB_Router extends CI_Router
 	 */
 	public function has_admin($module)
 	{
-		if ('admin' === $module)
-		{
-			return false;
-		}
-		return (is_file($this->module_path($module).'controllers/Admin.php') 
-			OR is_file($this->module_path($module).'controllers/admin/Admin.php'));
+		return ('admin' !== $module 
+			&& false !== is_file($this->module_path($module).'controllers/Admin.php'));
 	}
 
 	// ------------------------------------------------------------------------

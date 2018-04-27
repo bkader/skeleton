@@ -215,30 +215,10 @@ $lang['updates']        = 'التحديثات';
 $lang['updates_recent'] = 'لديك أحدث إصدار من كوديجنتر سكلتون';
 $lang['updates_old']    = 'تم إصدار نسخة جديدة من كوديجنتر سكلتون. حمل البرنامج من <a href="%s" target="_blank">جيثب</a>.';
 
-// Users.
-$lang['user']  = 'العضو';
-$lang['users'] = 'الأعضاء';
+// manifest.json error.
+$lang['manifest_missing_heading'] = 'خطأ في ملف تعريف الوحدة';
+$lang['manifest_missing_message'] = 'ملف تعريف هذه الوحدة، "manifest.json"، مفقود أو منسق بشكل سيئ.';
 
-// Media.
-$lang['media']   = 'الوسائط';
-$lang['library'] = 'مكتبة الوسائط';
-
-// Themes.
-$lang['theme']  = 'القالب';
-$lang['themes'] = 'القوالب';
-
-// Menus.
-$lang['menu']  = 'القائمة';
-$lang['menus'] = 'القوائم';
-
-// Menus.
-$lang['plugin']  = 'الإضافة';
-$lang['plugins'] = 'الإضافات';
-
-// Languages.
-$lang['language']  = 'اللغة';
-$lang['languages'] = 'اللغات';
-
-// Activities.
-$lang['activity']   = 'النشاط';
-$lang['activities'] = 'الأنشطة';
+// Module disabled.
+$lang['module_disabled_heading'] = 'وحدة معطلة';
+$lang['module_disabled_message'] = 'هذه الوحدة معطلة. يجب تفعيلها على لوحة القيادة من أجل استخدامها.';

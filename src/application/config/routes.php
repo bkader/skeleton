@@ -115,6 +115,12 @@ Route::context('(admin|ajax|process)', '$1', array(
 ));
 
 /**
+ * Load controller used to load assets on the dashboard.
+ * @since 	1.4.0
+ */
+Route::get('load/(.*)', 'load/index/$1');
+
+/**
  * Because we are using Static Routing like Laravel's,
  * it is IMPORTANT to keep the line below ALWYAS at the
  * bottom of this file.
