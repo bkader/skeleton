@@ -47,14 +47,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.3.0
+ * @version 	1.4.0
  */
-?><h2 class="page-header clearfix"><?php _e('add_user') ?> <?php echo admin_anchor('users', lang('us_manage_users'), 'class="btn btn-primary btn-sm pull-right"') ?></h2>
+?><h2 class="page-header clearfix"><?php _e('add_user') ?> <?php echo admin_anchor('users', line('us_manage_users'), 'class="btn btn-primary btn-sm pull-right"') ?></h2>
 <div class="row">
 	<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
 		<div class="panel panel-default">
 			<div class="panel-body">
-				<?php echo form_open('admin/users/add', 'role="form"', $hidden) ?>
+				<?php
+				echo form_open('admin/users/add', 'role="form"');
+				echo form_nonce('add-user');
+				?>
 					<div class="form-group<?php echo form_error('first_name') ? ' has-error' : '' ?>">
 						<label for="first_name" class="sr-only"><?php _e('first_name') ?></label>
 						<?php echo print_input($first_name, array('class' => 'form-control', 'autofocus' => 'autofocus')) ?>

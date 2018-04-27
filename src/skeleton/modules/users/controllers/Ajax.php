@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.3.3
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 class Ajax extends AJAX_Controller {
 
@@ -68,15 +68,11 @@ class Ajax extends AJAX_Controller {
 	{
 		parent::__construct();
 
-		// We add our safe admin AJAX methods.
-		array_push(
-			$this->safe_admin_methods,
-			'activate',
-			'deactivate',
-			'delete',
-			'restore',
-			'remove'
-		);
+		$this->safe_admin_methods[] = 'activate';
+		$this->safe_admin_methods[] = 'deactivate';
+		$this->safe_admin_methods[] = 'delete';
+		$this->safe_admin_methods[] = 'restore';
+		$this->safe_admin_methods[] = 'remove';
 	}
 
 	// ------------------------------------------------------------------------
@@ -98,46 +94,43 @@ class Ajax extends AJAX_Controller {
 	 */
 	public function activate($id = 0)
 	{
-		// Default header status code.
-		$this->response->header = 409;
-
-		// We make sure $id is valid.
 		if ( ! is_numeric($id) OR $id < 0)
 		{
-			$this->response->header  = 412;
-			$this->response->message = lang('error_safe_url');
+			$this->response->header  = self::HTTP_CONFLICT;
+			$this->response->message = line('error_safe_url');
 			return;
 		}
 
-		// The user cannot activate his/her own account.
 		if ($id == $this->c_user->id)
 		{
-			$this->response->header  = 405;
-			$this->response->message = lang('us_admin_activate_error_own');
+			$this->response->header  = self::HTTP_UNAUTHORIZED;
+			$this->response->message = line('us_admin_activate_error_own');
 			return;
 		}
 
-		// The user does not exist, or already enabled?
-		if (false === $this->kbcore->users->get_by(array('id' => $id, 'enabled' => 0)))
+		$user = $this->kbcore->users->get_by(array(
+			'id'      => $id,
+			'enabled' => 0,
+		));
+
+		if (false === $user)
 		{
-			$this->response->message = lang('us_admin_activate_error');
+			$this->response->header  = self::HTTP_CONFLICT;
+			$this->response->message = line('us_admin_activate_error');
 			return;
 		}
 
-		// Successfully disabled the user?
-		if (false !== $this->kbcore->entities->update($id, array('enabled' => 1)))
+		if (false !== $user->update('enabled', 1))
 		{
-			$this->response->header  = 200;
-			$this->response->message = lang('us_admin_activate_success');
-
-			// We log the activity.
 			log_activity($this->c_user->id, 'lang:act_user_activate::'.$id);
 
+			$this->response->header  = self::HTTP_OK;
+			$this->response->message = line('us_admin_activate_success');
 			return;
 		}
 
-		// Otherwise, user could not be activated.
-		$this->response->message = lang('us_admin_activate_error');
+		$this->response->header  = self::HTTP_CONFLICT;
+		$this->response->message = line('us_admin_activate_error');
 	}
 
 	// ------------------------------------------------------------------------
@@ -157,46 +150,43 @@ class Ajax extends AJAX_Controller {
 	 */
 	public function deactivate($id = 0)
 	{
-		// Default header status code.
-		$this->response->header = 409;
-
-		// We make sure $id is valid.
 		if ( ! is_numeric($id) OR $id < 0)
 		{
-			$this->response->header  = 412;
-			$this->response->message = lang('error_safe_url');
+			$this->response->header  = self::HTTP_CONFLICT;
+			$this->response->message = line('error_safe_url');
 			return;
 		}
 
-		// The user cannot deactivate his/her own account.
 		if ($id == $this->c_user->id)
 		{
-			$this->response->header  = 405;
-			$this->response->message = lang('us_admin_deactivate_error_own');
+			$this->response->header  = self::HTTP_UNAUTHORIZED;
+			$this->response->message = line('us_admin_deactivate_error_own');
 			return;
 		}
 
-		// The user does not exist, or already disabled?
-		if (false === $this->kbcore->users->get_by(array('id' => $id, 'enabled' => 1)))
+		$user = $this->kbcore->users->get_by(array(
+			'id'      => $id,
+			'enabled' => 1,
+		));
+
+		if (false === $user)
 		{
-			$this->response->message = lang('us_admin_deactivate_error');
+			$this->response->header  = self::HTTP_CONFLICT;
+			$this->response->message = line('us_admin_deactivate_error');
 			return;
 		}
 
-		// Successfully disabled the user?
-		if (false !== $this->kbcore->entities->update($id, array('enabled' => 0)))
+		if (false !== $user->update('enabled', 0))
 		{
-			$this->response->header  = 200;
-			$this->response->message = lang('us_admin_deactivate_success');
-
-			// We log the activity.
 			log_activity($this->c_user->id, 'lang:act_user_deactivate::'.$id);
 
+			$this->response->header  = self::HTTP_OK;
+			$this->response->message = line('us_admin_deactivate_success');
 			return;
 		}
 
-		// Otherwise, user could not be activated.
-		$this->response->message = lang('us_admin_deactivate_error');
+		$this->response->header  = self::HTTP_CONFLICT;
+		$this->response->message = line('us_admin_deactivate_error');
 	}
 
 	// --------------------------------------------------------------------
@@ -216,39 +206,31 @@ class Ajax extends AJAX_Controller {
 	 */
 	public function delete($id = 0)
 	{
-		// Default response header status code.
-		$this->response->header = 409;
-
-		// Did we provide a valid $id?
 		if ( ! is_numeric($id) OR $id < 0)
 		{
-			$this->response->header  = 412;
-			$this->response->message = lang('error_safe_url');
+			$this->response->header  = self::HTTP_CONFLICT;
+			$this->response->message = line('error_safe_url');
 			return;
 		}
 
-		// The user cannot delete his/her own account.
 		if ($id == $this->c_user->id)
 		{
-			$this->response->header  = 405;
-			$this->response->message = lang('us_admin_delete_error_own');
+			$this->response->header  = self::HTTP_UNAUTHORIZED;
+			$this->response->message = line('us_admin_delete_error_own');
 			return;
 		}
 
-		// We attempt to remove the user.
 		if (false !== $this->kbcore->users->delete($id))
 		{
-			$this->response->header  = 200;
-			$this->response->message = lang('us_admin_delete_success');
-
-			// We log the activity.
 			log_activity($this->c_user->id, 'lang:act_user_delete::'.$id);
 
+			$this->response->header  = self::HTTP_OK;
+			$this->response->message = line('us_admin_delete_success');
 			return;
 		}
 
-		// Otherwise, user could not be deleted.
-		$this->response->message = lang('us_admin_delete_error');
+		$this->response->header  = self::HTTP_CONFLICT;
+		$this->response->message = line('us_admin_delete_error');
 	}
 
 	// --------------------------------------------------------------------
@@ -268,39 +250,31 @@ class Ajax extends AJAX_Controller {
 	 */
 	public function restore($id = 0)
 	{
-		// Default response header status code.
-		$this->response->header = 409;
-
-		// Did we provide a valid $id?
 		if ( ! is_numeric($id) OR $id < 0)
 		{
-			$this->response->header  = 412;
-			$this->response->message = lang('error_safe_url');
+			$this->response->header  = self::HTTP_CONFLICT;
+			$this->response->message = line('error_safe_url');
 			return;
 		}
 
-		// The user cannot restore his/her own account.
 		if ($id == $this->c_user->id)
 		{
-			$this->response->header  = 405;
-			$this->response->message = lang('us_admin_restore_error_own');
+			$this->response->header  = self::HTTP_UNAUTHORIZED;
+			$this->response->message = line('us_admin_restore_error_own');
 			return;
 		}
 
-		// We attempt to restore the user.
 		if (false !== $this->kbcore->users->restore($id))
 		{
-			$this->response->header  = 200;
-			$this->response->message = lang('us_admin_restore_success');
-
-			// We log the activity.
 			log_activity($this->c_user->id, 'lang:act_user_restore::'.$id);
 
+			$this->response->header  = self::HTTP_OK;
+			$this->response->message = line('us_admin_restore_success');
 			return;
 		}
 
-		// Otherwise, user could not be restored.
-		$this->response->message = lang('us_admin_restore_error');
+		$this->response->header  = self::HTTP_CONFLICT;
+		$this->response->message = line('us_admin_restore_error');
 	}
 
 	// --------------------------------------------------------------------
@@ -320,39 +294,31 @@ class Ajax extends AJAX_Controller {
 	 */
 	public function remove($id = 0)
 	{
-		// Default response header status code.
-		$this->response->header = 409;
-
-		// Did we provide a valid $id?
 		if ( ! is_numeric($id) OR $id < 0)
 		{
-			$this->response->header  = 412;
-			$this->response->message = lang('error_safe_url');
+			$this->response->header  = self::HTTP_CONFLICT;
+			$this->response->message = line('error_safe_url');
 			return;
 		}
 
-		// The user cannot remove his/her own account.
 		if ($id == $this->c_user->id)
 		{
-			$this->response->header  = 405;
-			$this->response->message = lang('us_admin_remove_error_own');
+			$this->response->header  = self::HTTP_UNAUTHORIZED;
+			$this->response->message = line('us_admin_remove_error_own');
 			return;
 		}
 
-		// We attempt to remove the user.
 		if (false !== $this->kbcore->users->remove($id))
 		{
-			$this->response->header  = 200;
-			$this->response->message = lang('us_admin_remove_success');
-
-			// We log the activity.
 			log_activity($this->c_user->id, 'lang:act_user_remove::'.$id);
 
+			$this->response->header  = self::HTTP_OK;
+			$this->response->message = line('us_admin_remove_success');
 			return;
 		}
 
-		// Otherwise, user could not be removed.
-		$this->response->message = lang('us_admin_remove_error');
+		$this->response->header  = self::HTTP_CONFLICT;
+		$this->response->message = line('us_admin_remove_error');
 	}
 
 }

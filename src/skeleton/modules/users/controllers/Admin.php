@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.3.3
+ * @version 	1.4.0
  */
 class Admin extends Admin_Controller {
 
@@ -72,8 +72,11 @@ class Admin extends Admin_Controller {
 	{
 		parent::__construct();
 
+		// We add our language lines to head tag.
+		add_filter('admin_head', array($this, '_admin_head'));
+
 		// We add users JS file.
-		array_push($this->scripts, 'users');
+		$this->scripts[] = 'users';
 	}
 
 	// ------------------------------------------------------------------------
@@ -93,9 +96,6 @@ class Admin extends Admin_Controller {
 	 */
 	public function index()
 	{
-		// We add our language lines to head tag.
-		add_filter('admin_head', array($this, '_admin_head'));
-
 		// Create pagination.
 		$this->load->library('pagination');
 
@@ -197,10 +197,6 @@ class Admin extends Admin_Controller {
 				array('value' => set_value('cpassword'))
 			);
 
-			// Extra security layer.
-			$data['hidden'] = $this->create_csrf();
-
-			// Set page title and render view.
 			$this->theme
 				->set_title(lang('add_user'))
 				->render($data);
@@ -208,8 +204,7 @@ class Admin extends Admin_Controller {
 		// Process form.
 		else
 		{
-			// // Passed CSRF?
-			if ( ! $this->check_csrf())
+			if (true !== $this->check_nonce('add-user'))
 			{
 				set_alert(lang('error_csrf'), 'error');
 				redirect('admin/users/add', 'refresh');
@@ -220,16 +215,15 @@ class Admin extends Admin_Controller {
 			$user_data['enabled'] = ($this->input->post('enabled') == '1') ? 1 : 0;
 			$user_data['subtype'] = ($this->input->post('admin') == '1') ? 'administrator' : 'regular';
 
-			// User created successfully?
-			if (false !== $guid = $this->kbcore->users->create($user_data))
+			if (false !== ($guid = $this->kbcore->users->create($user_data)))
 			{
-				// Log the activity.
 				log_activity($this->c_user->id, 'lang:act_user_create::'.$guid);
-
+				set_alert(lang('us_admin_add_success'), 'success');
 				redirect('admin/users', 'refresh');
 				exit;
 			}
 
+			set_alert(lang('us_admin_add_error'), 'error');
 			redirect('admin/users/add', 'refresh');
 			exit;
 		}
@@ -380,9 +374,6 @@ class Admin extends Admin_Controller {
 		if ($this->form_validation->run() == false)
 		{
 
-			// Extra security layer.
-			$data['hidden'] = $this->create_csrf();
-
 			// Set page title and render view.
 			$this->theme
 				->set_title(lang('edit_user'))
@@ -391,8 +382,7 @@ class Admin extends Admin_Controller {
 		// Process form.
 		else
 		{
-			// Passed CSRF?
-			if ( ! $this->check_csrf())
+			if (true !== $this->check_nonce('edit-user_'.$id))
 			{
 				set_alert(lang('error_csrf'), 'error');
 				redirect('admin/users/edit/'.$id, 'refresh');
@@ -411,7 +401,7 @@ class Admin extends Admin_Controller {
 
 			// Format "enabled" and user's "subtype".
 			$user_data['enabled'] = ($this->input->post('enabled') == '1') ? 1 : 0;
-			$user_data['subtype']   = ($this->input->post('admin') == '1') ? 'administrator' : 'regular';
+			$user_data['subtype'] = ($this->input->post('admin') == '1') ? 'administrator' : 'regular';
 
 			/**
 			 * After form submit. We make sure to remove fields that have 
@@ -493,10 +483,11 @@ class Admin extends Admin_Controller {
 			'remove'     => htmlentities(lang('us_admin_remove_confirm'), ENT_QUOTES, 'UTF-8'),
 		);
 
-		// Append our lines.
-		$output .= '<script type="text/javascript">var i18n=i18n||{};i18n.users='.json_encode($lines).';</script>';
+		$output .= '<script type="text/javascript">';
+		$output .= 'csk.i18n = csk.i18n || {};';
+		$output .= 'csk.i18n.users = '.json_encode($lines).';';
+		$output .= '</script>';
 
-		// Return the final $output.
 		return $output;
 	}
 

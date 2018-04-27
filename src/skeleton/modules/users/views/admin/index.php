@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -47,12 +47,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.3.3
+ * @version 	1.4.0
  */
-?><h2 class="page-header clearfix"><?php _e('us_manage_users') ?> <?php echo admin_anchor('users/add', lang('add_user'), 'class="btn btn-primary btn-sm pull-right"') ?></h2>
+?><h2 class="page-header clearfix"><?php _e('us_manage_users') ?> <?php echo admin_anchor('users/add', line('add_user'), 'class="btn btn-primary btn-sm pull-right"') ?></h2>
 <div class="panel panel-default">
 	<div class="table-responsive">
-		<table class="table table-hover table-condensed table-striped">
+		<table class="table table-hover table-condensed table-striped" id="users-list">
 			<thead>
 				<tr>
 					<th class="col-xs-1">ID</th>
@@ -75,23 +75,97 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					<td><?php _e($user->subtype) ?></td>
 					<td><?php echo label_condition((1 == $user->enabled), 'lang:active', 'lang:inactive'); ?>&nbsp;<?php echo label_condition((0 == $user->deleted), null, 'lang:deleted'); ?></td>
 					<td class="text-right">
-						<a class="btn btn-default btn-xs" target="_blank" href="<?php echo site_url($user->username) ?>" title="<?php _e('view_user') ?>"><i class="fa fa-fw fa-eye"></i></a>&nbsp;
-						<a class="btn btn-primary btn-xs" href="<?php echo admin_url('users/edit/'.$user->id) ?>" title="<?php _e('edit_user') ?>"><i class="fa fa-fw fa-edit"></i></a>&nbsp;
-					<?php if (0 == $user->enabled): ?>
-						<a href="<?php echo safe_ajax_url('users/activate/'.$user->id); ?>" data-user-id="<?php echo $user->id; ?>" class="btn btn-success btn-xs user-activate" title="<?php _e('activate_user'); ?>"><i class="fa fa-fw fa-unlock-alt"></i></a>
-					<?php else: ?>
-						<a href="<?php echo safe_ajax_url('users/deactivate/'.$user->id); ?>" data-user-id="<?php echo $user->id; ?>" class="btn btn-warning btn-xs user-deactivate" title="<?php _e('deactivate_user'); ?>"><i class="fa fa-fw fa-lock"></i></a>
-					<?php endif; ?>&nbsp;
-						<div class="btn-group btn-group-xs">
+					<?php
+					/**
+					 * Fire before default users actions.
+					 * @since 	1.4.0
+					 */
+					do_action('admin_users_action', $user);
+
+					// View user's profile.
+					echo admin_anchor(
+						$user->username,
+						'<i class="fa fa-fw fa-eye"></i>',
+						array(
+							'class' => 'btn btn-default btn-xs ml5',
+							'target' => '_blank',
+							'title' => line('view_user'),
+						)
+					);
+					// Edit user button.
+					echo admin_anchor(
+						'users/edit/'.$user->id,
+						'<i class="fa fa-fw fa-edit"></i>',
+						array(
+							'class'   => 'btn btn-primary btn-xs ml5',
+							'data-id' => $user->id,
+							'title'   => line('edit_user'),
+						)
+					);
+					// Activate/deactivate user.
+					if (1 == $user->enabled) {
+						echo safe_ajax_anchor(
+							'users/deactivate/'.$user->id,
+							'deactivate-user_'.$user->id,
+							'<i class="fa fa-fw fa-lock"></i>',
+							array(
+								'class'   => 'btn btn-warning btn-xs ml5 user-deactivate',
+								'data-id' => $user->id,
+								'title'   => line('deactivate_user'),
+							)
+						);
+					} else {
+						echo safe_ajax_anchor(
+							'users/activate/'.$user->id,
+							'activate-user_'.$user->id,
+							'<i class="fa fa-fw fa-unlock-alt"></i>',
+							array(
+								'class'   => 'btn btn-success btn-xs ml5 user-activate',
+								'data-id' => $user->id,
+								'title'   => line('activate_user'),
+							)
+						);
+					}
+					?>
+						<div class="btn-group btn-group-xs ml5">
 							<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="<?php _e('more'); ?>"><i class="fa fa-fw fa-caret-down"></i></button>
 							<ul class="dropdown-menu dropdown-menu-right">
-								<?php if (0 == $user->deleted): ?>
-								<li><a href="<?php echo safe_ajax_url('users/delete/'.$user->id); ?>" data-user-id="<?php echo $user->id; ?>" class="user-delete"><?php _e('delete_user'); ?></a></li>
-								<?php else: ?>
-								<li><a href="<?php echo safe_ajax_url('users/restore/'.$user->id); ?>" data-user-id="<?php echo $user->id; ?>" class="user-restore"><?php _e('restore_user'); ?></a></li>
-								<?php endif; ?>
-								<li role="separator" class="divider"></li>
-								<li><a href="<?php echo safe_ajax_url('users/remove/'.$user->id); ?>" data-user-id="<?php echo $user->id; ?>" class="user-remove"><?php _e('remove_user'); ?></a></li>
+							<?php
+							if (1 == $user->deleted) {
+								echo '<li>', safe_ajax_anchor(
+									'users/restore/'.$user->id,
+									'restore-user_'.$user->id,
+									line('restore_user'),
+									array(
+										'class'   => 'user-restore',
+										'data-id' => $user->id,
+									)
+								), '</li>';
+							} else {
+								echo '<li>', safe_ajax_anchor(
+									'users/delete/'.$user->id,
+									'delete-user_'.$user->id,
+									line('delete_user'),
+									array(
+										'class'   => 'user-delete',
+										'data-id' => $user->id,
+									)
+								), '</li>';
+							}
+
+							echo '<li role="separator" class="divider"></li>';
+
+							// Permanently delete user.
+							echo '<li>', safe_ajax_anchor(
+								'users/remove/'.$user->id,
+								'remove-user_'.$user->id,
+								line('remove_user'),
+								array(
+									'class'   => 'user-remove',
+									'data-id' => $user->id,
+								)
+							), '</li>';
+							?>
 							</ul>
 						</div>
 					</td>
