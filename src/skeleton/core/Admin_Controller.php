@@ -121,7 +121,7 @@ class Admin_Controller extends User_Controller
 		}
 		
 		add_filter('admin_head', array($this, 'csk_globals'), 0);
-		add_filter('admin_head', array($this, 'admin_head'));
+		add_filter('admin_head', array($this, 'admin_head'), 99);
 		$this->load->helper('admin');
 		$this->_admin_menu();
 	}
