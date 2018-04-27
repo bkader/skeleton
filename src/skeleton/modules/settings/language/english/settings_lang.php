@@ -179,6 +179,55 @@ $lang['set_upload_path_tip'] = 'The path where different allowed files are uploa
 $lang['set_allowed_types'] = 'Allowed Files';
 $lang['set_allowed_types_tip'] = 'List of files that are allowed to be uploaded. Use "&#124;" to separate between types.';
 
+// Date/month folder.
+$lang['set_upload_year_month'] = 'Files Organize';
+$lang['set_upload_year_month_tip'] = 'Organize uploads into month- and year-based folders.';
+
+// Max file sizes.
+$lang['set_max_size'] = 'Max File Size';
+$lang['set_max_size_tip'] = 'The maximum size (in kilobytes) that the file can be. Set to zero for no limit.';
+
+// Images max width and height
+$lang['set_min_image_size'] = 'Min Dimensions';
+$lang['set_min_height']     = 'Min Height';
+$lang['set_min_width']      = 'Min width';
+$lang['set_min_width_tip']  = 'The minimum width in pixels. Set to zero for no limit.';
+$lang['set_min_height_tip'] = 'The minimum height in pixels. Set to zero for no limit.';
+
+
+// Images max width and height
+$lang['set_max_image_size'] = 'Max Dimensions';
+$lang['set_max_height']     = 'Max Height';
+$lang['set_max_width']      = 'Max width';
+$lang['set_max_width_tip']  = 'The maximum width in pixels. Set to zero for no limit.';
+$lang['set_max_height_tip'] = 'The maximum height in pixels. Set to zero for no limit.';
+
+// Small thumbnails with and height.
+$lang['set_image_thumbnail']       = 'Small Thumbnails';
+$lang['set_image_thumbnail_h']     = 'Height in pixels';
+$lang['set_image_thumbnail_w']     = 'Width in pixels';
+$lang['set_image_thumbnail_h_tip'] = 'Height of thumbnails.';
+$lang['set_image_thumbnail_w_tip'] = 'Width of thumbnails.';
+
+// Thumbnails crop.
+$lang['set_image_thumbnail_crop']     = 'Crop Thumbnails';
+$lang['set_image_thumbnail_crop_tip'] = 'Crop thumbnail to exact dimensions.';
+
+// Medium size images width and height.
+$lang['set_image_medium']       = 'Medium Images';
+$lang['set_image_medium_h']     = 'Height in pixels';
+$lang['set_image_medium_w']     = 'Width in pixels';
+$lang['set_image_medium_h_tip'] = 'Medium images height.';
+$lang['set_image_medium_w_tip'] = 'Medium images width.';
+
+// Large images width and height
+$lang['set_image_large']       = 'Large Images';
+$lang['set_image_large_h']     = 'Height in pixels';
+$lang['set_image_large_w']     = 'Width in pixels';
+$lang['set_image_large_h_tip'] = 'Large images height.';
+$lang['set_image_large_w_tip'] = 'Large images width.';
+
+
 // ------------------------------------------------------------------------
 // Captcha Settings.
 // ------------------------------------------------------------------------

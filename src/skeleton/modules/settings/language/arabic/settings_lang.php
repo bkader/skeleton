@@ -180,6 +180,54 @@ $lang['set_upload_path_tip'] = 'المسار الذي يتم تحميل المل
 $lang['set_allowed_types'] = 'الملفات المسموح بها';
 $lang['set_allowed_types_tip'] = 'قائمة الملفات التي يسمح بتحميلها. استخدم "|" للفصل بين الأنواع.';
 
+// Date/month folder.
+$lang['set_upload_year_month'] = 'تنظيم الملفات';
+$lang['set_upload_year_month_tip'] = 'تنظيم التحميلات في مجلدات شهرية وسنوية.';
+
+// Max file sizes.
+$lang['set_max_size'] = 'الحد الأقصى لحجم الملف';
+$lang['set_max_size_tip'] = 'الحجم الأقصى للملفات بالكيلوبايت. صفر لإزالة الحدود.';
+
+// Images max width and height
+$lang['set_min_image_size'] = 'الحد الأدنى لأبعاد الصور';
+$lang['set_min_height']     = 'أدنى ارتفاع';
+$lang['set_min_width']      = 'أدنى عرض';
+$lang['set_min_width_tip']  = 'أدنى عرض بالبكسل. صفر بلا حدود.';
+$lang['set_min_height_tip'] = 'أدنى ارتفاع بالبكسل. صفر لإزالة الحدود.';
+
+
+// Images max width and height
+$lang['set_max_image_size'] = 'أبعاد الصور القصوى';
+$lang['set_max_height']     = 'أقصى ارتفاع';
+$lang['set_max_width']      = 'أقصى عرض';
+$lang['set_max_width_tip']  = 'أقصى عرض بالبكسل. صفر لإزالة الحدود.';
+$lang['set_max_height_tip'] = 'أقصى ارتفاع بالبكسل. صفر لإزالة الحدود.';
+
+// Small thumbnails with and height.
+$lang['set_image_thumbnail']       = 'الصور المصغرة';
+$lang['set_image_thumbnail_h']     = 'الارتفاع بالبكسل';
+$lang['set_image_thumbnail_w']     = 'العرض بالبكسل';
+$lang['set_image_thumbnail_h_tip'] = 'الارتفاع الصور المصغرة.';
+$lang['set_image_thumbnail_w_tip'] = 'العرض الصور المصغرة.';
+
+// Thumbnails crop.
+$lang['set_image_thumbnail_crop']     = 'قص المصغارت';
+$lang['set_image_thumbnail_crop_tip'] = 'قص المصغرة للحجم المحدد.';
+
+// Medium size images width and height.
+$lang['set_image_medium']       = 'الصور لمتوسطة';
+$lang['set_image_medium_h']     = 'الارتفاع بالبكسل';
+$lang['set_image_medium_w']     = 'العرض بالبكسل';
+$lang['set_image_medium_h_tip'] = 'ارتفاع الصور المتوسطة.';
+$lang['set_image_medium_w_tip'] = 'عرض الصور المتوسطة.';
+
+// Large images width and height
+$lang['set_image_large']       = 'الصور الكبيرة';
+$lang['set_image_large_h']     = 'الارتفاع بالبكسل';
+$lang['set_image_large_w']     = 'العرض بالبكسل';
+$lang['set_image_large_h_tip'] = 'ارتفاع الصور الكبيرة.';
+$lang['set_image_large_w_tip'] = 'عرض الصور الكبيرة.';
+
 // ------------------------------------------------------------------------
 // Captcha Settings.
 // ------------------------------------------------------------------------

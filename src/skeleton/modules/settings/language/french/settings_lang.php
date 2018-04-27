@@ -179,6 +179,54 @@ $lang['set_upload_path_tip'] = 'Chemin d\'accès aux différents fichiers. Par d
 $lang['set_allowed_types'] = 'Extensions autorisées';
 $lang['set_allowed_types_tip'] = 'Liste des extensions autorisées séparées par "|".';
 
+// Date/month folder.
+$lang['set_upload_year_month'] = 'Organisation';
+$lang['set_upload_year_month_tip'] = 'Organiser les fichiers envoyés dans des dossiers mensuels et annuels';
+
+// Max file sizes.
+$lang['set_max_size'] = 'Taille maximale';
+$lang['set_max_size_tip'] = 'La taille maximale (en kilo-octets) des fichiers envoyés. Zéro pour aucune limite.';
+
+// Images max width and height
+$lang['set_min_image_size'] = 'Dimensions minimales';
+$lang['set_min_height']     = 'Hauteur minimale';
+$lang['set_min_width']      = 'Largeur minimale';
+$lang['set_min_width_tip']  = 'La largeur minimale en pixels. Zéro pour aucune limite.';
+$lang['set_min_height_tip'] = 'La heuteur minimale en pixels. Zéro pour aucune limite.';
+
+
+// Images max width and height
+$lang['set_max_image_size'] = 'Dimensions maximales';
+$lang['set_max_height']     = 'Hauteur maximale';
+$lang['set_max_width']      = 'Largeur maximale';
+$lang['set_max_width_tip']  = 'La largeur maximale en pixels. Zéro pour aucune limite.';
+$lang['set_max_height_tip'] = 'La heuteur minimale en pixels. Zéro pour aucune limite.';
+
+// Small thumbnails with and height.
+$lang['set_image_thumbnail']       = 'Taille des miniatures';
+$lang['set_image_thumbnail_h']     = 'Hauteur en pixels';
+$lang['set_image_thumbnail_w']     = 'Largeur en pixels';
+$lang['set_image_thumbnail_h_tip'] = 'Hauteur des miniatures en pixels.';
+$lang['set_image_thumbnail_w_tip'] = 'Largeur des miniatures en pixels.';
+
+// Thumbnails crop.
+$lang['set_image_thumbnail_crop']     = 'Recadrer les images';
+$lang['set_image_thumbnail_crop_tip'] = ' Recadrer les images pour parvenir aux dimensions exactes.';
+
+// Medium size images width and height.
+$lang['set_image_medium']       = 'Taille moyenne';
+$lang['set_image_medium_h']     = 'Hauteur en pixels';
+$lang['set_image_medium_w']     = 'Largeur en pixels';
+$lang['set_image_medium_h_tip'] = 'Hauteur des images de taille moyenne.';
+$lang['set_image_medium_w_tip'] = 'Largeur des images de taille moyenne.';
+
+// Large images width and height
+$lang['set_image_large']       = 'Grande taille';
+$lang['set_image_large_w']     = 'Largeur en pixels';
+$lang['set_image_large_h']     = 'Heuteur en pixels';
+$lang['set_image_large_w_tip'] = 'Largeur des images de grande taille.';
+$lang['set_image_large_h_tip'] = 'Hauteur des images de grande taille.';
+
 // ------------------------------------------------------------------------
 // Captcha Settings.
 // ------------------------------------------------------------------------

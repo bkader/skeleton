@@ -84,6 +84,120 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					</div>
 				</div>
 
+				<!-- Date/Month folders -->
+				<div class="form-group<?php echo form_error('upload_year_month') ? ' has-error' : ''?>">
+					<label for="upload_year_month" class="col-sm-2 control-label"><?php _e('set_upload_year_month') ?></label>
+					<div class="col-sm-10">
+						<?php echo print_input($upload_year_month, array('class' => 'form-control')) ?>
+						<div class="help-block"><?php echo form_error('upload_year_month') ?: lang('set_upload_year_month_tip') ?></div>
+					</div>
+				</div>
+
+				<!-- Max file size -->
+				<div class="form-group<?php echo form_error('max_size') ? ' has-error' : ''?>">
+					<label for="max_size" class="col-sm-2 control-label"><?php _e('set_max_size') ?></label>
+					<div class="col-sm-10">
+						<?php echo print_input($max_size, array('class' => 'form-control')) ?>
+						<div class="help-block"><?php echo form_error('max_size') ?: lang('set_max_size_tip') ?></div>
+					</div>
+				</div>
+
+				<!-- Minimum image width/height -->
+				<div class="form-group">
+					<label class="col-sm-2 control-label"><?php _e('set_min_image_size') ?></label>
+					<div class="col-sm-10">
+						<div class="row">
+							<div class="col-xs-6<?php echo form_error('min_width') ? ' has-error' : ''?>">
+								<?php echo print_input($min_width, array('class' => 'form-control')) ?>
+								<div class="help-block"><?php echo form_error('min_width') ?: lang('set_min_width_tip') ?></div>
+							</div>
+							<div class="col-xs-6<?php echo form_error('min_height') ? ' has-error' : ''?>">
+								<?php echo print_input($min_height, array('class' => 'form-control')) ?>
+								<div class="help-block"><?php echo form_error('min_height') ?: lang('set_min_height_tip') ?></div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Maximum image width/height -->
+				<div class="form-group">
+					<label class="col-sm-2 control-label"><?php _e('set_max_image_size') ?></label>
+					<div class="col-sm-10">
+						<div class="row">
+							<div class="col-xs-6<?php echo form_error('max_width') ? ' has-error' : ''?>">
+								<?php echo print_input($max_width, array('class' => 'form-control')) ?>
+								<div class="help-block"><?php echo form_error('max_width') ?: lang('set_max_width_tip') ?></div>
+							</div>
+							<div class="col-xs-6<?php echo form_error('max_height') ? ' has-error' : ''?>">
+								<?php echo print_input($max_height, array('class' => 'form-control')) ?>
+								<div class="help-block"><?php echo form_error('max_height') ?: lang('set_max_height_tip') ?></div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Thumbnail Size -->
+				<div class="form-group">
+					<div class="row">
+						<div class="col-sm-6 col-md-12">
+							<label class="col-sm-2 control-label"><?php _e('set_image_thumbnail') ?></label>
+							<div class="col-sm-10">
+								<div class="row">
+									<div class="col-xs-6<?php echo form_error('image_thumbnail_w') ? ' has-error' : ''?>">
+										<?php echo print_input($image_thumbnail_w, array('class' => 'form-control')) ?>
+										<div class="help-block"><?php echo form_error('image_thumbnail_w') ?: lang('set_image_thumbnail_w_tip') ?></div>
+									</div>
+									<div class="col-xs-6<?php echo form_error('image_thumbnail_h') ? ' has-error' : ''?>">
+										<?php echo print_input($image_thumbnail_h, array('class' => 'form-control')) ?>
+										<div class="help-block"><?php echo form_error('image_thumbnail_h') ?: lang('set_image_thumbnail_h_tip') ?></div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-12">
+							<label class="col-sm-2 control-label"><?php _e('set_image_thumbnail_crop') ?></label>
+							<div class="col-sm-10">
+								<?php echo print_input($image_thumbnail_crop, array('class' => 'form-control')) ?>
+								<div class="help-block"><?php echo form_error('image_thumbnail_crop') ?: lang('set_image_thumbnail_crop_tip') ?></div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Medium image width/height -->
+				<div class="form-group">
+					<label class="col-sm-2 control-label"><?php _e('set_image_medium') ?></label>
+					<div class="col-sm-10">
+						<div class="row">
+							<div class="col-xs-6<?php echo form_error('image_medium_w') ? ' has-error' : ''?>">
+								<?php echo print_input($image_medium_w, array('class' => 'form-control')) ?>
+								<div class="help-block"><?php echo form_error('image_medium_w') ?: lang('set_image_medium_w_tip') ?></div>
+							</div>
+							<div class="col-xs-6<?php echo form_error('image_medium_h') ? ' has-error' : ''?>">
+								<?php echo print_input($image_medium_h, array('class' => 'form-control')) ?>
+								<div class="help-block"><?php echo form_error('image_medium_h') ?: lang('set_image_medium_h_tip') ?></div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Large image width/height -->
+				<div class="form-group">
+					<label class="col-sm-2 control-label"><?php _e('set_image_large') ?></label>
+					<div class="col-sm-10">
+						<div class="row">
+							<div class="col-xs-6<?php echo form_error('image_large_w') ? ' has-error' : ''?>">
+								<?php echo print_input($image_large_w, array('class' => 'form-control')) ?>
+								<div class="help-block"><?php echo form_error('image_large_w') ?: lang('set_image_large_w_tip') ?></div>
+							</div>
+							<div class="col-xs-6<?php echo form_error('image_large_h') ? ' has-error' : ''?>">
+								<?php echo print_input($image_large_h, array('class' => 'form-control')) ?>
+								<div class="help-block"><?php echo form_error('image_large_h') ?: lang('set_image_large_h_tip') ?></div>
+							</div>
+						</div>
+					</div>
+				</div>
+
 				<div class="text-right">
 					<button class="btn btn-primary btn-sm" type="submit"><?php _e('save_changes') ?></button>
 				</div>
