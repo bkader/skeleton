@@ -48,8 +48,8 @@ textarea {
 // Page wrapper.
 .wrapper {
     @include screen-sm {
-        padding-right: $sidebar__width;
-        padding-left: 0;
+        margin-right: $sidebar__width;
+        margin-left: 0;
 
         // Change footer position.
         .footer { left: 0; right: $sidebar__width; }

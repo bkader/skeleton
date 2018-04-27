@@ -58,8 +58,8 @@ textarea {
 
 @media screen and (min-width: 768px) {
   .wrapper {
-    padding-right: 225px;
-    padding-left: 0;
+    margin-right: 225px;
+    margin-left: 0;
   }
   .wrapper .footer {
     left: 0;
