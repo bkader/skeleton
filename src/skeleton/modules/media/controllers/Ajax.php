@@ -428,7 +428,7 @@ class Ajax extends AJAX_Controller {
 		$db_media = $this->kbcore->media->get_all();
 		if (false === $db_media)
 		{
-			$this->response->header  = 404;
+			$this->response->header  = self::HTTP_NOT_FOUND;
 			$this->response->message = line('smd_media_missing');
 			return;
 		}
@@ -438,8 +438,9 @@ class Ajax extends AJAX_Controller {
 		{
 			$media['media'][] = $item->to_array();
 		}
-		$this->response->header = 200;
-		$this->response->message = $media;
+		
+		$this->response->header = self::HTTP_OK;
+		$this->response->results = $media;
 	}
 
 	// ------------------------------------------------------------------------
