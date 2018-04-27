@@ -222,3 +222,35 @@ $lang['manifest_missing_message'] = 'This module\'s "manifest.json" file is eith
 // Module disabled.
 $lang['module_disabled_heading'] = 'Module Disabled';
 $lang['module_disabled_message'] = 'This module is disabled. Enable it on the dashboard in order to use it.';
+
+// ------------------------------------------------------------------------
+// Dashboard sections (singular and plural forms).
+// ------------------------------------------------------------------------
+
+// Users.
+$lang['user']  = 'User';
+$lang['users'] = 'Users';
+
+// Media.
+$lang['media']   = 'Media';
+$lang['library'] = 'Library';
+
+// Themes.
+$lang['theme']  = 'Theme';
+$lang['themes'] = 'Themes';
+
+// Menus.
+$lang['menu']  = 'Menu';
+$lang['menus'] = 'Menus';
+
+// Menus.
+$lang['plugin']  = 'Plugin';
+$lang['plugins'] = 'Plugins';
+
+// Languages.
+$lang['language']  = 'Language';
+$lang['languages'] = 'Languages';
+
+// Activities.
+$lang['activity']   = 'Activity';
+$lang['activities'] = 'Activities';

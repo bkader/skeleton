@@ -222,3 +222,35 @@ $lang['manifest_missing_message'] = 'Le fichier "manifest.json" de ce module est
 // Module disabled.
 $lang['module_disabled_heading'] = 'Module désactivé';
 $lang['module_disabled_message'] = 'Ce module est désactivé. Activez-le sur le tableau de bord pour l\'utiliser.';
+
+// ------------------------------------------------------------------------
+// Dashboard sections (singular and plural forms).
+// ------------------------------------------------------------------------
+
+// Users.
+$lang['user']  = 'Utilisateur';
+$lang['users'] = 'Utilisateurs';
+
+// Media.
+$lang['media']   = 'Médias';
+$lang['library'] = 'Bibliothèque';
+
+// Themes.
+$lang['theme']  = 'Thème';
+$lang['themes'] = 'Thèmes';
+
+// Menus.
+$lang['menu']  = 'Menu';
+$lang['menus'] = 'Menus';
+
+// Menus.
+$lang['plugin']  = 'Extension';
+$lang['plugins'] = 'Extensions';
+
+// Languages.
+$lang['language']  = 'Langue';
+$lang['languages'] = 'Langues';
+
+// Activities.
+$lang['activity']   = 'Activité';
+$lang['activities'] = 'Activités';

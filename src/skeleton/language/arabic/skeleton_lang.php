@@ -222,3 +222,35 @@ $lang['manifest_missing_message'] = 'ملف تعريف هذه الوحدة، "ma
 // Module disabled.
 $lang['module_disabled_heading'] = 'وحدة معطلة';
 $lang['module_disabled_message'] = 'هذه الوحدة معطلة. يجب تفعيلها على لوحة القيادة من أجل استخدامها.';
+
+// ------------------------------------------------------------------------
+// Dashboard sections (singular and plural forms).
+// ------------------------------------------------------------------------
+
+// Users.
+$lang['user']  = 'العضو';
+$lang['users'] = 'الأعضاء';
+
+// Media.
+$lang['media']   = 'الوسائط';
+$lang['library'] = 'مكتبة الوسائط';
+
+// Themes.
+$lang['theme']  = 'القالب';
+$lang['themes'] = 'القوالب';
+
+// Menus.
+$lang['menu']  = 'القائمة';
+$lang['menus'] = 'القوائم';
+
+// Menus.
+$lang['plugin']  = 'الإضافة';
+$lang['plugins'] = 'الإضافات';
+
+// Languages.
+$lang['language']  = 'اللغة';
+$lang['languages'] = 'اللغات';
+
+// Activities.
+$lang['activity']   = 'النشاط';
+$lang['activities'] = 'الأنشطة';
