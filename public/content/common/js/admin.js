@@ -219,7 +219,7 @@
         }
 
         //Sidebar toggle.
-        $(".sidebar-toggle").on("click", function (e) {
+        $(document).on("click", ".sidebar-toggle", function (e) {
             return csk.ui.toggleSidebar(e);
         });
 
@@ -363,9 +363,9 @@
         // If dropdowns are closed, we return the table to it
         // initial status.
         // ---------------------------------------------------
-        $(".table-responsive").on("show.bs.dropdown", function () {
+        $(document).on("show.bs.dropdown", ".table-responsive", function () {
             $(this).css("overflow", "inherit");
-        }).on("hide.bs.dropdown", function () {
+        }).on("hide.bs.dropdown", ".table-responsive", function () {
             $(this).css("overflow", "auto");
         });
 
