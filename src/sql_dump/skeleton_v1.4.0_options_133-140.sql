@@ -45,5 +45,4 @@ INSERT INTO `options` VALUES ('max_size', '0', 'upload', 'number', '', '1');
 INSERT INTO `options` VALUES ('max_width', '0', 'upload', 'number', '', '1');
 INSERT INTO `options` VALUES ('min_height', '0', 'upload', 'number', '', '1');
 INSERT INTO `options` VALUES ('min_width', '0', 'upload', 'number', '', '1');
-INSERT INTO `options` VALUES ('plugins', 'a:0:{}', 'plugin', 'text', '', '1');
 INSERT INTO `options` VALUES ('upload_year_month', 'true', 'upload', 'dropdown', 'a:2:{s:4:\"true\";s:8:\"lang:yes\";s:5:\"false\";s:7:\"lang:no\";}', '1');
