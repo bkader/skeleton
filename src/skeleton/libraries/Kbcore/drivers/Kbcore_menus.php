@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
- * @version 	1.3.0
+ * @version 	1.4.1
  */
 class Kbcore_menus extends CI_Driver
 {
@@ -506,8 +506,14 @@ class Kbcore_menus extends CI_Driver
 		 * If we provided a new slug for the menu, we make sure that
 		 * it is different from the current one and also that it 
 		 * is not used by another entity.
+		 *
+		 * Fixed issue with slug not being URL-titled.
+		 * @since 	1.4.1
 		 */
-		if ($slug && $slug <> $menu->username && false === $this->get_menu($slug))
+		(null === $slug) && $slug = $name;
+		$slug = url_title($slug, '-', true);
+
+		if ($slug !== $menu->username && false === $this->get_menu($slug))
 		{
 			$menu->username = $slug;
 		}
