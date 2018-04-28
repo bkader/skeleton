@@ -129,6 +129,9 @@ class KB_Router extends CI_Router
 		log_message('info', 'KB_Router Class Initialized');
 		
 		parent::__construct();
+
+		// Register the action after controller constructor.
+		add_action('post_controller_constructor', array($this, '_load_modules'));
 	}
 
 	// ------------------------------------------------------------------------
@@ -583,7 +586,7 @@ class KB_Router extends CI_Router
 	// ------------------------------------------------------------------------
 
 	/**
-	 * load_modules
+	 * _load_modules
 	 *
 	 * Because modules are loaded ONLY when they are requested via HTTP and 
 	 * there tons of ways to make them load. We created the "init.php" file
@@ -600,7 +603,7 @@ class KB_Router extends CI_Router
 	 * @param 	none
 	 * @return 	void
 	 */
-	public function load_modules()
+	public function _load_modules()
 	{
 		foreach ($this->modules_paths() as $i => $module)
 		{
