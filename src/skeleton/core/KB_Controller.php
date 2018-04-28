@@ -92,9 +92,6 @@ class KB_Controller extends CI_Controller {
 		// Load application main library.
 		$this->load->driver('kbcore');
 
-		// Load modules "init.php" files.
-		$this->router->load_modules();
-
 		// Get current module's details.
 		$this->module = $this->router->module_details($this->router->fetch_module());
 
