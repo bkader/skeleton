@@ -54,7 +54,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		1.3.4 	Anchor are automatically translated if the title contains "lang:" at the beginning.
  * @since 		1.4.0 	Safe URL and anchors were rewritten for better security.
  * 
- * @version 	1.3.4
+ * @version 	1.4.2
  */
 
 if ( ! function_exists('anchor'))
