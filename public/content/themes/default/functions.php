@@ -375,7 +375,7 @@ if ( ! function_exists( 'fa_icon' ) ) {
 	 * @return string       the full FA tag.
 	 */
 	function fa_icon( $icon = 'user' ) {
-		return "<i class=\"fa fa-{$icon}\"></i>";
+		return "<i class=\"fa fa-fw fa-{$icon}\"></i>";
 	}
 }
 

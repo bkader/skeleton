@@ -91,7 +91,7 @@ if ( ! function_exists('fa_icon'))
 	 */
 	function fa_icon($class = '')
 	{
-		return "<i class=\"fa fa-{$class}\"></i>";
+		return "<i class=\"fa fa-fw fa-{$class}\"></i>";
 	}
 }
 
