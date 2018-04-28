@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.4.0
+ * @version 	1.4.2
  */
 class Kbcore_entities extends CI_Driver implements CRUD_interface
 {
@@ -364,6 +364,20 @@ class Kbcore_entities extends CI_Driver implements CRUD_interface
 
 		// Make sure to add the update date.
 		(isset($data['updated_at'])) OR $ata['updated_at'] = time();
+
+		/**
+		 * We make sure the username is always URL-titled and proceed
+		 * only if it is not taken.
+		 * @since 	1.4.2
+		 */
+		if (isset($data['username']))
+		{
+			$data['username'] = url_title($data['username'], '-', true);
+			if (false !== $this->get_by('username', $data['username']))
+			{
+				return false;
+			}
+		}
 
 		// Prepare out update statement.
 		$this->ci->db->set($data);
