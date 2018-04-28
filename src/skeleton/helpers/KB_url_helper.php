@@ -250,24 +250,23 @@ if ( ! function_exists('trace_anchor'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('safe_url'))
+if ( ! function_exists('nonce_url'))
 {
 	/**
-	 * safe_url
+	 * nonce_url
 	 *
 	 * Function for generating site URLs with appended security nonce.
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://github.com/bkader
 	 *
-	 *  @since 	1.0.0
-	 *  @since 	1.4.0 	Rewritten to use new KB_Security methods.
+	 * @since 	1.4.2
 	 *
 	 * @param 	string 	$uri 		The URI used to generate the URL.
 	 * @param 	mixed 	$action 	Action to attach to the URL.
 	 * @return 	string
 	 */
-	function safe_url($uri = '', $action = -1)
+	function nonce_url($uri = '', $action = -1)
 	{
 		$uri    = str_replace('&amp;', '&', $uri);
 		$url    = site_url($uri);
@@ -292,22 +291,37 @@ if ( ! function_exists('safe_url'))
 	}
 }
 
-// --------------------------------------------------------------------
+// ------------------------------------------------------------------------
 
-if ( ! function_exists('safe_anchor'))
+if ( ! function_exists('safe_url'))
 {
 	/**
-	 * safe_anchor
+	 * Function for generating site URLs with appended security nonce.
+	 * @deprecated 1.4.2 	Kept for backward compatibility.
+	 * @return 	string
+	 */
+	function safe_url($uri = '', $action = -1)
+	{
+		return nonce_url($uri, $action);
+	}
+}
+
+// --------------------------------------------------------------------
+
+if ( ! function_exists('nonce_anchor'))
+{
+	/**
+	 * nonce_anchor
 	 *
 	 * Function for generating anchor using CodeIgniter built-in anchor
-	 * function but using our custom "safe_url" function generate a full
+	 * function but using our custom "nonce_url" function generate a full
 	 * URL with security nonce.
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://github.com/bkader
 	 *
 	 *  @since 	1.0.0
-	 *  @since 	1.4.0 	Rewritten because the "safe_url" was rewritten as well.
+	 *  @since 	1.4.0 	Rewritten because the "nonce_url" was rewritten as well.
 	 *
 	 * @param 	string 	$uri 	The URI used to generate the URL.
 	 * @param 	string 	$action The action to attach to the URL.
@@ -315,10 +329,10 @@ if ( ! function_exists('safe_anchor'))
 	 * @param 	mixed 	$attrs 	Links attributes.
 	 * @return 	string 	The full anchor tag.
 	 */
-	function safe_anchor($uri = '', $action = -1, $title = '', $attrs = '')
+	function nonce_anchor($uri = '', $action = -1, $title = '', $attrs = '')
 	{
 		// Prepare the URL first.
-		$url = safe_url($uri, $action);
+		$url = nonce_url($uri, $action);
 
 		// Format the title an see if it should be translated.
 		$title = (string) $title;
@@ -336,6 +350,23 @@ if ( ! function_exists('safe_anchor'))
 		$attrs = (is_array($attrs)) ? _stringify_attributes($attrs) : ' '.$attrs;
 
 		return '<a href="'.$url.'"'.$attrs.'>'.$title.'</a>';
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('safe_anchor'))
+{
+	/**
+	 * Function for generating anchor using CodeIgniter built-in anchor
+	 * function but using our custom "safe_url" function generate a full
+	 * URL with security nonce.
+	 * @deprecated 	1.4.2 	Kept for backward compatibility.
+	 * @return 	string 	The full anchor tag.
+	 */
+	function safe_anchor($uri = '', $action = -1, $title = '', $attrs = '')
+	{
+		return nonce_anchor($uri, $action, $title, $attrs);
 	}
 }
 
@@ -381,26 +412,67 @@ if ( ! function_exists('admin_anchor'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('safe_admin_url'))
+if ( ! function_exists('nonce_admin_url'))
 {
 	/**
-	 * safe_admin_url
+	 * nonce_admin_url
 	 *
-	 * Function for creating safe URLs for the dashboard area.
+	 * Function for creating nonce URLs for the dashboard area.
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://github.com/bkader
 	 * 
-	 * @since 	1.0.0
-	 * @since 	1.4.0 	Rewritten because "safe_url" was rewritten as well.
+	 * @since 	1.4.2
 	 *
 	 * @param 	string 	$uri 	The URI used to generate the URL.
 	 * @return 	string 	$action The action to attach to the URL.
 	 */
-	function safe_admin_url($uri = '', $action = -1)
+	function nonce_admin_url($uri = '', $action = -1)
 	{
 		$uri = ($uri == '') ? 'admin' : 'admin/'.$uri;
-		return safe_url($uri, $action);
+		return nonce_url($uri, $action);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('safe_admin_url'))
+{
+	/**
+	 * Function for creating safe URLs for the dashboard area.
+	 * @deprecated 	1.4.2 	Kept for backward compatibility.
+	 * @return 	string 	$action The action to attach to the URL.
+	 */
+	function safe_admin_url($uri = '', $action = -1)
+	{
+		return nonce_admin_url($uri, $action);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('nonce_admin_anchor'))
+{
+	/**
+	 * nonce_admin_anchor
+	 *
+	 * Function for creating secured anchor tags for the dashboard area.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * 
+	 * @since 	1.4.2
+	 *
+	 * @param 	string 	$uri 	The URI used to generate the URL.
+	 * @param 	mixed 	$action The action attached to the URL.
+	 * @param 	string 	$title 	The anchor text.
+	 * @param 	mixed 	$attrs 	Anchor html attributes.
+	 * @return 	string
+	 */
+	function nonce_admin_anchor($uri = '', $action = -1, $title = '', $attrs = '')
+	{
+		$uri = ($uri == '') ? 'admin' : 'admin/'.$uri;
+		return nonce_anchor($uri, $action, $title, $attrs);
 	}
 }
 
@@ -409,26 +481,13 @@ if ( ! function_exists('safe_admin_url'))
 if ( ! function_exists('safe_admin_anchor'))
 {
 	/**
-	 * safe_admin_anchor
-	 *
 	 * Function for creating secured anchor tags for the dashboard area.
-	 *
-	 * @author 	Kader Bouyakoub
-	 * @link 	https://github.com/bkader
-	 * 
-	 * @since 	1.0.0
-	 * @since 	1.4.0 	Rewritten because "safe_url" was rewritten as well.
-	 *
-	 * @param 	string 	$uri 	The URI used to generate the URL.
-	 * @param 	mixed 	$action The action attached to the URL.
-	 * @param 	string 	$title 	The anchor text.
-	 * @param 	mixed 	$attrs 	Anchor html attributes.
+	 * @deprecated 	1.4.2 	Kept for backward compatibility.
 	 * @return 	string
 	 */
 	function safe_admin_anchor($uri = '', $action = -1, $title = '', $attrs = '')
 	{
-		$uri = ($uri == '') ? 'admin' : 'admin/'.$uri;
-		return safe_anchor($uri, $action, $title, $attrs);
+		return nonce_admin_anchor($uri, $action, $title, $attrs);
 	}
 }
 
@@ -474,27 +533,68 @@ if ( ! function_exists('process_anchor'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('safe_process_url'))
+if ( ! function_exists('nonce_process_url'))
 {
 	/**
-	 * safe_process_url
+	 * nonce_process_url
 	 *
-	 * Function for creating safe URLs for the process context.
+	 * Function for creating nonce URLs for the process context.
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://github.com/bkader
 	 * 
-	 * @since 	1.0.0
-	 * @since 	1.4.0 	Rewritten because "safe_url" was rewritten as well.
+	 * @since 	1.4.2
 	 *
 	 * @param 	string 	$uri 	The URI used to generate the URL
 	 * @param 	mixed 	$action The action to attach to the URL.
 	 * @return 	string
 	 */
-	function safe_process_url($uri = '', $action = -1)
+	function nonce_process_url($uri = '', $action = -1)
 	{
 		$uri = ($uri == '') ? 'process' : 'process/'.$uri;
-		return safe_url($uri, $action);
+		return nonce_url($uri, $action);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('safe_process_url'))
+{
+	/**
+	 * Function for creating safe URLs for the process context.
+	 * @deprecated 	1.4.2 	Kept for backward compatibility.
+	 * @return 	string
+	 */
+	function safe_process_url($uri = '', $action = -1)
+	{
+		return nonce_process_url($uri, $action);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('nonce_process_anchor'))
+{
+	/**
+	 * nonce_process_anchor
+	 *
+	 * Function for create nonce process anchor.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * 
+	 * @since 	1.4.2
+	 *
+	 * @param 	string 	$uri 	The URI used to generate the URL.
+	 * @param 	mixed 	$action The action to attach to the URL.
+	 * @param 	string 	$title 	The anchor text.
+	 * @param 	mixed 	$attrs 	The anchor attributes.
+	 * @return 	string
+	 */
+	function nonce_process_anchor($uri = '', $action = -1, $title = '', $attrs = '')
+	{
+		$uri = ($uri == '') ? 'process' : 'process/'.$uri;
+		return nonce_anchor($uri, $action, $title, $attrs);
 	}
 }
 
@@ -503,26 +603,13 @@ if ( ! function_exists('safe_process_url'))
 if ( ! function_exists('safe_process_anchor'))
 {
 	/**
-	 * safe_process_anchor
-	 *
 	 * Function for create safe process anchor.
-	 *
-	 * @author 	Kader Bouyakoub
-	 * @link 	https://github.com/bkader
-	 * 
-	 * @since 	1.0.0
-	 * @since 	1.4.0 	Rewritten because "safe_url" was rewritten as well.
-	 *
-	 * @param 	string 	$uri 	The URI used to generate the URL.
-	 * @param 	mixed 	$action The action to attach to the URL.
-	 * @param 	string 	$title 	The anchor text.
-	 * @param 	mixed 	$attrs 	The anchor attributes.
+	 * @deprecated 	1.4.2 	Kept for backward compatibility.
 	 * @return 	string
 	 */
 	function safe_process_anchor($uri = '', $action = -1, $title = '', $attrs = '')
 	{
-		$uri = ($uri == '') ? 'process' : 'process/'.$uri;
-		return safe_anchor($uri, $action, $title, $attrs);
+		return nonce_process_anchor($uri, $action, $title, $attrs);
 	}
 }
 
@@ -568,27 +655,68 @@ if ( ! function_exists('ajax_anchor'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('safe_ajax_url'))
+if ( ! function_exists('nonce_ajax_url'))
 {
 	/**
-	 * safe_ajax_anchor
+	 * nonce_ajax_anchor
 	 *
-	 * Function for creating safe URLs for Ajax context.
+	 * Function for creating nonce URLs for Ajax context.
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://github.com/bkader
 	 * 
-	 * @since 	1.0.0
-	 * @since 	1.4.0 	Rewritten because "safe_url" was rewritten as well.
+	 * @since 	1.4.2
 	 *
 	 * @param 	string 	$uri 	The URI used to generate the URL.
 	 * @param 	mixed 	$action The action to attach to the URL.
 	 * @return 	string
 	 */
-	function safe_ajax_url($uri = '', $action = -1)
+	function nonce_ajax_url($uri = '', $action = -1)
 	{
 		$uri = ($uri == '') ? 'ajax' : 'ajax/'.$uri;
-		return safe_url($uri, $action);
+		return nonce_url($uri, $action);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('safe_ajax_url'))
+{
+	/**
+	 * Function for creating safe URLs for Ajax context.
+	 * @deprecated 	1.4.2 	Kept for backward compatibility.
+	 * @return 	string
+	 */
+	function safe_ajax_url($uri = '', $action = -1)
+	{
+		return nonce_ajax_url($uri, $action);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('nonce_ajax_anchor'))
+{
+	/**
+	 * nonce_ajax_anchor
+	 *
+	 * Function for creating nonce anchors for the AJAX context.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * 
+	 * @since 	1.4.2
+	 *
+	 * @param 	string 	$uri 	The URI used to generate the URL.
+	 * @param 	mixed 	$action The action to attach to the URL.
+	 * @param 	string 	$title 	The anchor text.
+	 * @param 	mixed 	$attrs 	The anchor attributes.
+	 * @return 	string
+	 */
+	function nonce_ajax_anchor($uri = '', $action = -1, $title = '', $attrs = '')
+	{
+		$uri = ($uri == '') ? 'ajax' : 'ajax/'.$uri;
+		return nonce_anchor($uri, $action, $title, $attrs);
 	}
 }
 
@@ -597,48 +725,34 @@ if ( ! function_exists('safe_ajax_url'))
 if ( ! function_exists('safe_ajax_anchor'))
 {
 	/**
-	 * safe_ajax_anchor
-	 *
 	 * Function for creating safe anchors for the AJAX context.
-	 *
-	 * @author 	Kader Bouyakoub
-	 * @link 	https://github.com/bkader
-	 * 
-	 * @since 	1.0.0
-	 * @since 	Rewritten because "safe_url" was rewritten as well.
-	 *
-	 * @param 	string 	$uri 	The URI used to generate the URL.
-	 * @param 	mixed 	$action The action to attach to the URL.
-	 * @param 	string 	$title 	The anchor text.
-	 * @param 	mixed 	$attrs 	The anchor attributes.
+	 * @deprecated 	1.4.2 	Kept for backward compatibility.
 	 * @return 	string
 	 */
 	function safe_ajax_anchor($uri = '', $action = -1, $title = '', $attrs = '')
 	{
-		$uri = ($uri == '') ? 'ajax' : 'ajax/'.$uri;
-		return safe_anchor($uri, $action, $title, $attrs);
+		return nonce_ajax_anchor($uri, $action, $title, $attrs);
 	}
 }
 
 // --------------------------------------------------------------------
 
-if ( ! function_exists('check_safe_url'))
+if ( ! function_exists('check_nonce_url'))
 {
 	/**
-	 * check_safe_url
+	 * check_nonce_url
 	 *
-	 * Function for checking the selected URL safety.
+	 * Function for checking the selected URL noncety.
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://github.com/bkader
 	 * 
-	 * @since 	1.0.0
-	 * @since 	1.4.0 	Rewritten for better security.
+	 * @since 	1.4.2
 	 *
 	 * @param 	string
 	 * @return 	bool
 	 */
-	function check_safe_url($url = null, $action = -1)
+	function check_nonce_url($url = null, $action = -1)
 	{
 		// If no URL provided, we use the current one, then format it.
 		(null === $url) && $url = current_url();
@@ -653,5 +767,20 @@ if ( ! function_exists('check_safe_url'))
 		}
 
 		return verify_nonce($query['_csknonce'], $action);
+	}
+}
+
+// --------------------------------------------------------------------
+
+if ( ! function_exists('check_safe_url'))
+{
+	/**
+	 * Function for checking the selected URL safety.
+	 * @deprecated 	1.4.2 	Kept for backward compatibility.
+	 * @return 	bool
+	 */
+	function check_safe_url($url = null, $action = -1)
+	{
+		return check_nonce_url($url, $action);
 	}
 }
