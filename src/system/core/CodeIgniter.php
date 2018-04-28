@@ -546,7 +546,7 @@ if ( ! is_php('5.4'))
  * ------------------------------------------------------
  */
 	$EXT->call_hook('pre_controller');
-	$PLG->do_action('pre_controller');
+	do_action('pre_controller');
 
 /*
  * ------------------------------------------------------
@@ -564,7 +564,7 @@ if ( ! is_php('5.4'))
  * ------------------------------------------------------
  */
 	$EXT->call_hook('post_controller_constructor');
-	$PLG->do_action('post_controller_constructor');
+	do_action('post_controller_constructor');
 
 /*
  * ------------------------------------------------------
@@ -582,7 +582,7 @@ if ( ! is_php('5.4'))
  * ------------------------------------------------------
  */
 	$EXT->call_hook('post_controller');
-	$PLG->do_action('post_controller');
+	do_action('post_controller');
 
 /*
  * ------------------------------------------------------
@@ -600,4 +600,4 @@ if ( ! is_php('5.4'))
  * ------------------------------------------------------
  */
 	$EXT->call_hook('post_system');
-	$PLG->do_action('post_system');
+	do_action('post_system');
