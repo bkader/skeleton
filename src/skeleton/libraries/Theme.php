@@ -53,7 +53,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @since 		1.3.3 	changed "metadata" to "meta_tags" to avoid conflict with
  *          			the "Kbcore_metadata" library and added themes count.
  * @since 		1.4.0 	Added "the_doctype" filter and moved down body class filters.
- * @version 	1.4.0
+ * @since 		1.4.1 	All HTML is compressed except for <pre> tags content.
+ * @version 	1.4.1
  */
 class Theme
 {
@@ -3330,9 +3331,15 @@ EOT;
 	}
 
 	// --------------------------------------------------------------------
+	// Output Compression.
+	// --------------------------------------------------------------------
 
 	/**
 	 * Compresses the HTML output
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.4.1 	All HTML is compressed except for <pre> tags content.
+	 * 
 	 * @access 	private
 	 * @param 	string 	$output 	the html output to compress
 	 * @return 	string 	the minified version of $output
@@ -3341,15 +3348,86 @@ EOT;
 	{
 		// Make sure $output is always a string
 		(is_string($output)) OR $output = (string) $output;
+		
+		// Nothing? Don't process.
+		if ('' === trim($output))
+		{
+			return '';
+		}
 
+		// Conserve <pre> tags.
+		$pre_tags = array();
+
+		if (false !== strpos($output, '<pre'))
+		{
+			// We explode the output and always keep the last part.
+			$parts     = explode('</pre>', $output);
+			$last_part = array_pop($parts);
+
+			// Reset output.
+			$output = '';
+
+			// Marker used to identify <pre> tags.
+			$i = 0;
+
+			foreach ($parts as $part)
+			{
+				$start = strpos($part, '<pre');
+
+				// Malformed? Add it as it is.
+				if (false === $start)
+				{
+					$output .= $part;
+					continue;
+				}
+
+				// Identify the pre tag and keep it.
+				$name = "<pre csk-pre-tag-{$i}></pre>";
+				$pre_tags[$name] = substr($part, $start).'</pre>';
+				$output .= substr($part, 0, $start).$name;
+				$i++;
+			}
+
+			// Always add the last part.
+			$output .= $last_part;
+		}
+
+		// Compress the final output.
+		$output = $this->_compress_output($output);
+
+		// If we have <pre> tags, add them.
+		if ( ! empty($pre_tags))
+		{
+			$output = str_replace(array_keys($pre_tags), array_values($pre_tags), $output);
+		}
+
+		// Return the final output.
+		return $output;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * _compress_output
+	 *
+	 * The real method behind final output compression.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.1
+	 *
+	 * @access 	private
+	 * @param 	string 	$output 	The final output.
+	 * @return 	string 	The final output after compression.
+	 */
+	private function _compress_output($output)
+	{
 		// In orders, we are searching for
 		// 1. White-spaces after tags, except space.
 		// 2. White-spaces before tags, except space.
 		// 3. Multiple white-spaces sequences.
 		// 4. HTML comments
 		// 5. CDATA
-
-		// We return the minified $output
 		$output = preg_replace(array(
 			'/\>[^\S ]+/s',
 			'/[^\S ]+\</s',
@@ -3364,6 +3442,7 @@ EOT;
 			"//&lt;![CDATA[\n".'\1'."\n//]]>"
 		), $output);
 
+		// We return the minified $output
 		return $output;
 	}
 
@@ -4624,5 +4703,27 @@ if ( ! function_exists('array_clean'))
 			$array = array_filter($array);
 			$array = array_unique($array);
 		}
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('compress_html'))
+{
+	/**
+	 * compress_html
+	 *
+	 * Uses the Theme::compress_output method to compress the given string.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.1
+	 *
+	 * @param 	string 	$html 	The HTML string to compress.
+	 * @return 	string 	The HTML string after being compressed.
+	 */
+	function compress_html($html)
+	{
+		return get_instance()->theme->compress_output($html);
 	}
 }
