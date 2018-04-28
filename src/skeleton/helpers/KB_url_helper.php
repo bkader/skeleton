@@ -784,3 +784,25 @@ if ( ! function_exists('check_safe_url'))
 		return check_nonce_url($url, $action);
 	}
 }
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('module_url'))
+{
+	/**
+	 * modules_url
+	 *
+	 * Returns the URL to the public modules folder.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.2
+	 *
+	 * @param 	string
+	 * @return 	string
+	 */
+	function modules_url($uri = '')
+	{
+		return base_url('content/modules/'.$uri);
+	}
+}
