@@ -68,10 +68,10 @@ From line **#218** to **#223** we have loaded our custom plugins class **CI_Plug
 And because we have included this class, you will also find on this file:
 
 ```php
-$PLG->do_action('pre_controller');				// Line #542
-$PLG->do_action('post_controller_constructor');	// Line #560
-$PLG->do_action('post_controller');				// Line #578
-$PLG->do_action('post_system');					// Line #596
+do_action('pre_controller');				// Line #542
+do_action('post_controller_constructor');	// Line #560
+do_action('post_controller');				// Line #578
+do_action('post_system');					// Line #596
 ```
 
 At lines **#429** to **#450** we have a little modification so controllers are loaded from the default folder *APPPATH/controllers* but also our custom folder *KBPATH/controllers*. Here is how those line were and below how they become:
