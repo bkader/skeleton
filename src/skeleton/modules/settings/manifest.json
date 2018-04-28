@@ -8,5 +8,11 @@
   "license": "MIT",
   "enabled": true,
   "admin_menu": "Settings",
-  "admin_order": 89
+  "admin_order": 89,
+  "translations": {
+    "admin_menu": {
+      "french": "Param&egrave;tres",
+      "arabic": "الإعدادات"
+    }
+  }
 }
