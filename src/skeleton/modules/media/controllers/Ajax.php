@@ -417,7 +417,9 @@ class Ajax extends AJAX_Controller {
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://github.com/bkader
+	 * 
 	 * @since 	1.4.0
+	 * @since 	1.4.2 	Format returned medias array.
 	 *
 	 * @access 	public
 	 * @param 	none
@@ -434,9 +436,22 @@ class Ajax extends AJAX_Controller {
 		}
 
 		$media = array();
+		$this->load->helper('number');
+		/**
+		 * Prepare medias before returning them.
+		 * @since 	1.4.2
+		 */
 		foreach ($db_media as $item)
 		{
-			$media['media'][] = $item->to_array();
+			$_item = $item->to_array();
+			$_item['details']    = $item->media_meta;
+			$_item['created_at'] = date('Y/m/d H:i', $_item['created_at']);
+			$_item['file_size']  = byte_format($_item['details']['file_size'] * 1024, 2);
+			$_item['thumbnail']  = (isset($_item['details']['sizes']['thumbnail']))
+				? $_item['details']['file_url'].$_item['details']['sizes']['thumbnail']['file_name']
+				: $_item['content'];
+			
+			$media['media'][] = $_item;
 		}
 		
 		$this->response->header = self::HTTP_OK;
