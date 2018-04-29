@@ -53,6 +53,12 @@ textarea {
             right: 100%;
         }
     }
+
+    &.active > ul {
+        @include box-shadow(none);
+        top: 0;
+        right: 0;
+    }
 }
 
 // Change dashboard statuses font.

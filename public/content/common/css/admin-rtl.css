@@ -49,6 +49,13 @@ textarea {
     right: 100%;
   }
 }
+.nav-sidebar > li.active > ul {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  top: 0;
+  right: 0;
+}
 
 .status {
   font-family: Tahoma, Arial, sans-serif;
