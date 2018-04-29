@@ -1,12 +1,14 @@
 /* Media Library */
 .attachments {
     margin: 30px auto 15px;
+    outline: 0;
 
     > .attachment {
         cursor: pointer;
         margin-bottom: 30px;
         position: relative;
         text-align: center;
+        outline: 0;
 
         > .attachment-inner {
             display: block;

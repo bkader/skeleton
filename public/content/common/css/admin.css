@@ -292,12 +292,14 @@ body {
 /* Media Library */
 .attachments {
   margin: 30px auto 15px;
+  outline: 0;
 }
 .attachments > .attachment {
   cursor: pointer;
   margin-bottom: 30px;
   position: relative;
   text-align: center;
+  outline: 0;
 }
 .attachments > .attachment > .attachment-inner {
   display: block;
