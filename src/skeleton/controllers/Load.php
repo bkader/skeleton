@@ -113,10 +113,10 @@ class Load extends KB_Controller
 		{
 			// Let's first see if the file was cached or not.
 			$cached_file = md5(ENVIRONMENT.','.implode(',', $files)).'.'.$type;
-			if (is_file(KBPATH.'cache/assets/'.$cached_file))
+			if (is_file(APPPATH.'cache/assets/'.$cached_file))
 			{
 				// Get the content of the file and see if it has expired or not.
-				$content = file_get_contents(KBPATH.'cache/assets/'.$cached_file);
+				$content = file_get_contents(APPPATH.'cache/assets/'.$cached_file);
 				preg_match('/\d+/', $content, $expire);
 
 				// If the file is still alive, we remove unnecessary part of its content.
@@ -131,7 +131,7 @@ class Load extends KB_Controller
 				// Otherwise, we simply delete the file.
 				else
 				{
-					@unlink(KBPATH.'cache/assets/'.$cached_file);
+					@unlink(APPPATH.'cache/assets/'.$cached_file);
 				}
 			}
 
@@ -187,7 +187,7 @@ class Load extends KB_Controller
 			{
 				$cached_file      = md5(ENVIRONMENT.','.implode(',', $files)).'.'.$type;
 				$cached_output    = (time() + 86400).'|END>'.$out;
-				$cached_file_path = KBPATH.'cache/assets/'.$cached_file;
+				$cached_file_path = APPPATH.'cache/assets/'.$cached_file;
 				$cached_file_path = fopen($cached_file_path, 'w');
 				fwrite($cached_file_path, $cached_output);
 				fclose($cached_file_path);
@@ -365,7 +365,7 @@ class Load extends KB_Controller
 	protected function _delete_cache()
 	{
 		// Prepare the path to to assets folder.
-		$path = realpath(KBPATH.'cache/assets/');
+		$path = realpath(APPPATH.'cache/assets/');
 
 		// Let's open the folder to read.
 		if ($handle = opendir($path))
