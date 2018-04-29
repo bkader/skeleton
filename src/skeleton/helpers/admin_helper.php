@@ -148,10 +148,10 @@ if ( ! function_exists('module_menu'))
 		$output .= admin_anchor($module['folder'], $p_title);
 
 		// Does it have a sub-elements?
-		if (isset($module['submenu']))
+		if (isset($module['submenu']) && ! empty($module['submenu']))
 		{
 			// The list opening tag.
-			$output .= '<ul class="submenu">';
+			$output .= '<ul class="submenu nav">';
 
 			// Loop through items and display them.
 			foreach ($module['submenu'] as $uri => $c_title)

@@ -84,14 +84,15 @@ $color__border-abbr: #666;
 // --------------------------------------------------------------
 // Font families.
 // --------------------------------------------------------------
-$font__base: "Fira Sans", Helvetica, Arial, sans-serif;
-$font__oswald: "Oswald", "Fira Sans", sans-serif;
-$font__ruda: "Ruda", "Fira Sans", sans-serif;
-$font__droid: "Droid Arabic Kufi", "Fira Sans", sans-serif;
-$font__dubai: "Dubai", "Ruda", "Fira Sans", sans-serif;
+$font__base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+$font__oswald: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+$font__ruda: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+$font__droid: Tahoma, Arial, sans-serif;
+$font__dubai: Tahoma, Arial, sans-serif;
 $font__code: Monaco, Consolas, monospace;
 $font__pre: Courier, monospace;
-$font__line-height-body: 1.5;
+$font__size: 14px;
+$font__line-height-body: 21px;
 $font__line-height-pre: 1.6;
 
 // --------------------------------------------------------------
@@ -112,7 +113,7 @@ $size__container-lg: 1170px;
 // Gutters and Sidebar variables.
 // --------------------------------------------------------------
 $gutters: 15px;
-$sidebar__width: 225px;
+$sidebar__width: 180px;
 $sidebar__paddings: $gutters;
 $sidebar__background: darken($header__background, 35%);
 $sidebar__link: lighten($color__grey, 45%);

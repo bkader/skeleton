@@ -6,16 +6,6 @@
 @import "base/variables";
 @import "base/mixins";
 
-// Add Arabic fonts.
-
-// Droid Arabic Kufi
-@include font-face("Droid Arabic Kufi", "../fonts/droid-arabic-kufi-regular", 400);
-@include font-face("Droid Arabic Kufi", "../fonts/droid-arabic-kufi-bold", 700);
-
-// Dubai
-@include font-face("Dubai", "../fonts/dubai-regular", 400);
-@include font-face("Dubai", "../fonts/dubai-bold", 700);
-
 // Change site's font family.
 body { font-family: $font__droid; }
 
@@ -53,6 +43,15 @@ textarea {
 
         // Change footer position.
         .footer { left: 0; right: $sidebar__width; }
+    }
+}
+
+.nav-sidebar > li {
+    @include screen-sm {
+        ul {
+            left: auto;
+            right: 100%;
+        }
     }
 }
 

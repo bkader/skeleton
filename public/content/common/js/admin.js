@@ -33,7 +33,7 @@
         toggleSidebar: function (event) {
             event.preventDefault();
             event.stopPropagation();
-            var sidebar = $("#sidebar");
+            var sidebar = $("#csk-sidebar");
             if (sidebar.length) {
                 sidebar.toggleClass("open");
             }

@@ -19,7 +19,18 @@ h2,
 h3,
 h4,
 h5,
-h6 { font-family: $font__ruda; }
+h6 {
+    font-family: $font__ruda;
+    font-weight: 400;
+    line-height: 18px;
+}
+
+h1 { font-size: 23px; line-height: 29px; }
+h2 { font-size: 23px; line-height: 29px; }
+h3 { font-size: 17px; }
+h4 { font-size: 13px; }
+h5 { font-size: 11px; }
+h6 { font-size: 9px; }
 
 // --------------------------------------------------------------
 // Copy.
@@ -52,8 +63,9 @@ body {
     background-color: $color__background-body;
     color: $color__text-main;
     font-family: $font__base;
+    font-size: $font__size;
     line-height: $font__line-height-body;
-    padding-top: ($header__height + $gutters);
+    padding-top: $header__height;
     position: relative;
 }
 

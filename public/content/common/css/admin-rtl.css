@@ -3,43 +3,19 @@
  * Copyright 2018 Kader Bouyakoub (https://github.com/bkader)
  * Licensed under MIT (https://github.com/bkader/skeleton/blob/develop/LICENSE.md)
  */
-@font-face {
-  font-family: "Droid Arabic Kufi";
-  font-weight: 400;
-  font-style: normal;
-  src: local("Droid Arabic Kufi Regular"), local("DroidArabicKufi-Regular"), url("../fonts/droid-arabic-kufi-regular.woff2") format("woff2"), url("../fonts/droid-arabic-kufi-regular.woff") format("woff");
-}
-@font-face {
-  font-family: "Droid Arabic Kufi";
-  font-weight: 700;
-  font-style: normal;
-  src: local("Droid Arabic Kufi Bold"), local("DroidArabicKufi-Bold"), url("../fonts/droid-arabic-kufi-bold.woff2") format("woff2"), url("../fonts/droid-arabic-kufi-bold.woff") format("woff");
-}
-@font-face {
-  font-family: "Dubai";
-  font-weight: 400;
-  font-style: normal;
-  src: local("Dubai Regular"), local("Dubai-Regular"), url("../fonts/dubai-regular.woff2") format("woff2"), url("../fonts/dubai-regular.woff") format("woff");
-}
-@font-face {
-  font-family: "Dubai";
-  font-weight: 700;
-  font-style: normal;
-  src: local("Dubai Bold"), local("Dubai-Bold"), url("../fonts/dubai-bold.woff2") format("woff2"), url("../fonts/dubai-bold.woff") format("woff");
-}
 body {
-  font-family: "Droid Arabic Kufi", "Fira Sans", sans-serif;
+  font-family: Tahoma, Arial, sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Dubai", "Ruda", "Fira Sans", sans-serif;
+  font-family: Tahoma, Arial, sans-serif;
 }
 
 .form-control,
 .btn,
 input,
 textarea {
-  font-family: "Droid Arabic Kufi", "Fira Sans", sans-serif;
+  font-family: Tahoma, Arial, sans-serif;
 }
 
 .navbar-brand::before {
@@ -58,17 +34,24 @@ textarea {
 
 @media screen and (min-width: 768px) {
   .wrapper {
-    margin-right: 225px;
+    margin-right: 180px;
     margin-left: 0;
   }
   .wrapper .footer {
     left: 0;
-    right: 225px;
+    right: 180px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .nav-sidebar > li ul {
+    left: auto;
+    right: 100%;
   }
 }
 
 .status {
-  font-family: "Droid Arabic Kufi", "Fira Sans", sans-serif;
+  font-family: Tahoma, Arial, sans-serif;
 }
 
 .menu-item .menu-item-title {

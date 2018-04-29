@@ -67,81 +67,86 @@
 	</div>
 </nav>
 
-<main class="wrapper" id="wrapper" role="main">
-	<div class="container-fluid">
+<div class="csk-wrap">
+	<aside class="csk-sidebar" id="csk-sidebar" role="complementay">
 		<?php
 		/**
-		 * Fires at the top of page content.
+		 * Fires before the admin sidebar menu.
 		 * @since 	1.4.0
 		 */
-		do_action('admin_page_header');
-
-		// Display the page content.
-		the_content();
-
-		/**
-		 * Fires at the end of page content.
-		 * @since 	1.4.0
-		 */
-		do_action('admin_page_footer');
+		do_action('before_admin_menu');
 		?>
-		<div class="footer clearfix" id="kbfooter" role="contentinfo">
+		<ul class="nav nav-sidebar">
+			<li<?php echo (get_the_module() == null) ? ' class="active"' : '' ?>><?php echo admin_anchor('', lang('dashboard')) ?></li>
 			<?php
 			/**
-			 * Fires right after the opening tag of the admin footer.
+			 * Fires inside the admin menu.
+			 * Useful if you want to add links.
 			 * @since 	1.4.0
 			 */
-			do_action('in_admin_footer');
+			do_action('admin_menu');
 			?>
-			<small class="text-muted" id="footer-thankyou">
-				<?php
-				$thankyou = sprintf(line('admin_footer_text'), 'https://goo.gl/jb4nQC');
-				/**
-				 * Filters the "Thank you" text displayed in the admin footer.
-				 * @since 	1.3.3
-				 */
-				echo apply_filters('admin_footer_text', $thankyou);
-				?>
-			</small>
-			<small class="text-muted pull-right" id="footer-upgrade">
-				<?php
-				$version = sprintf(line('admin_version_text'), KB_VERSION);
-				/**
-				 * Filters the version text displayed in the admin footer.
-				 * @since 	1.4.0
-				 */
-				echo apply_filters('admin_version_text', $version);
-				?>
-			</small>
-		</div>
-	</div>
-</main>
-<aside class="sidebar" id="sidebar" role="complementay">
-	<?php
-	/**
-	 * Fires before the admin sidebar menu.
-	 * @since 	1.4.0
-	 */
-	do_action('before_admin_menu');
-	?>
-	<ul class="nav nav-sidebar">
-		<li<?php echo (get_the_module() == null) ? ' class="active"' : '' ?>><?php echo admin_anchor('', lang('dashboard')) ?></li>
+		</ul>
 		<?php
 		/**
-		 * Fires inside the admin menu.
-		 * Useful if you want to add links.
+		 * Fires after the admin sidebar menu.
 		 * @since 	1.4.0
 		 */
-		do_action('admin_menu');
+		do_action('after_admin_menu');
 		?>
-	</ul>
-	<?php
-	/**
-	 * Fires after the admin sidebar menu.
-	 * @since 	1.4.0
-	 */
-	do_action('after_admin_menu');
-	?>
-</aside>
+	</aside>
+
+	<main class="wrapper" id="wrapper" role="main">
+		<div class="container-fluid">
+			<?php
+			/**
+			 * Fires at the top of page content.
+			 * @since 	1.4.0
+			 */
+			do_action('admin_page_header');
+
+			// Display the page content.
+			the_content();
+
+			/**
+			 * Fires at the end of page content.
+			 * @since 	1.4.0
+			 */
+			do_action('admin_page_footer');
+			?>
+			<div class="footer clearfix" id="kbfooter" role="contentinfo">
+				<?php
+				/**
+				 * Fires right after the opening tag of the admin footer.
+				 * @since 	1.4.0
+				 */
+				do_action('in_admin_footer');
+				?>
+				<span class="text-muted" id="footer-thankyou">
+					<?php
+					$thankyou = sprintf(line('admin_footer_text'), 'https://goo.gl/jb4nQC');
+					/**
+					 * Filters the "Thank you" text displayed in the admin footer.
+					 * @since 	1.3.3
+					 */
+					echo apply_filters('admin_footer_text', $thankyou);
+					?>
+				</span>
+				<span class="text-muted pull-right" id="footer-upgrade">
+					<?php
+					$version = sprintf(line('admin_version_text'), KB_VERSION);
+					/**
+					 * Filters the version text displayed in the admin footer.
+					 * @since 	1.4.0
+					 */
+					echo apply_filters('admin_version_text', $version);
+					?>
+				</span>
+			</div>
+		</div>
+	</main>
+</div><!--/.csk-wrap-->
+
+
 
 <?php the_alert(); ?>
