@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.3.3
- * @version 	1.4.0
+ * @version 	1.4.2
  */
 class Ajax extends AJAX_Controller {
 
@@ -222,21 +222,12 @@ class Ajax extends AJAX_Controller {
 			$config['source_image']   = $data['full_path'];
 			$config['new_image']      = $new_image;
 			$config['maintain_ratio'] = true;
-
-			if ($data['image_width'] > $data['image_height'])
-			{
-				$config['height'] = $details['height'];
-				$config['width'] = ($data['image_width'] * $details['width']) / $data['image_height'];
-			}
-			else
-			{
-				$config['width'] = $details['width'];
-				$config['height'] = ($data['image_height'] * $details['height']) / $data['image_width'];
-			}
+			$config['width']          = $details['width'];
+			$config['height']         = $details['height'];
 
 			$this->image_lib->initialize($config);
 
-			if (false === $this->image_lib->resize())
+			if (false === $this->image_lib->process())
 			{
 				$this->response->header  = self::HTTP_CONFLICT;
 				$this->response->message = line('smd_media_upload_error');
@@ -245,30 +236,9 @@ class Ajax extends AJAX_Controller {
 
 			if (isset($details['crop']) && true === $details['crop'])
 			{
-				$this->image_lib->clear();
-				$_config = $config;
-				unset($config);
-
-				$config['image_library']  = 'gd2';
-				$config['source_image']   = $_config['new_image'];
 				$config['maintain_ratio'] = false;
-				$config['width']          = $details['width'];
-				$config['height']         = $details['height'];
-
-				if ($_config['width'] > $_config['height'])
-				{
-					$config['x_axis'] = ($_config['width'] - $details['width']) / 2;
-					$config['y_axis'] = 0;
-				}
-				else
-				{
-					$config['x_axis'] = 0;
-					$config['y_axis'] = ($_config['height'] - $details['height']) / 2;
-				}
-
-				// Initialize library and resize the image.
 				$this->image_lib->initialize($config);
-				$this->image_lib->crop();
+				$this->image_lib->process();
 			}
 			
 			$media_sizes[$name] = array(
@@ -283,7 +253,6 @@ class Ajax extends AJAX_Controller {
 		{
 			$media['media_meta']['sizes'] = $media_sizes;
 			$db_media->update('media_meta', $media['media_meta']);
-			// update_meta($media_id, 'media_meta', $media['media_meta']);
 		}
 
 		$media['thumbnail']    = get_media_src($db_media, 'thumbnail');
