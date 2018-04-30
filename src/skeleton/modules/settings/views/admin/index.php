@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.4.0
+ * @version 	1.4.2
  */
 ?><h2 class="page-header"><?php _e('site_settings') ?></h2>
 
@@ -62,7 +62,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <div class="tab-content tab-settings">
 	<div class="tab-pane active" role="tabpanel" id="general">
 		<?php
-		echo form_open('admin/settings', 'role="form" class="form-horizontal"');
+		echo form_open('admin/settings', 'role="form" class="form-horizontal" id="settings-general"');
 		echo form_nonce('admin_settings_general');
 		?>
 			<fieldset>

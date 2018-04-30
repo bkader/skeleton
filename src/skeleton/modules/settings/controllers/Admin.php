@@ -50,8 +50,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
  * @since 		1.3.3 	Changed "settings_admin" file to "settings".
+ * @since 		1.4.2 	Added jQuery validation.
  * 
- * @version 	1.3.3
+ * @version 	1.4.2
  */
 class Admin extends Admin_Controller
 {
@@ -65,6 +66,9 @@ class Admin extends Admin_Controller
 
 		// Load settings language file.
 		$this->load->language('settings/settings');
+
+		// Load jQuery validation.
+		$this->_jquery_validate();
 	}
 
 	// ------------------------------------------------------------------------
@@ -83,7 +87,7 @@ class Admin extends Admin_Controller
 		list($data, $rules) = $this->_prep_settings('general');
 
 		// Prepare form validation and rules.
-		$this->prep_form($rules);
+		$this->prep_form($rules, '#settings-general');
 
 		// Before form processing.
 		if ($this->form_validation->run() == false)
@@ -155,7 +159,7 @@ class Admin extends Admin_Controller
 		list($data, $rules) = $this->_prep_settings('users');
 
 		// Prepare form validation and rules.
-		$this->prep_form($rules);
+		$this->prep_form($rules, '#settings-users');
 
 		// Before form processing.
 		if ($this->form_validation->run() == false)
@@ -267,7 +271,7 @@ class Admin extends Admin_Controller
 		}
 
 		// Prepare form validation and rules.
-		$this->prep_form($rules);
+		$this->prep_form($rules, '#settings-email');
 
 		// Before form processing.
 		if ($this->form_validation->run() == false)
@@ -339,7 +343,7 @@ class Admin extends Admin_Controller
 		list($data, $rules) = $this->_prep_settings('upload');
 
 		// Prepare form validation and rules.
-		$this->prep_form($rules);
+		$this->prep_form($rules, '#settings-uploads');
 
 		// Before form processing.
 		if ($this->form_validation->run() == false)
@@ -429,7 +433,7 @@ class Admin extends Admin_Controller
 		}
 
 		// Prepare form validation and rules.
-		$this->prep_form($rules);
+		$this->prep_form($rules, '#settings-captcha');
 
 		// Before form processing.
 		if ($this->form_validation->run() == false)
