@@ -68,7 +68,12 @@ class Admin extends Admin_Controller {
 		add_filter('admin_head', array($this, '_admin_head'));
 
 		// Add require assets files.
-		$this->_dropzone(true)->_handlebars()->_zoom();
+		$this
+			->_dropzone(true)
+			->_handlebars()
+			->_zoom()
+			->_jquery_validate();
+		
 		$this->scripts[] = 'media';
 	}
 
@@ -88,7 +93,12 @@ class Admin extends Admin_Controller {
 	 */
 	public function index()
 	{
-		$this->prep_form();
+		$this->prep_form(array(
+			array( 	'field' => 'name',
+					'label' => 'lang:title',
+					'rules' => 'trim|required|min_length[3]|max_length[100]')
+		), '.media-update');
+
 		$this->load->library('pagination');
 
 		$config['base_url']   = $config['first_link'] = admin_url('media');
