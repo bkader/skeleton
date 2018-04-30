@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.3.3
+ * @version 	1.4.2
  */
 class Admin extends Admin_Controller {
 
@@ -57,6 +57,7 @@ class Admin extends Admin_Controller {
 	 * @since 	1.0.0
 	 * @since 	1.3.0 	Added AJAX methods and changes language file name.
 	 * @since 	1.4.0 	Dashboard assets enqueue is handled by parent methods.
+	 * @since 	1.4.2 	Added jQuery validation plugin.
 	 * 
 	 * @return 	void
 	 */
@@ -77,7 +78,7 @@ class Admin extends Admin_Controller {
 		('items' === $this->router->fetch_method()) && $this->_jquery_ui(true);
 
 		// We add garlic to hold inputs values.
-		$this->_garlic();
+		$this->_garlic()->_jquery_validate();
 
 		// Add our menus JS file.
 		$this->scripts[] = 'menus';
@@ -120,8 +121,8 @@ class Admin extends Admin_Controller {
 		$this->prep_form(array(
 			array(	'field' => 'name',
 					'label' => 'lang:smn_menu_name',
-					'rules' => 'required')
-		));
+					'rules' => 'required|min_length[3]|max_length[100]|alpha_numeric')
+		), "#add-menu");
 
 		// Before the form is processed.
 		if ($this->form_validation->run() == false)
@@ -223,7 +224,7 @@ class Admin extends Admin_Controller {
 		}
 
 		// Prepare form validation and rules.
-		$this->prep_form($rules);
+		$this->prep_form($rules, '#edit-menu');
 
 		// Before the form is processed.
 		if ($this->form_validation->run() == false)
@@ -385,7 +386,7 @@ class Admin extends Admin_Controller {
 			array(	'field' => 'href',
 					'label' => 'lang:smn_item_url',
 					'rules' => 'required'),
-		));
+		), '#add-item');
 
 		// Before the form is processed.
 		if ($this->form_validation->run() == false)

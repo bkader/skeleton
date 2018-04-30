@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.4.0
+ * @version 	1.4.2
  */
 ?><h2 class="page-header clearfix"><?php
 
@@ -145,7 +145,7 @@ echo admin_anchor('menus', lang('smn_manage_menus'), 'class="btn btn-default btn
 			</div>
 			<div class="panel-body">
 				<?php
-				echo form_open('admin/menus/items/'.$menu->id, 'role="form" rel="persist"'),
+				echo form_open('admin/menus/items/'.$menu->id, 'role="form" rel="persist" id="add-item"'),
 				form_nonce('add_menu_item_'.$menu->id);
 				?>
 					<div class="form-group<?php echo form_error('name') ? ' has-error' : ''; ?>">
