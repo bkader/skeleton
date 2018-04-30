@@ -59,7 +59,7 @@ echo admin_anchor('plugins?status=active', sprintf(lang('spg_active'), $count_ac
 
 echo admin_anchor('plugins?status=inactive', sprintf(lang('spg_inactive'), $count_inactive), 'class="btn btn-'.('inactive' === $filter ? 'primary' : 'default').'"');
 
-	?></div><?php echo admin_anchor('plugins/install', lang('spg_plugin_add'), 'class="btn btn-primary btn-sm pull-right"'); ?></span>
+	?></div><?php echo admin_anchor('plugins/install', lang('spg_plugin_add'), 'class="btn btn-primary btn-sm"'); ?></span>
 </h2>
 <div class="panel panel-default">
 	<div class="table-responsive">
