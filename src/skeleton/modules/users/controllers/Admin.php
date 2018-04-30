@@ -174,10 +174,6 @@ class Admin extends Admin_Controller {
 					'rules' => 'required|matches[password]'),
 		), '#add-user');
 
-		$this->jquery_validation->set_messages(array(
-			'username' => array('required' => 'Username required'),
-		));
-
 		// Before form processing
 		if ($this->form_validation->run() == false)
 		{
