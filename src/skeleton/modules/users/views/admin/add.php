@@ -55,7 +55,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<?php
-				echo form_open('admin/users/add', 'role="form"');
+				echo form_open('admin/users/add', 'role="form" id="add-user"');
 				echo form_nonce('add-user');
 				?>
 					<div class="form-group<?php echo form_error('first_name') ? ' has-error' : '' ?>">

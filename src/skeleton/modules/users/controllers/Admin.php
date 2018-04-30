@@ -75,6 +75,12 @@ class Admin extends Admin_Controller {
 		// We add our language lines to head tag.
 		add_filter('admin_head', array($this, '_admin_head'));
 
+		// We load jQuery validation in add and edit methods.
+		if ('add' === $this->router->fetch_method())
+		{
+			$this->_jquery_validate();
+		}
+
 		// We add users JS file.
 		$this->scripts[] = 'users';
 	}
@@ -159,13 +165,17 @@ class Admin extends Admin_Controller {
 					'rules' => 'trim|required|valid_email|unique_email'),
 			array(	'field' => 'username',
 					'label' => 'lang:username',
-					'rules' => 'trim|required|min_length[5]|max_length[32]|unique_username'),
+					'rules' => 'trim|required|alpha_dash|min_length[5]|max_length[32]|unique_username'),
 			array(	'field' => 'password',
 					'label' => 'lang:password',
 					'rules' => 'required|min_length[8]|max_length[20]'),
 			array(	'field' => 'cpassword',
 					'label' => 'lang:confirm_password',
 					'rules' => 'required|matches[password]'),
+		), '#add-user');
+
+		$this->jquery_validation->set_messages(array(
+			'username' => array('required' => 'Username required'),
 		));
 
 		// Before form processing
