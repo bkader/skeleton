@@ -3206,6 +3206,29 @@ EOT;
 		return $this;
 	}
 
+	// ------------------------------------------------------------------------
+
+	/**
+	 * do_extension
+	 *
+	 * Method for making sure this library puts back files extensions in case
+	 * the "no_extension" was called. Make sure to call it right after you
+	 * call the late one.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.2
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
+	public function do_extension()
+	{
+		$this->_remove_extension = true;
+		return $this;
+	}
+
 	// --------------------------------------------------------------------
 
 	/**
