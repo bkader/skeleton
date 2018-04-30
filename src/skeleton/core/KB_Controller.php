@@ -232,13 +232,13 @@ class KB_Controller extends CI_Controller {
 	 * @link 	https://github.com/bkader
 	 * @since 	1.4.0
 	 *
-	 * @access 	protected
+	 * @access 	public
 	 * @param 	string 	$action 	The action attached (Optional).
 	 * @param 	bool 	$referrer	Whether to check referrer.
 	 * @param 	string 	$name 		The name of the field used as nonce.
 	 * @return 	bool
 	 */
-	protected function check_nonce($action = null, $referrer = true, $name = '_csknonce')
+	public function check_nonce($action = null, $referrer = true, $name = '_csknonce')
 	{
 		// If the action is not provided, get if from the request.
 		$real_action = (null !== $req = $this->input->request('action')) ? $req : -1;
@@ -279,7 +279,7 @@ class KB_Controller extends CI_Controller {
 	 * @param 	string 	$name 		The name of the referrer field.
 	 * @return 	bool
 	 */
-	protected function check_referrer($referrer = null, $name = '_csk_http_referrer')
+	public function check_referrer($referrer = null, $name = '_csk_http_referrer')
 	{
 		(class_exists('CI_User_agent', false)) OR $this->load->library('user_agent');
 
@@ -302,11 +302,11 @@ class KB_Controller extends CI_Controller {
 	 * @since 	1.0.0
 	 * @since 	1.4.0 	DEPRECATED: you may want to use [create/verify]_nonce.
 	 *
-	 * @access 	protected
+	 * @access 	public
 	 * @param 	none
 	 * @return 	array
 	 */
-	protected function create_csrf()
+	public function create_csrf()
 	{
 		// Make sure to load string helper.
 		(function_exists('random_string')) OR $this->load->helper('string');
@@ -343,11 +343,11 @@ class KB_Controller extends CI_Controller {
 	 * @since 	1.0.0
 	 * @since 	1.4.0 	DEPRECATED. You may want to use verify_nonce.
 	 *
-	 * @access 	protected
+	 * @access 	public
 	 * @param 	none
 	 * @return 	array
 	 */
-	protected function check_csrf()
+	public function check_csrf()
 	{
 		$user_value = $this->input->post($this->session->flashdata('csrf_key'));
 		$csrf_value = $this->session->flashdata('csrf_value');
@@ -360,11 +360,11 @@ class KB_Controller extends CI_Controller {
 
 	/**
 	 * Generate a captcha field.
-	 * @access 	protected
+	 * @access 	public
 	 * @param 	int 	$guid 	the user's ID.
 	 * @return 	array 	captcha image URL and form details.
 	 */
-	protected function create_captcha($guid = 0)
+	public function create_captcha($guid = 0)
 	{
 		// Not using captcha at all?
 		if (get_option('use_captcha', false) === false)
@@ -437,11 +437,11 @@ class KB_Controller extends CI_Controller {
 
 	/**
 	 * Check captcha.
-	 * @access 	protected
+	 * @access 	public
 	 * @param 	string 	$str 	captcha word
 	 * @return 	bool
 	 */
-	protected function check_captcha($str)
+	public function check_captcha($str)
 	{
 		// Return true if captcha is disabled.
 		if (get_option('use_captcha', false) === false)
