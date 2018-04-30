@@ -50,8 +50,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
  * @since 		1.3.3 	Added dynamic assets loading.
+ * @since 		1.4.2 	Added jQuery validate plugin.
  * 
- * @version 	1.3.3
+ * @version 	1.4.2
  */
 class Admin_Controller extends User_Controller
 {
@@ -190,6 +191,12 @@ class Admin_Controller extends User_Controller
 					->no_extension()
 					->add('js', site_url("load/scripts?load=".rawurlencode($this->scripts)), null, null, true);
 			}
+
+			/**
+			 * We make sure to make theme library put back extensions.
+			 * @since 	1.4.2
+			 */
+			$this->theme->do_extension();
 
 			// We call the method.
 			return call_user_func_array(array($this, $method), $params);
@@ -388,6 +395,33 @@ class Admin_Controller extends User_Controller
 		$this->styles[]  = 'jquery-ui';
 		$this->scripts[] = 'jquery-ui';
 		(true === $touch_punch) && $this->scripts[] = 'jquery.ui.touch-punch';
+		return $this;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * _jquery_validate
+	 *
+	 * Method to enqueue jQuery validate plugin.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.4.2
+	 *
+	 * @access 	protected
+	 * @param 	none
+	 * @return 	void
+	 */
+	protected function _jquery_validate()
+	{
+		$this->scripts[] = 'jquery.validate';
+
+		if ('en' !== ($code = $this->lang->lang('code')))
+		{
+			$this->scripts[] = 'jquery-validate/'.$code;
+		}
+
 		return $this;
 	}
 

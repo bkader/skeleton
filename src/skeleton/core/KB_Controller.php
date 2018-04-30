@@ -52,7 +52,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.4.0
+ * @version 	1.4.2
  */
 class KB_Controller extends CI_Controller {
 
@@ -152,14 +152,22 @@ class KB_Controller extends CI_Controller {
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Prepare form validation.
-	 * @access 	public
-	 * @param 	array 	$rules 	array of validation rules.
+	 * prep_form
+	 *
+	 * Method for preparing form validation library with optional rules to
+	 * apply and whether to use jQuery.
+	 *
 	 * @author 	Kader Bouyakoub
-	 * @version 1.0
-	 * @return void
+	 * @link 	https://github.com/bkader
+	 * 
+	 * @since 	1.0.0
+	 * @since 	1.4.2 	Added jQuery validation plugin.
+	 *
+	 * @access 	protected
+	 * @param 	array
+	 * @return 	void
 	 */
-	public function prep_form($rules = array())
+	public function prep_form($rules = array(), $form = null)
 	{
 		// Load form validation library if not loaded.
 		if ( ! class_exists('CI_Form_validation', false))
@@ -167,22 +175,47 @@ class KB_Controller extends CI_Controller {
 			$this->load->library('form_validation');
 		}
 
-		// Load form helper if not loaded.
-		if ( ! function_exists('form_open'))
-		{
-			$this->load->helper('form');
-		}
-
-		// If there are any rules, set them.
-		if (is_array($rules) && ! empty($rules))
-		{
-			$this->form_validation->set_rules($rules);
-		}
-
 		// Load inputs config file.
 		if ( ! $this->config->item('inputs'))
 		{
 			$this->load->config('inputs', true);
+		}
+
+		// Are there any rules to apply?
+		if (is_array($rules) && ! empty($rules))
+		{
+			// Set CI validation rules first.
+			$this->form_validation->set_rules($rules);
+
+			// Use jQuery validation?
+			if (null !== $form)
+			{
+				// Make sure to use _query_validate() method on admin.
+				if ('admin' !== $this->router->fetch_class())
+				{
+					add_script('jquery-validate', get_common_url('js/jquery.validate'));
+
+					// Different language?
+					if ('en' !== ($code = $this->lang->lang('code')))
+					{
+						add_script(
+							'jquery-validate-'.$code,
+							get_common_url('js/jquery-validate/'.$code)
+						);
+					}
+				}
+
+				// Load jQuery validation and add rules.
+				if ( ! class_exists('Jquery_validation', false))
+				{
+					$this->load->library('jquery_validation');
+				}
+
+				$this->jquery_validation->set_rules($rules);
+
+				// we build the final jQuery validation output.
+				add_inline_script($this->jquery_validation->run($form));
+			}
 		}
 	}
 
