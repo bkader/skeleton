@@ -50,9 +50,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		Version 1.0.0
  * @since 		1.3.3 	Changed "settings_admin" file to "settings".
- * @since 		1.4.2 	Added jQuery validation.
+ * @since 		1.5.0 	Added jQuery validation.
  * 
- * @version 	1.4.2
+ * @version 	1.5.0
  */
 class Admin extends Admin_Controller
 {

@@ -52,7 +52,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.4.2
+ * @version 	1.5.0
  */
 class KB_Controller extends CI_Controller {
 
@@ -161,7 +161,7 @@ class KB_Controller extends CI_Controller {
 	 * @link 	https://github.com/bkader
 	 * 
 	 * @since 	1.0.0
-	 * @since 	1.4.2 	Added jQuery validation plugin.
+	 * @since 	1.5.0 	Added jQuery validation plugin.
 	 *
 	 * @access 	protected
 	 * @param 	array

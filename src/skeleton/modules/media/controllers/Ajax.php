@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.3.3
- * @version 	1.4.2
+ * @version 	1.5.0
  */
 class Ajax extends AJAX_Controller {
 
@@ -388,7 +388,7 @@ class Ajax extends AJAX_Controller {
 	 * @link 	https://github.com/bkader
 	 * 
 	 * @since 	1.4.0
-	 * @since 	1.4.2 	Format returned medias array.
+	 * @since 	1.5.0 	Format returned medias array.
 	 *
 	 * @access 	public
 	 * @param 	none
@@ -408,7 +408,7 @@ class Ajax extends AJAX_Controller {
 		$this->load->helper('number');
 		/**
 		 * Prepare medias before returning them.
-		 * @since 	1.4.2
+		 * @since 	1.5.0
 		 */
 		foreach ($db_media as $item)
 		{

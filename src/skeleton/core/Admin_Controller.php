@@ -50,9 +50,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
  * @since 		1.3.3 	Added dynamic assets loading.
- * @since 		1.4.2 	Added jQuery validate plugin.
+ * @since 		1.5.0 	Added jQuery validate plugin.
  * 
- * @version 	1.4.2
+ * @version 	1.5.0
  */
 class Admin_Controller extends User_Controller
 {
@@ -194,7 +194,7 @@ class Admin_Controller extends User_Controller
 
 			/**
 			 * We make sure to make theme library put back extensions.
-			 * @since 	1.4.2
+			 * @since 	1.5.0
 			 */
 			$this->theme->do_extension();
 
@@ -407,7 +407,7 @@ class Admin_Controller extends User_Controller
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://github.com/bkader
-	 * @since 	1.4.2
+	 * @since 	1.5.0
 	 *
 	 * @access 	protected
 	 * @param 	none

@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.4.2
+ * @version 	1.5.0
  */
 class Admin extends Admin_Controller {
 
@@ -57,7 +57,7 @@ class Admin extends Admin_Controller {
 	 * @since 	1.0.0
 	 * @since 	1.3.0 	Added AJAX methods and changes language file name.
 	 * @since 	1.4.0 	Dashboard assets enqueue is handled by parent methods.
-	 * @since 	1.4.2 	Added jQuery validation plugin.
+	 * @since 	1.5.0 	Added jQuery validation plugin.
 	 * 
 	 * @return 	void
 	 */

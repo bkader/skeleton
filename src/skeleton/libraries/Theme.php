@@ -3217,7 +3217,7 @@ EOT;
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://github.com/bkader
-	 * @since 	1.4.2
+	 * @since 	1.5.0
 	 *
 	 * @access 	public
 	 * @param 	none
@@ -4070,12 +4070,12 @@ if ( ! function_exists('add_ie9_support'))
 	function add_ie9_support(&$output, $remote = true)
 	{
 		$html5shiv = 'https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js';
-		$respond   = 'https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js';
+		$respond   = 'https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.5.0/respond.min.js';
 
 		if ($remote === false)
 		{
 			$html5shiv = get_common_url('js/html5shiv-3.7.3.min.js');
-			$respond   = get_common_url('js/respond-1.4.2.min.js');
+			$respond   = get_common_url('js/respond-1.5.0.min.js');
 		}
 		$output .= <<<EOT
 	<!--[if lt IE 9]>

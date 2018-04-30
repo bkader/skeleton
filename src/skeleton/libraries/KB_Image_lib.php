@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		1.4.2
+ * @since 		1.5.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -49,8 +49,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		1.4.2
- * @version 	1.4.2
+ * @since 		1.5.0
+ * @version 	1.5.0
  */
 class KB_Image_lib extends CI_Image_lib
 {
@@ -89,7 +89,7 @@ class KB_Image_lib extends CI_Image_lib
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://github.com/bkader
-	 * @since 	1.4.2
+	 * @since 	1.5.0
 	 *
 	 * @access 	public
 	 * @param 	array
@@ -116,7 +116,7 @@ class KB_Image_lib extends CI_Image_lib
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://github.com/bkader
-	 * @since 	1.4.2
+	 * @since 	1.5.0
 	 *
 	 * @access 	public
 	 * @param 	none
@@ -143,7 +143,7 @@ class KB_Image_lib extends CI_Image_lib
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://github.com/bkader
-	 * @since 	1.4.2
+	 * @since 	1.5.0
 	 *
 	 * @access 	public
 	 * @param 	none

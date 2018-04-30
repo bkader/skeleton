@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	1.4.2
+ * @version 	1.5.0
  */
 class Kbcore_entities extends CI_Driver implements CRUD_interface
 {
@@ -368,7 +368,7 @@ class Kbcore_entities extends CI_Driver implements CRUD_interface
 		/**
 		 * We make sure the username is always URL-titled and proceed
 		 * only if it is not taken.
-		 * @since 	1.4.2
+		 * @since 	1.5.0
 		 */
 		if (isset($data['username']))
 		{
