@@ -135,11 +135,12 @@ class Jquery_validation {
      *
      * @access 	public
      * @param 	string 	$form 			The form to target (jQuery selector).
+     * @param 	string 	$filter 		String appended to filters names.
      * @return 	string
      */
-    public function run($form = null)
+    public function run($form = null, $filter = null)
     {
-        return $this->_output($form);
+        return $this->_output($form, $filter);
     }
 
     // ------------------------------------------------------------------------
@@ -450,12 +451,21 @@ class Jquery_validation {
      * @since 	1.4.2
      *
      * @access 	private
-     * @param 	string
+     * @param 	string 	$form 		The jQuery select for the form.
+     * @param 	string 	$filter 	String appended to applied filters.
      * @return 	string
      */
-    private function _output($form = 'form')
+    private function _output($form = 'form', $filter = null)
     {
     	empty($form) && $form = 'form';
+
+    	// Allow only ID and class selectors.
+    	if (false === strpos($form, '.') && false === strpos($form, '#'))
+    	{
+    		return;
+    	}
+
+    	empty($filter) && $filter = str_replace(array('.', '#'), '', $form);
 
 		// Default jQuery validate params.
 
@@ -654,38 +664,37 @@ class Jquery_validation {
 		 */
 		$jqv_ignoreTitle  = false;
 
+		$jqv_submitHandler       = apply_filters('jquery_validate_submitHandler-'.$filter, $jqv_submitHandler);
+		$jqv_invalidHandler      = apply_filters('jquery_validate_invalidHandler-'.$filter, $jqv_invalidHandler);
+		$jqv_ignore              = apply_filters('jquery_validate_ignore-'.$filter, $jqv_ignore);
+		$jqv_groups              = apply_filters('jquery_validate_groups-'.$filter, $jqv_groups);
+		$jqv_normalizer          = apply_filters('jquery_validate_normalizer-'.$filter, $jqv_normalizer);
+		$jqv_onsubmit            = apply_filters('jquery_validate_onsubmit-'.$filter, $jqv_onsubmit);
+		$jqv_onfocusout          = apply_filters('jquery_validate_onfocusout-'.$filter, $jqv_onfocusout);
+		$jqv_onkeyup             = apply_filters('jquery_validate_onkeyup-'.$filter, $jqv_onkeyup);
+		$jqv_onclick             = apply_filters('jquery_validate_onclick-'.$filter, $jqv_onclick);
+		$jqv_focusInvalid        = apply_filters('jquery_validate_focusInvalid-'.$filter, $jqv_focusInvalid);
+		$jqv_focusCleanup        = apply_filters('jquery_validate_focusCleanup-'.$filter, $jqv_focusCleanup);
+		$jqv_errorClass          = apply_filters('jquery_validate_errorClass-'.$filter, $jqv_errorClass);
+		$jqv_validClass          = apply_filters('jquery_validate_validClass-'.$filter, $jqv_validClass);
+		$jqv_errorElement        = apply_filters('jquery_validate_errorElement-'.$filter, $jqv_errorElement);
+		$jqv_wrapper             = apply_filters('jquery_validate_wrapper-'.$filter, $jqv_wrapper);
+		$jqv_errorLabelContainer = apply_filters('jquery_validate_errorLabelContainer-'.$filter, $jqv_errorLabelContainer);
+		$jqv_errorContainer      = apply_filters('jquery_validate_errorContainer-'.$filter, $jqv_errorContainer);
+		$jqv_showErrors          = apply_filters('jquery_validate_showErrors-'.$filter, $jqv_showErrors);
+		$jqv_errorPlacement      = apply_filters('jquery_validate_errorPlacement-'.$filter, $jqv_errorPlacement);
+		$jqv_success             = apply_filters('jquery_validate_success-'.$filter, $jqv_success);
+		$jqv_highlight           = apply_filters('jquery_validate_highlight-'.$filter, $jqv_highlight);
+		$jqv_unhighlight         = apply_filters('jquery_validate_unhighlight-'.$filter, $jqv_unhighlight);
+		$jqv_ignoreTitle         = apply_filters('jquery_validate_ignoreTitle-'.$filter, $jqv_ignoreTitle);
+
 		// We allow themes/plugins alter these.
-		if ('admin' !== $this->_ci->router->fetch_class())
-		{
-			$jqv_submitHandler       = apply_filters('jquery_validate_submitHandler', $jqv_submitHandler);
-			$jqv_invalidHandler      = apply_filters('jquery_validate_invalidHandler', $jqv_invalidHandler);
-			$jqv_ignore              = apply_filters('jquery_validate_ignore', $jqv_ignore);
-			$jqv_groups              = apply_filters('jquery_validate_groups', $jqv_groups);
-			$jqv_normalizer          = apply_filters('jquery_validate_normalizer', $jqv_normalizer);
-			$jqv_onsubmit            = apply_filters('jquery_validate_onsubmit', $jqv_onsubmit);
-			$jqv_onfocusout          = apply_filters('jquery_validate_onfocusout', $jqv_onfocusout);
-			$jqv_onkeyup             = apply_filters('jquery_validate_onkeyup', $jqv_onkeyup);
-			$jqv_onclick             = apply_filters('jquery_validate_onclick', $jqv_onclick);
-			$jqv_focusInvalid        = apply_filters('jquery_validate_focusInvalid', $jqv_focusInvalid);
-			$jqv_focusCleanup        = apply_filters('jquery_validate_focusCleanup', $jqv_focusCleanup);
-			$jqv_errorClass          = apply_filters('jquery_validate_errorClass', $jqv_errorClass);
-			$jqv_validClass          = apply_filters('jquery_validate_validClass', $jqv_validClass);
-			$jqv_errorElement        = apply_filters('jquery_validate_errorElement', $jqv_errorElement);
-			$jqv_wrapper             = apply_filters('jquery_validate_wrapper', $jqv_wrapper);
-			$jqv_errorLabelContainer = apply_filters('jquery_validate_errorLabelContainer', $jqv_errorLabelContainer);
-			$jqv_errorContainer      = apply_filters('jquery_validate_errorContainer', $jqv_errorContainer);
-			$jqv_showErrors          = apply_filters('jquery_validate_showErrors', $jqv_showErrors);
-			$jqv_errorPlacement      = apply_filters('jquery_validate_errorPlacement', $jqv_errorPlacement);
-			$jqv_success             = apply_filters('jquery_validate_success', $jqv_success);
-			$jqv_highlight           = apply_filters('jquery_validate_highlight', $jqv_highlight);
-			$jqv_unhighlight         = apply_filters('jquery_validate_unhighlight', $jqv_unhighlight);
-			$jqv_ignoreTitle         = apply_filters('jquery_validate_ignoreTitle', $jqv_ignoreTitle);
-		}
-		
+
 		// Prepare the final output.
     	$output = '<script type="text/javascript">';
     	$output .= '$(document).ready(function () {';
-    	$output .= '$("'.$form.'").validate({';
+    	$output .= 'var $form = $("'.$form.'");';
+    	$output .= ' $form.validate({';
 
     	// We start by adding rules and messages.
     	$output .= 'rules: '.$jqv_rules;

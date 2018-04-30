@@ -165,9 +165,11 @@ class KB_Controller extends CI_Controller {
 	 *
 	 * @access 	protected
 	 * @param 	array
+	 * @param 	string 	$form 		jQuery selector.
+	 * @param 	string 	$filter 	String appended to filtered parameters.
 	 * @return 	void
 	 */
-	public function prep_form($rules = array(), $form = null)
+	public function prep_form($rules = array(), $form = null, $filter = null)
 	{
 		// Load form validation library if not loaded.
 		if ( ! class_exists('CI_Form_validation', false))
@@ -214,7 +216,7 @@ class KB_Controller extends CI_Controller {
 				$this->jquery_validation->set_rules($rules);
 
 				// we build the final jQuery validation output.
-				add_inline_script($this->jquery_validation->run($form));
+				add_inline_script($this->jquery_validation->run($form, $filter));
 			}
 		}
 	}
