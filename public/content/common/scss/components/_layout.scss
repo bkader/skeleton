@@ -14,7 +14,7 @@
     width: $sidebar__width;
     overflow: visible;
     padding: $gutters 0;
-    z-index: 9980;
+    z-index: 990;
 
     &.open {@include transform(translateX(0));}
 
@@ -55,7 +55,7 @@
                 @include absolute(top -1px left 100%);
                 @include box-shadow(0 3px 5px rgba(#000, 0.2));
                 background-color: $sidebar__background;
-                z-index: 9989;
+                z-index: 991;
                 min-width: ($sidebar__width * 3) / 4;
 
                 a {

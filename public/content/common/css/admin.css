@@ -114,7 +114,7 @@ body {
   background-color: #2185d0;
   border: none;
   margin-bottom: 0;
-  z-index: 9999;
+  z-index: 999;
 }
 .navbar-admin .navbar-toggle {
   color: #fff;
@@ -216,7 +216,7 @@ body {
   width: 180px;
   overflow: visible;
   padding: 15px 0;
-  z-index: 9980;
+  z-index: 990;
 }
 .csk-sidebar.open {
   -webkit-transform: translateX(0);
@@ -267,7 +267,7 @@ body {
     -moz-box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
     background-color: #092236;
-    z-index: 9989;
+    z-index: 991;
     min-width: 135px;
   }
   .csk-sidebar .nav-sidebar li ul a:hover, .csk-sidebar .nav-sidebar li ul a:focus, .csk-sidebar .nav-sidebar li ul a:active {
