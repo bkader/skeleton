@@ -867,11 +867,7 @@ EOT;
 	 */
 	public function set_theme($theme = 'default')
 	{
-		// Reset all.
-		$this->_reset();
-
-		// Change config item.
-		$this->ci->config->set_item('theme', $theme);
+		$this->_theme = $theme;
 		return $this;
 	}
 
