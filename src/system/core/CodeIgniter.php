@@ -57,14 +57,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 	const CI_VERSION = '3.1.8';
 
-/**
- * Skeleton Version
- *
- * @var	string
- *
- */
-	const KB_VERSION = '1.5.0';
-
 /*
  * ------------------------------------------------------
  *  Load the framework constants
@@ -89,6 +81,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * ------------------------------------------------------
  */
 	require_once(BASEPATH.'core/Common.php');
+
 
 /*
  * ------------------------------------------------------
@@ -204,13 +197,6 @@ if ( ! is_php('5.4'))
 
 /*
  * ------------------------------------------------------
- *  Instantiate the plugins class
- * ------------------------------------------------------
- */
-	$PLG =& load_class('Plugins', 'libraries');
-
-/*
- * ------------------------------------------------------
  *  Instantiate the hooks class
  * ------------------------------------------------------
  */
@@ -218,7 +204,7 @@ if ( ! is_php('5.4'))
 
 /*
  * ------------------------------------------------------
- *  Is there a "pre_system" action or hook?
+ *  Is there a "pre_system" hook?
  * ------------------------------------------------------
  */
 	$EXT->call_hook('pre_system');
@@ -300,6 +286,7 @@ if ( ! is_php('5.4'))
  *  Load compatibility features
  * ------------------------------------------------------
  */
+
 	require_once(BASEPATH.'core/compat/mbstring.php');
 	require_once(BASEPATH.'core/compat/hash.php');
 	require_once(BASEPATH.'core/compat/password.php');
@@ -338,17 +325,10 @@ if ( ! is_php('5.4'))
  *	Is there a valid cache file? If so, we're done...
  * ------------------------------------------------------
  */
-	if ($EXT->call_hook('cache_override') === FALSE
-		&& $OUT->_display_cache($CFG, $URI) === TRUE)
+	if ($EXT->call_hook('cache_override') === FALSE && $OUT->_display_cache($CFG, $URI) === TRUE)
 	{
 		exit;
 	}
-
-	// Allow plugins/themes to change cache expiration.
-	$OUT->cache_expiration = $PLG->apply_filters(
-		'output_cache_expiration',
-		$OUT->cache_expiration
-	);
 
 /*
  * -----------------------------------------------------
@@ -390,12 +370,6 @@ if ( ! is_php('5.4'))
 	function &get_instance()
 	{
 		return CI_Controller::get_instance();
-	}
-
-	// Make our custom controller available.
-	if (file_exists(KBPATH.'core/KB_Controller.php'))
-	{
-		require_once KBPATH.'core/KB_Controller.php';
 	}
 
 	if (file_exists(APPPATH.'core/'.$CFG->config['subclass_prefix'].'Controller.php'))
@@ -546,7 +520,6 @@ if ( ! is_php('5.4'))
  * ------------------------------------------------------
  */
 	$EXT->call_hook('pre_controller');
-	do_action('pre_controller');
 
 /*
  * ------------------------------------------------------
@@ -564,7 +537,6 @@ if ( ! is_php('5.4'))
  * ------------------------------------------------------
  */
 	$EXT->call_hook('post_controller_constructor');
-	do_action('post_controller_constructor');
 
 /*
  * ------------------------------------------------------
@@ -582,7 +554,6 @@ if ( ! is_php('5.4'))
  * ------------------------------------------------------
  */
 	$EXT->call_hook('post_controller');
-	do_action('post_controller');
 
 /*
  * ------------------------------------------------------
@@ -600,4 +571,3 @@ if ( ! is_php('5.4'))
  * ------------------------------------------------------
  */
 	$EXT->call_hook('post_system');
-	do_action('post_system');

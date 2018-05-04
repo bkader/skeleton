@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -50,8 +50,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @since 		1.0.0
+ * @version 	1.5.2
  */
 class KB_Hooks extends CI_Hooks
 {
@@ -76,25 +76,32 @@ class KB_Hooks extends CI_Hooks
 			include(KBPATH.'config/hooks.php');
 		}
 
-		// Grab the "hooks" definition file.
-		if (file_exists(APPPATH.'config/hooks.php'))
-		{
-			include(APPPATH.'config/hooks.php');
-		}
+		parent::__construct();
+	}
 
-		if (file_exists(APPPATH.'config/'.ENVIRONMENT.'/hooks.php'))
-		{
-			include(APPPATH.'config/'.ENVIRONMENT.'/hooks.php');
-		}
+	// ------------------------------------------------------------------------
 
-		// If there are no hooks, we're done.
-		if ( ! isset($hook) OR ! is_array($hook))
-		{
-			return;
-		}
+	/**
+	 * call_hook
+	 *
+	 * Calls a particular hook. Added for Skeleton in order to execute action
+	 * using the Plugins class.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://github.com/bkader
+	 * @since 	1.5.2
+	 *
+	 * @access 	public
+	 * @param 	string 	$which 	The hook's name.
+	 * @return 	bool 	true on success, else false.
+	 */
+	public function call_hook($which = '')
+	{
+		// We do any action first.
+		do_action($which);
 
-		$this->hooks =& $hook;
-		$this->enabled = TRUE;
+		// Then we let the parent do the rest.
+		return parent::call_hook($which);
 	}
 
 	// ------------------------------------------------------------------------

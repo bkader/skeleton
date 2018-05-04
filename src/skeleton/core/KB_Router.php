@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -41,7 +41,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * Make sure to load our custom Route class right here.
  * This class allows us to use static routing like laravel.
  */
-require_once(KBPATH.'libraries/Route.php');
+require_once(KBPATH.'third_party/Route/Route.php');
 
 /**
  * KB_Router Class
@@ -54,8 +54,8 @@ require_once(KBPATH.'libraries/Route.php');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @since 		1.0.0
+ * @version 	1.5.2
  */
 class KB_Router extends CI_Router
 {

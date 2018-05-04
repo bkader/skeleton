@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -46,9 +46,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
- * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @since 		1.0.0
+ * @version 	1.5.2
  */
+
+/*
+|--------------------------------------------------------------------------
+| Skeleton Version.
+|--------------------------------------------------------------------------
+*/
+defined('KB_VERSION') OR define('KB_VERSION', '1.5.2');
 
 /*
 |--------------------------------------------------------------------------
@@ -71,3 +78,10 @@ defined('KB_IN_BYTES') OR define('KB_IN_BYTES', 1024);
 defined('MB_IN_BYTES') OR define('MB_IN_BYTES', 1024 * KB_IN_BYTES);
 defined('GB_IN_BYTES') OR define('GB_IN_BYTES', 1024 * MB_IN_BYTES);
 defined('TB_IN_BYTES') OR define('TB_IN_BYTES', 1024 * GB_IN_BYTES);
+
+/*
+ * ------------------------------------------------------
+ *  Instantiate the plugins class
+ * ------------------------------------------------------
+ */
+require_once(KBPATH.'third_party/Plugins/Plugins.php');

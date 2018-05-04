@@ -378,13 +378,13 @@ class Route {
         }
 
         // No we proceed to generating routes.
-        self::get($name,                 $new_name.'/index'.$nest_offset,                     $options, $nested);
-        self::get($name.'/new',          $new_name.'/create_new'.$nest_offset,                $options, $nested);
-        self::get($name.'/'.$id.'/edit', $new_name.'/edit'.$nest_offset.'/$'.(1 + $offset),   $options, $nested);
-        self::get($name.'/'.$id,         $new_name.'/show'.$nest_offset.'/$'.(1 + $offset),   $options, $nested);
-        self::post($name,                $new_name.'/create'.$nest_offset,                    $options, $nested);
-        self::put($name.'/'.$id,         $new_name.'/update'.$nest_offset.'/$'.(1 + $offset), $options, $nested);
-        self::delete($name.'/'.$id,      $new_name.'/delete'.$nest_offset.'/$'.(1 + $offset), $options, $nested);
+        self::get($name, $new_name.'/index'.$nest_offset, $options, $nested);
+        self::get($name.'/new', $new_name.'/add'.$nest_offset, $options, $nested);
+        self::get($name.'/'.$id.'/edit', $new_name.'/edit'.$nest_offset.'/$'.(1 + $offset), $options, $nested);
+        self::get($name.'/'.$id, $new_name.'/view'.$nest_offset.'/$'.(1 + $offset), $options, $nested);
+        self::post($name, $new_name.'/create'.$nest_offset, $options, $nested);
+        self::put($name.'/'.$id, $new_name.'/update'.$nest_offset.'/$'.(1 + $offset), $options, $nested);
+        self::delete($name.'/'.$id, $new_name.'/delete'.$nest_offset.'/$'.(1 + $offset), $options, $nested);
     }
 
     // ------------------------------------------------------------------------

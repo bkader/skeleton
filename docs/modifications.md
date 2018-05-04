@@ -21,8 +21,8 @@ On this file, we have first added the path to **src** folder which starts from l
  * CodeIgniter core classes and files.
  *
  */
-	$skeleton_src = '_PATH_TO_SRC_DIR';
-	$skeleton_path = "{$skeleton_src}/skeleton";
+    $skeleton_src = '_PATH_TO_SRC_DIR';
+    $skeleton_path = "{$skeleton_src}/skeleton";
 ```
 At line **#251** and line **#254** we have defined two useful constants:
 ```php
@@ -35,71 +35,42 @@ define('DS', DIRECTORY_SEPARATOR);
 
 ## CodeIgniter.php
 
-From line **#60** to line **#66**, we simply added the Skeleton version constant (since v**1.3.3**).
-
-```php
-/**
- * Skeleton Version
- *
- * @var	string
- *
- */
-	const KB_VERSION = '1.3.3';
-```
-
-We have include our custom **constants.php** file in which you will find some useful constants. At like **#75**:
-
+* At line **#75** we included our custom `constants.php` file that holds some useful constants including the Skeleton version `KB_VERSION`. 
 ```php
 // Some useful constants are added.
 require_once(KBPATH.'config/constants.php');
 ```
-
-From line **#218** to **#223** we have loaded our custom plugins class **CI_Plugins** that allows as to use a more advanced hooks system:
-
-```php
-/*
- * ------------------------------------------------------
- *  Instantiate the plugins class
- * ------------------------------------------------------
- */
-	$PLG =& load_class('Plugins', 'libraries');
-```
-
-And because we have included this class, you will also find on this file:
+* Lines from **#405** up to **#411** we replace by our custom check. In the modified file you will find them from **#408** up to **#425**.
 
 ```php
-do_action('pre_controller');				// Line #542
-do_action('post_controller_constructor');	// Line #560
-do_action('post_controller');				// Line #578
-do_action('post_system');					// Line #596
-```
-
-At lines **#429** to **#450** we have a little modification so controllers are loaded from the default folder *APPPATH/controllers* but also our custom folder *KBPATH/controllers*. Here is how those line were and below how they become:
-
-```php
-// Line #405 (original CodeIgiter.php):
+// 405-411 | Original file:
 if (empty($class) OR ! file_exists(APPPATH.'controllers/'.$RTR->directory.$class.'.php'))
-
-// Line #405 (after) ... You will find it at #433:
-if (empty($class))
-
-
-// Line #411 (original CodeIgniter.php)
-require_once(APPPATH.'controllers/'.$RTR->directory.$class.'.php');
-
-// After, you will find it at line #433
-if (file_exists(APPPATH.'controllers/'.$RTR->directory.$class.'.php'))
 {
-	require_once(APPPATH.'controllers/'.$RTR->directory.$class.'.php');
-}
-elseif (file_exists(KBPATH.'controllers/'.$RTR->directory.$class.'.php'))
-{
-	require_once(KBPATH.'controllers/'.$RTR->directory.$class.'.php');
+    $e404 = TRUE;
 }
 else
 {
-	$e404 = TRUE;
+    require_once(APPPATH.'controllers/'.$RTR->directory.$class.'.php');
+
+// 408-425 | Modified file:
+if (empty($class))
+{
+    $e404 = TRUE;
 }
+else
+{
+    if (file_exists(APPPATH.'controllers/'.$RTR->directory.$class.'.php'))
+    {
+        require_once(APPPATH.'controllers/'.$RTR->directory.$class.'.php');
+    }
+    elseif (file_exists(KBPATH.'controllers/'.$RTR->directory.$class.'.php'))
+    {
+        require_once(KBPATH.'controllers/'.$RTR->directory.$class.'.php');
+    }
+    else
+    {
+        $e404 = TRUE;
+    }
 ```
 
 ## Common.php
@@ -125,10 +96,10 @@ From line ** #170** to line **#182**, here is where we load our custom classes t
  */
 if (file_exists(KBPATH.$directory.'/KB_'.$class.'.php'))
 {
-	$name = 'KB_'.$class;
-	if (class_exists($name, FALSE) === FALSE)
-	{
-		require_once(KBPATH.$directory.'/KB_'.$class.'.php');
-	}
+    $name = 'KB_'.$class;
+    if (class_exists($name, FALSE) === FALSE)
+    {
+        require_once(KBPATH.$directory.'/KB_'.$class.'.php');
+    }
 }
 ```
