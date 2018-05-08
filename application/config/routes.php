@@ -119,6 +119,13 @@ Route::prefix(KB_ADMIN, function() {
 		Route::context($context, array('home' => KB_ADMIN.'/'.$context));
 	}
 });
+
+// Reserved routes.
+Route::any('ajax/(reports|modules|plugins|themes|languages|users)/(:any)', 'ajax/index/$1/$2');
+Route::any('ajax/(reports|modules|plugins|themes|languages|users)/(:any)/(:any)', 'ajax/index/$1/$2/$3');
+Route::any('ajax/(reports|modules|plugins|themes|languages|users)', 'ajax/index/$1');
+
+// AJAX and process contexts.
 Route::context('(ajax|process)', '$1', array(
 	'home'   => '$1/index',
 	'offset' => 1
