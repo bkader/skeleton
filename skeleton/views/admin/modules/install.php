@@ -33,12 +33,12 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://goo.gl/wGXHO9
- * @since 		1.3.4
+ * @since 		2.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Plugins Module - Install Plugins
+ * Modules Module - Install Module
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
@@ -46,58 +46,99 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
- * @since 		1.3.4
- * @version 	1.3.4
+ * @since 		2.0.0
+ * @version 	2.0.0
  */
 ?>
-<div class="row<?php if ( ! form_error('pluginzip')): ?> -collapse<?php endif; ?> justify-content-md-center" id="plugin-install">
+<div class="row<?php if ( ! form_error('modulezip')): ?> collapse<?php endif; ?> justify-content-md-center mb15" id="module-install">
 	<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 text-center">
-		<p><?php _e('spg_plugin_upload_tip'); ?></p><br>
+		<p><?php _e('CSK_MODULES_UPLOAD_TIP'); ?></p><br>
 		<div class="card">
 			<div class="card-body text-center">
 				<?php
+				// Form opening tag.
 				echo form_open_multipart(
-					'admin/plugins/upload',
-					'class="form-inline'.(form_error('pluginzip') ? ' has-error' : '').'" id="plugin-upload"',
-					$hidden),
-				form_upload('pluginzip', null, 'id="pluginzip"'),
-				form_error('pluginzip', '<div class="help-block">', '</div>'),
-				form_submit('plugin-install', line('spg_plugin_install'), array(
-					'class' => 'btn btn-primary btn-sm'
+					'admin/modules/upload',
+					'class="form-inline'.(form_error('modulezip') ? ' has-error' : '').'" id="module-upload"'
+				),
+				// Form security nonce.
+				form_nonce('upload-module'),
+
+				// Form file.
+				form_upload('modulezip', null, 'id="modulezip"'),
+
+				// Form error.
+				form_error('modulezip', '<div class="help-block">', '</div>'),
+
+				// Location selection.
+				form_dropdown('location', array(
+					'-1' => line('CSK_MODULES_LOCATION_SELECT'),
+					'0'  => line('CSK_MODULES_LOCATION_APPLICATION'),
+					'1'  => line('CSK_MODULES_LOCATION_PUBLIC'),
+				), '-1', 'class="form-control form-control-sm ml5"'),
+
+				// Form submit button.
+				form_submit('module-install', line('CSK_MODULES_INSTALL'), array(
+					'class' => 'btn btn-primary btn-sm ml5'
 				));
+
+				// Form closing tag.
+				form_close();
 				?>
-				</form>
 			</div>
 		</div>
 	</div>
 </div>
-<nav class="navbar navbar-default" role="navigation">
-	<!-- Brand and toggle get grouped for better mobile display -->
-	<p class="navbar-text"><span class="badge">0</span></p>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb15" role="navigation">
+	<p class="navbar-brand"><span class="badge badge-white text-red">0</span></p>
+	
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#modules-filter" aria-controls="modules-filter" aria-expanded="false" aria-label="Toggle navigation"><i class="fa fa-bars"></i></button>
 
-	<!-- Collect the nav links, forms, and other content for toggling -->
-	<div class="collapse navbar-collapse navbar-ex1-collapse">
-		<ul class="nav navbar-nav">
-			<li><a href="#" data-sort="featured"><?php _e('spg_featured'); ?></a></li>
-			<li><a href="#" data-sort="recommended"><?php _e('spg_recommended'); ?></a></li>
-			<li><a href="#" data-sort="popular"><?php _e('spg_popular'); ?></a></li>
-			<li><a href="#" data-sort="new"><?php _e('spg_new'); ?></a></li>
+	<div class="collapse navbar-collapse" id="modules-filter">
+		<ul class="nav navbar-nav mr-auto">
+		<?php
+		// Featured.
+		echo html_tag('li', array(
+			'class' => 'nav-item'
+		), html_tag('a', array(
+			'href' => 'javascript:void(0)',
+			'class' => 'nav-link',
+		), line('CSK_MODULES_FILTER_FEATURED'))),
+
+		// Recommended
+		html_tag('li', array(
+			'class' => 'nav-item'
+		), html_tag('a', array(
+			'href' => 'javascript:void(0)',
+			'class' => 'nav-link',
+		), line('CSK_MODULES_FILTER_RECOMMENDED'))),
+
+		// Popular.
+		html_tag('li', array(
+			'class' => 'nav-item'
+		), html_tag('a', array(
+			'href' => 'javascript:void(0)',
+			'class' => 'nav-link',
+		), line('CSK_MODULES_FILTER_POPULAR'))),
+
+		// New.
+		html_tag('li', array(
+			'class' => 'nav-item'
+		), html_tag('a', array(
+			'href' => 'javascript:void(0)',
+			'class' => 'nav-link',
+		), line('CSK_MODULES_FILTER_NEW')));
+		?>
 		</ul>
-		<div class="navbar-right">
-			<form class="navbar-form navbar-left" role="search" method="get">
-				<div class="form-group">
-					<select name="type" id="type" class="form-control">
-						<option value="name" selected="selected"><?php _e('spg_name'); ?></option>
-						<option value="tags"><?php _e('spg_tags'); ?></option>
-						<option value="author"><?php _e('spg_author'); ?></option>
-					</select>
-				</div>
-				<div class="form-group">
-					<input type="text" class="form-control" id="search" name="search" placeholder="<?php _e('spg_search'); ?>">
-				</div>
-			</form>
-		</div>
+		<form class="form-inline my-2 my-lg-0" role="search" method="get">
+			<select name="type" id="type" class="form-control-sm">
+				<option value="name" selected="selected"><?php _e('CSK_MODULES_NAME'); ?></option>
+				<option value="tags"><?php _e('CSK_MODULES_TAGS'); ?></option>
+				<option value="author"><?php _e('CSK_MODULES_AUTHOR'); ?></option>
+			</select>
+			<input type="text" class="form-control-sm ml5" id="search" name="search" placeholder="<?php _e('CSK_MODULES_SEARCH'); ?>">
+		</form>
 	</div><!-- /.navbar-collapse -->
 </nav>
 <div class="alert alert-info"><strong>NOTE</strong>: This section will be developed soon.</div>
-<div id="plugin-modal-container"></div>
+<div id="module-modal-container"></div>
