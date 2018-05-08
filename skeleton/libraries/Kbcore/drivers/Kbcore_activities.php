@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	1.4.0
+ * @version 	2.0.0
  */
 class Kbcore_activities extends CI_Driver implements CRUD_interface
 {
@@ -65,9 +65,6 @@ class Kbcore_activities extends CI_Driver implements CRUD_interface
 	public function initialize()
 	{
 		log_message('info', 'Kbcore_activities Class Initialized');
-
-		// We load the activities language file.
-		$this->ci->load->language('activities/activities');
 	}
 
     // ------------------------------------------------------------------------

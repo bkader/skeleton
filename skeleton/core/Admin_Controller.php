@@ -49,10 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @since 		1.3.3 	Added dynamic assets loading.
- * @since 		1.5.0 	Added jQuery validate plugin.
- * 
- * @version 	1.5.0
+ * @version 	2.0.0
  */
 class Admin_Controller extends User_Controller
 {
@@ -80,6 +77,7 @@ class Admin_Controller extends User_Controller
 	protected $scripts = array(
 		'modernizr-2.8.3',
 		'jquery-3.2.1',
+		'handlebars',
 		'popper',
 		'bootstrap',
 		'toastr',
@@ -107,6 +105,8 @@ class Admin_Controller extends User_Controller
 			exit;
 		}
 
+		$this->load->language('csk_admin');
+
 		if (null !== $this->router->fetch_module())
 		{
 			if (false === $this->module)
@@ -121,8 +121,6 @@ class Admin_Controller extends User_Controller
 				exit;
 			}
 		}
-
-		$this->load->language('csk_admin');
 		
 		add_filter('admin_head', array($this, 'csk_globals'), 0);
 		add_filter('admin_head', array($this, 'admin_head'), 99);
@@ -295,6 +293,12 @@ class Admin_Controller extends User_Controller
 
 		foreach ($modules as $folder => $module)
 		{
+			// we make sure the module is enabled!
+			if (true !== $module['enabled'])
+			{
+				continue;
+			}
+
 			foreach ($module['contexts'] as $context => $status)
 			{
 				// No context? Ignore it.
@@ -487,6 +491,9 @@ class Admin_Controller extends User_Controller
 	 * @link 	https://goo.gl/wGXHO9
 	 * @since 	1.5.0
 	 *
+	 * @copyright 	jquery-validation (https://github.com/jquery-validation)
+	 * @link 		https://github.com/jquery-validation/jquery-validation
+	 *
 	 * @access 	protected
 	 * @param 	none
 	 * @return 	void
@@ -500,6 +507,30 @@ class Admin_Controller extends User_Controller
 			$this->scripts[] = 'jquery-validate/'.$code;
 		}
 
+		return $this;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * _jquery_sprintf
+	 *
+	 * Method for loading jQuery sprintf plugin.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @copyright 	Carl Fürstenberg (https://github.com/azatoth)
+	 * @link 		https://github.com/azatoth/jquery-sprintf
+	 *
+	 * @access 	protected
+	 * @param 	none
+	 * @return 	void
+	 */
+	protected function _jquery_sprintf()
+	{
+		$this->scripts[] = 'jquery.sprintf';
 		return $this;
 	}
 
@@ -654,6 +685,195 @@ class Admin_Controller extends User_Controller
 		}
 
 		echo $anchor;
+	}
+
+}
+
+// ------------------------------------------------------------------------
+
+/**
+ * Content_Controller Class
+ *
+ * Only "Content.php" controllers should extend this class.
+ *
+ * @package 	CodeIgniter
+ * @subpackage 	Skeleton
+ * @category 	Core Extension
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://goo.gl/wGXHO9
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @since 		2.0.0
+ * @version 	2.0.0
+ */
+class Content_Controller extends Admin_Controller {
+
+	/**
+	 * __construct
+	 *
+	 * Load needed resources only.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->load->language('csk_content');
+	}
+
+}
+
+// ------------------------------------------------------------------------
+
+/**
+ * Help_Controller Class
+ *
+ * Only "Help.php" controllers should extend this class.
+ *
+ * @package 	CodeIgniter
+ * @subpackage 	Skeleton
+ * @category 	Core Extension
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://goo.gl/wGXHO9
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @since 		2.0.0
+ * @version 	2.0.0
+ */
+class Help_Controller extends Admin_Controller {
+
+	/**
+	 * __construct
+	 *
+	 * Load needed resources only.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->load->language('csk_help');
+	}
+
+}
+
+// ------------------------------------------------------------------------
+
+/**
+ * Reports_Controller Class
+ *
+ * Only "Reports.php" controllers should extend this class.
+ *
+ * @package 	CodeIgniter
+ * @subpackage 	Skeleton
+ * @category 	Core Extension
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://goo.gl/wGXHO9
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @since 		2.0.0
+ * @version 	2.0.0
+ */
+class Reports_Controller extends Admin_Controller {
+
+	/**
+	 * __construct
+	 *
+	 * Load needed resources only.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->load->language('csk_reports');
+		$this->scripts[]          = 'reports';
+		$this->data['page_icon']  = 'bar-chart';
+		$this->data['page_title'] = line('CSK_REPORTS_ACTIVITY_LOG');
+		add_action('admin_head', array($this, '_reports_admin_head'), 0);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * _reports_admin_head
+	 *
+	 * Add some JS lines.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	string
+	 * @return 	string
+	 */
+	public function _reports_admin_head($output)
+	{
+		$output .= '<script type="text/javascript">';
+		$output .= 'csk.i18n = csk.i18n || {};';
+		$output .= ' csk.i18n.reports = csk.i18n.reports || {};';
+		$output .= ' csk.i18n.reports.delete = "'.line('CSK_REPORTS_CONFIRM_DELETE').'";';
+		$output .= '</script>';
+
+		return $output;
+	}
+
+}
+
+// ------------------------------------------------------------------------
+
+/**
+ * Settings_Controller Class
+ *
+ * Only "Settings.php" controllers should extend this class.
+ *
+ * @package 	CodeIgniter
+ * @subpackage 	Skeleton
+ * @category 	Core Extension
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://goo.gl/wGXHO9
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @since 		2.0.0
+ * @version 	2.0.0
+ */
+class Settings_Controller extends Admin_Controller {
+
+	/**
+	 * __construct
+	 *
+	 * Load needed resources only.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->load->language('csk_settings');
+		$this->scripts[] = 'settings';
+		$this->data['page_icon']  = 'sliders';
+		$this->data['page_title'] = line('CSK_SETTINGS');
 	}
 
 }

@@ -55,7 +55,7 @@ require_once(KBPATH.'third_party/Route/Route.php');
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	1.5.2
+ * @version 	2.0.0
  */
 class KB_Router extends CI_Router
 {
@@ -624,7 +624,10 @@ class KB_Router extends CI_Router
 					
 					while (false !== ($file = readdir($handle)))
 					{
-						if ( ! in_array($file, $_to_eliminate))
+						// Must be a directory and has "manifest.json".
+						if ( ! in_array($file, $_to_eliminate) 
+							&& is_dir($location.$file)
+							&& is_file($location.$file."/manifest.json"))
 						{
 							$this->_modules[$file] = rtrim(str_replace('\\', '/', $location.$file), '/').'/';
 						}
@@ -632,6 +635,9 @@ class KB_Router extends CI_Router
 				}
 			}
 		}
+
+		// Alphabetically order modules.
+		ksort($this->_modules);
 
 		$return = $this->_modules;
 

@@ -55,7 +55,7 @@ require_once('CRUD_interface.php');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	1.3.3
+ * @version 	2.0.0
  */
 class Kbcore extends CI_Driver_Library
 {
@@ -86,6 +86,7 @@ class Kbcore extends CI_Driver_Library
 
 		// Fill valid drivers.
 		$this->valid_drivers = array(
+			'auth',
 			'activities',
 			'entities',
 			'groups',
@@ -119,6 +120,11 @@ class Kbcore extends CI_Driver_Library
 		$this->options->initialize();
 		$KB->options = $this->options;
 
+		// Initialize authentication library.
+		$this->auth->initialize();
+		$KB->auth = $this->auth;
+		$this->ci->auth =& $this->auth;
+
 		// Store language in session and change config item.
 		$this->_set_language();
 		$this->ci->config->set_item('language', $this->ci->session->language);
@@ -127,7 +133,7 @@ class Kbcore extends CI_Driver_Library
 		foreach ($this->valid_drivers as $driver)
 		{
 			// Options already initialized.
-			if ('options' !== $driver)
+			if ('options' !== $driver && 'auth' !== $driver)
 			{
 				$this->{$driver}->initialize();
 				$KB->{$driver} = $this->{$driver};
@@ -148,13 +154,10 @@ class Kbcore extends CI_Driver_Library
 		$this->_languages_list();
 
 		// Load main language file.
-		$this->ci->load->language('skeleton');
+		$this->ci->load->language('csk_main');
 
 		// Initialize plugins if plugins system is enabled.
 		$this->plugins->load_plugins();
-
-		// Attempt to authenticate the current user.
-		$this->ci->load->library('users/auth', array('kbcore' => $this));
 
 		log_message('info', 'Kbcore Class Initialized');
 	}

@@ -50,10 +50,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
- * 
  * @since 		1.0.0
- * @since 		1.3.3 	Ignored filters on dashboard.
- * 
  * @version 	2.0.0
  */
 class KB_Pagination extends CI_Pagination
@@ -132,12 +129,16 @@ class KB_Pagination extends CI_Pagination
 			'num_tag_close'        => '</li>',
 			'prev_tag_open'        => '<li class="page-item">',
 			'prev_tag_close'       => '</li>',
+			'prev_link'            => '<i class="fa fa-fw fa-backward"></i>',
 			'next_tag_open'        => '<li class="page-item">',
 			'next_tag_close'       => '</li>',
+			'next_link'            => '<i class="fa fa-fw fa-forward"></i>',
 			'first_tag_open'       => '<li class="page-item">',
 			'first_tag_close'      => '</li>',
+			'first_link'           => '<i class="fa fa-fw fa-fast-backward"></i>',
 			'last_tag_open'        => '<li class="page-item">',
 			'last_tag_close'       => '</li>',
+			'last_link'            => '<i class="fa fa-fw fa-fast-forward"></i>',
 			'cur_tag_open'         => '<li class="page-item active"><span class="page-link">',
 			'cur_tag_close'        => '<span class="sr-only">(current)</span></span></li>',
 			'use_page_numbers'     => true,
@@ -168,12 +169,16 @@ class KB_Pagination extends CI_Pagination
 			'num_tag_close',
 			'prev_tag_open',
 			'prev_tag_close',
+			'prev_link',
 			'next_tag_open',
 			'next_tag_close',
+			'next_link',
 			'first_tag_open',
 			'first_tag_close',
+			'first_link',
 			'last_tag_open',
 			'last_tag_close',
+			'last_link',
 			'cur_tag_open',
 			'cur_tag_close',
 			'display_pages',

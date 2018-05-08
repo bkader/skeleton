@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://goo.gl/wGXHO9
- * @since 		1.0.0
+ * @since 		2.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -46,10 +46,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
- * @since 		1.0.0
- * @version 	1.3.3
+ * @since 		2.0.0
+ * @version 	2.0.0
  */
-class Auth
+class Kbcore_auth extends CI_Driver
 {
 	/**
 	 * Holds the currently logged in user's object.
@@ -64,24 +64,28 @@ class Auth
 	 */
 	private $ip_address;
 
+	// ------------------------------------------------------------------------
+
 	/**
-	 * Class constructor
+	 * initialize
+	 *
+	 * Initialize this class.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	none
 	 * @return 	void
 	 */
-	public function __construct($config = array())
+	public function initialize()
 	{
-		$this->kbcore =& $config['kbcore'];
-		$this->ci =& $this->kbcore->ci;
-
-		// We always user's IP address.
+		// Always store the ip address.
 		$this->ip_address = $this->ci->input->ip_address();
 
-		/**
-		 * The following files are used everywhere on the
-		 * application, so we load them now.
-		 */
-		$this->ci->load->library('users/users_lib', null, 'users');
-		$this->ci->load->language('users/users');
+		// Make sure to load users language file.
+		$this->ci->load->language('csk_users');
 
 		// Attempt to authenticate the current user.
 		$this->_authenticate();
@@ -105,7 +109,7 @@ class Auth
 		}
 
 		// Let's get the variable from database.
-		$var = $this->kbcore->variables->get_by(array(
+		$var = $this->_parent->variables->get_by(array(
 			'guid'          => $user_id,
 			'name'          => 'online_token',
 			'BINARY(value)' => $token,
@@ -117,7 +121,7 @@ class Auth
 		}
 
 		// Let's get the user from database.
-		$user = $this->kbcore->users->get($user_id);
+		$user = $this->_parent->users->get($user_id);
 		if ( ! $user)
 		{
 			return;
@@ -180,7 +184,7 @@ class Auth
 		if (false === $this->ci->config->item('allow_multi_session'))
 		{
 			// Get the variable from database.
-			$var = $this->kbcore->variables->get_by(array(
+			$var = $this->_parent->variables->get_by(array(
 				'guid'  => $this->ci->session->user_id,
 				'name'  => 'online_token',
 				'value' => $this->ci->session->token,
@@ -192,7 +196,7 @@ class Auth
 		}
 
 		// Get the user from database.
-		$user = $this->kbcore->users->get($this->ci->session->user_id);
+		$user = $this->_parent->users->get($this->ci->session->user_id);
 		if ( ! $user)
 		{
 			return false;
@@ -295,7 +299,7 @@ class Auth
 		{
 			// Get the user by username.
 			case 'username':
-				$user = $this->kbcore->users
+				$user = $this->_parent->users
 					->get_by('entities.username', $identity);
 				if ( ! $user)
 				{
@@ -306,7 +310,7 @@ class Auth
 
 			// Get user by email address.
 			case 'email':
-				$user = $this->kbcore->users
+				$user = $this->_parent->users
 					->get_by('users.email', $identity);
 				if ( ! $user)
 				{
@@ -318,7 +322,7 @@ class Auth
 			// Get user by username or email address.
 			case 'both':
 			default:
-				$user = $this->kbcore->users
+				$user = $this->_parent->users
 					->get($identity);
 
 				if ( ! $user)
@@ -358,7 +362,7 @@ class Auth
 		if ($user->deleted > 0)
 		{
 			// Check who deleted the user.
-			$log = $this->kbcore->activities->get_by(array(
+			$log = $this->_parent->activities->get_by(array(
 				'module'     => 'users',
 				'controller' => 'admin',
 				'method'     => 'delete',
@@ -383,13 +387,13 @@ class Auth
 		}
 
 		// Proceed
-		$this->ci->users->delete_password_codes($user->id);
+		$this->delete_password_codes($user->id);
 
 		// Setup the session.
 		if (true === $this->_set_session($user->id, $remember, null, $user->language))
 		{
 			// Log the activity.
-			$this->kbcore->activities->log_activity($user->id, 'lang:act_user_login');
+			$this->_parent->activities->log_activity($user->id, 'lang:act_user_login');
 
 			return true;
 		}
@@ -414,7 +418,7 @@ class Auth
 		// ID, username or email provided?
 		if ( ! $user instanceof KB_User OR ! is_object($user))
 		{
-			$user = $this->ci->kbcore->users->get($user);
+			$user = $this->_parent->users->get($user);
 		}
 
 		return (false !== $user) 
@@ -443,10 +447,10 @@ class Auth
 		$this->ci->input->set_cookie('c_user', '', '');
 
 		// Delete online tokens.
-		$this->ci->users->delete_online_tokens($user_id);
+		$this->delete_online_tokens($user_id);
 
 		// Put the user offline.
-		$this->kbcore->users->update($user_id, array('online' => 0));
+		$this->_parent->users->update($user_id, array('online' => 0));
 
 		// Destroy the session.
 		$this->ci->session->sess_destroy();
@@ -506,10 +510,10 @@ class Auth
 		$this->ci->session->set_userdata($sess_data);
 
 		// Now we create/update the variable.
-		$this->kbcore->variables->set_var($user_id, 'online_token', $token, $this->ip_address);
+		$this->_parent->variables->set_var($user_id, 'online_token', $token, $this->ip_address);
 
 		// Put the user online.
-		$this->kbcore->users->update($user_id, array('online' => 1));
+		$this->_parent->users->update($user_id, array('online' => 1));
 
 		// The return depends on $remember.
 		return (true === $remember) ? $this->_set_cookie($user_id, $token) : true;
@@ -586,6 +590,106 @@ class Auth
 		 * 3. The random string generated when encoding the cookie.
 		 */
 		return (empty($cookie) OR count($cookie) !== 3) ? false : $cookie;
+	}
+
+	// ------------------------------------------------------------------------
+	// General Cleaners.
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Delete user's online token and perform a clean up of older tokens.
+	 * @access 	public
+	 * @param 	int 	$user_id
+	 * @return 	void
+	 */
+	public function delete_online_tokens($user_id = 0)
+	{
+		if (is_numeric($user_id) && $user_id > 0)
+		{
+			$this->_parent->variables->delete_by(array(
+				'guid' => $user_id,
+				'name' => 'online_token',
+			));
+		}
+
+		// Perform a clean up of older tokens.
+		$this->_parent->variables->delete_by(array(
+			'name' => 'online_token',
+			'created_at <' => time() - (MONTH_IN_SECONDS * 2)
+		));
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Delete user's password code and perform a clean up of older ones.
+	 * @access 	public
+	 * @param 	int 	$user_id
+	 * @return 	void
+	 */
+	public function delete_password_codes($user_id = 0)
+	{
+		if (is_numeric($user_id) && $user_id > 0)
+		{
+			$this->_parent->variables->delete_by(array(
+				'guid' => $user_id,
+				'name' => 'password_code',
+			));
+		}
+
+		// Perform a clean up of older tokens.
+		$this->_parent->variables->delete_by(array(
+			'name' => 'password_code',
+			'created_at <' => time() - (DAY_IN_SECONDS * 2)
+		));
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Delete account's activation code and clean up old ones.
+	 * @access 	public
+	 * @param 	int 	$user_id
+	 * @return 	void
+	 */
+	public function delete_activation_codes($user_id)
+	{
+		if (is_numeric($user_id) && $user_id > 0)
+		{
+			$this->_parent->variables->delete_by(array(
+				'guid' => $user_id,
+				'name' => 'activation_code',
+			));
+		}
+
+		// Perfrom a clean up of older activation codes.
+		$this->_parent->variables->delete_by(array(
+			'name'         => 'activation_code',
+			'created_at <' => time() - (DAY_IN_SECONDS * 2)
+		));
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Delete old captcha from database.
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
+	public function delete_captcha()
+	{
+		// Delete captcha of the current ip address.
+		$this->_parent->variables->delete_by(array(
+			'name'   => 'captcha',
+			'params' => $this->ci->input->ip_address(),
+		));
+
+		// Delete old captcha.
+		$this->_parent->variables->delete_by(array(
+			'name'         => 'captcha',
+			'created_at <' => time() - 7200
+		));
 	}
 
 }

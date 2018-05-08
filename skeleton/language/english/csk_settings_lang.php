@@ -50,6 +50,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @version 	2.0.0
  */
 
+$lang['CSK_SETTINGS']          = 'Settings';
+$lang['CSK_SETTINGS_SETTINGS'] = 'Settings';
+
 // ------------------------------------------------------------------------
 // Tabs sections.
 // ------------------------------------------------------------------------

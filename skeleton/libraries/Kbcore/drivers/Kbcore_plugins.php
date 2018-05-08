@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @version 	2.0.0
  */
 
 class Kbcore_plugins extends CI_Driver
@@ -550,6 +550,9 @@ class Kbcore_plugins extends CI_Driver
 				}
 			}
 		}
+
+		// Sort plugins alphabetically.
+		ksort($plugins);
 
 		// No details needed?
 		if ($details === false)

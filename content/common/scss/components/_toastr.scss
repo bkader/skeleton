@@ -1,0 +1,14 @@
+#toast-container {
+    margin-top: $navbar__height;
+    z-index: 9990;
+
+    &.toast-top-center > div,
+    &.toast-bottom-center > div {
+        @include border-radius(0);
+        @include box-shadow(none);
+        // opacity: 1;
+        width: auto;
+        min-width: 300px;
+        max-width: 500px;
+    }
+}

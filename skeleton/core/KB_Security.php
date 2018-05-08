@@ -50,7 +50,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.4.0
- * @version 	1.4.0
+ * @version 	2.0.0
  */
 class KB_Security extends CI_Security {
 
@@ -72,9 +72,6 @@ class KB_Security extends CI_Security {
 	{
 		// Prepare an instance of CI object.
 		$CI =& get_instance();
-
-		// Load Authentication library if not loaded.
-		(class_exists('Auth', false)) OR $CI->load->library('users/auth');
 
 		// Get the current user's ID.
 		$uid = (false !== $user = $CI->auth->user()) 
@@ -111,9 +108,6 @@ class KB_Security extends CI_Security {
 	{
 		// Prepare an instance of CI object.
 		$CI =& get_instance();
-
-		// Load Authentication library if not loaded.
-		(class_exists('Auth', false)) OR $CI->load->library('users/auth');
 
 		// Get the current user's ID.
 		$uid = (false !== $user = $CI->auth->user()) 
