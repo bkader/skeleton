@@ -70,7 +70,7 @@ body {
 }
 
 @each $side in left, right, auto, none {
-	.float-#{$side} {float: $side;}
+	.float-#{$side} {float: $side !important;}
 }
 
 // Make pagination centered.

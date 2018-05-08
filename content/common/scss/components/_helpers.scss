@@ -1,8 +1,24 @@
-.text-small {
-    font-size: 0.83em;
-}
-.text-normal {
-    font-weight: normal;
+.text-small { font-size: 0.83em; }
+.text-normal { font-weight: normal; }
+.text-italic { font-style: italic !important; }
+.text-bold { font-weight: 700 !important; }
+.text-bold-italic { font-weight: 700 !important; font-style: italic !important; }
+
+// Text transformations.
+.text-upper,
+.text-uppercase { text-transform: uppercase; }
+
+.text-lower,
+.text-lowercase { text-transform: lowercase; }
+
+.text-ucwords,
+.text-capitalize { text-transform: capitalize; }
+
+.text-full-width { text-transform: full-width; }
+
+.text-ucfrist {
+    text-transform: lowercase;
+    &::first-letter { text-transform: uppercase; }
 }
 
 /* Helpers */
@@ -136,5 +152,8 @@
     // Badge.
     .badge-#{nth($color, 1)} {
         background-color: #{nth($color, 2)};
+        @if nth($color, 1) != 'white' and nth($color, 1) != 'default' {
+            color: $color__white;
+        } 
     }
 }

@@ -1,18 +1,19 @@
 /*!
- * Skeleton Dashboard - Admin JS (https://goo.gl/wGXHO9/skeleton)
+ * Skeleton Dashboard - Admin JS (https://github.com/bkader/skeleton)
  * Copyright 2018 Kader Bouyakoub (https://goo.gl/wGXHO9)
- * Licensed under MIT (https://goo.gl/wGXHO9/skeleton/blob/develop/LICENSE.md)
+ * Licensed under MIT (https://github.com/bkader/skeleton/blob/develop/LICENSE.md)
  */
 (function ($, window, document, undefined) {
     "use strict";
 
-    // Prepare "csk" global.
+    // Prepare Skeleton globals.
     var csk = window.csk = window.csk || {};
     csk.i18n = csk.i18n || {};
 
-    // =======================================================
-    // BootBox configuration is found.
-    // =======================================================
+    /**
+     * BootBox default configuration.
+     * @since   1.2.0
+     */
     if (typeof bootbox !== "undefined") {
         bootbox.setDefaults({
             backdrop: false,
@@ -22,30 +23,27 @@
         });
     }
 
-    // =======================================================
-    // Skeleton UI module.
-    // =======================================================
+    /**
+     * Skeleton UI module.
+     * @since   1.2.0
+     */
     csk.ui = {
-        
-        // ---------------------------------------------------
-        // Toggle sidebar action.
-        // ---------------------------------------------------
-        toggleSidebar: function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-            var sidebar = $("#csk-sidebar");
-            if (sidebar.length) {
-                sidebar.toggleClass("open");
-            }
-        },
-
-        // ---------------------------------------------------
-        // Confirmation using BootBox or JavaScript alert.
-        // ---------------------------------------------------
+        /**
+         * Confirmation alert using either bootbox or default alert.
+         * @since   1.2.0
+         * @param   string  message
+         * @param   trueCallback    The callback to use once confirmed.
+         * @param   falseCallback    The callback to use once canceled.
+         * @return  void
+         */
         confirm: function (message, trueCallback, falseCallback) {
             if (typeof bootbox !== "undefined") {
                 bootbox.confirm({
                     message: message,
+                    buttons: {
+                        confirm: {className: "btn btn-primary btn-sm"},
+                        cancel: {className: "btn btn-default btn-sm"}
+                    },
                     callback: function (result) {
                         bootbox.hideAll();
                         if (result === true && typeof trueCallback === "function") {
@@ -64,16 +62,86 @@
 
         // Alert (Notification).
         alert: function (message, type) {
-            if (typeof toastr === "undefined") {
-                alert(message);
+            
+            if (!message.length) {
+                return false;
+            }
+
+            type = type || 'info';
+            if (type === "error") {
+                type = "danger";
+            }
+
+            // If toastr is avaiable, we use it.
+            if (typeof toastr !== "undefined") {
+                switch (type) {
+                    case "success":
+                        toastr.success(message);
+                        break;
+                    case "error":
+                    case "danger":
+                        toastr.error(message);
+                        break;
+                    case "warning":
+                        toastr.warning(message);
+                        break;
+                    case "info":
+                    default:
+                        toastr.info(message);
+                        break;
+                }
                 return;
             }
 
-            switch (type) {
-                case "success": toastr.success(message); break;
-                case "error": toastr.error(message); break;
-                case "warning": toastr.warning(message); break;
-                case "info": default: toastr.info(message); break;
+            /**
+             * If Handlebars is loaded, we already have an alert template
+             * stored within the dashboard default layout. So we use it.
+             */
+            if (typeof Handlebars === "object") {
+                // We store any old alert so we can remove it later.
+                var oldAlert = $("#csk-alert"),
+                    alertSource = document.getElementById("csk-alert-template").innerHTML,
+                    alertTemplate = Handlebars.compile(alertSource);
+                
+                // Compile the alert.
+                var alertCompiled = alertTemplate({message: message, type: type});
+
+                // If we have an old alert, remove it first.
+                if (oldAlert.length) {
+                    oldAlert.fadeOut(function() {
+                        $(this).remove();
+                        $(alertCompiled).prependTo("#wrapper > .container");
+                    });
+                } else {
+                    $(alertCompiled).prependTo("#wrapper > .container");
+                }
+
+                // Stop the script.
+                return;
+            }
+
+            /**
+             * Otherwise, we make sure to strip any HTML tags from the message
+             * and simply use browser's default alert.
+             */
+            alert(message.replace(/(<([^>]+)>)/ig,""));
+
+        },
+
+        // Reload main page parts.
+        reload: function(el, navbar) {
+            
+            // Shall we reload the admin navbar?
+            navbar = navbar || true;
+
+            // If no element is provided, we use "#wrapper".
+            el = el || "#wrapper";
+
+            if (navbar === true) {
+                $("#navbar-admin").load(csk.config.currentURL + " #navbar-admin > *");
+            }
+            if (el.length) {
+                $(el).load(csk.config.currentURL + " " + el + " > *");
             }
         }
     };
@@ -121,6 +189,14 @@
                 dataType: "json",
                 success: function (data, textStatus, jqXHR) {
                     csk.ajax._response(data);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    var response = jqXHR.responseJSON || undefined;
+                    if (typeof response !== "undefined" 
+                        && response.message !== "undefined" 
+                        && response.message.length) {
+                        csk.ui.alert(response.message, "error");
+                    }
                 }
             }, params);
 
@@ -199,13 +275,16 @@
 
     $(document).ready(function () {
 
-        // Toastr Configuration.
+        /**
+         * Toatr default configuration.
+         * @since   1.2.0
+         */
         if (typeof toastr !== "undefined") {
             toastr.options = {
                 "closeButton": true,
                 "positionClass": "toast-top-center",
                 "hideDuration": "300",
-                "timeOut": "3500",
+                "timeOut": "2500",
                 "showEasing": "swing",
                 "hideEasing": "linear",
                 "showMethod": "fadeIn",
@@ -218,7 +297,10 @@
             }
         }
 
-        // Check all feature.
+        /**
+         * Check all feature.
+         * @since   2.0.0
+         */
         $(document).on("change", ":checkbox[name=check-all]", function () {
             var that = $(this);
             that
@@ -227,10 +309,8 @@
                 .prop("checked", this.checked)
                 .closest("tr").toggleClass("selected", this.checked);
         });
-
-        //Sidebar toggle.
-        $(document).on("click", ".sidebar-toggle", function (e) {
-            return csk.ui.toggleSidebar(e);
+        $(document).on("change", ":checkbox.check-this", function () {
+            $(this).parents("tr").toggleClass("selected", this.checked);
         });
 
         // Bootstrap tooltip and popover.
@@ -241,11 +321,19 @@
             $("[data-toggle=popover], [rel=popover]").popover();
         }
 
-        // Avoid multiple form submission.
+        /**
+         * To avoid multiple form submission, we make sure to 
+         * disable submit buttons once hit.
+         * @since   1.2.0
+         */
         $(document).on("submit", "form", function (e) {
             var $form = $(this);
-            $form.find("[type=submit]").prop("disabled", true).addClass("disabled");
+            $form
+                .find("[type=submit]")
+                .prop("disabled", true)
+                .addClass("disabled");
             
+            // Disable the submit event.
             $form.submit(function () {
                 return false;
             });
@@ -258,51 +346,64 @@
             $("[rel=persist]").garlic();
         }
 
-        // AJAXify anchors with rel attributes.
+        /**
+         * AJAXify anchors with attribute rel="async".
+         * @since   1.3.3
+         */
         $(document).on("click", "a[rel]", function (e) {
-            var $this = $(this), rel = $this.attr("rel"), href = $this.attr("href");
+            var $this = $(this),
+                rel = $this.attr("rel"),
+                href = $this.attr("href");
 
-            if (typeof href === "undefined") {
+            if (typeof href === "undefined" || !href.length) {
                 e.preventDefault();
+                return false;
+            }
+
+            // Not valid rel attribute? Proceed by default.
+            if (!rel.length || rel !== "async" || rel !== "async-post") {
+                window.location.href = href;
                 return;
             }
 
-            switch (rel) {
-                case "async":
-                case "async-post":
-                    e.preventDefault();
-                    var type = (rel === "async") ? "GET" : "POST";
-                    csk.ajax.request(href, {
-                        el: this,
-                        type: type,
-                        beforeSend: function () {
-                            if ($this.prop("disabled")) {
-                                return;
-                            }
+            e.preventDefault();
+            var type = (rel === "async") ? "GET" : "POST";
+            csk.ajax.request(href, {
+                el: this,
+                type: type,
+                beforeSend: function () {
+                    if ($this.prop("disabled")) {
+                        return;
+                    }
 
-                            // We disable the element before proceeding.
-                            $this.prop("disabled", true).addClass("disabled");
-                        },
-                        complete: function () {
-                            // We enable back the element.
-                            $this.prop("disabled", false).removeClass("disabled");
-                        }
-                    });
-                    return false;
-                    break;
-            }
+                    // We disable the element before proceeding.
+                    $this.prop("disabled", true).addClass("disabled");
+                },
+                complete: function () {
+                    // We enable back the element.
+                    $this.prop("disabled", false).removeClass("disabled");
+                }
+            });
+            return false;
         });
 
-        // AJAXify forms with rel attributes.
+        /**
+         * We ajaxify forms with attribute rel="async".
+         * @since   1.3.0
+         */
         $(document).on("submit", "form[rel]", function (e) {
-            var $this = $(this), rel = $this.attr("rel"), href = $this.attr("action");
+            var $this = $(this),
+                rel = $this.attr("rel"),
+                href = $this.attr("action");
 
-            if (typeof href === "undefined") {
+            // No action provided? Nothing to do...
+            if (typeof href === "undefined" || !href.length) {
                 e.preventDefault();
-                return;
+                return false;
             }
 
             switch (rel) {
+                // In case of an asynchronous use.
                 case "async":
                     e.preventDefault();
                     csk.ajax.request(href, {
@@ -331,47 +432,49 @@
             }
         });
         
-        // ---------------------------------------------------
-        // If there is a modal, we make sure to show it.
-        // if hidden, we make sure to completely remove it.
-        // ---------------------------------------------------
+        /**
+         * If there is a modal within the page, we make sure to display it
+         * @since   1.0.0
+         */
         if (typeof $.fn.modal !== "undefined") {
             var bsModal = $(".modal");
-            if (bsModal.length) { bsModal.modal("show"); }
-            $(document).on("hidden.bs.modal", ".modal", function (e) {
-                $(this).remove();
-            });
+            if (bsModal.length) {
+                bsModal.modal("show");
+            }
         }
+        // We make sure to completely remove the modal when closed.
+        $(document).on("hidden.bs.modal", ".modal", function (e) {
+            $(this).remove();
+        });
         
-        // ---------------------------------------------------
-        // Links and buttons with confirmation message.
-        // ---------------------------------------------------
+        /**
+         * Another way to add a confirmation message before proceeding is
+         * to add the "data-confirm" tag with a required message.
+         * @example:
+         * <a href="..." data-confirm="Are you sure?">...</a>
+         */
         $(document).on("click", "[data-confirm]", function (e) {
             e.preventDefault();
-            var that = $(this), href = that.attr("href"), message = that.attr("data-confirm");
-            if (csk.ui.confirm(message)) {
-                window.location.href = href;
-            }
-            return false;
-        });
 
-        $(document).on("click", ".plugin-delete", function(e) {
-            if (!confirm(csk.i18n.plugins.delete)) {
-                e.preventDefault();
+            var that = $(this),
+                href = that.attr("href"),
+                message = that.data("confirm");
+
+            // No URL provided? Nothing to do...
+            if (!href.length) {
                 return false;
             }
-        });
 
-        // ---------------------------------------------------
-        // Hack to make dropdown buttons possible inside responsive
-        // tables without being hidden by table hidden overflow.
-        // If dropdowns are closed, we return the table to it
-        // initial status.
-        // ---------------------------------------------------
-        $(document).on("show.bs.dropdown", ".table-responsive", function () {
-            $(this).css("overflow", "inherit");
-        }).on("hide.bs.dropdown", ".table-responsive", function () {
-            $(this).css("overflow", "auto");
+            // No message provided? Just proceed.
+            if (!message.length) {
+                window.location.href = href;
+                return;
+            }
+
+            // Display the confirmation box before proceeding.
+            return csk.ui.confirm(message, function () {
+                window.location.href = href;
+            });
         });
 
     });

@@ -1,14 +1,28 @@
-.table-striped {
-    border-left: 1px solid #dee2e6;
-    border-right: 1px solid #dee2e6;
-    border-bottom: 1px solid #dee2e6;
-}
-.table-striped thead tr:nth-of-type(odd),
-.table-striped tbody tr:nth-of-type(even) {
-    background-color: $color__white;
-}
-.table-striped tbody tr:nth-of-type(even):hover { 
-    background-color: rgba(#000, 0.075); 
+table {
+
+    // Align checkboxes.
+    th > input[type="checkbox"],
+    td > input[type="checkbox"] { vertical-align: middle; }
+
+    &.table-striped {
+        border-bottom: 1px solid #dee2e6;
+
+        thead tr:nth-of-type(odd),
+        tbody tr:nth-of-type(even) { background-color: $color__white;}
+        
+        tbody tr:nth-of-type(even):hover { background-color: rgba(#000, 0.075); }
+        
+        tr {
+            border-left: 1px solid #dee2e6;
+            border-right: 1px solid #dee2e6;
+
+            // Selected rows.
+            &.selected {
+                border-color: $color__blue;
+            }
+        }
+    }
+
 }
 
 .tab-content .table-striped {

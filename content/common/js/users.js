@@ -1,7 +1,7 @@
 /*!
- * CodeIgniter Skeleton - Users Module (https://goo.gl/wGXHO9/skeleton)
+ * CodeIgniter Skeleton - Users Module (https://github.com/bkader/skeleton)
  * Copyright 2018 Kader Bouyakoub (https://goo.gl/wGXHO9)
- * Licensed under MIT (https://goo.gl/wGXHO9/skeleton/blob/develop/LICENSE.md)
+ * Licensed under MIT (https://github.com/bkader/skeleton/blob/develop/LICENSE.md)
  */
 (function ($, undefined) {
     "use strict";

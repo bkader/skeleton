@@ -54,7 +54,12 @@
 
         > a::after { display: none; }
 
-        img { margin-left: 10px; display: none; }
+        img {
+            display: none;
+            margin-left: 10px;
+            margin-top: -1px;
+            vertical-align: middle;
+        }
     }
 
     @include screen-md {
