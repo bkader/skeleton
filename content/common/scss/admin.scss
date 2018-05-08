@@ -1,0 +1,17 @@
+/*!
+ * CodeIgniter Skeleton - Admin CSS (https://goo.gl/wGXHO9/skeleton)
+ * Copyright 2018 Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * Licensed under MIT (https://goo.gl/wGXHO9/skeleton/blob/develop/LICENSE.md)
+ */
+@import "base/all";
+@import "components/all";
+
+.tab-settings {
+    .tab-pane {
+        padding: 20px;
+        background-color: #fff;
+        border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+    }
+}

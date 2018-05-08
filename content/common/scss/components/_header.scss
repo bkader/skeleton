@@ -1,0 +1,34 @@
+.header {
+    background-color: $header__background;
+    border-bottom: 1px solid $header__border-color;
+    height: $header__height;
+    padding: $header__padding;
+
+    .container { position: relative; }
+
+    .page-title {
+        @include font-size(20);
+        @include line-height(36);
+        color: $color__white;
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+
+        > .page-icon { margin-right: $gutters; }
+    }
+
+    .logo-container {
+        display: none;
+
+        @include screen-md {
+            @include absolute(top 0 right $gutters);
+            display: block;
+
+            .logo {
+                max-height: 35px;
+                width: auto;
+                padding: 0 8px;
+            }
+        }
+    }
+}

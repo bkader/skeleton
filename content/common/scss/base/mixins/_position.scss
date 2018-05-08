@@ -1,0 +1,32 @@
+// Element positioning.
+
+// Main helper.
+@mixin position($position, $args) {
+	position: $position;
+	@each $o in top right bottom left {
+		$i: index($args, $o);
+		@if $i and $i + 1 <= length($args) and type-of(nth($args, $i + 1)) == number {
+			#{$o}: nth($args, $i + 1);
+		}
+	}
+}
+
+// Positions helpers.
+@mixin absolute($args: '') {
+	@include position(absolute, $args);
+}
+@mixin fixed($args: '') {
+	@include position(fixed, $args);
+}
+@mixin relative($args: '') {
+	@include position(relative, $args);
+}
+@mixin static($args: '') {
+	@include position(static, $args);
+}
+
+// Vertical centering of element.
+@mixin center-vertical {
+	@include absolute(top 50% left 50%);
+	@include transform(translate(-50%, -50%));
+}

@@ -1,0 +1,83 @@
+// --------------------------------------------------------------
+// Typography
+// --------------------------------------------------------------
+body,
+button,
+input,
+select,
+optgroup,
+textarea {
+	color: $color__text-main;
+	font-family: $font__base;
+}
+
+// --------------------------------------------------------------
+// Headings
+// --------------------------------------------------------------
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: $font__ruda;
+    font-weight: 400;
+    line-height: 18px;
+}
+
+h1 { font-size: 23px; line-height: 29px; }
+h2 { font-size: 23px; line-height: 29px; }
+h3 { font-size: 17px; }
+h4 { font-size: 13px; }
+h5 { font-size: 11px; }
+h6 { font-size: 9px; }
+
+// --------------------------------------------------------------
+// Copy.
+// --------------------------------------------------------------
+p { margin: 0; }
+p + p { margin-top: $gutters; }
+
+// --------------------------------------------------------------
+// Elements.
+// --------------------------------------------------------------
+html { @include box-sizing(border-box); }
+
+// Fallback for when there is no custom background color defined.
+body { background: $color__background-body; }
+
+// Make embed elements take 100% of parent's width.
+embed,
+object,
+iframe { max-width: 100%; }
+
+// Make images responsive by default.
+img { max-width: 100%; height: auto; }
+
+// --------------------------------------------------------------
+// Base styling.
+// --------------------------------------------------------------
+html,
+body { height: 100%; }
+body {
+    @include font-size($font__size);
+    @include line-height($font__line-height-body);
+    background-color: $color__background-body;
+    color: $color__text-main;
+    font-family: $font__base;
+    position: relative;
+    padding-top: $navbar__height;
+}
+
+@each $side in left, right, auto, none {
+	.float-#{$side} {float: $side;}
+}
+
+// Make pagination centered.
+.pagination { display: inline-flex; }
+
+.alert-dismissible .close {
+    font-size: 1.2rem;
+    outline: 0;
+    padding: 0.25rem 0.5rem;
+}

@@ -1,0 +1,23 @@
+// Image helpers.
+
+// Fluid images.
+%img-fluid {
+	// Set the maximum relative to the parent.
+	max-width: 100%;
+	// Set the height to auto set the image won't be stretched.
+	height: auto;
+}
+
+// Retina images.
+@mixin img-retina($image-1x, $image-2x, $width, $height) {
+	background-image: url($image-1x);
+	@media only screen and (min--moz-device-pixel-ratio: 2),
+	only screen and (-o-min-device-pixel-ratio: 2/1),
+	only screen and (-webkit-min-device-pixel-ratio: 2),
+	only screen and (min-device-pixel-ratio: 2),
+	only screen and (min-resolution: 192dpi), // IE9-11 don't support dppx
+	only screen and (min-resolution: 2dppx) { // Standardized
+		background-image: url($image-2x);
+		background-size: $width $height;
+	}
+}

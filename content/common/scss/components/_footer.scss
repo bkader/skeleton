@@ -1,0 +1,17 @@
+.footer {
+    @include box-shadow($footer__box-shadow);
+    @include fixed(left 0 bottom 0 right 0);
+    @include font-size(12);
+    background-color: $footer__background;
+    border-top: 1px solid darken($footer__background, 5%);
+    color: $footer__text-color;
+    display: none;
+    height: $footer__height;
+    padding: $footer__padding;
+    z-index: $footer__z-index;
+
+    // Make links darken.
+    a { color: darken($footer__text-color, 10%); }
+
+    @include screen-md { display: block; }
+}

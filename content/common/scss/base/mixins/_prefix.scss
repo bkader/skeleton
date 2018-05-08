@@ -1,0 +1,8 @@
+// Add vendor prefixes.
+@mixin prefix($property, $value, $prefixes: ('webkit' 'moz')) {
+	@each $prefix in $prefixes {
+		#{"-" + $prefix + "-" + $property}: $value;
+	}
+	// Non-prefixed declaration.
+	#{$property}: $value;
+}

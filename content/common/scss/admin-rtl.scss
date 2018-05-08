@@ -1,0 +1,84 @@
+/*!
+ * Skeleton Dashboard - v1.3.2 (https://goo.gl/wGXHO9/skeleton)
+ * Copyright 2018 Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * Licensed under MIT (https://goo.gl/wGXHO9/skeleton/blob/develop/LICENSE.md)
+ */
+@import "base/variables";
+@import "base/mixins";
+
+// Change site's font family.
+body { font-family: $font__droid; }
+
+// Change headings font family.
+h1, h2, h3, h4, h5, h6 { font-family: $font__dubai; }
+
+.form-control,
+.btn,
+input,
+textarea {
+    font-family: $font__droid;
+}
+
+.navbar-brand::before {
+    margin-right: 0!important;
+    margin-left: $gutters;
+}
+
+// User menu.
+.user-menu {
+    border-left: none;
+    border-right: 1px solid darken($header__background, 5%);
+
+    img {
+        margin-right: $gutters / 2;
+        margin-left: 0;
+    }
+}
+
+// Page wrapper.
+.wrapper {
+    @include screen-sm {
+        margin-right: $sidebar__width;
+        margin-left: 0;
+
+        // Change footer position.
+        .footer { left: 0; right: $sidebar__width; }
+    }
+}
+
+.nav-sidebar > li {
+    @include screen-sm {
+        ul {
+            left: auto;
+            right: 100%;
+        }
+    }
+
+    &.active > ul {
+        @include box-shadow(none);
+        top: 0;
+        right: 0;
+    }
+}
+
+// Change dashboard statuses font.
+.status { font-family: $font__droid; }
+
+// Menus
+.menu-item {
+
+    .menu-item-title {
+        padding-left: $gutters * 5;
+        padding-right: 0;
+    }
+
+    .menu-item-controls {
+        left: 0;
+        right: auto;
+
+        a { float: right; }
+
+    }
+}
+
+.dz-preview { float: right; }

@@ -1,0 +1,7 @@
+// Box
+// A simple mixin to give dimensions to a box.
+
+@mixin box($width, $height: $width) {
+	width: $width;
+	height: $height;
+}

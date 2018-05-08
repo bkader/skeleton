@@ -1,0 +1,18 @@
+{
+  "name": "Settings Module",
+  "description": "Manage site settings.",
+  "version": "1.0.0",
+  "author": "Kader Bouyakoub",
+  "author_uri": "https://goo.gl/wGXHO9",
+  "author_email": "bkade@mail.com",
+  "license": "MIT",
+  "enabled": true,
+  "admin_menu": "Settings",
+  "admin_order": 89,
+  "translations": {
+    "admin_menu": {
+      "french": "Param&egrave;tres",
+      "arabic": "الإعدادات"
+    }
+  }
+}

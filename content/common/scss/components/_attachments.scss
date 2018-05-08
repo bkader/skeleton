@@ -1,0 +1,105 @@
+/* Media Library */
+.attachments {
+    margin: $gutters auto 0;
+    outline: 0;
+
+    > .attachment {
+        cursor: pointer;
+        margin-bottom: 30px;
+        position: relative;
+        text-align: center;
+        outline: 0;
+
+        > .attachment-inner {
+            display: block;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+
+            a {
+                display: block;
+                position: relative;
+            }
+
+            img { @include box-shadow(0 0 1px 1px #ddd); }
+        }
+
+        &.selected .attachment-inner a { @include box-shadow(0 0 0 5px $color__blue); }
+
+        @include screen-max-xs {
+
+            .attachment-action {
+                padding-top: 53px;
+            }
+        }
+
+        @include screen-xs {
+
+            .attachment-action {
+                padding-top: 103px;
+            }
+        }
+
+        @include screen-md {
+
+            .attachment-action {
+                padding-top: 73px;
+            }
+        }
+
+        @include screen-lg {
+
+            .attachment-action {
+                padding-top: 53px;
+            }
+        }
+    }
+
+    &.select-mode {
+
+        .attachment {
+            img { @include opacity(0.5); }
+
+            &.selected {
+                a  { @include box-shadow(0 0 0 5px $color__red); }
+                img { @include opacity(1); }
+            }
+        }
+    }
+}
+
+.dz-message {
+    text-align: center;
+    padding: 30px;
+    background-color: #fefefe;
+    border: 1px dashed #ddd;
+}
+
+.dz-preview {
+    margin: 0!important;
+    vertical-align: baseline!important;
+    display: block!important;
+    float: left;
+    height: 150px!important;
+
+    &.dz-image-preview {
+        background: none!important;
+        margin: 0 0 40px!important;
+        padding: 0 16px;
+    }
+
+    .dz-image {
+        @include border-radius(0!important);
+        padding: 5px;
+        width: 150px!important;
+        height: 140px!important;
+        overflow: visible!important;
+
+        img {
+            @include box-shadow(0 0 1px 1px #ddd);
+            width: 150px!important;
+            height: 140px!important;
+        }
+    }
+}
+.dz-hidden-input { display: none!important; }

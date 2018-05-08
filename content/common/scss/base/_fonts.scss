@@ -1,0 +1,5 @@
+// Lato font.
+@include font-face-ext("Lato", "../fonts/lato-400", 400);
+@include font-face-ext("Lato", "../fonts/lato-400i", 400, italic);
+@include font-face-ext("Lato", "../fonts/lato-700", 700);
+@include font-face-ext("Lato", "../fonts/lato-700i", 700, italic);

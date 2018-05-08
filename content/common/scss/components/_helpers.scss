@@ -1,0 +1,140 @@
+.text-small {
+    font-size: 0.83em;
+}
+.text-normal {
+    font-weight: normal;
+}
+
+/* Helpers */
+.m0 {margin:0!important}
+.m5 {margin:5px!important}
+.m10 {margin:10px!important}
+.m15 {margin:15px!important}
+.m30 {margin:30px!important}
+.mt0 {margin-top:0!important}
+.mt5 {margin-top:5px!important}
+.mt10 {margin-top:10px!important}
+.mt15 {margin-top:15px!important}
+.mt30 {margin-top:30px!important}
+.mb0 {margin-bottom:0!important}
+.mb5 {margin-bottom:5px!important}
+.mb10 {margin-bottom:10px!important}
+.mb15 {margin-bottom:15px!important}
+.mb30 {margin-bottom:30px!important}
+.ml0 {margin-left:0!important}
+.ml5 {margin-left:5px!important}
+.ml10 {margin-left:10px!important}
+.ml15 {margin-left:15px!important}
+.ml30 {margin-left:30px!important}
+.mr0 {margin-right:0!important}
+.mr5 {margin-right:5px!important}
+.mr10 {margin-right:10px!important}
+.mr15 {margin-right:15px!important}
+.mr30 {margin-right:30px!important}
+
+.txof {
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.w-2 { width: 2.5% !important; }
+.w-5 { width: 5% !important; }
+.w-10 { width: 10% !important; }
+.w-125 { width: 12.5% !important; }
+.w-15 { width: 15% !important; }
+.w-18 { width: 17.5% !important; }
+.w-20 { width: 20% !important; }
+.w-23 { width: 22.5% !important; }
+.w-30 { width: 30% !important; }
+.w-38 { width: 37.5% !important; }
+.w-35 { width: 35% !important; }
+.w-65 { width: 65% !important; }
+.w-85 { width: 85% !important; }
+
+// Extra colors
+.card.status {
+    margin-bottom: $gutters;
+
+    .card-title {
+        @include font-size(48);
+    }
+}
+
+@each $color in $color__list {
+
+    @if nth($color, 1) != 'default' and nth($color, 1) != 'white' {
+        .text-#{nth($color, 1)} {
+            color: #{nth($color, 2)};
+        }
+    }
+
+    // Backgrounds.
+    .bg-#{nth($color, 1)} {
+        background-color: #{nth($color, 2)} !important;
+        @if nth($color, 1) == 'white' or nth($color, 1) == 'default'  {
+            color: #333;
+        } @else {
+            color: #fff;
+        }
+    }
+
+    // Buttons.
+    .btn-#{nth($color, 1)} {
+        background-color: #{nth($color, 2)};
+
+        @if nth($color, 1) == 'white' or nth($color, 1) == 'default'  {
+            border-color: #ccc;
+            color: #333;
+        } @else {
+            border-color: darken(nth($color, 2), 5%);
+            color: #fff;
+        }
+
+        &:hover {
+            background-color: darken(nth($color, 2), 10%);
+            @if nth($color, 1) == 'white' or nth($color, 1) == 'default' {
+                border-color: #8c8c8c;
+                color: #333;
+            } @else {
+                border-color: darken(nth($color, 2), 15%);
+                color: #fff;
+            }
+        }
+
+        &:active {
+            background-color: darken(nth($color, 2), 15%) !important;
+        }
+
+        &:focus {
+            @if nth($color, 1) == 'white' or nth($color, 1) == 'default' {
+                @include box-shadow(0 0 0 0.2rem rgba(#333, 0.25));
+            } @else {
+                @include box-shadow(0 0 0 0.2rem rgba(nth($color, 2), 0.25));
+            }
+            outline: 0;
+        }
+    }
+
+    .btn-#{nth($color, 1)}.btn-icon > [class^="fa"] {
+        background-color: darken(nth($color, 2), 10%);
+        border-color: darken(nth($color, 2), 15%);
+    }
+
+    // Panels.
+    .card-#{nth($color, 1)} {
+        border-color: #{nth($color, 2)};
+    }
+    .status.card-#{nth($color, 1)} > .card-header {
+        background-color: #{nth($color, 2)};
+        @if nth($color, 1) != 'white' and nth($color, 1) != 'default' {
+            color: $color__white;
+        } 
+    }
+
+    // Badge.
+    .badge-#{nth($color, 1)} {
+        background-color: #{nth($color, 2)};
+    }
+}

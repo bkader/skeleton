@@ -1,0 +1,5 @@
+.wrapper {
+    padding: $gutters 0;
+
+    @include screen-md { padding-bottom: ($gutters * 3); }
+}

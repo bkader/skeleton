@@ -1,0 +1,24 @@
+.table-striped {
+    border-left: 1px solid #dee2e6;
+    border-right: 1px solid #dee2e6;
+    border-bottom: 1px solid #dee2e6;
+}
+.table-striped thead tr:nth-of-type(odd),
+.table-striped tbody tr:nth-of-type(even) {
+    background-color: $color__white;
+}
+.table-striped tbody tr:nth-of-type(even):hover { 
+    background-color: rgba(#000, 0.075); 
+}
+
+.tab-content .table-striped {
+    border-left: 1px solid #dee2e6;
+    border-right: 1px solid #dee2e6;
+    thead th { border-top: none; }
+}
+
+.table-bulk-actions {
+    display: inline-block;
+    overflow: hidden;
+    padding: 2px 8px 5px 0;
+}

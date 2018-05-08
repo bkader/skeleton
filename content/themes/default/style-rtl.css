@@ -1,0 +1,41 @@
+/**
+ * Droid Aabic Kufi
+ */
+@font-face {
+	font-family: 'Droid Arabic Kufi';
+	font-weight: normal;
+	font-style: normal;
+	src: url(assets/fonts/droid-arabic-kufi-regular.woff2) format('woff2'),
+		url(assets/fonts/droid-arabic-kufi-regular.woff) format('woff');
+} 
+
+@font-face {
+	font-family: 'Droid Arabic Kufi';
+	font-weight: bold;
+	font-style: normal;
+	src: url(assets/fonts/droid-arabic-kufi-bold.woff2) format('woff2'),
+		url(assets/fonts/droid-arabic-kufi-bold.woff) format('woff');
+}
+
+body {
+	font-family: 'Open Sans', 'Droid Arabic Kufi', sans-serif;
+	font-size: 14px;
+	font-weight: normal;
+}
+
+.form-control,
+input,
+textarea {
+	font-family: 'Open Sans', 'Droid Arabic Kufi', sans-serif;
+}
+	
+
+.user-menu {
+	border-left: none;
+	border-right: 1px solid #eee; /* Fallback */
+	border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+.user-menu img {
+    margin-left: 0;
+    margin-right: 12px;
+}

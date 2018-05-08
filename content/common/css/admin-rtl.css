@@ -1,0 +1,78 @@
+/*!
+ * Skeleton Dashboard - v1.3.2 (https://goo.gl/wGXHO9/skeleton)
+ * Copyright 2018 Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * Licensed under MIT (https://goo.gl/wGXHO9/skeleton/blob/develop/LICENSE.md)
+ */
+body {
+  font-family: Tahoma, Arial, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: Tahoma, Arial, sans-serif;
+}
+
+.form-control,
+.btn,
+input,
+textarea {
+  font-family: Tahoma, Arial, sans-serif;
+}
+
+.navbar-brand::before {
+  margin-right: 0 !important;
+  margin-left: 15px;
+}
+
+.user-menu {
+  border-left: none;
+  border-right: 1px solid #1e77ba;
+}
+.user-menu img {
+  margin-right: 7.5px;
+  margin-left: 0;
+}
+
+@media screen and (min-width: 768px) {
+  .wrapper {
+    margin-right: 180px;
+    margin-left: 0;
+  }
+  .wrapper .footer {
+    left: 0;
+    right: 180px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .nav-sidebar > li ul {
+    left: auto;
+    right: 100%;
+  }
+}
+.nav-sidebar > li.active > ul {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  top: 0;
+  right: 0;
+}
+
+.status {
+  font-family: Tahoma, Arial, sans-serif;
+}
+
+.menu-item .menu-item-title {
+  padding-left: 75px;
+  padding-right: 0;
+}
+.menu-item .menu-item-controls {
+  left: 0;
+  right: auto;
+}
+.menu-item .menu-item-controls a {
+  float: right;
+}
+
+.dz-preview {
+  float: right;
+}

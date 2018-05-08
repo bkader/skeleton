@@ -1,0 +1,75 @@
+# Ignore unnecessary folders.
+.DS_Store
+.phpintel
+license.txt
+
+# Ignore cache files.
+!application/cache/*
+application/cache/*
+!application/cache/assets/
+application/cache/assets/*
+!application/cache/assets/.htaccess
+
+# Ignore log files.
+application/logs/*
+!application/logs/.htaccess
+
+# Remove generated encryption key file.
+application/config/encryption_key.php
+application/config/*/encryption_key.php
+
+# Ignore test controller.
+application/controllers/Test.php
+
+# keep all .htaccess, .gitkeep and index.html
+!**/.htaccess
+!**/.gitkeep
+!**/index.html
+
+# Ignore all captcha images.
+!content/captcha/
+content/captcha/*
+!content/captcha/index.html
+
+# Ignore all uploaded files.
+!content/uploads/
+content/uploads/*
+!content/uploads/index.html
+!content/uploads/temp/
+content/uploads/temp/*
+!content/uploads/temp/index.html
+
+!content/uploads/avatars/
+content/uploads/avatars/*
+!content/uploads/avatars/index.html
+
+# Ignore all public modules except default ones.
+# Think of removing or commenting the following lines
+# if you want your plugins to be pushed to your repo.
+!content/modules/
+content/modules/*
+!content/modules/index.html
+
+# Ignore all plugins except default ones.
+# Think of removing or commenting the following lines
+# if you want your plugins to be pushed to your repo.
+!content/plugins/
+content/plugins/*
+!content/plugins/cache-assets/*
+!content/plugins/extra-profile-fields/*
+!content/plugins/helloworld/*
+!content/plugins/social-meta-tags/*
+!content/plugins/the-title/*
+
+# Ignore all themes except the default one.
+# Think of removing or commenting the following lines
+# if you want your themes to be pushed to your repo.
+!content/themes/
+content/themes/*
+!content/themes/default/
+
+# Sublime Text cache files
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace

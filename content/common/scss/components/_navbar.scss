@@ -1,0 +1,65 @@
+.navbar-admin {
+    @include fixed(top 0 left 0 right 0);
+    background-color: $navbar__background;
+    border-bottom: 1px solid darken($navbar__background, 5%);
+    min-height: $navbar__height;
+    padding-bottom: 0;
+    padding-top: 0;
+    z-index: $navbar__z-index;
+
+    .navbar-brand {
+        color: $navbar__nav-link;
+
+        @include hover-focus-active {
+            color: $navbar__nav-link-hover;
+        }
+    }
+
+    .navbar-toggler { color: $color__white; }
+
+    // Links.
+    .nav-item > .nav-link {
+        @include font-size(13);
+        color: $navbar__nav-link;
+        line-height: $navbar__height;
+        padding-bottom: 0;
+        padding-top: 0;
+
+        @include hover-focus-active {
+            color: $navbar__nav-link-hover;
+        }
+    }
+
+    // Dropdown menus.
+    .nav-item.dropdown .dropdown-menu {
+        margin-top: 0;
+        padding: 5px 0;
+
+        .dropdown-item {
+            @include font-size(13);
+            padding: 3px 20px;
+
+            @include hover-focus-active {
+                background-color: $navbar__dropdown-item-hover;
+                color: $color__white;
+
+                > .text-grey { color: darken($color__white, 20%); }
+            }
+        }
+    }
+
+    // User menu.
+    .user-menu {
+        border-left: 1px solid darken($navbar__background, 5%);
+
+        > a::after { display: none; }
+
+        img { margin-left: 10px; display: none; }
+    }
+
+    @include screen-md {
+        height: $navbar__height;
+
+        .user-menu img { display: inline-block; }
+    }
+}

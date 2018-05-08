@@ -1,0 +1,212 @@
+// --------------------------------------------------------------
+// Site variables.
+// --------------------------------------------------------------
+
+// --------------------------------------------------------------
+// Different colors.
+// --------------------------------------------------------------
+$color__black: #1b1c1d;
+$color__blue: #2185d0;
+$color__brown: #a5673f;
+$color__green: #21ba45;
+$color__grey: #767676;
+$color__olive: #b5cc18;
+$color__orange: #f2711c;
+$color__pink: #e03997;
+$color__purple: #a333c8;
+$color__red: #db2828;
+$color__teal: #00b5ad;
+$color__white: #fff;
+$color__yellow: #fbbd08;
+$color__violet: #6435c9;
+
+$color__danger: $color__red;
+$color__info: $color__teal;
+$color__primary: $color__blue;
+$color__secondary: $color__grey;
+$color__success: $color__green;
+$color__warning: $color__orange;
+$color__default: darken($color__white, 2.5%);
+
+// --------------------------------------------------------------
+// Different background colors.
+// --------------------------------------------------------------
+$color__background-body: darken($color__white, 2.5%);
+
+// --------------------------------------------------------------
+// Social network colors.
+// --------------------------------------------------------------
+$color__facebook: #3b5998;
+$color__twitter: #1da1f2;
+$color__youtube: #ff0000;
+$color__instagram: #c32aa3;
+$color__pinterest: #bd081c;
+$color__linkedin: #007bb5;
+$color__google-plus: #db4437;
+$color__google: #4285f4;
+$color__snapchat: #fffc00;
+$color__whatsapp: #25d366;
+$color__tumblr: #35465d;
+$color__reddit: #ff4500;
+$color__spotify: #1ed760;
+$color__apple: #a6b1b7;
+$color__amazon: #ff9900;
+$color__foursquare: #f94877;
+$color__swarm: #ffa633;
+$color__vimeo: #1ab7ea;
+$color__skype: #00aff0;
+$color__android: #a4c639;
+$color__quora: #aa2200;
+$color__dribbble: #ea4c89;
+$color__stumbleupon: #e94826;
+$color__flickr: #f40083;
+$color__yahoo: #430297;
+$color__soundcloud: #ff5500;
+$color__deviantart: #05cc47;
+$color__pocket: #ee4056;
+$color__500px: #0099e5;
+$color__vk: #4a76a8;
+$color__vine: #00b489;
+$color__steam: #171A21;
+$color__discord: #7289da;
+$color__medium: #02b875;
+
+$color__list: (
+    "500px": $color__500px,
+    "amazon": $color__amazon,
+    "android": $color__android,
+    "apple": $color__apple,
+    "black": $color__black,
+    "blue": $color__blue,
+    "brown": $color__brown,
+    "danger": $color__danger,
+    "default": $color__default,
+    "deviantart": $color__deviantart,
+    "discord": $color__discord,
+    "dribbble": $color__dribbble,
+    "facebook": $color__facebook,
+    "flickr": $color__flickr,
+    "foursquare": $color__foursquare,
+    "google": $color__google,
+    "google-plus": $color__google-plus,
+    "green": $color__green,
+    "grey": $color__grey,
+    "info": $color__info,
+    "instagram": $color__instagram,
+    "linkedin": $color__linkedin,
+    "medium": $color__medium,
+    "olive": $color__olive,
+    "orange": $color__orange,
+    "pink": $color__pink,
+    "pinterest": $color__pinterest,
+    "pocket": $color__pocket,
+    "primary": $color__primary,
+    "purple": $color__purple,
+    "quora": $color__quora,
+    "red": $color__red,
+    "reddit": $color__reddit,
+    "secondary": $color__secondary,
+    "skype": $color__skype,
+    "snapchat": $color__snapchat,
+    "soundcloud": $color__soundcloud,
+    "spotify": $color__spotify,
+    "steam": $color__steam,
+    "stumbleupon": $color__stumbleupon,
+    "success": $color__success,
+    "swarm": $color__swarm,
+    "teal": $color__teal,
+    "tumblr": $color__tumblr,
+    "twitter": $color__twitter,
+    "vimeo": $color__vimeo,
+    "vine": $color__vine,
+    "violet": $color__violet,
+    "vk": $color__vk,
+    "warning": $color__warning,
+    "whatsapp": $color__whatsapp,
+    "white": $color__white,
+    "yahoo": $color__yahoo,
+    "yellow": $color__yellow,
+    "youtube": $color__youtube
+);
+
+// --------------------------------------------------------------
+// Different text colors.
+// --------------------------------------------------------------
+$color__text-screen: #21759b;
+$color__text-input: #666;
+$color__text-input-focus: #111;
+$color__text-main: #414141;
+$color__text-light: #636363;
+
+// --------------------------------------------------------------
+// Different border colors.
+// --------------------------------------------------------------
+$color__border-button: #ccc #ccc #bbb;
+$color__border-button-hover: #ccc #bbb #aaa;
+$color__border-button-focus: #aaa #bbb #bbb;
+$color__border-input: #ccc;
+$color__border-abbr: #666;
+
+// --------------------------------------------------------------
+// Font families.
+// --------------------------------------------------------------
+$font__base: "Helvetica Neue", "Segoe UI", Helvetica, Arial, sans-serif;;
+$font__oswald: "Helvetica Neue", "Segoe UI", Helvetica, Arial, sans-serif;;
+$font__ruda: "Helvetica Neue", "Segoe UI", Helvetica, Arial, sans-serif;;
+$font__droid: Tahoma, Arial, sans-serif;
+$font__dubai: Tahoma, Arial, sans-serif;
+$font__code: Monaco, Consolas, monospace;
+$font__pre: Courier, monospace;
+$font__size: 13;
+$font__line-height-body: 18;
+$font__line-height-pre: 1.6;
+
+// --------------------------------------------------------------
+// Navbar variables.
+// --------------------------------------------------------------
+$navbar__height: 41px;
+$navbar__background: darken($color__blue, 30%);
+$navbar__z-index: 999;
+
+$navbar__nav-link: #d9d9d9;
+$navbar__nav-link-hover: $color__white;
+
+$navbar__dropdown-item-hover: darken($color__blue, 15%);
+
+// --------------------------------------------------------------
+// Header variables.
+// --------------------------------------------------------------
+$header__height: 50px;
+$header__background: darken($color__blue, 20%);
+$header__border-color: darken($header__background, 10%);
+$header__z-index: 998;
+$header__padding: 7px 0;
+
+// --------------------------------------------------------------
+// Sub-header variables.
+// --------------------------------------------------------------
+$subhead__height: 51px;
+$subhead__background: darken($color__white, 10%);
+$subhead__border-color: darken($subhead__background, 10%);
+
+// --------------------------------------------------------------
+// Footer variables.
+// --------------------------------------------------------------
+$footer__height: 30px;
+$footer__background: #ebebeb;
+$footer__text-color: #626262;
+$footer__z-index: 997;
+$footer__padding: 5px 0;
+$footer__box-shadow: 0 0 3px rgba(#000, 0.1);
+
+// --------------------------------------------------------------
+// Container sizes.
+// --------------------------------------------------------------
+$size__container-sm: 750px;
+$size__container-md: 970px;
+$size__container-lg: 1170px;
+
+// --------------------------------------------------------------
+// Gutters and Sidebar variables.
+// --------------------------------------------------------------
+$gutters: 15px;

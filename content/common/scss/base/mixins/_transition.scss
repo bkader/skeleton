@@ -1,0 +1,6 @@
+// Animation (transition)
+@mixin transition($value...) {
+	@if (length($value)) > 0 {
+		@include prefix(transition, $value, "webkit" "moz" "ms" "o");
+	}
+}
