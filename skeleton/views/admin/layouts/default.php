@@ -476,3 +476,9 @@ if (has_action('admin_subhead') OR true === $module['has_help'] OR isset($page_h
 		?>
 	</div>
 </footer>
+<script type="text/x-handlebars-template" id="csk-alert-template">
+<div class="alert alert-{{type}} alert-dismissible fade show" role="alert" id="csk-alert">
+	{{{message}}}
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+</div>
+</script>
