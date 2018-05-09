@@ -75,11 +75,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					'-1' => line('CSK_MODULES_LOCATION_SELECT'),
 					'0'  => line('CSK_MODULES_LOCATION_APPLICATION'),
 					'1'  => line('CSK_MODULES_LOCATION_PUBLIC'),
-				), '-1', 'class="form-control form-control-sm ml5"'),
+				), '-1', 'class="form-control form-control-sm ml-2"'),
 
 				// Form submit button.
 				form_submit('module-install', line('CSK_MODULES_INSTALL'), array(
-					'class' => 'btn btn-primary btn-sm ml5'
+					'class' => 'btn btn-primary btn-sm ml-2'
 				));
 
 				// Form closing tag.
@@ -136,7 +136,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				<option value="tags"><?php _e('CSK_MODULES_TAGS'); ?></option>
 				<option value="author"><?php _e('CSK_MODULES_AUTHOR'); ?></option>
 			</select>
-			<input type="text" class="form-control-sm ml5" id="search" name="search" placeholder="<?php _e('CSK_MODULES_SEARCH'); ?>">
+			<input type="text" class="form-control-sm ml-2" id="search" name="search" placeholder="<?php _e('CSK_MODULES_SEARCH'); ?>">
 		</form>
 	</div><!-- /.navbar-collapse -->
 </nav>

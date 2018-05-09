@@ -73,9 +73,10 @@ class Plugins extends Admin_Controller
 		add_filter('admin_head', array($this, '_admin_head'));
 		$this->scripts[] = 'plugins';
 
-		// Default page title and icon.
+		// Page icon, title and help URL.
 		$this->data['page_icon']  = 'plug';
 		$this->data['page_title'] = line('CSK_PLUGINS_PLUGINS');
+		$this->data['page_help']  = 'https://goo.gl/cvLaCz';
 	}
 
 	// ------------------------------------------------------------------------
@@ -188,8 +189,8 @@ class Plugins extends Admin_Controller
 								'plugins/delete/'.$folder,
 								'delete-plugin_'.$folder
 							),
-							'class' => 'btn btn-default btn-xs btn-icon plugin-delete ml-2',
-						), fa_icon('trash-o text-danger').line('CSK_PLUGINS_DELETE'));
+							'class' => 'btn btn-danger btn-xs btn-icon plugin-delete ml-2',
+						), fa_icon('trash-o').line('CSK_PLUGINS_DELETE'));
 					}
 
 					// Module details.
@@ -464,11 +465,6 @@ class Plugins extends Admin_Controller
 	 */
 	protected function _subhead()
 	{
-		// Page icon, title and help URL.
-		$this->data['page_icon']  = 'plug';
-		$this->data['page_title'] = line('CSK_PLUGINS_PLUGINS');
-		$this->data['page_help']  = 'https://goo.gl/cvLaCz';
-
 		// Displaying buttons depending on the page we are on.
 		$method = $this->router->fetch_method();
 
@@ -484,7 +480,7 @@ class Plugins extends Admin_Controller
 					// Upload plugin button.
 					echo html_tag('button', array(
 						'role' => 'button',
-						'class' => 'btn btn-primary btn-sm btn-icon mr5',
+						'class' => 'btn btn-primary btn-sm btn-icon mr-2',
 						'data-toggle' => 'collapse',
 						'data-target' => '#plugin-install'
 					), fa_icon('upload').line('CSK_PLUGINS_UPLOAD'));

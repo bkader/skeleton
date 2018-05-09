@@ -119,7 +119,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				<option value="tags"><?php _e('CSK_PLUGINS_TAGS'); ?></option>
 				<option value="author"><?php _e('CSK_PLUGINS_AUTHOR'); ?></option>
 			</select>
-			<input type="text" class="form-control form-control-sm ml5" id="search" name="search" placeholder="<?php _e('CSK_PLUGINS_SEARCH'); ?>">
+			<input type="text" class="form-control form-control-sm ml-2" id="search" name="search" placeholder="<?php _e('CSK_PLUGINS_SEARCH'); ?>">
 		</form>
 	</div><!-- /.navbar-collapse -->
 </nav>

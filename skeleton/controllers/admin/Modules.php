@@ -145,8 +145,8 @@ class Modules extends Admin_Controller {
 					'modules/delete/'.$folder,
 					'delete-module_'.$folder
 				),
-				'class' => 'btn btn-default btn-xs btn-icon module-delete ml-2',
-			), fa_icon('trash-o text-danger').line('CSK_MODULES_DELETE'));
+				'class' => 'btn btn-danger btn-xs btn-icon module-delete ml-2',
+			), fa_icon('trash-o').line('CSK_MODULES_DELETE'));
 
 			// Module details.
 			$details = array();
@@ -357,7 +357,7 @@ class Modules extends Admin_Controller {
 				// Upload module button.
 				echo html_tag('button', array(
 					'role' => 'button',
-					'class' => 'btn btn-primary btn-sm btn-icon mr5',
+					'class' => 'btn btn-primary btn-sm btn-icon mr-2',
 					'data-toggle' => 'collapse',
 					'data-target' => '#module-install'
 				), fa_icon('upload').line('CSK_MODULES_UPLOAD'));
@@ -372,7 +372,7 @@ class Modules extends Admin_Controller {
 			add_action('admin_subhead', function() {
 				echo html_tag('a', array(
 					'href'  => admin_url('modules/install'),
-					'class' => 'btn btn-primary btn-sm btn-icon',
+					'class' => 'btn btn-primary btn-sm btn-icon mr-2',
 				), fa_icon('upload').line('CSK_MODULES_ADD'));
 			});
 		}
