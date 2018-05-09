@@ -248,7 +248,7 @@
 				// Language list.
 				foreach ($site_languages as $folder => $lang) {
 					echo html_tag('a', array(
-						'href' => site_url('language/change/'.$folder),
+						'href' => site_url('process/set_language/'.$folder),
 						'class' => 'dropdown-item',
 					), $lang['name_en'].html_tag('span', array(
 						'class' => 'text-grey pull-right'

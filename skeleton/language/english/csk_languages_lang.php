@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://goo.gl/wGXHO9
- * @since 		1.0.0
+ * @since 		2.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -42,46 +42,52 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @category 	Modules\Language
+ * @category 	Language
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
- * @since 		1.0.0
- * @version 	1.3.3
+ * @since 		2.0.0
+ * @version 	2.0.0
  */
 
+$lang['CSK_LANGUAGES']           = 'Languages';
+$lang['CSK_LANGUAGES_LANGUAGE']  = 'Language';
+$lang['CSK_LANGUAGES_LANGUAGES'] = 'Languages';
+
 // Dashboard page title and tip.
-$lang['sln_manage_languages']     = 'إدارة اللغات';
-$lang['sln_manage_languages_tip'] = 'تفعيل وتعطيل وتثبيت وتعيين اللغة الافتراضية للموقع. اللغات المفعلة متوفرة لزوار الموقع.';
+$lang['CSK_LANGUAGES_TIP'] = 'Enabled, disable and set site\'s default language. Enabled languages are available to site visitors.';
 
 // Language details.
-$lang['sln_folder']       = 'المجلد';
-$lang['sln_abbreviation'] = 'الاختصار';
-$lang['sln_is_default']   = 'الافتراضي';
-$lang['sln_enabled']      = 'مفعل';
+$lang['CSK_LANGUAGES_FOLDER']       = 'Folder';
+$lang['CSK_LANGUAGES_ABBREVIATION'] = 'Abbreviation';
+$lang['CSK_LANGUAGES_IS_DEFAULT']   = 'Is Default';
+$lang['CSK_LANGUAGES_ENABLED']      = 'Enabled';
 
 // Language actions.
-$lang['sln_make_default'] = 'افتراضي';
+$lang['CSK_LANGUAGES_DISABLE']      = 'Disable';
+$lang['CSK_LANGUAGES_ENABLE']       = 'Enable';
+$lang['CSK_LANGUAGES_MAKE_DEFAULT'] = 'Make Default';
+
+// Confirmation messages.
+$lang['CSK_LANGUAGES_CONFIRM_ENABLE']  = 'Are you sure you want to enable this language?';
+$lang['CSK_LANGUAGES_CONFIRM_DISABLE'] = 'Are you sure you want to disable this language?';
+$lang['CSK_LANGUAGES_CONFIRM_DEFAULT'] = 'Are you sure you want to make this language as site\'s default language?';
 
 // Success messages.
-$lang['sln_language_enable_success']  = 'تم تفعيل اللغة بنجاح.';
-$lang['sln_language_disable_success'] = 'تم تعطيل اللغة بنجاح.';
-$lang['sln_language_default_success'] = 'تم تغيير اللغة الافتراضية بنجاح.';
+$lang['CSK_LANGUAGES_SUCCESS_ENABLE']  = 'Language successfully enabled.';
+$lang['CSK_LANGUAGES_SUCCESS_DISABLE'] = 'Language successfully disabled.';
+$lang['CSK_LANGUAGES_SUCCESS_DEFAULT'] = 'Default language successfully changed.';
 
 // Error messages.
-$lang['sln_english_required']       = 'مطلوب ولا يمكن تغييره.';
-$lang['sln_language_enable_error']  = 'تعذر تفعيل اللغة.';
-$lang['sln_language_disable_error'] = 'تعذر تعطيل اللغة.';
-$lang['sln_language_default_error'] = 'تعذر تغيير اللغة الافتراضية.';
+$lang['CSK_LANGUAGES_ERROR_ENABLE']           = 'Unable to enable language.';
+$lang['CSK_LANGUAGES_ERROR_DISABLE']          = 'Unable to disable language.';
+$lang['CSK_LANGUAGES_ERROR_DEFAULT']          = 'Unable to change default language.';
+$lang['CSK_LANGUAGES_ERROR_ENGLISH_REQUIRED'] = 'Required and untouchable.';
 
 // Missing language errors.
-$lang['sln_language_missing_folder']  = 'مجلد اللغة مفقود. لا يمكن ترجمة الموقع.';
-$lang['sln_language_missing_line']    = 'لم يمكن العثور على سطر اللغة المطلوب.';
-$lang['sln_language_enable_missing']  = 'اللغة التي تحاول تفعيلها غير متوفرة.';
-$lang['sln_language_disable_missing'] = 'اللغة التي تحاول تعطيلها غير متوفرة.';
-$lang['sln_language_default_missing'] = 'اللغة التي تحاول جعلها افتراضية غير متوفرة.';
+$lang['CSK_LANGUAGES_MISSING_FOLDER']  = 'The language folder is missing. Lines may not be translated.';
 
 // Already enabled/disable/default message.
-$lang['sln_language_enable_already']  = 'هذه اللغة مفعلة.';
-$lang['sln_language_disable_already'] = 'هذه اللغة معطلة.';
-$lang['sln_language_default_already'] = 'هذه اللغة هي اللغة الافتراضية.';
+$lang['CSK_LANGUAGES_ALREADY_ENABLE']  = 'This language is already enabled.';
+$lang['CSK_LANGUAGES_ALREADY_DISABLE'] = 'This language is already disabled.';
+$lang['CSK_LANGUAGES_ALREADY_DEFAULT'] = 'This language is already the default one.';

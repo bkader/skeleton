@@ -124,6 +124,7 @@ Route::prefix(KB_ADMIN, function() {
 Route::any('ajax/(reports|modules|plugins|themes|languages|users)/(:any)', 'ajax/index/$1/$2');
 Route::any('ajax/(reports|modules|plugins|themes|languages|users)/(:any)/(:any)', 'ajax/index/$1/$2/$3');
 Route::any('ajax/(reports|modules|plugins|themes|languages|users)', 'ajax/index/$1');
+Route::any('process/set_language(.*)', 'process/set_language$1');
 
 // AJAX and process contexts.
 Route::context('(ajax|process)', '$1', array(

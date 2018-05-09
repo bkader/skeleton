@@ -49,9 +49,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	2.0.01
+ * @version 	2.0.0
  */
-class Extensions extends Admin_Controller
+class Languages extends Admin_Controller
 {
 	/**
 	 * __construct
@@ -72,10 +72,16 @@ class Extensions extends Admin_Controller
 		parent::__construct();
 
 		// We load module language file.
-		$this->load->language('language/language');
+		$this->load->language('csk_languages');
+
+		add_action('admin_head', array($this, '_admin_head'));
 
 		// We add JS files.
 		$this->scripts[] = 'language';
+
+		$this->data['page_icon']  = 'globe';
+		$this->data['page_title'] = line('CSK_LANGUAGES');
+		$this->data['page_help']  = 'https://goo.gl/cAmWt1';
 	}
 
 	// ------------------------------------------------------------------------
@@ -121,11 +127,77 @@ class Extensions extends Admin_Controller
 			{
 				$lang['action'] = (in_array($folder, $this->data['available_languages'])) ? 'disable' : 'enable';
 			}
+
+			// Action buttons.
+			$lang['actions'] = array();
+
+			/**
+			 * No actions is available on "English" language except making
+			 * it the language by default if it is not.
+			 */
+			if ('english' === $folder)
+			{
+
+				// Not by default? Display the "Make Default" button.
+				if ('english' !== $this->data['language'])
+				{
+					$lang['actions'][] = html_tag('button', array(
+						'type' => 'button',
+						'data-endpoint' => nonce_ajax_url(
+							'languages/make_default/english',
+							'default-language_english'
+						),
+						'class' => 'btn btn-default btn-xs btn-icon language-default ml-2',
+					), fa_icon('lock').line('CSK_LANGUAGES_MAKE_DEFAULT'));
+				}
+
+				// Ignore the rest.
+				continue;
+			}
+
+			// Make default action.
+			if ($folder !== $this->data['language'])
+			{
+				$lang['actions'][] = html_tag('button', array(
+					'type' => 'button',
+					'data-endpoint' => nonce_ajax_url(
+						"languages/make_default/{$folder}",
+						"default-language_{$folder}"
+					),
+					'class' => 'btn btn-default btn-xs btn-icon language-default ml-2',
+				), fa_icon('lock').line('CSK_LANGUAGES_MAKE_DEFAULT'));
+			}
+
+			// Disable language action.
+			if (in_array($folder, $this->data['available_languages']))
+			{
+				$lang['actions'][] = html_tag('button', array(
+					'type' => 'button',
+					'data-endpoint' => nonce_ajax_url(
+						"languages/disable/{$folder}",
+						"disable-language_{$folder}"
+					),
+					'class' => 'btn btn-default btn-xs btn-icon language-disable ml-2',
+				), fa_icon('times text-danger').line('CSK_LANGUAGES_DISABLE'));
+			}
+
+			// Enable language action.
+			else
+			{
+				$lang['actions'][] = html_tag('button', array(
+					'type' => 'button',
+					'data-endpoint' => nonce_ajax_url(
+						"languages/enable/{$folder}",
+						"enable-language_{$folder}"
+					),
+					'class' => 'btn btn-default btn-xs btn-icon language-enable ml-2',
+				), fa_icon('check text-success').line('CSK_LANGUAGES_ENABLE'));
+			}
 		}
 
 		// Set page title and render view.
 		$this->theme
-			->set_title(lang('sln_manage_languages'))
+			->set_title(lang('CSK_LANGUAGES'))
 			->render($this->data);
 	}
 
@@ -133,10 +205,55 @@ class Extensions extends Admin_Controller
 	// Private methods.
 	// ------------------------------------------------------------------------
 
-	protected function _heading()
+	/**
+	 * _admin_head
+	 *
+	 * Add some JS lines to admin head section.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	string
+	 * @return 	string
+	 */
+	public function _admin_head($output)
 	{
-		$this->data['page_icon'] = 'globe';
-		$this->data['page_title'] = line('languages');
+		$lines = array(
+			'enable'  => line('CSK_LANGUAGES_CONFIRM_ENABLE'),
+			'disable' => line('CSK_LANGUAGES_CONFIRM_DISABLE'),
+			'default' => line('CSK_LANGUAGES_CONFIRM_DEFAULT'),
+		);
+
+		$output .= '<script type="text/javascript">';
+		$output .= 'csk.i18n = csk.i18n || {};';
+		$output .= ' csk.i18n.language = '.json_encode($lines).';';
+		$output .= '</script>';
+
+		return $output;
+	}
+
+	/**
+	 * _subhead
+	 *
+	 * Added notice to dashboard subhead section.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	protected
+	 * @param 	none
+	 * @return 	void
+	 */
+	protected function _subhead()
+	{
+		add_action('admin_subhead', function () {
+			echo html_tag('span', array(
+				'class' => 'navbar-text'
+			), fa_icon('info-circle text-primary mr-1').line('CSK_LANGUAGES_TIP'));
+		});
 	}
 
 }

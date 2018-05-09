@@ -47,67 +47,60 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	1.3.3
  * @version 	2.0.0
  */
-?>
-	<p class="mb-3"><?php _e('sln_manage_languages_tip'); ?></p>
-	<div class="table-responsive-sm">
-		<table class="table table-striped table-hover table-sm">
-			<thead>
-				<tr>
-					<th class="w-25"><?php _e('language'); ?></th>
-					<th class="w-15"><?php _e('sln_abbreviation'); ?></th>
-					<th class="w-15"><?php _e('sln_folder'); ?></th>
-					<th class="w-10"><?php _e('sln_is_default'); ?></th>
-					<th class="w-10"><?php _e('sln_enabled'); ?></th>
-					<th class="w-25 text-right"><?php _e('action'); ?></th>
-				</tr>
-			</thead>
-		<?php if ($languages): ?>
-			<tbody>
-			<?php foreach ($languages as $folder => $lang): ?>
-				<tr id="lang-<?php echo $folder; ?>">
-					<?php if (true === $lang['available']): ?>
-					<td><?php echo $lang['name_en']; ?>&nbsp;<small class="text-muted"><?php echo $lang['name']; ?></small></td>
-					<?php else: ?>
-					<td><del title="<?php _e('sln_language_missing_folder'); ?>" class="text-danger"><?php echo $lang['name_en']; ?>&nbsp;<small class="text-muted"><?php echo $lang['name']; ?></small></del></td>
-					<?php endif; ?>
-					<td><?php echo $lang['code']; ?>&nbsp;<small class="text-muted"><?php echo $lang['locale']; ?></small></td>
-					<td><?php echo $folder; ?></td>
-					<td><?php echo label_condition($folder === $language); ?></td>
-					<td><?php echo label_condition(in_array($folder, $available_languages)); ?></td>
-					<td class="text-right">
-					<?php
-					/**
-					 * Make sure language default.
-					 * @since 	1.0.0
-					 */
-					if ($folder !== $language) {
-						echo html_tag('a', array(
-							'href'      => nonce_ajax_url('language/make_default/'.$folder, 'default-language-'.$folder),
-							'data-lang' => $folder,
-							'class'     => 'mr-2 btn btn-default btn-xs lang-default',
-						), line('sln_make_default'));
-					}
 
-					/**
-					 * Enabled/Disable action.
-					 * @since 	1.0.0
-					 */
-					if (null !== $lang['action']) {
-						echo html_tag('a', array(
-							'href'      => nonce_ajax_url("language/{$lang['action']}/{$folder}", $lang['action'].'-language_'.$folder),
-							'data-lang' => $folder,
-							'class'     => 'btn btn-xs btn-'.$lang['action'].' btn-'.('enable' === $lang['action'] ? 'success' : 'danger'),
-						), line($lang['action']));
-					}
-					?>
-					</td>
-				</tr>
-			<?php endforeach; ?>
-			</tbody>
-		<?php endif; ?>
-		</table>
-	</div>
-</div>
+echo '<div class="table-responsive-sm">',
+	'<table class="table table-sm table-striped table-hover">',
+		'<thead>',
+			'<tr>',
+				'<th class="w-25">', line('CSK_LANGUAGES_LANGUAGE'), '</th>',
+				'<th class="w-15">', line('CSK_LANGUAGES_ABBREVIATION'), '</th>',
+				'<th class="w-15">', line('CSK_LANGUAGES_FOLDER'), '</th>',
+				'<th class="w-10">', line('CSK_LANGUAGES_IS_DEFAULT'), '</th>',
+				'<th class="w-10">', line('CSK_LANGUAGES_ENABLED'), '</th>',
+				'<th class="w-25 text-right">', line('CSK_ADMIN_ACTIONS'), '</th>',
+			'</tr>',
+		'</thead>';
+
+if ($languages) {
+	echo '<tbody id="languages-list">';
+
+	foreach ($languages as $folder => $lang) {
+		echo '<tr id="lang-'.$folder.'" data-lang="'.$folder.'">',
+
+			'<td>';
+
+			if (true === $lang['available']) {
+				echo $lang['name_en'];
+			} else {
+				echo html_tag('del', array(
+					'class' => 'text-danger',
+					'title' => line('CSK_LANGUAGES_MISSING_FOLDER'),
+				), $lang['name_en']);
+			}
+			echo html_tag('span', array(
+				'class' => 'text-muted ml-2'
+			), $lang['name']),
+			'</td>',
+
+			'<td>', $lang['code'], html_tag('small', array(
+				'class' => 'text-muted ml-2'
+			), $lang['locale']), '</td>',
+
+			'<td>', $lang['folder'], '</td>',
+
+			'<td>', label_condition($folder === $language), '</td>',
+			
+			'<td>', label_condition(in_array($folder, $available_languages)), '</td>',
+			
+			'<td class="text-right">', implode('', $lang['actions']), '</td>',
+
+		'</tr>';
+	}
+
+	echo '</tbody>';
+}
+
+echo '</table>',
+'</div>';

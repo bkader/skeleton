@@ -33,56 +33,60 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://goo.gl/wGXHO9
- * @since 		1.0.0
+ * @since 		2.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Language Module - Language Controller
+ * Process Controller
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @category 	Modules\Controllers
+ * @category 	Controllers
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://goo.gl/wGXHO9
- * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
- * @since 		1.0.0
- * @version 	1.3.3
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @since 		2.0.0
+ * @version 	2.0.0
  */
-class Language extends KB_Controller
-{
-	/**
-	 * Array of method that accept only AJAX requests.
-	 * @var array
-	 */
-	protected $ajax_methods = array('line');
+class Process extends Process_Controller {
 
 	/**
-	 * Class constructor.
+	 * index
 	 *
-	 * @since 	1.3.2
+	 * This method is here to avoid 404 error. All it does is redirect the
+	 * user to homepage.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
 	 *
 	 * @access 	public
+	 * @param 	none
+	 * @return 	void
 	 */
-	public function __construct()
+	public function index()
 	{
-		parent::__construct();
-		$this->load->language('language/language');
+		redirect('');
+		exit;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Switch site language.
+	 * set_language
 	 *
-	 * @since 	1.0.0
-	 * @since 	1.3.3 	Update user's language.
-	 * 
+	 * Method for changing current site language.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
 	 * @access 	public
-	 * @param 	string 	$folder The language's folder name.
+	 * @param 	string 	$folder 	The language's folder name;
 	 * @return 	void
 	 */
-	public function change($folder = null)
+	public function set_language($folder = null)
 	{
 		// Prepare redirection.
 		$redirect = ($this->input->get_post('next'))
@@ -112,42 +116,6 @@ class Language extends KB_Controller
 
 		redirect($redirect);
 		exit;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Method for getting language lines using AJAX.
-	 *
-	 * @since 	1.0.0
-	 * @since 	1.3.2 	Rewritten so it can be used.
-	 *
-	 * @access 	public
-	 * @param 	none
-	 * @return 	string
-	 */
-	public function line()
-	{
-		// Default status header.
-		$this->response->header = 404;
-
-		// Should we load a file?
-		if ($file = $this->input->post('file'))
-		{
-			$this->load->language($file);
-		}
-
-		// We make sure a line is requested.
-		$line = $this->input->post('line');
-		if (empty($line))
-		{
-			$this->response->message = lang('sln_language_missing_line');
-			return;
-		}
-
-		// We set status code and translate the line.
-		$this->response->header = 200;
-		$this->response->message = lang($line);
 	}
 
 }

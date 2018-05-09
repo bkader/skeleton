@@ -8,8 +8,8 @@
 
     // Prepare globals.
     var csk           = window.csk = window.csk || {};
-    csk.i18n          = csk.i18n || {};
-    csk.i18n.lang = csk.i18n.lang || {};
+    csk.i18n = csk.i18n || {};
+    csk.i18n.language = csk.i18n.language || {};
 
     /**
      * Language Object.
@@ -18,54 +18,67 @@
      */
     csk.language = {
 
-        // Enable the targeted language.
-        enable: function (el, action) {
+        // Enable a language.
+        enable: function (el) {
+            return csk.language._do(el, "enable");
+        },
+
+        // Disable a language.
+        disable: function (el) {
+            return csk.language._do(el, "disable");
+        },
+
+        // Make default.
+        make_default: function (el) {
+            return csk.language._do(el, "default");
+        },
+
+        // Actions handler.
+        _do: function (el, action) {
             var $this = $(el),
-                href = $this.attr("href"),
-                id = $this.data("lang"),
-                action = action || 'enable-language_';
-            
-            if (!href.length || !action.length) {
+                href = $this.data("endpoint"),
+                row = $this.closest("tr"),
+                lang = row.data("lang"),
+                id = row.attr("id"),
+                action = action || -1;
+
+            // No URL provided? Nothing to do...
+            if (typeof href === "undefined" || !href.length || action <= 0) {
                 return false;
             }
-            
-            csk.ajax.request(href, {
-                type: "POST",
-                data: {action: action + id},
-                complete: function () {
-                    $("#wrapper").load(csk.config.currentURL + " #wrapper > *");
-                    $("#lang-dropdown").load(csk.config.currentURL + " #lang-dropdown > *");
-                }
+
+            csk.ui.confirm(csk.i18n.language[action], function () {
+                csk.ajax.request(href, {
+                    type: "POST",
+                    data: {action: action + "-language_" + lang},
+                    complete: function (jqXHR, textStatus) {
+                        if (textStatus !== "success") {
+                            return;
+                        }
+
+                        // Simply reload the UI.
+                        csk.ui.reload();
+                    }
+                });
             });
-        },
-
-        // Disable the targeted language.
-        disable: function (el) {
-            return this.enable(el, 'disable-language_');
-        },
-
-        // Make sure selected language default.
-        make_default: function (el) {
-            return this.enable(el, 'default-language_');
         }
     };
 
     $(document).ready(function () {
-
         // Enable language.
-        $(document).on("click", ".lang-enable", function (e) {
+        $(document).on("click", ".language-enable", function (e) {
             e.preventDefault();
             return csk.language.enable(this);
         });
 
         // Disable language.
-        $(document).on("click", ".lang-disable", function (e) {
+        $(document).on("click", ".language-disable", function (e) {
             e.preventDefault();
             return csk.language.disable(this);
         });
 
         // Make default.
-        $(document).on("click", ".lang-default", function (e) {
+        $(document).on("click", ".language-default", function (e) {
             e.preventDefault();
             return csk.language.make_default(this);
         });
