@@ -83,6 +83,7 @@ class Ajax extends AJAX_Controller {
 
 		// Add safe reports.
 		$this->safe_admin_methods[] = '_modules';
+		$this->safe_admin_methods[] = '_plugins';
 		$this->safe_admin_methods[] = '_reports';
 	}
 
@@ -305,6 +306,96 @@ class Ajax extends AJAX_Controller {
 				// An error occurred somewhere!
 				$this->response->header = self::HTTP_CONFLICT;
 				$this->response->message = line('CSK_MODULES_ERROR_DELETE');
+				break;
+		}
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * _plugins
+	 *
+	 * Method for interacting with plugins.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	string 	$action 	The action to perform.
+	 * @param 	string 	$name 		The plugin's folder name;
+	 * @return 	void
+	 */
+	public function _plugins($action = null, $name = null)
+	{
+		// Load plugins language file.
+		$this->load->language('csk_plugins');
+
+		// Array of available actions.
+		$actions = array('activate', 'deactivate', 'delete');
+
+		if ((null === $action OR ! in_array($action, $actions))
+			OR (null === $name OR ! is_string($name))
+			OR true !== $this->check_nonce())
+		{
+			$this->response->header  = self::HTTP_NOT_ACCEPTABLE;
+			$this->response->message = line('CSK_ERROR_NONCE_URL');
+			return;
+		}
+
+
+		switch ($action) {
+			
+			// In case of activating a plugin.
+			case 'activate':
+
+				// Successfully activated?
+				if (false !== $this->kbcore->plugins->activate($name))
+				{
+					$this->response->header = self::HTTP_OK;
+					$this->response->message = line('CSK_PLUGINS_SUCCESS_ACTIVATE');
+					return;
+				}
+
+				// An error occurred somewhere?
+				$this->response->header = self::HTTP_CONFLICT;
+				$this->response->message = line('CSK_PLUGINS_ERROR_ACTIVATE');
+				return;
+
+				break;
+			
+			// In case of deactivating a plugin.
+			case 'deactivate':
+				// Successfully deactivated?
+				if (false !== $this->kbcore->plugins->deactivate($name))
+				{
+					$this->response->header = self::HTTP_OK;
+					$this->response->message = line('CSK_PLUGINS_SUCCESS_DEACTIVATE');
+					return;
+				}
+
+				// An error occurred somewhere?
+				$this->response->header = self::HTTP_CONFLICT;
+				$this->response->message = line('CSK_PLUGINS_ERROR_DEACTIVATE');
+				return;
+				break;
+
+			// In case of deleting a plugin.
+			case 'delete':
+
+				// Successfully deleted?
+				if (false !== $this->kbcore->plugins->delete($name))
+				{
+					$this->response->header = self::HTTP_OK;
+					$this->response->message = line('CSK_PLUGINS_SUCCESS_DELETE');
+					return;
+				}
+
+				// An error occurred somewhere?
+				$this->response->header = self::HTTP_CONFLICT;
+				$this->response->message = line('CSK_PLUGINS_ERROR_DELETE');
+				return;
+
 				break;
 		}
 	}
