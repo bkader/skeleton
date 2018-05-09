@@ -763,6 +763,10 @@ class Help_Controller extends Admin_Controller {
 	{
 		parent::__construct();
 		$this->load->language('csk_help');
+		
+		$this->data['page_icon']  = 'question-circle';
+		$this->data['page_title'] = line('CSK_ADMIN_HELP');
+		$this->data['page_help']  = 'https://goo.gl/dAChV1';
 	}
 
 }
@@ -802,10 +806,14 @@ class Reports_Controller extends Admin_Controller {
 	{
 		parent::__construct();
 		$this->load->language('csk_reports');
-		$this->scripts[]          = 'reports';
-		$this->data['page_icon']  = 'bar-chart';
-		$this->data['page_title'] = line('CSK_REPORTS_ACTIVITY_LOG');
+		
+		$this->scripts[] = 'reports';
+		
 		add_action('admin_head', array($this, '_reports_admin_head'), 0);
+		
+		$this->data['page_icon']  = 'bar-chart';
+		$this->data['page_title'] = line('CSK_ADMIN_REPORTS');
+		$this->data['page_help']  = 'https://goo.gl/L3cXUb';
 	}
 
 	// ------------------------------------------------------------------------
@@ -871,9 +879,12 @@ class Settings_Controller extends Admin_Controller {
 	{
 		parent::__construct();
 		$this->load->language('csk_settings');
+		
 		$this->scripts[] = 'settings';
+
 		$this->data['page_icon']  = 'sliders';
-		$this->data['page_title'] = line('CSK_SETTINGS');
+		$this->data['page_title'] = line('CSK_ADMIN_BTN_SETTINGS');
+		$this->data['page_help']  = 'https://goo.gl/H9giKR';
 	}
 
 }
