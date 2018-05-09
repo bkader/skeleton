@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://goo.gl/wGXHO9
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -51,7 +51,7 @@ if ( ! function_exists('label_condition'))
 	 * @param 	string 	$false 	String to output if false.
 	 * @return 	string
 	 */
-	function label_condition($cond, $true = 'lang:yes', $false = 'lang:no')
+	function label_condition($cond, $true = 'lang:CSK_ADMIN_YES', $false = 'lang:CSK_ADMIN_NO')
 	{
 		// Prepare the empty label.
 		$label = '<span class="badge badge-%s">%s</span>';
