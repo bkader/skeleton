@@ -39,7 +39,8 @@
                 row = $this.closest("tr"),
                 module = row.data("module"),
                 name = row.data("name") || 'this',
-                id = row.attr("id");
+                id = row.attr("id"),
+                action = action || -1;
 
             // No URL provided? Nothing to do..
             if (typeof href === "undefined" || !href.length) {

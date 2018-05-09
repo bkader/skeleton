@@ -111,7 +111,7 @@ class Modules extends Admin_Controller {
 			{
 				$m['actions'][] = html_tag('a', array(
 					'href'  => admin_url('settings/'.$folder),
-					'class' => 'btn btn-secondary btn-xs btn-icon ml-2',
+					'class' => 'btn btn-default btn-xs btn-icon ml-2',
 				), fa_icon('cogs').line('CSK_MODULES_SETTINGS'));
 			}
 
@@ -124,7 +124,7 @@ class Modules extends Admin_Controller {
 						'deactivate-module_'.$folder
 					),
 					'class' => 'btn btn-default btn-xs btn-icon module-deactivate ml-2',
-				), fa_icon('times text-red').line('CSK_MODULES_DEACTIVATE'));
+				), fa_icon('times text-danger').line('CSK_MODULES_DEACTIVATE'));
 			}
 			else
 			{
@@ -135,7 +135,7 @@ class Modules extends Admin_Controller {
 						'activate-module_'.$folder
 					),
 					'class' => 'btn btn-default btn-xs btn-icon module-activate ml-2',
-				), fa_icon('check text-green').line('CSK_MODULES_ACTIVATE'));
+				), fa_icon('check text-success').line('CSK_MODULES_ACTIVATE'));
 			}
 
 			$m['actions'][] = html_tag('button', array(
@@ -144,8 +144,8 @@ class Modules extends Admin_Controller {
 					'modules/delete/'.$folder,
 					'delete-module_'.$folder
 				),
-				'class' => 'btn btn-danger btn-xs btn-icon module-delete ml-2',
-			), fa_icon('trash-o').line('CSK_MODULES_DELETE'));
+				'class' => 'btn btn-default btn-xs btn-icon module-delete ml-2',
+			), fa_icon('trash-o text-danger').line('CSK_MODULES_DELETE'));
 
 			// Module details.
 			$details = array();
