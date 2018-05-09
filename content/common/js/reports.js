@@ -21,30 +21,32 @@
 
         // Delete the targeted report.
         delete: function (el) {
-            var that = $(el),
-                href = that.attr("href"),
-                id = that.parents("tr").data("id");
+            var $this = $(el),
+                href = $this.data("endpoint"),
+                row = $this.closest("tr"),
+                id = row.data("id");
 
             // We cannot proceed if the URL is not provided.
-            if (!href.length) {
+            if (typeof href === "undefined" || !href.length) {
                 return false;
             }
             
+            // Keep the count to see if we shall refresh page.
             var logCount = $("#reports-list").children(".report-item").length;
 
             return csk.ui.confirm(csk.i18n.reports.delete, function () {
                 var data = {action: "delete-report_" + id};
                 csk.ajax.request(href, {
                     type: "POST",
-                    data: data,
+                    data: {action: "delete-report_" + id},
                     complete: function (jqXHR, textStatus) {
                         if (textStatus === "success") {
                             logCount--;
                             if (logCount <= 0) {
                                 window.location.href = reportsURL;
                             } else {
-                                $("#report-" + id).animate({opacity: 0}, function () {
-                                    $("#wrapper").load(csk.config.currentURL + " #wrapper > *");
+                                row.animate({opacity: 0}, function () {
+                                    csk.ui.reload();
                                 });
                             }
                         }

@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.3.3
- * @version 	1.3.3
+ * @version 	2.0.0
  */
 
 echo '<div class="table-responsive-sm mb15">',
@@ -76,13 +76,14 @@ if ($reports) {
 			'<td>', $report->ip_address, '</td>',
 			'<td>', date('Y/m/d H:i', $report->created_at), '</td>',
 			'<td class="text-right">',
-				html_tag('a', array(
-					'href' => nonce_ajax_url(
+				html_tag('button', array(
+					'type' => 'button',
+					'data-endpoint' => nonce_ajax_url(
 						'reports/delete/'.$report->id,
 						'delete-report_'.$report->id
 					),
-					'class' => 'btn btn-danger btn-xs btn-icon report-delete',
-				), fa_icon('trash-o').line('CSK_ADMIN_BTN_DELETE')),
+					'class' => 'btn btn-default btn-xs btn-icon report-delete',
+				), fa_icon('trash-o text-danger').line('CSK_ADMIN_BTN_DELETE')),
 			'</td>',
 			
 		'</tr>';
