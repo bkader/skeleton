@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.3.4
- * @version 	1.3.4
+ * @version 	2.0.0
  */
 ?>
 <div class="row<?php if ( ! form_error('pluginzip')): ?> collapse<?php endif; ?> justify-content-md-center mb15" id="plugin-install">
@@ -113,7 +113,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		), line('CSK_PLUGINS_FILTER_NEW')));
 		?>
 		</ul>
-		<form class="form-inline my-2" role="search" method="get">
+		<form class="form-inline my-2 my-lg-0" role="search" method="get">
 			<select name="type" id="type" class="form-control form-control-sm">
 				<option value="name" selected="selected"><?php _e('CSK_PLUGINS_NAME'); ?></option>
 				<option value="tags"><?php _e('CSK_PLUGINS_TAGS'); ?></option>

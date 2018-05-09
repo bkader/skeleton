@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 
 // Form opening tag.
-echo form_open('admin/plugins', 'class="table-responsive-md"'),
+echo form_open('admin/plugins', 'class="form-inline table-responsive-md"'),
 
 // Form nonce field.
 form_nonce('bulk-update-plugins'),
@@ -63,7 +63,7 @@ form_nonce('bulk-update-plugins'),
 		'activate-selected'   => line('CSK_PLUGINS_ACTIVATE'),
 		'deactivate-selected' => line('CSK_PLUGINS_DEACTIVATE'),
 		'delete-selected'     => line('CSK_PLUGINS_DELETE'),
-	), 'activate-selected', 'class="form-control-sm"'),
+	), 'activate-selected', 'class="form-control form-control-sm"'),
 
 	form_submit('doaction', line('CSK_ADMIN_BTN_APPLY'), 'class="btn btn-primary btn-sm"'),
 
@@ -80,8 +80,9 @@ form_nonce('bulk-update-plugins'),
 		form_checkbox('check-all', null, false),
 	'</th>',
 	
-	'<th class="w-23">', line('CSK_PLUGINS_PLUGIN'), '</th>',
-	'<th class="w-75">', line('CSK_PLUGINS_DESCRIPTION'), '</th>',
+	'<th class="w-20">', line('CSK_PLUGINS_PLUGIN'), '</th>',
+	'<th class="w-50">', line('CSK_PLUGINS_DESCRIPTION'), '</th>',
+	'<th class="w-30 text-right">', line('CSK_ADMIN_ACTIONS'), '</th>',
 '</tr>',
 '</thead>';
 
@@ -93,19 +94,21 @@ if ($plugins) {
 			// Plugin selection.
 			'<td>',
 				form_label('Select '.$plugin['name'], 'checkbox-'.$folder, 'class="sr-only"'),
-				form_checkbox('selected[]', $folder, false, 'id="checkbox-'.$folder.'"'),
+				form_checkbox('selected[]', $folder, false, 'id="checkbox-'.$folder.'" class="check-this"'),
 			'</td>',
 			
 			'<td>',
 				html_tag(($plugin['enabled'] ? 'strong' : 'span'), array(
 					'data-plugin' => $folder,
-				), $plugin['name']), '<br />',
-				implode(' &#124; ', $plugin['actions']),
+				), $plugin['name']),
 			'</td>',
 			
 			'<td>',
 				html_tag('p', null, $plugin['description']),
 				implode(' &#124; ', $plugin['details']),
+			'</td>',
+			'<td class="text-right">',
+				implode('', $plugin['actions']),
 			'</td>',
 		'</tr>';
 	}
