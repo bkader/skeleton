@@ -81,6 +81,7 @@ class Modules extends Admin_Controller {
 		// Default page title and icon.
 		$this->data['page_icon']  = 'cubes';
 		$this->data['page_title'] = line('CSK_MODULES_MODULES');
+		$this->data['page_help']  = 'https://goo.gl/Pyw7vE';
 	}
 
 	// ------------------------------------------------------------------------
