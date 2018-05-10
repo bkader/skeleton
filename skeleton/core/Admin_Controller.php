@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		1.0.0
  * @version 	2.0.0
  */
-class Admin_Controller extends User_Controller
+class Admin_Controller extends KB_Controller
 {
 	/**
 	 * Array of CSS files to be loaded.
@@ -98,7 +98,14 @@ class Admin_Controller extends User_Controller
 	{
 		parent::__construct();
 
-		if ( ! $this->auth->is_admin())
+		// Make sure the user is logged in.
+		if (true !== $this->kbcore->auth->online())
+		{
+			redirect('admin/login?next='.rawurlencode(uri_string()),'refresh');
+			exit;
+		}
+
+		if ( ! $this->kbcore->auth->is_admin())
 		{
 			set_alert(lang('CSK_ERROR_PERMISSION'), 'error');
 			redirect('');
