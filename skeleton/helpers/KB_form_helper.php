@@ -328,11 +328,6 @@ if ( ! function_exists('has_error'))
 	 */
 	function has_error($field = NULL)
 	{
-		if (FALSE !== ($OBJ =& _get_validation_object()))
-		{
-			return FALSE;
-		}
-
-		return $OBJ->has_error($field);
+		return ( ! empty(form_error($field)));
 	}
 }
