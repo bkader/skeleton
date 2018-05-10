@@ -143,7 +143,7 @@ EOT;
 	 * JavaSript alert template.
 	 */
 	private $_template_alert_js = <<<EOT
-'<div class="{class} alert-dismissible fade show" role="alert">''
+'<div class="{class} alert-dismissible fade show" role="alert">'
 + '{message}'
 + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'
 + '<span aria-hidden="true">&times;</span>'
