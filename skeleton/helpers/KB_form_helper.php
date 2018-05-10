@@ -48,12 +48,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
- * 
  * @since 		1.0.0
- * @since 		1.3.3 	Added extra functions.
- * @since 		1.4.0 	More useful functions were added and useless ones remove.
- * 
- * @version 	1.4.0
+ * @version 	2.0.0
  */
 
 if ( ! function_exists('form_nonce'))
@@ -86,6 +82,8 @@ if ( ! function_exists('form_nonce'))
 	 */
 	function form_nonce($action = -1, $name = '_csknonce', $referrer = true)
 	{
+		empty($name) && $name = '_csknonce';
+
 		$output = '<input type="hidden" id="'.$name.'" name="'.$name.'" value="'.html_escape(create_nonce($action)).'" />';
 
 		(true === $referrer) && $output .= form_referrer();
@@ -112,6 +110,7 @@ if ( ! function_exists('form_referrer'))
 	 */
 	function form_referrer($name = '_csk_http_referrer')
 	{
+		empty($name) && $name = '_csk_http_referrer';
 		return form_hidden($name, $_SERVER['REQUEST_URI']);
 	}
 }
