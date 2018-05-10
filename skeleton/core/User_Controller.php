@@ -62,7 +62,7 @@ class User_Controller extends KB_Controller
 		parent::__construct();
 
 		// The user must be logged in.
-		if ( ! $this->auth->online())
+		if ( ! $this->kbcore->auth->online())
 		{
 			set_alert(lang('CSK_ERROR_LOGGED_OUT'), 'error');
 			redirect('login?next='.rawurlencode(uri_string()),'refresh');
