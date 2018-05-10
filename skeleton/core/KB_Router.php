@@ -608,6 +608,9 @@ class KB_Router extends CI_Router
 		{
 			// Prepare an empty array of modules.
 			$this->_modules = array();
+
+			// Reserved modules.
+			global $csk_modules;
 			
 			// Let's go through folders and check if there are any.
 			foreach ($this->modules_locations() as $location)
@@ -627,7 +630,8 @@ class KB_Router extends CI_Router
 						// Must be a directory and has "manifest.json".
 						if ( ! in_array($file, $_to_eliminate) 
 							&& is_dir($location.$file)
-							&& is_file($location.$file."/manifest.json"))
+							&& is_file($location.$file."/manifest.json")
+							&& ! in_array($file, $csk_modules))
 						{
 							$this->_modules[$file] = rtrim(str_replace('\\', '/', $location.$file), '/').'/';
 						}
