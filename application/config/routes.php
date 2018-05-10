@@ -50,64 +50,50 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |		my-controller/my-method	-> my_controller/my_method
 */
 
-// Get the default controller from database.
+// ------------------------------------------------------------------------
+// DON'T CHANGE LINES BELOW.
+// ------------------------------------------------------------------------
+
+/**
+ * We get the default controller from database.
+ * If found, we set it, otherwise we use the default one stored
+ * in the KB_BASE constant (application/config/constants.php).
+ * @since 	1.3.0
+ */
 require_once(BASEPATH .'database/DB.php');
 $db =& DB();
-if (null !== $result = $db->where('name', 'base_controller')->get('options')->row())
-{
-	// if we were able to connect and got a result
-	// we set it to that result.
-	$route['default_controller'] = $result->value;
-}
-else
-{
-	// else something went wrong and we'll 
-	// default to the blog controller.
-	$route['default_controller'] = 'welcome';
-}
+$route['default_controller'] = (null !== ($result = $db->where('name', 'base_controller')->get('options')->row())) ? $result->value : KB_BASE;
 
-$route['404_override'] = '';
-$route['translate_uri_dashes'] = FALSE;
+/**
+ * Authentication routes.
+ * @since 	2.0.0
+ */
+Route::any(KB_LOGIN, 'users/login', function() {
+	Route::any('recover', 'users/recover');
+	Route::any('reset', 'users/reset');
+	Route::any('restore', 'users/restore');
+});
+Route::any(KB_LOGOUT, 'users/logout');
 
-// ------------------------------------------------------------------------
-// PUT YOUR ROUTE RULES BELOW.
-// ------------------------------------------------------------------------
+/**
+ * Account creation routes.
+ * @since 	2.0.0
+ */
+Route::any(KB_REGISTER, 'users/register', function() {
+	Route::any('resend', 'users/resend');
+	Route::any('activate', 'users/activate');
+});
 
-// ------------------------------------------------------------------------
-// END OF YOUR ROUTES. Place to ours.
-// ------------------------------------------------------------------------
+// Prevent direct access to users controller.
+Route::block('users(.*)');
 
 /**
  * The application has a built-in administration panel. Each module can
  * have context controllers.
- *
- * @example 	Admin Controllers.
- * Each module can have a controller named "Admin.php". It will be then
- * have an administration section and will be automatically added to
- * dashboard's menu. admin controller must extends "Admin_Controller" class.
- * To access admin section of a module, simply go to:
- * <site_url>/admin/<module>. i.e: <site_url>/admin/users.
- * You can user the provided URL helper: admin_url('<module>').
- *
- * @example 	Ajax Controller.
- * Each module has the possibility to handle AJAX requests by creating an.
- * "Ajax.php" controller that should extend our "Ajax_Controller" class.
- *
- * @example 	Process Controllers.
- * Sometimes, we want to create temporary keys they you will use in order
- * to execute certain operation. i.e: When an account is created, an
- * activation code is temporary created and stored in variables table.
- * In order to activate the account, the user must go to:
- * <site_url>/process/users/activate/<code>.
- * Another example is when changing the email address. The code and email
- * are store in database and in order to proceed, the user must go to:
- * <site_url>/process/settings/email/<code>
- *
- * NOTE:
- * You can create as any site areas as you want. Simply add the context
- * you want to the routing below. Let's say I want to add an "Api"
- * controller, all I need to do is adding to like so:
- * (admin|ajax|process) => (admin|ajax|process|api).
+ * Default contexts are stored within the application/config/contexts.php
+ * file. If you want to add a context, you may simply add it to the 
+ * corresponding array ($back_contexts or front_contexts).
+ * @since 	1.0.0
  */
 Route::prefix(KB_ADMIN, function() {
 
@@ -118,30 +104,85 @@ Route::prefix(KB_ADMIN, function() {
 	// System information route first.
 	Route::any('settings/sysinfo', 'admin/settings/sysinfo');
 
-	// Different contexts.
-	global $contexts;
-	foreach ($contexts as $context) {
-		Route::context($context, array('home' => KB_ADMIN.'/'.$context));
-	}
+	/**
+	 * Load controller used to load assets on the dashboard.
+	 * @since 	1.4.0
+	 */
+	Route::get('load/(.*)', 'admin/load/index/$1');
+
+	/**
+	 * Reserved dashboard sections.
+	 * @since 	2.0.0
+	 */
+	global $csk_modules;
+	$modules_routes = implode('|', $csk_modules);
+	Route::any("({$modules_routes})/(:any)/(:any)", 'admin/$1/$2/$3');
+	Route::any("({$modules_routes})/(:any)",        'admin/$1/$2');
+	Route::any("({$modules_routes})",                     'admin/$1/index');
+
+	/**
+	 * Reserved back-end contexts.
+	 * @since 	1.5.0
+	 */
+	global $back_contexts;
+	$contexts_routes = implode('|', $back_contexts);
+	Route::context("({$contexts_routes})", '$1', array(
+		'home'   => KB_ADMIN.'/$1/index',
+		'offset' => 1,
+	));
 });
 
-// Reserved routes.
-Route::any('ajax/(reports|modules|plugins|themes|languages|users)/(:any)', 'ajax/index/$1/$2');
-Route::any('ajax/(reports|modules|plugins|themes|languages|users)/(:any)/(:any)', 'ajax/index/$1/$2/$3');
-Route::any('ajax/(reports|modules|plugins|themes|languages|users)', 'ajax/index/$1');
+/**
+ * Reserved back-end AJAX routes.
+ * @since 	2.0.0
+ */
+Route::prefix('ajax', function () {
+	global $csk_modules;
+	$modules_routes = implode('|', $csk_modules);
+	Route::any("({$modules_routes})/(:any)/(:any)", "ajax/index/$1/$2/$3");
+	Route::any("({$modules_routes})/(:any)", "ajax/index/$1/$2");
+	Route::any("({$modules_routes})", "ajax/index/$1");
+});
 Route::any('process/set_language(.*)', 'process/set_language$1');
 
-// AJAX and process contexts.
-Route::context('(ajax|process)', '$1', array(
+/**
+ * Front-end context.
+ * @since 	1.0.0
+ */
+global $front_contexts;
+Route::context('('.implode('|', $front_contexts).')', '$1', array(
 	'home'   => '$1/index',
-	'offset' => 1
+	'offset' => 1,
 ));
 
-/**
- * Load controller used to load assets on the dashboard.
- * @since 	1.4.0
- */
-Route::get('load/(.*)', 'load/index/$1');
+// ------------------------------------------------------------------------
+// PUT YOUR ROUTE RULES BELOW.
+// ------------------------------------------------------------------------
+
+/*
+| -------------------------------------------------------------------------
+| CodeIgniter URI routing
+| -------------------------------------------------------------------------
+|	$route['404_override'] = 'errors/page_missing';
+|
+| This route will tell the Router which controller/method to use if those
+| provided in the URL cannot be matched to a valid route.
+|
+|	$route['translate_uri_dashes'] = FALSE;
+|
+| This is not exactly a route, but allows you to automatically route
+| controller and method names that contain dashes. '-' isn't a valid
+| class or method name character, so it requires translation.
+| When you set this option to TRUE, it will replace ALL dashes in the
+| controller and method URI segments.
+*/
+$route['404_override']         = '';
+$route['translate_uri_dashes'] = FALSE;
+
+
+// ------------------------------------------------------------------------
+// END OF YOUR ROUTES.
+// ------------------------------------------------------------------------
 
 /**
  * Because we are using Static Routing like Laravel's,

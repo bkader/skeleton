@@ -185,7 +185,7 @@ class Admin_Controller extends KB_Controller
 
 				$this->theme
 					->no_extension()
-					->add('css', site_url("load/styles?load=".rawurlencode($this->styles)), null, null, true);
+					->add('css', admin_url("load/styles?load=".rawurlencode($this->styles)), null, null, true);
 			}
 
 			// Do we have any JS files to laod?
@@ -197,7 +197,7 @@ class Admin_Controller extends KB_Controller
 				$this->scripts = implode(',', $this->scripts);
 				$this->theme
 					->no_extension()
-					->add('js', site_url("load/scripts?load=".rawurlencode($this->scripts)), null, null, true);
+					->add('js', admin_url("load/scripts?load=".rawurlencode($this->scripts)), null, null, true);
 			}
 
 			/**
@@ -288,7 +288,7 @@ class Admin_Controller extends KB_Controller
 	 */
 	protected function _admin_menu()
 	{
-		global $contexts;
+		global $back_contexts;
 		$ignored_contexts = array('admin', 'users', 'settings');
 		$modules = $this->router->list_modules(true);
 		$lang = $this->config->item('language');

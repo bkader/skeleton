@@ -584,8 +584,8 @@ class KB_Router extends CI_Router
 		$module_contexts['admin']  = is_file($path.'/controllers/Admin.php');
 
 		// Loop through contexts and see if we find a controller.
-		global $contexts;
-		foreach ($contexts as $context)
+		global $back_contexts;
+		foreach ($back_contexts as $context)
 		{
 			$module_contexts[$context] = is_file($path.'/controllers/'.ucfirst($context).EXT);
 		}

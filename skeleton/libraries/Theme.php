@@ -549,8 +549,8 @@ EOT;
 		$this->controller = $this->ci->router->fetch_class();
 		$this->method     = $this->ci->router->fetch_method();
 
-		global $contexts;
-		if (in_array($this->controller, $contexts) 
+		global $back_contexts;
+		if (in_array($this->controller, $back_contexts) 
 			OR 'admin' === $this->controller 
 			OR 'admin' === $this->ci->uri->segment(1))
 		{

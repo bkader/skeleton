@@ -79,18 +79,19 @@ defined('MB_IN_BYTES') OR define('MB_IN_BYTES', 1024 * KB_IN_BYTES);
 defined('GB_IN_BYTES') OR define('GB_IN_BYTES', 1024 * MB_IN_BYTES);
 defined('TB_IN_BYTES') OR define('TB_IN_BYTES', 1024 * GB_IN_BYTES);
 
-/*
-|--------------------------------------------------------------------------
-| Site contexts and administration area.
-|--------------------------------------------------------------------------
-*/
-static $contexts = array(
-	'content',
-	'help',
+/**
+ * 
+ * Array of names that modules cannot have.
+ * @since 	2.0.0
+ *
+ * The reason behind this approach is because we already have controllers
+ * named so. So modules cannot have either of this names to avoid conflicts.
+ */
+static $csk_modules = array(
+	'languages',
+	'modules',
+	'plugins',
 	'reports',
-	'settings',
+	'themes',
+	'users',
 );
-defined('KB_ADMIN') OR define('KB_ADMIN', 'admin');
-
-/* End of file constants.php */
-/* Location: ./skeleton/config/constants.php */

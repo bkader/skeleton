@@ -83,3 +83,31 @@ defined('EXIT_USER_INPUT')     OR define('EXIT_USER_INPUT', 7); // invalid user 
 defined('EXIT_DATABASE')       OR define('EXIT_DATABASE', 8); // database error
 defined('EXIT__AUTO_MIN')      OR define('EXIT__AUTO_MIN', 9); // lowest automatically-assigned error code
 defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
+
+/**
+ * Site contexts.
+ * @since 	1.0.0
+ *
+ * There are two categories of contexts: back-end and front-end.
+ * Front-end contexts (controllers) may simply extend KB_Controller class.
+ * Back-end context (controllers) should alway extend the Admin_Controller
+ * class, or the context class if it exits of course.
+ */
+static $front_contexts = array('ajax', 'process');
+static $back_contexts  = array('content', 'help', 'reports', 'settings');
+
+/**
+ * Site reserved constants.
+ * @since 	2.0.0
+ *
+ * KB_ADMIN 	URL used to access the dashboard. Default: "admin" for "/admin/".
+ * KB_BASE 		The default controller to use if none is set in database.
+ * KB_LOGIN		It is the route using for the login page.
+ * KB_LOGOUT 	The logout URL.
+ * KB_REGISTER	The route used for the registration page.
+ */
+defined('KB_ADMIN')    OR define('KB_ADMIN', 'admin');
+defined('KB_BASE')     OR define('KB_BASE', 'welcome');
+defined('KB_LOGIN')    OR define('KB_LOGIN', 'login');
+defined('KB_LOGOUT')   OR define('KB_LOGOUT', 'logout');
+defined('KB_REGISTER') OR define('KB_REGISTER', 'register');

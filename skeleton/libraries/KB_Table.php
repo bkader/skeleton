@@ -72,9 +72,9 @@ class KB_Table extends CI_Table {
 		 * Because the dashboard is built using Bootstrap, we simply
 		 * ignore any configuration file or template set.
 		 */
-		global $contexts;
+		global $back_contexts;
 		$controller = get_instance()->router->fetch_class();
-		if ('admin' === $controller OR in_array($controller, $contexts))
+		if ('admin' === $controller OR in_array($controller, $back_contexts))
 		{
 			$config = array();
 		}

@@ -70,9 +70,9 @@ class KB_Pagination extends CI_Pagination
 		 * pagination configuration will be ignored, we use the default
 		 * one provided by the "_admin_params" method.
 		 */
-		global $contexts;
+		global $back_contexts;
 		$controller = get_instance()->router->fetch_class();
-		if ('admin' === $controller OR in_array($controller, $contexts))
+		if ('admin' === $controller OR in_array($controller, $back_contexts))
 		{
 			$params = $this->_admin_params();
 		}
