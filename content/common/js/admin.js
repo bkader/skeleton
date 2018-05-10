@@ -362,7 +362,6 @@
 
             // Not valid rel attribute? Proceed by default.
             if (!rel.length || rel !== "async" || rel !== "async-post") {
-                window.location.href = href;
                 return;
             }
 
