@@ -82,7 +82,7 @@ class Login extends KB_Controller {
 		 * @since 	2.0.0
 		 */
 		$default_layout = 'clean';
-		$login_layout   = apply_filters('login_layout', 'clean');
+		$login_layout   = apply_filters('admin_login_layout', 'clean');
 		empty($login_layout) && $login_layout = $default_layout;
 		$this->theme->set_layout($login_layout);
 
