@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.5.0
- * @version 	1.5.0
+ * @version 	2.0.0
  */
 class Jquery_validation {
 
@@ -576,7 +576,7 @@ class Jquery_validation {
 		 * @see 	https://jqueryvalidation.org/validate/#errorclass
 		 * @var 	string
 		 */
-		$jqv_errorClass = 'has-error';
+		$jqv_errorClass = 'is-invalid';
 
 		/**
 		 * This class is added to an element after it was validated and 
@@ -584,7 +584,7 @@ class Jquery_validation {
 		 * @see 	https://jqueryvalidation.org/validate/#errorclass
 		 * @var 	string
 		 */
-		$jqv_validClass = 'has-success';
+		$jqv_validClass = 'is-valid';
 
 		/**
 		 * Use this element type to create error messages and to look
@@ -632,7 +632,7 @@ class Jquery_validation {
 		 * @see 	https://jqueryvalidation.org/validate/#errorplacement
 		 * @var 	string (function)
 		 */
-		$jqv_errorPlacement = 'function (error, element) { error.addClass("help-block"); element.parents(".form-group").find(".help-block").remove(); if (element.prop("type") === "checkbox") { error.insertAfter(element.parent("label")); } else { error.insertAfter(element); } }';
+		$jqv_errorPlacement = 'function (error, element) { error.addClass("invalid-feedback"); element.parents(".form-group").find(".invalid-feedback").remove(); if (element.prop("type") === "checkbox") { error.insertAfter(element.parent("label")); } else { error.insertAfter(element); } }';
 
 		/**
 		 * If specified, the error label is displayed to show a valid element.
@@ -647,14 +647,14 @@ class Jquery_validation {
 		 * @see 	https://jqueryvalidation.org/validate/#highlight
 		 * @var 	string (function)
 		 */
-		$jqv_highlight = 'function (element, errorClass, validClass) { $(element).parents(".form-group").addClass("has-error").removeClass("has-success"); }';
+		$jqv_highlight = 'function (element, errorClass, validClass) { $(element).addClass("is-invalid").removeClass("is-valid"); }';
 		
 		/**
 		 * Called to revert changes made by option highlight, same arguments as highlight.
 		 * @see 	https://jqueryvalidation.org/validate/#unhighlight
 		 * @var 	string (function)
 		 */
-		$jqv_unhighlight = 'function (element, errorClass, validClass) { $(element).parents(".form-group").addClass("has-success").removeClass("has-error"); }';
+		$jqv_unhighlight = 'function (element, errorClass, validClass) { $(element).addClass("is-valid").removeClass("is-invalid"); }';
 
 		/**
 		 * Set to skip reading messages from the title attribute, helps to avoid 
