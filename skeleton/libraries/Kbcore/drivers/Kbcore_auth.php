@@ -84,6 +84,12 @@ class Kbcore_auth extends CI_Driver
 		// Always store the ip address.
 		$this->ip_address = $this->ci->input->ip_address();
 
+		// Make sure to load session library.
+		if ( ! class_exists('CI_Session', false))
+		{
+			$this->ci->load->library('session');
+		}
+
 		// Make sure to load users language file.
 		$this->ci->load->language('csk_users');
 
@@ -472,7 +478,10 @@ class Kbcore_auth extends CI_Driver
 		$this->_parent->users->update($user_id, array('online' => 0));
 
 		// Destroy the session.
-		$this->ci->session->sess_destroy();
+		if (PHP_SESSION_NONE !== session_status())
+		{
+			$this->ci->session->sess_destroy();
+		}
 
 		// Fires After user is logged out, cookie deleted and session destroyed.
 		do_action('after_user_logout', $user_id);
