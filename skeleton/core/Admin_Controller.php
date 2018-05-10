@@ -373,8 +373,8 @@ class Admin_Controller extends User_Controller
 	 */
 	protected function _dropzone($lazyload = false)
 	{
-		$this->styles[]  = 'dropzone';
-		$this->scripts[] = 'dropzone';
+		in_array('dropzone', $this->styles) OR $this->styles[]  = 'dropzone';
+		in_array('dropzone', $this->scripts) OR $this->scripts[] = 'dropzone';
 		
 		(true === $lazyload) && $this->_lazyload();
 		
@@ -401,7 +401,7 @@ class Admin_Controller extends User_Controller
 	 */
 	protected function _garlic()
 	{
-		$this->scripts[] = 'garlic';
+		in_array('garlic', $this->scripts) OR $this->scripts[] = 'garlic';
 		return $this;
 	}
 
@@ -425,7 +425,11 @@ class Admin_Controller extends User_Controller
 	 */
 	protected function _handlebars()
 	{
-		$this->scripts[] = 'handlebars';
+		if ( ! in_array('handlebars', $this->scripts))
+		{
+			$this->scripts[] = 'handlebars';
+		}
+
 		return $this;
 	}
 
@@ -449,8 +453,8 @@ class Admin_Controller extends User_Controller
 	 */
 	protected function _highlight()
 	{
-		$this->styles[]  = 'highlight';
-		$this->scripts[] = 'highlight';
+		in_array('highlight', $this->styles) OR $this->styles[]  = 'highlight';
+		in_array('highlight', $this->scripts) OR $this->scripts[] = 'highlight';
 		return $this;
 	}
 
@@ -474,9 +478,14 @@ class Admin_Controller extends User_Controller
 	 */
 	protected function _jquery_ui($touch_punch = true)
 	{
-		$this->styles[]  = 'jquery-ui';
-		$this->scripts[] = 'jquery-ui';
-		(true === $touch_punch) && $this->scripts[] = 'jquery.ui.touch-punch';
+		in_array('jquery-ui', $this->styles) OR $this->styles[]  = 'jquery-ui';
+		in_array('jquery-ui', $this->scripts) OR $this->scripts[] = 'jquery-ui';
+
+		if (true === $touch_punch 
+			&& ! in_array('jquery.ui.touch-punch', $this->scripts))
+		{
+			$this->scripts[] = 'jquery.ui.touch-punch';
+		}
 		return $this;
 	}
 
@@ -500,11 +509,17 @@ class Admin_Controller extends User_Controller
 	 */
 	protected function _jquery_validate()
 	{
-		$this->scripts[] = 'jquery.validate';
+		if ( ! in_array('jquery.validate', $this->scripts))
+		{
+			$this->scripts[] = 'jquery.validate';
+		}
 
 		if ('en' !== ($code = $this->lang->lang('code')))
 		{
-			$this->scripts[] = 'jquery-validate/'.$code;
+			if ( ! in_array('jquery-validate/'.$code, $this->scripts))
+			{
+				$this->scripts[] = 'jquery-validate/'.$code;
+			}
 		}
 
 		return $this;
@@ -530,7 +545,11 @@ class Admin_Controller extends User_Controller
 	 */
 	protected function _jquery_sprintf()
 	{
-		$this->scripts[] = 'jquery.sprintf';
+		if ( ! in_array('jquery.sprintf', $this->scripts))
+		{
+			$this->scripts[] = 'jquery.sprintf';
+		}
+
 		return $this;
 	}
 
@@ -554,7 +573,7 @@ class Admin_Controller extends User_Controller
 	 */
 	protected function _lazyload()
 	{
-		$this->scripts[] = 'lazyload';
+		in_array('lazyload', $this->scripts) OR $this->scripts[] = 'lazyload';
 		return $this;
 	}
 
@@ -578,15 +597,21 @@ class Admin_Controller extends User_Controller
 	 */
 	protected function _select2($bootstrap = true)
 	{
-		$this->styles[]  = 'select2';
-		$this->scripts[] = 'select2';
+		in_array('select2', $this->styles) OR $this->styles[]  = 'select2';
+		in_array('select2', $this->scripts) OR $this->scripts[] = 'select2';
 
-		if ('english' !== $this->config->item('language'))
+		if ('en' !== ($code = $this->lang->lang('code')))
 		{
-			$this->scripts[] = 'select2/'.$this->lang->lang('code');
+			if ( ! in_array('select2/'.$code, $this->scripts))
+			{
+				$this->scripts[] = 'select2/'.$code;
+			}
 		}
 
-		(true === $bootstrap) && $this->styles[] = 'select2-bootstrap';
+		if (true === $bootstrap && ! in_array('select2-bootstrap', $this->scripts))
+		{
+			$this->styles[] = 'select2-bootstrap';
+		}
 
 		return $this;
 	}
@@ -611,11 +636,16 @@ class Admin_Controller extends User_Controller
 	 */
 	protected function _summernote()
 	{
-		$this->styles[]  = 'summernote';
-		$this->scripts[] = 'summernote';
+		in_array('summernote', $this->styles) OR $this->styles[]  = 'summernote';
+		in_array('summernote', $this->scripts) OR $this->scripts[] = 'summernote';
+
 		if ('english' !== $this->config->item('language'))
 		{
-			$this->scripts[] = 'summernote/summernote-'.$this->lang->lang('locale');
+			$locale = $this->lang->lang('locale');
+			if ( ! in_array('summernote/summernote-'.$locale, $this->scripts))
+			{
+				$this->scripts[] = 'summernote/summernote-'.$locale;
+			}
 		}
 
 		return $this;
@@ -641,8 +671,8 @@ class Admin_Controller extends User_Controller
 	 */
 	protected function _zoom()
 	{
-		$this->styles[]  = 'zoom';
-		$this->scripts[] = 'zoom';
+		in_array('zoom', $this->styles) OR $this->styles[]  = 'zoom';
+		in_array('zoom', $this->scripts) OR $this->scripts[] = 'zoom';
 		return $this;
 	}
 
