@@ -47,93 +47,69 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	1.4.0
+ * @version 	2.0.0
  */
-?><h2 class="page-header clearfix"><?php
 
-// Page header.
-_e('sth_theme_settings');
+$theme_item_temp =<<<EOT
+<div class="col-sm-6 col-md-4 theme-item" id="theme-{folder}" data-theme="{folder}">
+	<div class="card theme-inner">
+		<img src="{screenshot}" alt="{name}" class="theme-screenshot img-fluid" />
+		<div class="theme-caption clearfix p-2">
+			<h3 class="theme-title m-0">{name}<span class="theme-action pull-right">{actions}</span></h3>
+		</div>
+	</div>
+</div>
+EOT;
 
-// Add theme anchor.
-echo admin_anchor('themes/install', line('sth_theme_add'), 'class="btn btn-primary btn-sm pull-right"');
-
-?></h2>
-<?php if ($themes): ?>
-<div class="row">
-<?php foreach ($themes as $t): ?>
-	<div class="col-sm-6 col-md-4" id="theme-<?php echo $t['folder'] ?>">
-		<div class="theme-item thumbnail">
-			<img src="<?php echo $t['screenshot'] ?>" alt="<?php echo $t['name'] ?>" class="theme-screenshot img-responsive">
-			<div class="theme-caption caption clearfix">
-				<h4 class="theme-title"><?php echo $t['name']; ?><span class="theme-actions pull-right"><?php
-
-// Activate button.
-if (true !== $t['enabled'])
+if ($themes)
 {
-	echo safe_ajax_anchor(
-		'themes/activate/'.$t['folder'],
-		'activate_theme_'.$t['folder'],
-		line('sth_theme_activate'),
-		array(
-			'class' => 'theme-activate btn btn-default btn-sm',
-			'data-theme' => $t['folder']
-		)
-	).'&nbsp;';
+	echo '<div class="row" id="themes-list">';
+	foreach ($themes as $folder => $t) {
+		$t['actions'] = implode('', $t['actions']);
+		echo str_replace(
+			array('{folder}', '{name}', '{screenshot}', '{actions}'),
+			array($folder, $t['name'], $t['screenshot'], $t['actions']),
+			$theme_item_temp
+		);
+	}
+	echo '</div>';
 }
 
-// Details anchor.
-echo admin_anchor(
-	'themes?theme='.$t['folder'],
-	line('sth_theme_details'),
-	array(
-		'class'      => 'theme-details btn btn-primary btn-sm',
-		'data-theme' => $t['folder'],
-		'data-href'  => ajax_url('themes/details/'.$t['folder']),
-	)
-);
-				?></span></h4>
-			</div><!--/.caption-->
-		</div><!--thumbnail-->
-	</div><!--/.column-->
-<?php endforeach; ?>
-</div>
-<?php endif; ?>
-
-<?php if (null !== $theme): ?>
+if (null !== $theme): ?>
 <div class="modal fade" tabindex="-1" role="dialog" id="theme-modal" tabindex="-1">
 	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header clearfix">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><i class="fa fa-times"></i></span></button>
-				<h4 class="modal-title"><?php printf(lang('sth_details_name'), $theme['name']); ?></h4>
+				<h2 class="modal-title"><?php printf(lang('CSK_THEMES_THEME_DETAILS_NAME'), $theme['name']); ?></h2>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 			</div>
 			<div class="modal-body">
 				<div class="row">
 					<div class="col-sm-12 col-md-7">
-						<img src="<?php echo $theme['screenshot']; ?>" alt="<?php echo $theme['name']; ?>">
+						<img src="<?php echo $theme['screenshot']; ?>" alt="<?php echo $theme['name']; ?>" class="img-fluid" data-action="zoom">
 					</div>
 					<div class="col-sm-12 col-md-5">
-						<h2 class="page-header clearfix"><?php echo $theme['name_uri']; ?> <small class="text-muted"><?php echo $theme['version']; ?></small><small class="pull-right"><?php echo label_condition($theme['enabled'], 'lang:active', ''); ?></small></h2>
+						<h2 class="page-header clearfix"><?php echo $theme['name_uri']; ?> <small class="text-muted"><?php echo $theme['version']; ?></small><small class="pull-right"><?php echo label_condition($theme['enabled'], 'lang:CSK_ADMIN_ACTIVE', ''); ?></small></h2>
 						<p><?php echo $theme['description']; ?></p><br />
-						<table class="table table-condensed table-striped">
-							<tr><th><?php _e('sth_author'); ?></th><td><?php echo $theme['author']; ?></td></tr>
-							<?php if ($theme['author_email']): ?>
-							<tr><th><?php _e('sth_author_email'); ?></th><td><small><?php echo $theme['author_email']; ?></small></td></tr>
-							<?php endif; ?>
-							<tr><th><?php _e('sth_license'); ?></th><td><?php echo $theme['license']; ?></td></tr>
-							<tr><th><?php _e('sth_tags'); ?></th><td><small><?php echo $theme['tags']; ?></small></td></tr>
-						</table>
+						<div class="table-responsive-sm">
+							<table class="table table-sm table-condensed table-striped">
+								<tr><th class="w-35"><?php _e('CSK_THEMES_AUTHOR'); ?></th><td><?php echo $theme['author']; ?></td></tr>
+								<?php if ($theme['author_email']): ?>
+								<tr><th><?php _e('CSK_THEMES_AUTHOR_EMAIL'); ?></th><td><?php echo $theme['author_email']; ?></td></tr>
+								<?php endif; ?>
+								<tr><th><?php _e('CSK_THEMES_LICENSE'); ?></th><td><?php echo $theme['license']; ?></td></tr>
+								<tr><th><?php _e('CSK_THEMES_TAGS'); ?></th><td><?php echo $theme['tags']; ?></td></tr>
+							</table>
+						</div>
 						<?php if (true !== $theme['enabled']): ?>
-						<p class="clearfix">
-							<a href="<?php echo safe_ajax_url('themes/activate/'.$theme['folder']); ?>" class="theme-activate btn btn-primary btn-sm" data-theme="<?php echo $theme['folder']; ?>"><?php _e('sth_theme_activate'); ?></a>
-							<a href="<?php echo safe_ajax_url('themes/delete/'.$theme['folder']); ?>" class="theme-delete btn btn-danger btn-sm pull-right" data-theme="<?php echo $theme['folder']; ?>"><?php _e('sth_theme_delete'); ?></a></p>
+						<p class="clearfix"><?php echo $theme['action_activate'], $theme['action_delete']; ?></p>
 					<?php endif; ?>
 					</div>
-				</div><!--/.row-->
-			</div><!--/modal-body-->
-		</div><!--/.modal-content-->
-	</div><!--/.modal-dialog-->
-</div><!--/.modal-->
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 <?php endif; ?>
 
 <script type="text/x-handlebars-template" id="theme-details-modal">
@@ -141,31 +117,32 @@ echo admin_anchor(
 	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header clearfix">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><i class="fa fa-times"></i></span></button>
-				<h4 class="modal-title"><?php printf(line('sth_details_name'), "{{name}}"); ?></h4>
+				<h2 class="modal-title"><?php printf(line('CSK_THEMES_THEME_DETAILS_NAME'), "{{name}}"); ?></h2>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 			</div>
 			<div class="modal-body">
 				<div class="row">
 					<div class="col-sm-12 col-md-7">
-						<img src="{{screenshot}}" alt="{{name}}">
+						<img src="{{screenshot}}" alt="{{name}}" class="img-fluid" data-action="zoom">
 					</div>
 					<div class="col-sm-12 col-md-5">
-						<h2 class="page-header clearfix">{{{name_uri}}} <small class="text-muted">{{version}}</small>
-							<small class="pull-right">{{#if enabled}}<span class="label label-success"><?php _e('active'); ?></span>{{/if}}</small></h2>
+						<h2 class="page-header clearfix">{{{name_uri}}} <small class="text-muted">{{version}}</small><small class="pull-right">{{{status}}}</small></h2>
 						<p>{{description}}</p><br />
-						<table class="table table-condensed table-striped">
-							<tr><th><?php _e('sth_author'); ?></th><td>{{{author}}}</td></tr>
-							{{#if author_email}}
-							<tr><th><?php _e('sth_author_email'); ?></th><td><small>{{{author_email}}}</small></td></tr>
-							{{/if}}
-							<tr><th><?php _e('sth_license'); ?></th><td>{{{license}}}</td></tr>
-							<tr><th><?php _e('sth_tags'); ?></th><td><small>{{tags}}</small></td></tr>
-						</table>
+						<div class="table-responsive-sm">
+							<table class="table table-sm table-condensed table-striped">
+								<tr><th class="w-35"><?php _e('CSK_THEMES_AUTHOR'); ?></th><td>{{{author}}}</td></tr>
+								{{#if author_email}}
+								<tr><th><?php _e('CSK_THEMES_AUTHOR_EMAIL'); ?></th><td>{{{author_email}}}</td></tr>
+								{{/if}}
+								<tr><th><?php _e('CSK_THEMES_LICENSE'); ?></th><td>{{{license}}}</td></tr>
+								<tr><th><?php _e('CSK_THEMES_TAGS'); ?></th><td>{{tags}}</td></tr>
+							</table>
+						</div>
 						<p class="clearfix">{{{action_activate}}} {{{action_delete}}}</p>
 					</div>
-				</div><!--/.row-->
-			</div><!--/modal-body-->
-		</div><!--/.modal-content-->
-	</div><!--/.modal-dialog-->
-</div><!--/.modal-->
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 </script>

@@ -42,51 +42,77 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @category 	Modules\Views
+ * @category 	Views
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.3.4
- * @version 	1.4.0
+ * @version 	2.0.0
  */
-?><h2 class="page-header clearfix"><?php _e('sth_theme_add'); ?><span class="pull-right"><?php echo admin_anchor('themes', 'lang:back', 'class="btn btn-default btn-sm"'); ?> <button role="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#theme-install"><?php _e('sth_theme_upload'); ?></button></span></h2>
-<div class="row<?php if ( ! form_error('themezip')): ?> collapse<?php endif; ?>" id="theme-install">
+?>
+<div class="row<?php if ( ! form_error('themezip')): ?> collapse<?php endif; ?> justify-content-md-center mb15" id="theme-install">
 	<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 text-center">
-		<p><?php _e('sth_theme_upload_tip'); ?></p><br>
-		<div class="well">
-			<?php echo form_open_multipart(
-				'admin/themes/upload',
-				array( // Attributes.
-					'class' => 'form-inline'.(has_error('themezip') ? ' has_error' : ''),
-					'id' => 'theme-upload',
-				)
-			); ?>
-			<?php echo form_nonce('theme_upload'); ?>
-				<div class="form-group"><?php echo form_upload('themezip', null, 'id="themezip"'); ?></div><?php
-				echo form_error('themezip', '<div class="help-block">', '</div>');
-				?><button type="submit" name="theme-install" class="btn btn-primary btn-sm theme-install"><?php _e('sth_theme_install'); ?></button>
-			</form>
+		<p><?php _e('CSK_THEMES_UPLOAD_TIP'); ?></p><br>
+		<div class="card">
+			<div class="card-body text-center">
+				<?php
+				echo form_open_multipart(
+					'admin/themes/upload',
+					'class="form-inline'.(form_error('themezip') ? ' has-error' : '').'" id="theme-upload"'
+				),
+				form_nonce('upload-theme'),
+				form_upload('themezip', null, 'id="themezip"'),
+				form_error('themezip', '<div class="help-block">', '</div>'),
+				form_submit('theme-install', line('CSK_THEMES_INSTALL'), array(
+					'class' => 'btn btn-primary btn-sm'
+				));
+				?>
+				</form>
+			</div>
 		</div>
 	</div>
 </div>
-<nav class="navbar navbar-default" role="navigation">
-	<!-- Brand and toggle get grouped for better mobile display -->
-	<p class="navbar-text"><span class="badge">0</span></p>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb15" role="navigation">
+	<p class="navbar-brand"><span class="badge badge-white text-red">0</span></p>
+	
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#themes-filter" aria-controls="themes-filter" aria-expanded="false" aria-label="Toggle navigation"><i class="fa fa-bars"></i></button>
 
-	<!-- Collect the nav links, forms, and other content for toggling -->
-	<div class="collapse navbar-collapse navbar-ex1-collapse">
-		<ul class="nav navbar-nav">
-			<li><a href="#" data-sort="featured"><?php _e('sth_theme_featured'); ?></a></li>
-			<li><a href="#" data-sort="popular"><?php _e('sth_theme_popular'); ?></a></li>
-			<li><a href="#" data-sort="new"><?php _e('sth_theme_new'); ?></a></li>
+	<div class="collapse navbar-collapse" id="themes-filter">
+		<ul class="nav navbar-nav mr-auto">
+		<?php
+		// Featured.
+		echo html_tag('li', array(
+			'class' => 'nav-item'
+		), html_tag('a', array(
+			'href' => 'javascript:void(0)',
+			'class' => 'nav-link',
+		), line('CSK_THEMES_FILTER_FEATURED'))),
+
+		// Popular.
+		html_tag('li', array(
+			'class' => 'nav-item'
+		), html_tag('a', array(
+			'href' => 'javascript:void(0)',
+			'class' => 'nav-link',
+		), line('CSK_THEMES_FILTER_POPULAR'))),
+
+		// New.
+		html_tag('li', array(
+			'class' => 'nav-item'
+		), html_tag('a', array(
+			'href' => 'javascript:void(0)',
+			'class' => 'nav-link',
+		), line('CSK_THEMES_FILTER_NEW')));
+		?>
 		</ul>
-		<div class="navbar-right">
-			<form class="navbar-form navbar-left" role="search" action="javascript:void(0)">
-				<div class="form-group">
-					<input type="text" class="form-control" placeholder="<?php _e('sth_theme_search'); ?>">
-				</div>
-			</form>
-		</div>
+		<form class="form-inline my-2 my-lg-0" role="search" method="get">
+			<select name="type" id="type" class="form-control form-control-sm">
+				<option value="name" selected="selected"><?php _e('CSK_THEMES_NAME'); ?></option>
+				<option value="tags"><?php _e('CSK_THEMES_TAGS'); ?></option>
+				<option value="author"><?php _e('CSK_THEMES_AUTHOR'); ?></option>
+			</select>
+			<input type="text" class="form-control form-control-sm ml-2" id="search" name="search" placeholder="<?php _e('CSK_THEMES_SEARCH'); ?>">
+		</form>
 	</div><!-- /.navbar-collapse -->
 </nav>
 <div class="alert alert-info"><strong>NOTE</strong>: This section will be developed soon.</div>

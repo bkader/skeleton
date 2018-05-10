@@ -80,7 +80,7 @@ class Themes extends Admin_Controller {
 		add_filter('admin_head', array($this, '_admin_head'));
 
 		// We need handlebars.
-		$this->_handlebars();
+		$this->_handlebars()->_zoom();
 
 		// Add our needed JS file.
 		$this->scripts[] = 'themes';
@@ -136,35 +136,108 @@ class Themes extends Admin_Controller {
 		// Format some elements before final output.
 		foreach ($themes as $folder => &$t)
 		{
-			// Is the theme enabled?
-			$t['enabled'] = ($folder === get_option('theme', 'default'));
+			$t['actions'] = array();
 
-			// The theme has a URI?
-			$t['name_uri'] = (empty($t['theme_uri']))
-				? $t['name']
-				: sprintf(lang('CSK_THEMES_THEME_NAME'), $t['name'], $t['theme_uri']);
+			// Activation button.
+			if ($folder !== get_option('theme', 'default'))
+			{
+				$t['actions'][] = html_tag('button', array(
+					'type' => 'button',
+					'data-endpoint' => nonce_ajax_url(
+						"themes/activate/{$folder}",
+						"activate-theme_{$folder}"
+					),
+					'class' => 'btn btn-default btn-sm theme-activate mr-2',
+				), line('CSK_THEMES_ACTIVATE'));
+			}
 
-			// Does the license have a URI?
-			$t['license'] = (empty($t['license_uri']))
-				? $t['license']
-				: sprintf(lang('CSK_THEMES_THEME_LICENSE'), $t['license'], $t['license_uri']);
-
-			// Does the author have a URI?
-			$t['author'] = (empty($t['author_uri']))
-				? $t['author']
-				: sprintf(lang('CSK_THEMES_THEME_AUTHOR'), $t['author'], $t['author_uri']);
-
-			// Did the user provide a support email address?
-			$t['author_email'] = (empty($t['author_email']))
-				? null
-				: sprintf(lang('CSK_THEMES_THEME_AUTHOR_EMAIL'), $t['author_email']);
+			// Details button.
+			$t['actions'][] = html_tag('a', array(
+				'href' => admin_url('themes?theme='.$folder),
+				'data-endpoint' => nonce_ajax_url(
+					"themes/details/{$folder}",
+					"details-theme_{$folder}"
+				),
+				'class' => 'btn btn-primary btn-sm theme-details',
+			), line('CSK_THEMES_DETAILS'));
 		}
 
 		// Displaying a single theme details?
 		$theme = $this->input->get('theme', true);
-		if (null !== $theme)
+		if (null !== $theme && isset($themes[$theme]))
 		{
-			$theme = (isset($themes[$theme])) ? $themes[$theme] : null;
+			$get   = $theme;
+			$theme = $themes[$theme];
+
+			// Is the theme enabled?
+			$theme['enabled'] = ($get === get_option('theme', 'default'));
+
+			// The theme has a URI?
+			$theme['name_uri'] = $theme['name'];
+			if ( ! empty($theme['theme_uri'])) {
+				$theme['name_uri'] = html_tag('a', array(
+					'href'   => $theme['theme_uri'],
+					'target' => '_blank',
+					'rel'    => 'nofollow',
+				), $theme['name']);
+			}
+
+			// Does the license have a URI?
+			if ( ! empty($theme['license_uri'])) {
+				$theme['license'] = html_tag('a', array(
+					'href'   => $theme['license_uri'],
+					'target' => '_blank',
+					'rel'    => 'nofollow',
+				), $theme['license']);
+			}
+
+			// Does the author have a URI?
+			if ( ! empty($theme['author_uri'])) {
+				$theme['author'] = html_tag('a', array(
+					'href'   => $theme['author_uri'],
+					'target' => '_blank',
+					'rel'    => 'nofollow',
+				), $theme['author']);
+			}
+
+			// Did the user provide a support email address?
+			if ( ! empty($theme['author_email'])) {
+				$theme['author_email'] = html_tag('a', array(
+					'href'   => "mailto:{$theme['author_email']}?subject=".rawurlencode("Support: {$theme['name']}"),
+					'target' => '_blank',
+					'rel'    => 'nofollow',
+				), line('CSK_ADMIN_BTN_SUPPORT'));
+			}
+
+			// Actions buttons.
+			$theme['action_activate'] = null;
+			$theme['action_delete'] = null;
+			if (true !== $theme['enabled'])
+			{
+				$theme['action_activate'] = html_tag('button', array(
+					'type' => 'button',
+					'data-endpoint' => nonce_ajax_url(
+						"themes/activate/{$get}",
+						"activate-theme_{$get}"
+					),
+					'data-theme' => $get,
+					'class' => 'btn btn-primary btn-sm theme-activate',
+				), line('CSK_THEMES_ACTIVATE'));
+
+				$theme['action_delete'] = html_tag('button', array(
+					'type' => 'button',
+					'data-endpoint' => nonce_ajax_url(
+						"themes/delete/{$get}",
+						"delete-theme_{$get}"
+					),
+					'data-theme' => $get,
+					'class' => 'btn btn-danger btn-sm theme-delete pull-right',
+				), line('CSK_THEMES_DELETE'));
+			}
+		}
+		else
+		{
+			$theme = null;
 		}
 
 		// Pass all variables to view.
@@ -173,7 +246,7 @@ class Themes extends Admin_Controller {
 
 		// Set page title and render view.
 		$this->theme
-			->set_title(lang('CSK_THEMES'))
+			->set_title(line('CSK_THEMES'))
 			->render($this->data);
 	}
 
@@ -201,7 +274,7 @@ class Themes extends Admin_Controller {
 
 		// Set page title and load view.
 		$this->theme
-			->set_title(lang('CSK_THEMES_THEME_ADD'))
+			->set_title(line('CSK_THEMES_INSTALL'))
 			->render($this->data);
 	}
 
@@ -224,9 +297,9 @@ class Themes extends Admin_Controller {
 	 */
 	public function upload()
 	{
-		if (true !== $this->check_nonce('theme_upload'))
+		if (true !== $this->check_nonce('upload-theme'))
 		{
-			set_alert(lang('CSK_ERROR_CSRF'), 'error');
+			set_alert(line('CSK_ERROR_CSRF'), 'error');
 			redirect('admin/themes/install');
 			exit;
 		}
@@ -234,7 +307,7 @@ class Themes extends Admin_Controller {
 		// Did the user provide a valid file?
 		if (empty($_FILES['themezip']['name']))
 		{
-			set_alert(lang('CSK_THEMES_THEME_UPLOAD_ERROR'), 'error');
+			set_alert(line('CSK_THEMES_ERROR_UPLOAD'), 'error');
 			redirect('admin/themes/install');
 			exit;
 		}
@@ -243,7 +316,7 @@ class Themes extends Admin_Controller {
 		$this->load->helper('file');
 		if ( ! function_exists('unzip_file'))
 		{
-			set_alert(lang('CSK_THEMES_THEME_UPLOAD_ERROR'), 'error');
+			set_alert(line('CSK_THEMES_ERROR_UPLOAD'), 'error');
 			redirect('admin/themes/install');
 			exit;
 		}
@@ -257,7 +330,7 @@ class Themes extends Admin_Controller {
 		// Error uploading?
 		if (false === $this->upload->do_upload('themezip') OR ! class_exists('ZipArchive', false))
 		{
-			set_alert(lang('CSK_THEMES_THEME_UPLOAD_ERROR'), 'error');
+			set_alert(line('CSK_THEMES_ERROR_UPLOAD'), 'error');
 			redirect('admin/themes/install');
 			exit;
 		}
@@ -272,13 +345,13 @@ class Themes extends Admin_Controller {
 		// Successfully installed?
 		if (true === $status)
 		{
-			set_alert(lang('CSK_THEMES_THEME_UPLOAD_SUCCESS'), 'success');
+			set_alert(line('CSK_THEMES_SUCCESS_UPLOAD'), 'success');
 			redirect('admin/themes');
 			exit;
 		}
 
 		// Otherwise, the theme could not be installed.
-		set_alert(lang('CSK_THEMES_THEME_UPLOAD_ERROR'), 'error');
+		set_alert(line('CSK_THEMES_ERROR_UPLOAD'), 'error');
 		redirect('admin/themes/install');
 		exit;
 	}
@@ -301,10 +374,10 @@ class Themes extends Admin_Controller {
 	{
 		// Add lines.
 		$lines = array(
-			'activate' => lang('CSK_THEMES_THEME_ACTIVATE_CONFIRM'),
-			'delete'   => lang('CSK_THEMES_THEME_DELETE_CONFIRM'),
-			'install'  => lang('CSK_THEMES_THEME_INSTALL_CONFIRM'),
-			'upload'   => lang('CSK_THEMES_THEME_UPLOAD_CONFIRM'),
+			'activate' => line('CSK_THEMES_CONFIRM_ACTIVATE'),
+			'delete'   => line('CSK_THEMES_CONFIRM_DELETE'),
+			'install'  => line('CSK_THEMES_CONFIRM_INSTALL'),
+			'upload'   => line('CSK_THEMES_CONFIRM_UPLOAD'),
 		);
 		$output .= '<script type="text/javascript">';
 		$output .= 'csk.i18n = csk.i18n || {};';
@@ -312,17 +385,32 @@ class Themes extends Admin_Controller {
 		$output .= '</script>';
 		return $output;
 	}
+	// ------------------------------------------------------------------------
 
+	/**
+	 * _subhead
+	 *
+	 * Add some buttons to dashboard subhead section.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	protected
+	 * @param 	none
+	 * @return 	void
+	 */
 	protected function _subhead()
 	{
 		// Default page icon and title.
 		$this->data['page_icon']  = 'paint-brush';
-		$this->data['page_title'] = line('themes');
+		$this->data['page_title'] = line('CSK_THEMES');
 		$this->data['page_help'] = 'https://goo.gl/B1hPhc';
 
+		// On the install section?
 		if ('install' === $this->router->fetch_method())
 		{
-			$this->data['page_title'] = line('CSK_THEMES_THEME_ADD');
+			$this->data['page_title'] = line('CSK_THEMES_ADD');
 
 			// Subhead.
 			add_action('admin_subhead', function() {
@@ -330,16 +418,13 @@ class Themes extends Admin_Controller {
 				// Upload theme button.
 				echo html_tag('button', array(
 					'role' => 'button',
-					'class' => 'btn btn-primary btn-sm btn-icon',
+					'class' => 'btn btn-primary btn-sm btn-icon mr-2',
 					'data-toggle' => 'collapse',
 					'data-target' => '#theme-install'
-				), fa_icon('upload').line('CSK_THEMES_THEME_UPLOAD'));
+				), fa_icon('upload').line('CSK_THEMES_UPLOAD'));
 
 				// Back button.
-				echo html_tag('a', array(
-					'href' => admin_url('themes'),
-					'class' => 'btn btn-default btn-sm btn-icon ml15'
-				), fa_icon('arrow-left').line('back'));
+				$this->_btn_back('themes');
 
 			});
 		}
@@ -351,7 +436,7 @@ class Themes extends Admin_Controller {
 				echo html_tag('a', array(
 					'href' => admin_url('themes/install'),
 					'class' => 'btn btn-primary btn-sm btn-icon'
-				), fa_icon('plus').line('CSK_THEMES_THEME_ADD'));
+				), fa_icon('plus').line('CSK_THEMES_ADD'));
 
 			});
 		}

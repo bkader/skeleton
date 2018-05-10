@@ -7,7 +7,8 @@
     "use strict";
 
     // Prepare globals.
-    var csk = window.csk = window.csk || {};
+    var csk = window.csk = window.csk || {},
+        themesURL = csk.config.currentURL;
     csk.i18n = csk.i18n || {};
     csk.i18n.themes = csk.i18n.themes || {};
 
@@ -18,83 +19,102 @@
      */
     csk.themes = {
 
-        // To avoid repeating, we gather all action in one.
-        _do: function (el, action) {
+        // Retrieve theme's details.
+        details: function (el) {
             var $this = $(el),
                 href = $this.attr("href"),
-                theme = $this.attr("data-theme");
+                endpoint = $this.data("endpoint"),
+                row = $this.parents(".theme-item"),
+                theme = row.data("theme"),
+                id = row.attr("id"),
+                action = action || -1;
 
-            if (!href.length || !theme.length) {
+            if (!endpoint.length || !theme.length) {
                 return false;
             }
 
-            var action_raw = (action === -1) ? $action : action + "_theme_" + theme;
-
-            return csk.ui.confirm(csk.i18n.themes[action], function () {
-                csk.ajax.request(href, {
-                    type: "POST",
-                    data: {
-                        action: action_raw
-                    },
-                    complete: function () {
-                        // We remove the item in delete action.
-                        if (action === "delete") {
-                            $("#theme-" + theme).fadeOut(function () {
-                                $(this).remove();
-                            });
-                        }
-
-                        // Reload page content.
-                        $("#wrapper").load(csk.config.adminURL + "/themes  #wrapper > *");
-
-                        /*
-                         * We always make sure to hide the theme modal 
-                         * in case it was show.
-                         * This will trigger the hidden.bs.modal event, so
-                         * it will automatically push the URL.
-                         */
-                        $("#theme-modal").modal("hide");
+            // Compile Handlebars modal template
+            csk.ajax.request(endpoint, {
+                type: "POST",
+                data: {action: "details-theme_" + theme},
+                complete: function (jqXHR, textStatus) {
+                    if (textStatus !== "success") {
+                        return false;
                     }
-                });
+                    var modalSource = document.getElementById("theme-details-modal").innerHTML,
+                        modalTemplate = Handlebars.compile(modalSource),
+                        response = jqXHR.responseJSON;
+
+                    var _modal = modalTemplate(response.results);
+                    $("#wrapper").append(_modal);
+                    $("#theme-modal").modal("show");
+                    window.history.pushState({href: href}, "", href);
+                }
             });
         },
 
         // Main function: activate or delete.
         activate: function (el) {
-            return this._do(el, "activate")
+            return csk.themes._do(el, "activate")
         },
+
         delete: function (el) {
-            return this._do(el, "delete")
+            return csk.themes._do(el, "delete")
         },
 
-        // Retrieve theme's details.
-        details: function (el) {
+        // To avoid repeating, we gather all action in one.
+        _do: function (el, action) {
             var $this = $(el),
-                href = $this.attr("data-href"),
-                url = $this.attr("href"),
-                theme = $this.attr("data-theme");
+                href = $this.attr("href"),
+                endpoint = $this.data("endpoint"),
+                row = $this.parents(".theme-item"),
+                theme = row.data("theme") || $this.data("theme"),
+                id = row.attr("id") || "theme-" + theme,
+                action = action || -1,
+                themeModal = $("#theme-modal");
 
-            if (!href.length || !theme.length) {
+            if (!endpoint.length || !theme.length) {
                 return false;
             }
 
-            // Compile Handlebars modal template
-            var modalSource = document.getElementById("theme-details-modal").innerHTML;
-            var modalTemplate = Handlebars.compile(modalSource);
-            csk.ajax.request(href, {
-                success: function (response) {
-                    var _modal = modalTemplate(response.results);
-                    $("#wrapper").append(_modal);
-                    $("#theme-modal").modal("show");
-                    window.history.pushState({
-                        href: url
-                    }, "", url);
+            csk.ui.confirm(csk.i18n.themes[action], function () {
+                
+                // Hide modal first;
+                if (themeModal.length) {
+                    themeModal.modal("hide");
                 }
+
+                // Proceed to AJAX.
+                csk.ajax.request(endpoint, {
+                    type: "POST",
+                    data: {action: action + '-theme_' + theme},
+                    complete: function (jqXHR, textStatus) {
+                        if (textStatus !== "success") {
+                            return false;
+                        }
+
+                        if (action === "delete") {
+                            $("#" + id).fadeOut(function() {
+                                $(this).remove();
+                                csk.ui.reload("#wrapper", false);
+                            });
+                            return;
+                        }
+
+                        csk.ui.reload("#wrapper", false);
+                    }
+                });
             });
-        },
+        }
     };
 
     $(document).ready(function () {
+
+        // Remove get parameters from URL.
+        if (themesURL.indexOf("?") > 0) {
+            themesURL = themesURL.substring(0, themesURL.indexOf("?"));
+        }
+
         // Display theme's details.
         $(document).on("click", ".theme-details", function (e) {
             e.preventDefault();
@@ -115,9 +135,7 @@
 
         // Put back URL when modal is closed.
         $(document).on("hidden.bs.modal", "#theme-modal", function (e) {
-            window.history.pushState({
-                href: csk.config.adminURL + "/themes"
-            }, "", csk.config.adminURL + "/themes");
+            window.history.pushState({href: themesURL}, "", themesURL);
             $(this).remove();
         });
     });
