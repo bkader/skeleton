@@ -694,6 +694,13 @@ class Jquery_validation {
 		$output = '<script type="text/javascript">';
 		$output .= '$(document).ready(function () {';
 		$output .= 'var $form = $("'.$form.'");';
+
+		/**
+		 * We proceed to validation only if the form is found.
+		 * @since 	2.0.0
+		 */
+		$output .= ' if (typeof $form === "undefined" || !$form.length) { return false; }';
+
 		$output .= ' $form.validate({';
 
 		// We start by adding rules and messages.
