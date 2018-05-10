@@ -429,7 +429,7 @@ class KB_Controller extends CI_Controller {
 				'type'        => 'text',
 				'name'        => 'captcha',
 				'id'          => 'captcha',
-				'placeholder' => 'lang:captcha',
+				'placeholder' => 'lang:CSK_INPUT_CAPTCHA',
 				'maxlength'   => $this->config->item('word_length', 'captcha'),
 			),
 		);
