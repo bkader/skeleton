@@ -48,14 +48,36 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
- * 
  * @since 		1.0.0
- * @since 		1.3.3 	Added both AJAX and API functions.
- * @since 		1.3.4 	Anchor are automatically translated if the title contains "lang:" at the beginning.
- * @since 		1.4.0 	Safe URL and anchors were rewritten for better security.
- * 
- * @version 	1.5.0
+ * @version 	2.0.0
  */
+
+if ( ! function_exists('site_url'))
+{
+	/**
+	 * site_url
+	 *
+	 * We override CodeIgniter default function behavior in order to use
+	 * the named routes feature.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @param 	string 	$name
+	 * @param 	string 	$protocol
+	 * @return 	string
+	 */
+	function site_url($name = '', $protocol = NULL)
+	{
+		// If the route is not found, we use $name.
+		$uri = Route::named($name);
+		(null === $uri) && $uri = $name;
+		return get_instance()->config->site_url($uri, $protocol);
+	}
+}
+
+// ------------------------------------------------------------------------
 
 if ( ! function_exists('anchor'))
 {
