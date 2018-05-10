@@ -272,6 +272,7 @@ class Jquery_validation {
 						&& (false !== strpos($param, '[name=')))
 					{
 						$param = rtrim(str_replace('[name=', '', $param), ']');
+						$param = $this->_get_field_name($param);
 					}
 
 					if (false === ($line = $this->_get_field_error($key, $rule)))
