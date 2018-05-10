@@ -110,6 +110,11 @@ $route['translate_uri_dashes'] = FALSE;
  * (admin|ajax|process) => (admin|ajax|process|api).
  */
 Route::prefix(KB_ADMIN, function() {
+
+	// Admin login section.
+	Route::any('login/(:any)', 'admin/login/$1');
+	Route::any('login',        'admin/login/index');
+
 	// System information route first.
 	Route::any('settings/sysinfo', 'admin/settings/sysinfo');
 

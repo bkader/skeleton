@@ -77,20 +77,6 @@ class KB_Form_validation extends CI_Form_validation
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Checks if the field has an error associated with it.
-	 * @access 	public
-	 * @param 	string 	$field 	The field to check.
-	 * @return 	boolean
-	 */
-	public function has_error($field = null)
-	{
-		// We return TRUE only if the field is provided and has an error.
-		return ( ! empty($field) && ! empty($this->_field_data[$field]['error']));
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
 	 * Run the form validation.
 	 * @access 	public
 	 * @param 	string 	$module
@@ -175,6 +161,31 @@ class KB_Form_validation extends CI_Form_validation
 	public function user_exists($str)
 	{
 		return (false !== $this->ci->kbcore->users->get($str));
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * user_admin
+	 *
+	 * Method for making sure the user trying to login is an admin.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	mixed 	User username or email address.
+	 * @return 	bool
+	 */
+	public function user_admin($str)
+	{
+		if (false !== ($user = $this->ci->kbcore->users->get($str)))
+		{
+			return ('administrator' === $user->subtype);
+		}
+
+		return false;
 	}
 
 	// ------------------------------------------------------------------------

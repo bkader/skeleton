@@ -67,14 +67,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $config['username'] = array(
 	'name'        => 'username',
 	'id'          => 'username',
-	'placeholder' => 'lang:username',
+	'placeholder' => 'lang:CSK_INPUT_USERNAME',
 );
 
 // Identity field.
 $config['identity'] = array(
 	'name'        => 'identity',
 	'id'          => 'identity',
-	'placeholder' => 'lang:identity',
+	'placeholder' => 'lang:CSK_INPUT_IDENTITY',
 );
 
 // ------------------------------------------------------------------------
@@ -86,7 +86,7 @@ $config['password'] = array(
 	'type'        => 'password',
 	'name'        => 'password',
 	'id'          => 'password',
-	'placeholder' => 'lang:password',
+	'placeholder' => 'lang:CSK_INPUT_PASSWORD',
 );
 
 // Confirm field.
@@ -94,7 +94,7 @@ $config['cpassword'] = array(
 	'type'        => 'password',
 	'name'        => 'cpassword',
 	'id'          => 'cpassword',
-	'placeholder' => 'lang:confirm_password',
+	'placeholder' => 'lang:CSK_INPUT_CONFIRM_PASSWORD',
 );
 
 // New password field.
@@ -102,7 +102,7 @@ $config['npassword'] = array(
 	'type'        => 'password',
 	'name'        => 'npassword',
 	'id'          => 'npassword',
-	'placeholder' => 'lang:new_password',
+	'placeholder' => 'lang:CSK_INPUT_NEW_PASSWORD',
 );
 
 // Current password field.
@@ -110,7 +110,7 @@ $config['opassword'] = array(
 	'type'        => 'password',
 	'name'        => 'opassword',
 	'id'          => 'opassword',
-	'placeholder' => 'lang:current_password',
+	'placeholder' => 'lang:CSK_INPUT_CURRENT_PASSWORD',
 );
 
 // ------------------------------------------------------------------------
@@ -122,7 +122,7 @@ $config['email'] = array(
 	'type'        => 'email',
 	'name'        => 'email',
 	'id'          => 'email',
-	'placeholder' => 'lang:email_address',
+	'placeholder' => 'lang:CSK_INPUT_EMAIL_ADDRESS',
 );
 
 // New email field.
@@ -130,7 +130,7 @@ $config['nemail'] = array(
 	'type'        => 'email',
 	'name'        => 'nemail',
 	'id'          => 'nemail',
-	'placeholder' => 'lang:new_email_address',
+	'placeholder' => 'lang:CSK_INPUT_NEW_EMAIL_ADDRESS',
 );
 
 // ------------------------------------------------------------------------
@@ -141,14 +141,14 @@ $config['nemail'] = array(
 $config['first_name'] = array(
 	'name'        => 'first_name',
 	'id'          => 'first_name',
-	'placeholder' => 'lang:first_name',
+	'placeholder' => 'lang:CSK_INPUT_FIRST_NAME',
 );
 
 // Last name field.
 $config['last_name'] = array(
 	'name'        => 'last_name',
 	'id'          => 'last_name',
-	'placeholder' => 'lang:last_name',
+	'placeholder' => 'lang:CSK_INPUT_LAST_NAME',
 );
 
 // Gender field.
@@ -157,9 +157,9 @@ $config['gender'] = array(
 	'name' => 'gender',
 	'id' => 'gender',
 	'options' => array(
-		'unspecified' => 'lang:unspecified',
-		'male'        => 'lang:male',
-		'female'      => 'lang:female',
+		'unspecified' => 'lang:CSK_INPUT_UNSPECIFIED',
+		'male'        => 'lang:CSK_INPUT_MALE',
+		'female'      => 'lang:CSK_INPUT_FEMALE',
 	),
 );
 
@@ -167,21 +167,21 @@ $config['gender'] = array(
 $config['company'] = array(
 	'name'        => 'company',
 	'id'          => 'company',
-	'placeholder' => 'lang:company',
+	'placeholder' => 'lang:CSK_INPUT_COMPANY',
 );
 
 // Phone field.
 $config['phone'] = array(
 	'name'        => 'phone',
 	'id'          => 'phone',
-	'placeholder' => 'lang:phone',
+	'placeholder' => 'lang:CSK_INPUT_PHONE',
 );
 
 // Location field.
 $config['location'] = array(
 	'name'        => 'location',
 	'id'          => 'location',
-	'placeholder' => 'lang:location',
+	'placeholder' => 'lang:CSK_INPUT_LOCATION',
 );
 
 // ------------------------------------------------------------------------
@@ -192,21 +192,21 @@ $config['location'] = array(
 $config['name'] = array(
 	'name'        => 'name',
 	'id'          => 'name',
-	'placeholder' => 'lang:name',
+	'placeholder' => 'lang:CSK_INPUT_NAME',
 );
 
 // Title (same as name field).
 $config['title'] = array(
 	'name'        => 'name',
 	'id'          => 'name',
-	'placeholder' => 'lang:title',
+	'placeholder' => 'lang:CSK_INPUT_TITLE',
 );
 
 // Elements slug.
 $config['slug'] = array(
 	'name'        => 'slug',
 	'id'          => 'slug',
-	'placeholder' => 'lang:slug',
+	'placeholder' => 'lang:CSK_INPUT_SLUG',
 );
 
 // Description field.
@@ -214,14 +214,14 @@ $config['description'] = array(
 	'type'        => 'textarea',
 	'name'        => 'description',
 	'id'          => 'description',
-	'placeholder' => 'lang:description',
+	'placeholder' => 'lang:CSK_INPUT_DESCRIPTION',
 );
 
 // Used by menu items.
 $config['href'] = array(
 	'name'        => 'href',
 	'id'          => 'href',
-	'placeholder' => 'lang:url',
+	'placeholder' => 'lang:CSK_INPUT_URL',
 );
 
 // Menu order.
@@ -229,7 +229,19 @@ $config['order'] = array(
 	'type'        => 'number',
 	'name'        => 'order',
 	'id'          => 'order',
-	'placeholder' => 'lang:order',
+	'placeholder' => 'lang:CSK_INPUT_ORDER',
+);
+
+// Privacy.
+$config['privacy'] = array(
+	'type'    => 'dropdown',
+	'name'    => 'privacy',
+	'id'      => 'privacy',
+	'options' => array(
+		'0' => 'lang:CSK_PRIVACY_HIDDEN',
+		'1' => 'lang:CSK_PRIVACY_PRIVATE',
+		'2' => 'lang:CSK_PRIVACY_PUBLIC',
+	)
 );
 
 // ------------------------------------------------------------------------
@@ -240,7 +252,7 @@ $config['order'] = array(
 $config['meta_title'] = array(
 	'name'        => 'meta_title',
 	'id'          => 'meta_title',
-	'placeholder' => 'lang:meta_title',
+	'placeholder' => 'lang:CSK_INPUT_META_TITLE',
 	'maxlength'   => '70',
 );
 
@@ -248,7 +260,7 @@ $config['meta_title'] = array(
 $config['meta_description'] = array(
 	'name'        => 'meta_description',
 	'id'          => 'meta_description',
-	'placeholder' => 'lang:meta_description',
+	'placeholder' => 'lang:CSK_INPUT_META_DESCRIPTION',
 	'maxlength'   => '160',
 );
 
@@ -256,6 +268,6 @@ $config['meta_description'] = array(
 $config['meta_title'] = array(
 	'name'        => 'meta_title',
 	'id'          => 'meta_title',
-	'placeholder' => 'lang:meta_title',
+	'placeholder' => 'lang:CSK_INPUT_META_TITLE',
 	'maxlength'   => '255',
 );

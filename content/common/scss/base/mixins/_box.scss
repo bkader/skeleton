@@ -2,6 +2,6 @@
 // A simple mixin to give dimensions to a box.
 
 @mixin box($width, $height: $width) {
+    height: $height;
 	width: $width;
-	height: $height;
 }

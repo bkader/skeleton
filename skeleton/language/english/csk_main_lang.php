@@ -49,6 +49,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		1.0.0
  * @version 	2.0.0
  */
+
+$lang['CSK_SKELETON_OPEN_SOURCE'] = 'CodeIgniter Skeleton is free software released under the MIT License.';
 // ------------------------------------------------------------------------
 // General Buttons and Links.
 // ------------------------------------------------------------------------
@@ -60,6 +62,7 @@ $lang['CSK_BTN_CLICK_HERE']  = 'Click Here';
 $lang['CSK_BTN_SEND_LINK']   = 'Send link';
 $lang['CSK_BTN_RESEND_LINK'] = 'Resend link';
 $lang['CSK_BTN_SETTINGS']    = 'Settings';
+$lang['CSK_BTN_GO_HOMEPAGE'] = 'Go to site homepage';
 
 // ------------------------------------------------------------------------
 // Forms Input.
@@ -80,9 +83,11 @@ $lang['CSK_INPUT_FIRST_NAME'] = 'First name';
 $lang['CSK_INPUT_LAST_NAME']  = 'Last name';
 $lang['CSK_INPUT_FULL_NAME']  = 'Full name';
 
-$lang['CSK_INPUT_GENDER'] = 'Gender';
-$lang['CSK_INPUT_MALE']   = 'Male';
-$lang['CSK_INPUT_FEMALE'] = 'Female';
+// Gender lines.
+$lang['CSK_INPUT_UNSPECIFIED'] = 'Unspecified';
+$lang['CSK_INPUT_GENDER']      = 'Gender';
+$lang['CSK_INPUT_MALE']        = 'Male';
+$lang['CSK_INPUT_FEMALE']      = 'Female';
 
 $lang['CSK_INPUT_COMPANY']  = 'Company';
 $lang['CSK_INPUT_PHONE']    = 'Phone';
@@ -93,6 +98,19 @@ $lang['CSK_INPUT_AVATAR']   = 'Avatar';
 $lang['CSK_INPUT_META_TITLE']       = 'Meta Title';
 $lang['CSK_INPUT_META_DESCRIPTION'] = 'Meta Description';
 $lang['CSK_INPUT_META_KEYWORDS']    = 'Meta Keywords';
+
+$lang['CSK_INPUT_NAME']        = 'Name';
+$lang['CSK_INPUT_TITLE']       = 'Title';
+$lang['CSK_INPUT_SLUG']        = 'Slug';
+$lang['CSK_INPUT_DESCRIPTION'] = 'Description';
+$lang['CSK_INPUT_URL']         = 'URL';
+$lang['CSK_INPUT_ORDER']       = 'Order';
+
+// Privacy fields.
+$lang['CSK_INPUT_PRIVACY']   = 'Privacy';
+$lang['CSK_PRIVACY_HIDDEN']  = 'Hidden';
+$lang['CSK_PRIVACY_PRIVATE'] = 'Private';
+$lang['CSK_PRIVACY_PUBLIC']  = 'Public';
 
 // ------------------------------------------------------------------------
 // General notices and messages.
@@ -119,3 +137,4 @@ $lang['form_validation_current_password']  = 'Your current password in incorrect
 $lang['form_validation_unique_email']      = 'This email address is already in use.';
 $lang['form_validation_unique_username']   = 'This username is not available.';
 $lang['form_validation_user_exists']       = 'No user was found with that username or email address.';
+$lang['form_validation_user_admin']        = 'You do not have access to the dashboard section of this site.';

@@ -74,11 +74,12 @@ $lang['CSK_ADMIN_CONTENT'] = 'Content';
 $lang['CSK_ADMIN_COMPONENTS'] = 'Components';
 
 // Extensions menu.
-$lang['CSK_ADMIN_EXTENSIONS'] = 'Extensions';
-$lang['CSK_ADMIN_MODULES']    = 'Modules';
-$lang['CSK_ADMIN_PLUGINS']    = 'Plugins';
-$lang['CSK_ADMIN_THEMES']     = 'Themes';
-$lang['CSK_ADMIN_LANGUAGES']  = 'Languages';
+$lang['CSK_ADMIN_EXTENSIONS']        = 'Extensions';
+$lang['CSK_ADMIN_MODULES']           = 'Modules';
+$lang['CSK_ADMIN_PLUGINS']           = 'Plugins';
+$lang['CSK_ADMIN_THEMES']            = 'Themes';
+$lang['CSK_ADMIN_LANGUAGES']         = 'Languages';
+$lang['CSK_ADMIN_LANGUAGES_DEFAULT'] = 'Language - Default';
 
 // Reports menu.
 $lang['CSK_ADMIN_REPORTS'] = 'Reports';

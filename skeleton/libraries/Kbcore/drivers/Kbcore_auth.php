@@ -408,12 +408,13 @@ class Kbcore_auth extends CI_Driver
 	 *
 	 * @since 	1.0.0
 	 * @since 	1.3.3 	Added a little check.
+	 * @since 	2.0.0 	Added language selection.
 	 * 
 	 * @access 	public
 	 * @param 	object 	$user 	the user's object to login.
 	 * @return 	bool
 	 */
-	public function quick_login($user)
+	public function quick_login($user, $language = null)
 	{
 		// ID, username or email provided?
 		if ( ! $user instanceof KB_User OR ! is_object($user))
@@ -421,9 +422,27 @@ class Kbcore_auth extends CI_Driver
 			$user = $this->_parent->users->get($user);
 		}
 
-		return (false !== $user) 
-			? $this->_set_session($user->id, true, null, $user->language)
-			: false;
+		// Make sure the user exists.
+		if (false === $user)
+		{
+			return false;
+		}
+
+		$language OR $language = $user->language;
+
+		if (false !== $this->_set_session($user->id, true, null, $language))
+		{
+			// Change users language if needed.
+			if ($language !== $user->language 
+				&& in_array($language, $this->ci->config->item('languages')))
+			{
+				$user->update('language', $language);
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 
 	// ------------------------------------------------------------------------

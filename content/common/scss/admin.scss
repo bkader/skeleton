@@ -15,3 +15,60 @@
         border-bottom: 1px solid #ddd;
     }
 }
+
+
+// Clean layout.
+body.csk-clean {
+    padding: 0;
+    background-color: $header__background;
+
+    > .container {
+        @include absolute(top 50% left 50%);
+        margin-top: -205px;
+        margin-left: -152px;
+        width: 304px;
+    }
+
+    .card {
+        background-color: $subhead__background;
+
+        .card-logo {
+            border-bottom: 1px solid $color__white;
+            padding: 10px;
+        }
+    }
+
+    .footer {
+        @include box-shadow(none);
+        @include font-size(13);
+        background: none;
+        border: none;
+        color: $color__white;
+        height: 32px;
+
+        .container { position: relative; }
+
+        a { color: $color__white; }
+
+        .skeleton-logo {
+            @include absolute(top -5px left 50%);
+            background-color: transparent;
+            background-image: url("../img/csk-logo-white.png");
+            background-repeat: no-repeat;
+            display: inline-block;
+            height: 24px;
+            margin-left: -12px;
+            width: 24px;
+        }
+
+    }
+
+    .invalid-feedback { font-size: 90%; }
+
+    @include screen-sm {
+        .footer {display: block;}
+        .tooltip-inner {
+            max-width: 768px !important;
+        }
+    }
+}
