@@ -143,6 +143,50 @@
             if (el.length) {
                 $(el).load(csk.config.currentURL + " " + el + " > *");
             }
+        },
+
+        /**
+         * Check if an element is in viewport.
+         * @since   2.0.0
+         */
+        inViewport: function (el) {
+            var that = el.getBoundingClientRect();
+            return (
+                that.bottom >= 0 && 
+                that.right >= 0 && 
+                that.top <= (window.innerHeight || document.documentElement.clientHeight) && 
+                that.left <= (window.innerWidth || document.documentElement.clientWidth)
+            );
+        },
+
+        /**
+         * Function to add an event listener.
+         * @since   2.0.0
+         */
+        addListener: function (event, callback) {
+            if (window.addEventListener) {
+                window.addEventListener(event, callback);
+            } else {
+                window.attachEvent("on" + event, callback);
+            }
+        },
+
+        /**
+         * Lazy load images.
+         * @since   2.0.0
+         */
+        lazyLoad: function () {
+            var lazyImages = $("img[data-src]");
+
+            for (var i = 0; i < lazyImages.length; i++) {
+                var img = lazyImages[i];
+                if (csk.ui.inViewport(img)) {
+                    img.src = img.getAttribute("data-src");
+                    img.onload = function () {
+                        this.removeAttribute("data-src");
+                    };
+                }
+            }
         }
     };
 
@@ -273,6 +317,13 @@
         }
     };
 
+    /**
+     * Register our custom Lazy Load function.
+     * @since   2.0.0
+     */
+    csk.ui.addListener("load", csk.ui.lazyLoad);
+    csk.ui.addListener("scroll", csk.ui.lazyLoad);
+
     $(document).ready(function () {
 
         /**
@@ -315,10 +366,10 @@
 
         // Bootstrap tooltip and popover.
         if (typeof $.fn.tooltip !== "undefined") {
-            $("[data-toggle=tooltip], [rel=tooltip]").tooltip();
+            $("body").tooltip({selector: "[data-toggle=tooltip], [rel=tooltip]"});
         }
         if (typeof $.fn.popover !== "undefined") {
-            $("[data-toggle=popover], [rel=popover]").popover();
+            $("body").tooltip({selector: "[data-toggle=popover], [rel=popover]"});
         }
 
         /**

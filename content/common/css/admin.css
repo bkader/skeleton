@@ -75,8 +75,19 @@ iframe {
 }
 
 img {
-  max-width: 100%;
+  -webkit-transition: opacity 0.3s ease-in;
+  -moz-transition: opacity 0.3s ease-in;
+  -ms-transition: opacity 0.3s ease-in;
+  -o-transition: opacity 0.3s ease-in;
+  transition: opacity 0.3s ease-in;
+  opacity: 1;
+  filter: alpha(opacity=100);
   height: auto;
+  max-width: 100%;
+}
+img[data-src] {
+  opacity: 0;
+  filter: alpha(opacity=0);
 }
 
 html,

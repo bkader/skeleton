@@ -52,7 +52,15 @@ object,
 iframe { max-width: 100%; }
 
 // Make images responsive by default.
-img { max-width: 100%; height: auto; }
+img {
+    @include transition(opacity 0.3s ease-in);
+    @include opacity(1);
+    height: auto;
+    max-width: 100%;
+
+    // Added Laziness when loading images.
+    &[data-src] { @include opacity(0); }
+}
 
 // --------------------------------------------------------------
 // Base styling.
