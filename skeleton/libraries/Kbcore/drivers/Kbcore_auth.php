@@ -292,7 +292,7 @@ class Kbcore_auth extends CI_Driver
 	{
 		if (empty($identity) OR empty($password))
 		{
-			set_alert(lang('CSK_ERROR_FIELDS_REQUIRED'), 'error');
+			set_alert(line('CSK_ERROR_FIELDS_REQUIRED'), 'error');
 			return false;
 		}
 
@@ -309,7 +309,7 @@ class Kbcore_auth extends CI_Driver
 					->get_by('entities.username', $identity);
 				if ( ! $user)
 				{
-					set_alert(lang('us_wrong_credentials'), 'error');
+					set_alert(line('CSK_USERS_ERROR_LOGIN_CREDENTIALS'), 'error');
 					return false;
 				}
 				break;
@@ -320,7 +320,7 @@ class Kbcore_auth extends CI_Driver
 					->get_by('users.email', $identity);
 				if ( ! $user)
 				{
-					set_alert(lang('us_wrong_credentials'), 'error');
+					set_alert(line('CSK_USERS_ERROR_LOGIN_CREDENTIALS'), 'error');
 					return false;
 				}
 				break;
@@ -333,7 +333,7 @@ class Kbcore_auth extends CI_Driver
 
 				if ( ! $user)
 				{
-					set_alert(lang('us_wrong_credentials'), 'error');
+					set_alert(line('CSK_USERS_ERROR_LOGIN_CREDENTIALS'), 'error');
 					return false;
 				}
 
@@ -343,7 +343,7 @@ class Kbcore_auth extends CI_Driver
 		// Check the password.
 		if ( ! password_verify($password, $user->password))
 		{
-			set_alert(lang('us_wrong_credentials'), 'error');
+			set_alert(line('CSK_USERS_ERROR_LOGIN_CREDENTIALS'), 'error');
 			return false;
 		}
 
@@ -351,8 +351,8 @@ class Kbcore_auth extends CI_Driver
 		if ($user->enabled == 0)
 		{
 			set_alert(sprintf(
-				lang('us_account_disabled'),
-				anchor('register/resend', lang('click_here'))
+				line('CSK_USERS_ERROR_ACCOUNT_INACTIVE'),
+				anchor('register/resend', line('CSK_BTN_CLICK_HERE'))
 			), 'error');
 			return false;
 		}
@@ -360,34 +360,35 @@ class Kbcore_auth extends CI_Driver
 		// Make sure the account is not banned.
 		if ($user->enabled < 0)
 		{
-			set_alert(lang('us_account_banned'), 'error');
+			set_alert(line('CSK_USERS_ERROR_ACCOUNT_BANNED'), 'error');
 			return false;
 		}
 
 		// Make sure the account is not deleted.
 		if ($user->deleted > 0)
 		{
+			// TODO: Fix delete by admin.
 			// Check who deleted the user.
-			$log = $this->_parent->activities->get_by(array(
-				'module'     => 'users',
-				'controller' => 'admin',
-				'method'     => 'delete',
-				'activity'   => 'lang:act_user_delete::'.$user->id,
-			));
+			// $log = $this->_parent->activities->get_by(array(
+			// 	'module'     => 'users',
+			// 	'controller' => 'admin',
+			// 	'method'     => 'delete',
+			// 	'activity'   => 'lang:act_user_delete::'.$user->id,
+			// ));
 
-			// An admin did it? No way to restore it.
-			if (false !== $log)
-			{
-				set_alert(lang('us_account_deleted_admin'), 'error');
-			}
+			// // An admin did it? No way to restore it.
+			// if (false !== $log)
+			// {
+			// 	set_alert(line('CSK_USERS_ERROR_ACCOUNT_DELETED_ADMIN'), 'error');
+			// }
 			// Otherwise, the user can restore his/her account.
-			else
-			{
+			// else
+			// {
 				set_alert(sprintf(
-					lang('us_account_deleted'),
-					anchor('login/restore', lang('click_here'))
+					line('CSK_USERS_ERROR_ACCOUNT_DELETED'),
+					anchor('login/restore', line('CSK_BTN_CLICK_HERE'))
 				), 'error');
-			}
+			// }
 			
 			return false;
 		}
@@ -398,8 +399,7 @@ class Kbcore_auth extends CI_Driver
 		// Setup the session.
 		if (true === $this->_set_session($user->id, $remember, null, $user->language))
 		{
-			// Log the activity.
-			$this->_parent->activities->log_activity($user->id, 'lang:act_user_login');
+			// TODO: Log the activity.
 
 			return true;
 		}

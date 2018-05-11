@@ -90,12 +90,6 @@ $lang['CSK_ADMIN_DOCUMENTATION'] = 'Documentation';
 $lang['CSK_ADMIN_TRANSLATIONS']  = 'Translations';
 $lang['CSK_ADMIN_SKELETON_SHOP'] = 'Skeleton Shop';
 
-// Right menu.
-$lang['CSK_ADMIN_VIEW_SITE']         = 'View Site';
-$lang['CSK_ADMIN_USER_VIEW_PROFILE'] = 'View Profile';
-$lang['CSK_ADMIN_USER_EDIT_PROFILE'] = 'Edit Profile';
-$lang['CSK_ADMIN_LOGOUT']            = 'Sign Out';
-
 // ------------------------------------------------------------------------
 // Footer section.
 // ------------------------------------------------------------------------

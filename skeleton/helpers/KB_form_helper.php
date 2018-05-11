@@ -104,6 +104,7 @@ if ( ! function_exists('form_referrer'))
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://goo.gl/wGXHO9
 	 * @since 	1.4.0
+	 * @since 	2.0.0 	Remove GET parameters from URI.
 	 *
 	 * @param 	string 	$name 	Optional field name.
 	 * @return 	string
@@ -111,7 +112,8 @@ if ( ! function_exists('form_referrer'))
 	function form_referrer($name = '_csk_http_referrer')
 	{
 		empty($name) && $name = '_csk_http_referrer';
-		return form_hidden($name, $_SERVER['REQUEST_URI']);
+		$uri = strtok($_SERVER['REQUEST_URI'], '?');
+		return form_hidden($name, $uri);
 	}
 }
 

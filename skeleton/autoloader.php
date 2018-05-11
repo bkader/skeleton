@@ -123,7 +123,7 @@ require_once(KBPATH.'third_party/compat/str_to_bool.php');
 require_once(KBPATH.'third_party/compat/is_serialized.php');
 require_once(KBPATH.'third_party/compat/is_json.php');
 require_once(KBPATH.'third_party/compat/bool_or_serialize.php');
-require_once(KBPATH.'third_party/Plugins/Plugins.php');
+require_once(KBPATH.'third_party/Hooks/Hooks.php');
 require_once(KBPATH.'third_party/Route/Route.php');
 
 /*

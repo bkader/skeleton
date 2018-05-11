@@ -386,3 +386,91 @@ if ( ! function_exists( 'bs_label' )) {
 		return "<span class=\"label label-{$type}\">{$content}</span>";
 	}
 }
+
+/**
+ * Because the Theme library comes with Bootstrap 4 alert template,
+ * we make sure to change the template to use Bootstrap 3 alert.
+ * @since 	2.0.0
+ */
+add_filter('alert_template', function($output) {
+	$output =<<<EOT
+<div class="{class} alert-dismissible" role="alert">
+	{message}
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+</div>
+EOT;
+	return $output;
+});
+
+/**
+ * Because the Theme library comes with Bootstrap 4 alert template,
+ * we make sure to change the template to use Bootstrap 3 alert.
+ * @since 	2.0.0
+ */
+add_filter('alert_template_js', function($output) {
+	$output =<<<EOT
+'<div class="{class} alert-dismissible" role="alert">'
++ '{message}'
++ '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
++ '</div>'
+EOT;
+	return $output;
+});
+
+// ------------------------------------------------------------------------
+
+/**
+ * The jQuery validate library comes with Bootstrap 4 defaults. We make
+ * sure to change to Bootstrap 3.
+ * @since 	2.0.0
+ */
+
+/**
+ * Class used for invalid inputs.
+ * @see https://jqueryvalidation.org/validate/#errorclass
+ */
+add_filter('jquery_validate_errorClass', function($class) {
+	return 'has-error';
+});
+
+/**
+ * Class used for valid inputs.
+ * @see https://jqueryvalidation.org/validate/#errorclass
+ */
+add_filter('jquery_validate_successClass', function($class) {
+	return 'has-success';
+});
+
+/**
+ * Use this element type to create error messages and to look
+ * for existing error messages. Default: "label".
+ * @see https://jqueryvalidation.org/validate/#errorelement
+ */
+add_filter('jquery_validate_errorElement', function($el) {
+	return 'small';
+});
+
+/**
+ * Customize placement of created error labels.
+ * @see https://jqueryvalidation.org/validate/#errorplacement
+ */
+add_filter('jquery_validate_errorPlacement', function($output) {
+	return 'function (error, element) { error.addClass("help-block"); element.parents(".form-group").find(".help-block").remove(); if (element.prop("type") === "checkbox") { error.insertAfter(element.parent("label")); } else { error.insertAfter(element); } }';
+});
+
+/**
+ * How to highlight invalid fields.
+ * @see https://jqueryvalidation.org/validate/#highlight
+ */
+add_filter('jquery_validate_highlight', function($function) {
+	return 'function (element, errorClass, validClass) { $(element).parents(".form-group").addClass("has-error").removeClass("has-success"); }';
+});
+
+/**
+ * Called to revert changes made by option highlight,
+ * same arguments as highlight.
+ * @see https://jqueryvalidation.org/validate/#unhighlight
+ */
+add_filter('jquery_validate_unhighlight', function($function) {
+	return 'function (element, errorClass, validClass) { $(element).parents(".form-group").addClass("has-success").removeClass("has-error"); }';
+});

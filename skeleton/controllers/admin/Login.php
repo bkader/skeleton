@@ -77,6 +77,9 @@ class Login extends KB_Controller {
 			exit;
 		}
 
+		// Remove all filters applied by themes.
+		remove_all_filters();
+
 		/**
 		 * The layout to use for dashboard authentication.
 		 * @since 	2.0.0
@@ -161,10 +164,14 @@ class Login extends KB_Controller {
 
 		// Array of available languages.
 		$langs['-1'] = line('CSK_ADMIN_LANGUAGES_DEFAULT');
-		$languages = $this->lang->languages($this->config->item('languages'));
-		if (count($languages) >= 2) {
-			foreach ($languages as $folder => $lang) {
-				$langs[$folder] = $lang['name_en'].' ('.$lang['name'].')';
+		$site_languages = $this->config->item('languages');
+		if (count($site_languages) >= 2)
+		{
+			$languages = $this->lang->languages($site_languages);
+			if (count($languages) >= 2) {
+				foreach ($languages as $folder => $lang) {
+					$langs[$folder] = $lang['name_en'].' ('.$lang['name'].')';
+				}
 			}
 		}
 
@@ -206,7 +213,7 @@ class Login extends KB_Controller {
 			if (true !== $this->check_nonce('admin-login'))
 			{
 				set_alert(line('CSK_ERROR_CSRF'), 'error');
-				redirect('admin/login', 'refresh');
+				redirect('admin-login', 'refresh');
 				exit;
 			}
 
@@ -227,10 +234,10 @@ class Login extends KB_Controller {
 				 * Login error filter.
 				 * @since 	2.0.0
 				 */
-				$login_error = apply_filters('login_failed', line('CSK_ERROR_CSRF'));
+				$login_error = apply_filters('admin_login_failed', line('CSK_ERROR_CSRF'));
 				empty($login_error) && $login_error = line('CSK_ERROR_CSRF');
 				set_alert($login_error, 'error');
-				redirect('admin/login', 'refresh');
+				redirect('admin-login', 'refresh');
 				exit;
 			}
 
@@ -238,7 +245,7 @@ class Login extends KB_Controller {
 			 * Login redirection filter.
 			 * @since 	2.0.0
 			 */
-			$redirect_to = apply_filters('login_redirect', 'admin');
+			$redirect_to = apply_filters('admin_login_redirect', 'admin');
 			redirect($redirect_to);
 			exit;
 		}

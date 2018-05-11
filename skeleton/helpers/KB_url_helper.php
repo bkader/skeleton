@@ -70,10 +70,19 @@ if ( ! function_exists('site_url'))
 	 */
 	function site_url($name = '', $protocol = NULL)
 	{
+		// Keep $_GET parameters if we have any.
+		$get = null;
 		// If the route is not found, we use $name.
+		if (false !== ($position = strpos($name, '?')))
+		{
+			$get  = substr($name, $position);
+			$name = strtok($name, '?');
+		}
+
+		// Attempt to get the named route first.
 		$uri = Route::named($name);
 		(null === $uri) && $uri = $name;
-		return get_instance()->config->site_url($uri, $protocol);
+		return get_instance()->config->site_url($uri.$get, $protocol);
 	}
 }
 
@@ -197,7 +206,7 @@ if ( ! function_exists('current_url'))
 	function current_url()
 	{
 		$CI =& get_instance();
-		$current_url = $CI->config->site_url($CI->uri->uri_string());
+		$current_url = site_url($CI->uri->uri_string());
 		$params = $_SERVER['QUERY_STRING'];
 		return (empty($params)) ? $current_url : $current_url.'?'.$params;
 	}

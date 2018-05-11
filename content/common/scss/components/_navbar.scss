@@ -13,6 +13,20 @@
         @include hover-focus-active {
             color: $navbar__nav-link-hover;
         }
+
+        &.skeleton-logo::after {
+            @include opacity(0.8);
+            content: "";
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-color: transparent;
+            background-image: url("../img/csk-logo-white.png");
+            background-repeat: no-repeat;
+            background-position: center center;
+
+        }
+        &:hover::after { @include opacity(1); }
     }
 
     .navbar-toggler { color: $color__white; }
@@ -51,8 +65,6 @@
     // User menu.
     .user-menu {
         border-left: 1px solid darken($navbar__background, 5%);
-
-        > a::after { display: none; }
 
         img {
             display: none;

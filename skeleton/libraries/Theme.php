@@ -1037,6 +1037,30 @@ EOT;
 		return $this->_layout;
 	}
 
+	// ------------------------------------------------------------------------
+
+	/**
+	 * layout_exists
+	 *
+	 * Method for checking the existence of the layout.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	string 	$layout 	The layout to check (Optional).
+	 * @return 	bool 	true if the layout exists, else false.
+	 */
+	public function layout_exists($layout = null)
+	{
+		$layout OR $layout = $this->get_layout();
+		$layout = preg_replace('/.php$/', '', $layout).'.php';
+		$full_path = apply_filters('theme_layouts_path', $this->theme_path());
+
+		return (false !== is_file($full_path.DS.$layout));
+	}
+
 	// --------------------------------------------------------------------
 	// View file Setter and Getter.
 	// --------------------------------------------------------------------
@@ -1101,6 +1125,30 @@ EOT;
 		// Otherwise, apply the filter and return the view.
 		$this->_view = apply_filters('admin_view', $this->_view);
 		return $this->_view;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * view_exists
+	 *
+	 * Method for checking the existence of the current view.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	string 	$view 	The view to check (optional).
+	 * @return 	bool 	true if the view is found, else false.
+	 */
+	public function view_exists($view = null)
+	{
+		$view OR $view = $this->get_view();
+		$view = preg_replace('/.php$/', '', $view).'.php';
+		$full_path = apply_filters('theme_views_path', $this->theme_path());
+
+		return (false !== is_file($full_path.DS.$view));
 	}
 
 	// --------------------------------------------------------------------
@@ -1533,27 +1581,30 @@ EOT;
 			return $this;
 		}
 
-		// We get rid of nasty deep array.
-		(is_array($args[0])) && $args = $args[0];
-
-		// We loop through files and remove them.
-		foreach ($args as $arg)
+		if ( ! empty($args))
 		{
-			// Just to reset.
-			$handle = strtolower($arg);
-		
-			// Let's make $handle nicer :)/
-			$handle = preg_replace("/-{$type}$/", '', $handle)."-{$type}";
+			// We get rid of nasty deep array.
+			(is_array($args[0])) && $args = $args[0];
 
-			if ($type == 'css')
+			// We loop through files and remove them.
+			foreach ($args as $arg)
 			{
-				$this->_removed_styles[] = $handle;
-				unset($this->_styles[$handle]);
-			}
-			else
-			{
-				$this->_removed_scripts[] = $handle;
-				unset($this->_scripts[$handle]);
+				// Just to reset.
+				$handle = strtolower($arg);
+			
+				// Let's make $handle nicer :)/
+				$handle = preg_replace("/-{$type}$/", '', $handle)."-{$type}";
+
+				if ($type == 'css')
+				{
+					$this->_removed_styles[] = $handle;
+					unset($this->_styles[$handle]);
+				}
+				else
+				{
+					$this->_removed_scripts[] = $handle;
+					unset($this->_scripts[$handle]);
+				}
 			}
 		}
 

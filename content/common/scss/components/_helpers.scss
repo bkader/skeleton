@@ -48,6 +48,25 @@
 .mr15 {margin-right:15px!important}
 .mr30 {margin-right:30px!important}
 
+// Overflow helpers;
+.of-a { overflow: auto; }
+.of-h { overflow: hidden; }
+.of-i { overflow: initial; }
+.of-s { overflow: scroll; }
+.of-v { overflow: visible; }
+
+.ofx-a { overflow-x: auto; }
+.ofx-h { overflow-x: hidden; }
+.ofx-i { overflow-x: initial; }
+.ofx-s { overflow-x: scroll; }
+.ofx-v { overflow-x: visible; }
+
+.ofy-a { overflow-y: auto; }
+.ofy-h { overflow-y: hidden; }
+.ofy-i { overflow-y: initial; }
+.ofy-s { overflow-y: scroll; }
+.ofy-v { overflow-y: visible; }
+
 .txof {
     max-width: 100%;
     white-space: nowrap;

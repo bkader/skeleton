@@ -1,18 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-$lang['CSK_USERS_CREATE_ACCOUNT']  = 'Create Account';
-$lang['CSK_USERS_FORGOT_PASSWORD'] = 'Forgot password?';
-$lang['CSK_USERS_LOST_PASSWORD']   = 'Lost password';
-$lang['CSK_USERS_RESTORE_ACCOUNT'] = 'Restore account';
-
-$lang['CSK_USERS_PROFILE']      = 'Profile';
-$lang['CSK_USERS_VIEW_PROFILE'] = 'View Profile';
-$lang['CSK_USERS_EDIT_PROFILE'] = 'Edit Profile';
-
-// ------------------------------------------------------------------------
-
 $lang['CSK_USERS_MANAGE_USERS'] = 'Manage Users';
+$lang['CSK_USERS_MEMBER_LOGIN'] = 'Member Login';
 
 // Users actions.
 $lang['CSK_USERS_ADD_USER']  = 'Add User';
@@ -82,40 +72,93 @@ $lang['CSK_USERS_ADMIN_DELETE_ERROR_OWN']     = 'You cannot delete your own acco
 $lang['CSK_USERS_ADMIN_RESTORE_ERROR_OWN']    = 'You cannot restore your own account.';
 $lang['CSK_USERS_ADMIN_REMOVE_ERROR_OWN']     = 'You cannot remove your own account.';
 
-// ========================================================================
-// Users settings lines.
-// ========================================================================
-
-// Pages titles.
-$lang['set_profile_title']  = 'Update Profile';
-$lang['set_avatar_title']   = 'Update Avatar';
-$lang['set_password_title'] = 'Change Password';
-$lang['set_email_title']    = 'Change Email';
-
-// Pages headings.
-$lang['set_profile_heading']  = $lang['set_profile_title'];
-$lang['set_avatar_heading']   = $lang['set_avatar_title'];
-$lang['set_password_heading'] = $lang['set_password_title'];
-$lang['set_email_heading']    = $lang['set_email_title'];
+// ------------------------------------------------------------------------
+// Account creation.
+// ------------------------------------------------------------------------
 
 // Success messages.
-$lang['set_profile_success']  = 'Profile successfully updated.';
-$lang['set_avatar_success']   = 'Avatar successfully updated.';
-$lang['set_password_success'] = 'Password successfully changed.';
-$lang['set_email_success']    = 'Email address successfully changed.';
-
-// Error messages.
-$lang['set_profile_error']     = 'Unable to update profile.';
-$lang['set_avatar_error']      = 'Unable to update avatar.';
-$lang['set_password_error']    = 'Unable to change password.';
-$lang['set_email_error']       = 'Unable to change email address.';
-$lang['set_email_invalid_key'] = 'This new email link is no longer valid.';
+$lang['CSK_USERS_SUCCESS_CREATE']       = 'Account successfully created.';
+$lang['CSK_USERS_SUCCESS_CREATE_LOGIN'] = 'Account successfully created. You may now login.';
 
 // Info messages.
-$lang['set_email_info'] = 'A link to change your email address has been sent to your new address.';
+$lang['CSK_USERS_INFO_CREATE']        = 'Account successfully created. The activation link was sent to you.';
+$lang['CSK_USERS_INFO_CREATE_MANUAL'] = 'All accounts require approval by a site administrator before being active. You will receive an email once approved.';
 
-// Avatar extra lines.
-$lang['update_avatar']       = 'Update Avatar';
-$lang['add_image']           = 'Add Image';
-$lang['use_gravatar']        = 'Use Gravatar';
-$lang['use_gravatar_notice'] = 'If you check this option, your uploaded profile picture will be deleted and your <a href="%s" target="_blank">Gravatar</a> image will be used instead.';
+// Error messages.
+$lang['CSK_USERS_ERROR_CREATE'] = 'Unable to create user account.';
+
+// ------------------------------------------------------------------------
+// Account activation.
+// ------------------------------------------------------------------------
+
+// Success messages.
+$lang['CSK_USERS_SUCCESS_ACTIVATE']       = 'Account successfully activated.';
+$lang['CSK_USERS_SUCCESS_ACTIVATE_LOGIN'] = 'Account successfully activated. You may now login.';
+
+// Error messages.
+$lang['CSK_USERS_ERROR_ACTIVATE']         = 'Unable to activate user account.';
+$lang['CSK_USERS_ERROR_ACTIVATE_ALREADY'] = 'This account is already active.';
+$lang['CSK_USERS_ERROR_ACTIVATE_CODE']    = 'This account activation link is no longer valid.';
+
+// ------------------------------------------------------------------------
+// Resend activation link.
+// ------------------------------------------------------------------------
+$lang['CSK_USERS_RESEND_LINK'] = 'Resend Activation Link';
+$lang['CSK_USERS_RESEND_TIP']  = 'Enter your username or email address and we will send you a link to activate your account.';
+
+// Success messages.
+$lang['CSK_USERS_SUCCESS_RESEND'] = 'Account activation link successfully resent. Check your inbox or spam.';
+
+// Error message.
+$lang['CSK_USERS_ERROR_RESEND'] = 'Unable to resend account activation link.';
+
+// ------------------------------------------------------------------------
+// Member login.
+// ------------------------------------------------------------------------
+$lang['CSK_USERS_REMEMBER_ME'] = 'Remember me';
+
+// Error messages.
+$lang['CSK_USERS_ERROR_ACCOUNT_MISSING']       = 'This user does not exist.';
+$lang['CSK_USERS_ERROR_ACCOUNT_INACTIVE']      = 'You account is not yet active. Use the link that was sent to you or %s to receive a new one.';
+$lang['CSK_USERS_ERROR_ACCOUNT_BANNED']        = 'This user is banned from the site.';
+$lang['CSK_USERS_ERROR_ACCOUNT_DELETED']       = 'Your account has been deleted but not yet removed from database. %s if you wish to restore it.';
+$lang['CSK_USERS_ERROR_ACCOUNT_DELETED_ADMIN'] = 'Your account has been deleted by an administrator thus you cannot restore it. Feel free to contact us for more details.';
+
+$lang['CSK_USERS_ERROR_LOGIN_CREDENTIALS'] = 'Invalid username/email address and/or password.';
+
+// ------------------------------------------------------------------------
+// Lost password section.
+// ------------------------------------------------------------------------
+$lang['CSK_USERS_RECOVER_TIP'] = 'Enter your username or email address and we will send you a link to activate your account.';
+
+// Success messages.
+$lang['CSK_USERS_SUCCESS_RECOVER'] = 'Password reset link successfully sent.';
+
+// Error messages.
+$lang['CSK_USERS_ERROR_RECOVER']         = 'Unable to send password reset link.';
+$lang['CSK_USERS_ERROR_RECOVER_DELETED'] = 'Your account has been deleted but not yet removed from database. Contact us if you want it restored.';
+
+// ------------------------------------------------------------------------
+// Password reset section.
+// ------------------------------------------------------------------------
+
+// Success messages.
+$lang['CSK_USERS_SUCCESS_RESET'] = 'Password successfully reset.';
+
+// Error messages.
+$lang['CSK_USERS_ERROR_RESET']      = 'Unable to reset password.';
+$lang['CSK_USERS_ERROR_RESET_CODE'] = 'This password reset link is no longer valid.';
+
+// ------------------------------------------------------------------------
+// Restore account section.
+// ------------------------------------------------------------------------
+
+$lang['CSK_USERS_RESTORE_ACCOUNT']     = 'Restore Account';
+$lang['CSK_USERS_RESTORE_TIP'] = 'Enter your username/email address and password to restore your account.';
+
+// Success messages.
+$lang['CSK_USERS_SUCCESS_RESTORE'] = 'Account successfully restored.';
+
+// Error messages.
+$lang['CSK_USERS_ERROR_RESTORE']         = 'Unable to restore account.';
+$lang['CSK_USERS_ERROR_RESTORE_DELETED'] = 'Only deleted accounts can be restored.';

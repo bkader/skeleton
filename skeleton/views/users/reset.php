@@ -38,7 +38,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Dashboard login view.
+ * Users Controller - Default reset password view.
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
@@ -50,52 +50,42 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @version 	2.0.0
  */
 
-// Form open tag.
-echo form_open('admin/login', 'id="login"'),
-form_nonce('admin-login');
+// Form opening tag and nonce.
+echo form_open('login/reset?code='.$code, 'role="form" id="reset"'),
+form_nonce('user-reset-password_'.$code),
 
-// Username form.
-echo '<div class="form-group">',
-print_input($username, array(
-	'class' => 'form-control form-control-sm'.(has_error('username') ? ' is-invalid' : '')
+// New password field.
+'<div class="form-group">',
+print_input($npassword, array(
+	'class' => 'form-control form-control-sm'.(has_error('npassword') ? ' is-invalid' : '')
 )),
-form_error('username', '<div class="form-text invalid-feedback">', '</div>'),
-'</div>';
+form_error('npassword', '<div class="form-text invalid-feedback">', '</div>'),
+'</div>',
 
-// Password field.
-echo '<div class="form-group">',
-print_input($password, array(
-	'class' => 'form-control form-control-sm'.(has_error('password') ? ' is-invalid' : '')
+// Confirm password field.
+'<div class="form-group">',
+print_input($cpassword, array(
+	'class' => 'form-control form-control-sm'.(has_error('cpassword') ? ' is-invalid' : '')
 )),
-form_error('password', '<div class="form-text invalid-feedback">', '</div>'),
-'</div>';
+form_error('cpassword', '<div class="form-text invalid-feedback">', '</div>'),
+'</div>',
 
-if (null !== $languages)
-{
-	echo '<div class="form-group">',
-	print_input($languages, array('class' => 'form-control form-control-sm')),
-	'</div>';
-}
+// Submit button and login anchor.
+'<div class="form-group mb-0">',
 
-// Login button.
-echo '<div class="form-group clearfix mb-0">',
+// Submit button.
 html_tag('button', array(
 	'type' => 'submit',
-	'class' => 'btn btn-primary btn-sm btn-icon pull-right',
-), '<i class="fa fa-fw fa-sign-in"></i>'.line('CSK_BTN_LOGIN'));
+	'class' => 'btn btn-primary btn-sm btn-icon pull-right'
+), fa_icon('lock').line('CSK_BTN_RESET_PASSWORD')),
 
-// Lost password button.
-$recover_text = apply_filters('login_recover_text', line('CSK_BTN_LOST_PASSWORD'));
-$recover_link = apply_filters('login_recover_link', site_url('login/recover'));
+// Login button.
+html_tag('a', array(
+	'href' => site_url('login'),
+	'class' => 'btn btn-default btn-icon btn-sm',
+), fa_icon('sign-in').line('CSK_BTN_LOGIN')),
 
-if ( ! empty($recover_link)) {
-	echo html_tag('a', array(
-		'role'     =>'button',
-		'href'     => $recover_link,
-		'class'    => 'btn btn-default btn-sm btn-icon',
-		'tabindex' => '-1',
-	), '<i class="fa fa-fw fa-question-circle"></i>'.$recover_text);
-}
+'</div>',
 
-echo '</div>',
+// Form closing tag.
 form_close();

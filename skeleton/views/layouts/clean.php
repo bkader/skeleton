@@ -38,11 +38,11 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Dashboard login view.
+ * Dashboard clean layout.
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @category 	Views
+ * @category 	Views - Layouts.
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
@@ -50,52 +50,80 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @version 	2.0.0
  */
 
-// Form open tag.
-echo form_open('admin/login', 'id="login"'),
-form_nonce('admin-login');
+// Layout opening tags.
+echo '<div class="container">',
+'<div class="card">';
 
-// Username form.
-echo '<div class="form-group">',
-print_input($username, array(
-	'class' => 'form-control form-control-sm'.(has_error('username') ? ' is-invalid' : '')
-)),
-form_error('username', '<div class="form-text invalid-feedback">', '</div>'),
-'</div>';
+/**
+ * Skeleton logo filter.
+ * @since 	2.0.0
+ */
+$login_src = apply_filters('login_img_src', get_common_url('img/skeleton-inverse.png'));
+$login_alt = apply_filters('login_img_alt', 'CodeIgniter Skeleton');
+$login_url = apply_filters('login_img_url', site_url());
 
-// Password field.
-echo '<div class="form-group">',
-print_input($password, array(
-	'class' => 'form-control form-control-sm'.(has_error('password') ? ' is-invalid' : '')
-)),
-form_error('password', '<div class="form-text invalid-feedback">', '</div>'),
-'</div>';
+if ( ! empty($login_src)) {
+	echo '<div class="card-body card-logo">';
+	$login_img = html_tag('img', array(
+		'src'   => $login_src,
+		'class' => 'login-logo',
+		'alt'   => $login_alt
+	));
 
-if (null !== $languages)
-{
-	echo '<div class="form-group">',
-	print_input($languages, array('class' => 'form-control form-control-sm')),
-	'</div>';
+	echo empty($login_url) ? $login_img : "<a href=\"{$login_url}\" tabindex=\"-1\">{$login_img}</a>";
+	echo '</div>';
 }
 
-// Login button.
-echo '<div class="form-group clearfix mb-0">',
-html_tag('button', array(
-	'type' => 'submit',
-	'class' => 'btn btn-primary btn-sm btn-icon pull-right',
-), '<i class="fa fa-fw fa-sign-in"></i>'.line('CSK_BTN_LOGIN'));
+echo '<div class="card-body">';
 
-// Lost password button.
-$recover_text = apply_filters('login_recover_text', line('CSK_BTN_LOST_PASSWORD'));
-$recover_link = apply_filters('login_recover_link', site_url('login/recover'));
+// Display the alert.
+the_alert();
 
-if ( ! empty($recover_link)) {
-	echo html_tag('a', array(
-		'role'     =>'button',
-		'href'     => $recover_link,
-		'class'    => 'btn btn-default btn-sm btn-icon',
-		'tabindex' => '-1',
-	), '<i class="fa fa-fw fa-question-circle"></i>'.$recover_text);
+// Display the content.
+the_content();
+
+echo '</div></div></div>';
+
+/**
+ * Footer section.
+ * @since 	2.0.0
+ */
+echo '<footer class="footer" id="footer" role="contactinfo">',
+'<div class="container">';
+
+// Left side of the footer.
+echo '<span>',
+html_tag('a', array(
+	'href' => site_url(),
+	'target' => '_blank',
+), '<i class="fa fa-fw fa-external-link mr-1"></i>'.line('CSK_BTN_GO_HOMEPAGE')),
+'</span>';
+
+/**
+ * Display centered Skeleton logo.
+ * @var string
+ */
+$login_logo = html_tag('a', array(
+	'href'   => 'https://goo.gl/jb4nQC',
+	'target' => '_blank',
+	'rel'    => 'tooltip',
+	'title' => line('CSK_SKELETON_OPEN_SOURCE'),
+	'class'  => 'skeleton-footer-logo',
+));
+$login_logo = apply_filters('login_logo', $login_logo);
+if ( ! empty($login_logo)) {
+	echo $login_logo;
 }
 
-echo '</div>',
-form_close();
+/**
+ * Filter Skeleton copyright on the clean layout.
+ * @since 	2.0.0
+ */
+$default_copyright = sprintf(line('CSK_SKELETON_COPYRIGHT'), date('Y'));
+$footer_copyright = apply_filters('login_copyright', $default_copyright);
+if ( ! empty($footer_copyright)) {
+	echo '<span class="pull-right">', $footer_copyright, '</span>';
+}
+
+// Layout closing tags.
+echo '</div></footer>';

@@ -5,11 +5,17 @@
 		 * Apply filter on the displayed brand on dashboard.
 		 * @since 	1.4.0
 		 */
-		$brand = apply_filters('admin_logo', get_option('site_name', 'Skeleton'));
-		echo admin_anchor('', $brand, 'class="navbar-brand"');
+		$brand = html_tag('a', array(
+			'href'  => admin_url(),
+			'class' => 'navbar-brand skeleton-logo',
+		));
+		$brand = apply_filters('admin_logo', $brand);
+		if ( ! empty($brand)) {
+			echo $brand;
+		}
+		// echo admin_anchor('', $brand, 'class="navbar-brand"');
 		?>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-admin" aria-controls="navbar-admin" aria-expanded="false" aria-label="Toggle navigation"><i class="fa fa-fw fa-bars"></i></button>
-
 		<div class="collapse navbar-collapse" id="navbar-admin">
 			<?php
 			// ------------------------------------------------------------------------
@@ -265,9 +271,10 @@
 			echo html_tag('li', array(
 				'class' => 'nav-item csk-view-site'
 			), html_tag('a', array(
-				'href' => site_url(),
-				'class' => 'nav-link'
-			), line('CSK_ADMIN_VIEW_SITE'))),
+				'href'   => site_url(),
+				'target' => '_blank',
+				'class'  => 'nav-link',
+			), line('CSK_BTN_VIEW_SITE').fa_icon('external-link ml-1'))),
 
 			// 3. User dropdown.
 			'<li class="nav-item dropdown user-menu">',
@@ -276,37 +283,36 @@
 				'href' => '#',
 				'class' => 'nav-link dropdown-toggle',
 				'data-toggle' => 'dropdown',
-			), $c_user->first_name.user_avatar(24, $c_user->id, 'class="rounded-circle"')),
+			), fa_icon('user-o')),
 			
 			'<div class="dropdown-menu dropdown-menu-right">',
 
 				// View profile anchor.
 				anchor(
 					$c_user->username,
-					line('CSK_ADMIN_USER_VIEW_PROFILE'),
+					line('CSK_BTN_VIEW_PROFILE'),
 					'class="dropdown-item"'
 				),
 
 				// Edit account anchor.
 				admin_anchor(
 					'users/edit/'.$c_user->id,
-					line('CSK_ADMIN_USER_EDIT_PROFILE'),
+					line('CSK_BTN_EDIT_PROFILE'),
 					'class="dropdown-item"'
 				),
 
 				'<div class="dropdown-divider"></div>',
 
 				// Logout anchor.
-				anchor('logout', line('CSK_ADMIN_LOGOUT'), 'class="dropdown-item"'),
+				anchor('logout', line('CSK_BTN_LOGOUT'), 'class="dropdown-item"'),
 			'</div></li>',
 
 			// Closing tag (right menu).
 			'</ul>';
 			?>
-		</div><!--/.navbar-collapse-->
-	</div><!--/..container-->
+		</div>
+	</div>
 </nav>
-
 <header class="header" id="header" role="banner">
 	<div class="container">
 		<?php
@@ -340,7 +346,7 @@
 		 * Skeleton logo filter.
 		 * @since 	2.0.0
 		 */
-		$skeleton_logo_src = apply_filters('skeleton_logo_src', get_common_url('img/logo.png'));
+		$skeleton_logo_src = apply_filters('skeleton_logo_src', get_common_url('img/skeleton.png'));
 		$skeleton_logo_alt = apply_filters('skeleton_logo_alt', 'Skeleton');
 		if ( ! empty($skeleton_logo_src)) {
 			echo html_tag(
@@ -355,8 +361,7 @@
 		}
 		?>
 	</div>
-</header><!--/.header-->
-
+</header>
 <?php
 /**
  * Subhead section.
@@ -416,7 +421,6 @@ if (has_action('admin_subhead') OR true === $module['has_help'] OR isset($page_h
 	echo '</div></div>';
 }
 ?>
-
 <main class="wrapper" id="wrapper" role="main">
 	<div class="container">
 		<?php
@@ -440,7 +444,6 @@ if (has_action('admin_subhead') OR true === $module['has_help'] OR isset($page_h
 		?>
 	</div>
 </main>
-
 <footer class="footer" id="footer" role="contactinfo">
 	<div class="container">
 		<?php

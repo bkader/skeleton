@@ -26,7 +26,12 @@ body.csk-clean {
         @include absolute(top 50% left 50%);
         margin-top: -205px;
         margin-left: -152px;
-        width: 304px;
+        width: 320px;
+    }
+
+    &.csk-register > .container {
+        margin-top: -265px;
+        padding-bottom: 50px;
     }
 
     .card {
@@ -41,19 +46,21 @@ body.csk-clean {
     .footer {
         @include box-shadow(none);
         @include font-size(13);
-        background: none;
+        background-color: $header__background;
         border: none;
         color: $color__white;
         height: 32px;
+        padding: 0;
 
         .container { position: relative; }
 
         a { color: $color__white; }
 
-        .skeleton-logo {
-            @include absolute(top -5px left 50%);
+        .skeleton-footer-logo {
+            @include absolute(top 0 left 50%);
             background-color: transparent;
             background-image: url("../img/csk-logo-white.png");
+            background-position: center center;
             background-repeat: no-repeat;
             display: inline-block;
             height: 24px;

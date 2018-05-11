@@ -101,7 +101,7 @@ class Admin_Controller extends KB_Controller
 		// Make sure the user is logged in.
 		if (true !== $this->kbcore->auth->online())
 		{
-			redirect('admin/login?next='.rawurlencode(uri_string()),'refresh');
+			redirect('admin-login?next='.rawurlencode(uri_string()),'refresh');
 			exit;
 		}
 

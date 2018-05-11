@@ -697,6 +697,516 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 	}
 
 	// ------------------------------------------------------------------------
+	// Front-end methods.
+	// ------------------------------------------------------------------------
+
+	/**
+	 * register
+	 *
+	 * Method used for users registration to the front-end.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	array 	$data 	Array of user's data.
+	 * @return 	mixed 	The user's ID if created, else false.
+	 */
+	public function register($data = array())
+	{
+		// No data provided? Nothing to do...
+		if (empty($data))
+		{
+			set_alert(line('CSK_ERROR_FIELDS_REQUIRED'), 'error');
+			return false;
+		}
+
+		// Load users language file.
+		$this->ci->load->language('csk_users');
+
+		// User successfully created?
+		if (false !== ($guid = $this->create($data)))
+		{
+			$email_activation = ( ! isset($data['enabled']) && false !== $this->_parent->options->item('email_activation'));
+			$manual_activation = (false !== $this->_parent->options->item('manual_activation', false));
+
+			// Requires a manual activation?
+			if (true === $email_activation && true === $manual_activation)
+			{
+				// TODO: Send email to user.
+				set_alert(line('CSK_USERS_INFO_CREATE_MANUAL'), 'info');
+				return $guid;
+			}
+
+			// No activation required?
+			if (true !== $email_activation)
+			{
+				set_alert(line('CSK_USERS_SUCCESS_CREATE_LOGIN'), 'success');
+				return $guid;
+			}
+
+			// We create the activation code then send it to user.
+			function_exists('random_string') OR $this->ci->load->helper('string');
+			$code = random_string('alnum', 40);
+			$this->_parent->variables->create(array(
+				'guid'   => $guid,
+				'name'   => 'activation_code',
+				'value'  => $code,
+				'params' => $this->ci->input->ip_address(),
+			));
+
+			// TODO: Log the activity.
+			// TODO: Send email to user.
+
+			set_alert(line('CSK_USERS_INFO_CREATE'), 'info');
+			return $guid;
+		}
+
+		// Other wise, an error occurred.
+		set_alert(line('CSK_USERS_ERROR_CREATE'), 'error');
+		return false;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * resend_link
+	 *
+	 * Method for resending account activation link to user;
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	mixed  	$identity 	User's ID, username or email address.
+	 * @return 	bool 	true if successful, else false.
+	 */
+	public function resend_link($identity)
+	{
+		// Nothing passed? Nothing to do...
+		if (empty($identity))
+		{
+			set_alert(line('CSK_ERROR_FIELDS_REQUIRED'), 'error');
+			return false;
+		}
+
+		// Get the user from database and make sure he/she exists.
+		if (false === ($user = $this->get($identity)))
+		{
+			set_alert(line('CSK_USERS_ERROR_ACCOUNT_MISSING'), 'error');
+			return false;
+		}
+
+		// User already enabled?
+		if ($user->enabled == 1)
+		{
+			set_alert(line('CSK_USERS_ERROR_ACTIVATE_ALREADY'), 'error');
+			return false;
+		}
+
+		// Process status.
+		$status = false;
+
+		// Check if a variable already exists.
+		$var = $this->_parent->variables->get_by(array(
+			'guid' => $user->id,
+			'name' => 'activation_code',
+		));
+		// Exists an valid?
+		if ($var && $var->created_at > (time() - (DAY_IN_SECONDS * 2)))
+		{
+			$code   = $var->value;
+			$status = true;
+		}
+		else
+		{
+			function_exists('random_string') OR $this->ci->load->helper('string');
+			$code = random_string('alnum', 40);
+
+			// If the variable exists, update it.
+			if ($var)
+			{
+				$status = $var->update(array(
+					'value'      => $code,
+					'params'     => $this->ci->input->ip_address(),
+					'created_at' => time(),
+				));
+			}
+			// Create it.
+			else
+			{
+				$status = (bool) $this->_parent->variables->create(array(
+					'guid'   => $user->id,
+					'name'   => 'activation_code',
+					'value'  => $code,
+					'params' => $this->ci->input->ip_address(),
+				));
+			}
+		}
+
+		// The process was successful?
+		if (true === $status)
+		{
+			// TODO: Log the activity.
+			// TODO: Send the email to user.
+
+			// Delete old captcha.
+			$this->_parent->auth->delete_captcha();
+
+			set_alert(line('CSK_USERS_SUCCESS_RESEND'), 'success');
+		}
+		else
+		{
+			set_alert(line('CSK_USERS_ERROR_RESEND'), 'error');
+		}
+
+		return $status;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * restore_account
+	 *
+	 * Method for allowing users to restore their deleted accounts.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	string 	$identity 	User's username or email address.
+	 * @param 	string 	$password 	Account's password.
+	 * @return 	bool
+	 */
+	public function restore_account($identity, $password)
+	{
+		if (empty($identity) OR empty($password))
+		{
+			set_alert(line('CSK_ERROR_FIELDS_REQUIRED'), 'error');
+			return false;
+		}
+
+		// Get user from database and make sure he/she exists.
+		if (false === ($user = $this->get($identity)))
+		{
+			/**
+			 * The reason we are using wrong credentials here is to 
+			 * hide the fact that the account does not exist.
+			 */
+			set_alert(line('CSK_USERS_ERROR_LOGIN_CREDENTIALS'), 'error');
+			return false;
+		}
+
+		// Check the password.
+		if ( ! password_verify($password, $user->password))
+		{
+			set_alert(line('CSK_USERS_ERROR_LOGIN_CREDENTIALS'), 'error');
+			return false;
+		}
+
+		// The user is not really deleted?
+		if ($user->deleted == 0)
+		{
+			set_alert(line('CSK_USERS_ERROR_RESTORE_DELETED'), 'error');
+			return false;
+		}
+
+		// Process status.
+		$status = (false !== $user->update('deleted', 0) && $this->_parent->auth->quick_login($user));
+
+		// Successfully restored and logged in?
+		if (false !== $status)
+		{
+			// TODO: Log the activity.
+			// TODO: Send email to user.
+
+			// Delete old captcha codes.
+			$this->_parent->auth->delete_captcha();
+
+			set_alert(line('CSK_USERS_SUCCESS_RESTORE'), 'success');
+		}
+		else
+		{
+			set_alert(line('CSK_USERS_ERROR_RESTORE'), 'error');
+		}
+
+		// Return the final process status.
+		return $status;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * prep_password_reset
+	 *
+	 * Method for prepare account for password reset.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	string
+	 * @return 	bool
+	 */
+	public function prep_password_reset($identity)
+	{
+		// $identity is empty?
+		if (empty($identity))
+		{
+			set_alert(line('CSK_ERROR_FIELDS_REQUIRED'), 'error');
+			return false;
+		}
+
+		// Get user from database and make sure (s)he exists.
+		if (false === ($user = $this->get($identity)))
+		{
+			set_alert(line('CSK_USERS_ERROR_ACCOUNT_MISSING'), 'error');
+			return false;
+		}
+
+		// Make sure the account is not banned.
+		if ($user->enabled < 0)
+		{
+			set_alert(line('CSK_USERS_ERROR_ACCOUNT_BANNED'), 'error');
+			return false;
+		}
+
+		// Make sure the account is not deleted.
+		if ($user->deleted > 0)
+		{
+			set_alert(line('CSK_USERS_ERROR_RECOVER_DELETED'), 'error');
+			return false;
+		}
+
+		// Prepare process status.
+		$status = false;
+
+		// Check if there is an existing password code.
+		$var = $this->_parent->variables->get_by(array(
+			'guid' => $user->id,
+			'name' => 'password_code',
+		));
+
+		// Found?
+		if ($var && $var->created_at > time() - (DAY_IN_SECONDS * 2))
+		{
+			$code   = $var->value;
+			$status = true;
+		}
+		else
+		{
+			function_exists('random_string') OR $this->ci->load->helper('string');
+			$code = random_string('alnum', 40);
+
+			// If the variable exists, update it.
+			if ($var)
+			{
+				$status = $var->update(array(
+					'value'      => $code,
+					'params'     => $this->ci->input->ip_address(),
+					'created_at' => time(),
+				));
+			}
+			// Create it.
+			else
+			{
+				$status = (bool) $this->_parent->variables->create(array(
+					'guid'   => $user->id,
+					'name'   => 'password_code',
+					'value'  => $code,
+					'params' => $this->ci->input->ip_address(),
+				));
+			}
+		}
+
+		// Successful process?
+		if (true === $status)
+		{
+			// TODO: Send email to user.
+			// TODO: Log the activity.
+
+			// Set alert and log the activity.
+			set_alert(line('CSK_USERS_SUCCESS_RECOVER'), 'success');
+		}
+		else
+		{
+			set_alert(line('CSK_USERS_ERROR_RECOVER'), 'error');
+		}
+
+		return $status;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * check_password_code
+	 *
+	 * Method for checking the provided password reset code.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	string 	$code 	The password reset code.
+	 * @return 	mixed	Return the user's ID if found, else false.
+	 */
+	public function check_password_code($code = null)
+	{
+		// First we check if set and check the length.
+		if (empty($code) OR strlen($code) !== 40)
+		{
+			return false;
+		}
+
+		// Attempt to get the variable from database.
+		$var = $this->_parent->variables->get_by(array(
+			'name'          => 'password_code',
+			'BINARY(value)' => $code,
+			'created_at >'  => time() - (DAY_IN_SECONDS * 2),
+		));
+
+		return (false !== $var) ? $var->guid : false;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * reset_password
+	 *
+	 * Method for reseting user's password.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	int 	$guid 		The user's ID;
+	 * @param 	string 	$password 	The new password.
+	 * @return 	bool
+	 */
+	public function reset_password($guid, $password)
+	{
+		// Nothing provided? Nothing to do...
+		if (empty($guid) OR empty($password))
+		{
+			set_alert(line('CSK_ERROR_FIELDS_REQUIRED'), 'error');
+			return false;
+		}
+
+		// Make sure the user exists.
+		if (false === ($user = $this->get($guid)))
+		{
+			set_alert(line('CSK_USERS_ERROR_RESET'), 'error');
+			return false;
+		}
+
+		/**
+		 * The process status depending on two things:
+		 * 1. Whether the user is using the same old password.
+		 * 2. Whether a different password is provided and user updated.
+		 */
+		
+		// Same password? status is set to true.
+		$status = (false !== password_verify($password, $user->password));
+
+		// Different password? The status depends on the update.
+		$status OR $status = $user->update('password', $password);
+
+		// Successful?
+		if (true === $status)
+		{
+			// TODO: Send email to use.
+			// TODO: Log the activity.
+
+			// Purge password codes.
+			$this->_parent->auth->delete_password_codes($guid);
+
+			set_alert(line('CSK_USERS_SUCCESS_RESET'), 'success');
+		}
+		else
+		{
+			set_alert(line('CSK_USERS_ERROR_RESET'), 'error');
+		}
+
+		// Return the process status.
+		return $status;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * activate_by_code
+	 *
+	 * Method for activating a user by the given activation code.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	string 	$code 	The account activation code.
+	 * @return 	bool 	true if activated, else false.
+	 */
+	public function activate_by_code($code = null)
+	{
+		// Check whether it's set and check its length.
+		if (empty($code) OR strlen($code) !== 40)
+		{
+			set_alert(lang('CSK_USERS_ERROR_ACTIVATE_CODE'), 'error');
+			return false;
+		}
+
+		// Get variable from database and make sure it exists.
+		$var = $this->_parent->variables->get_by(array(
+			'name'          => 'activation_code',
+			'BINARY(value)' => $code,
+			'created_at >'  => time() - (DAY_IN_SECONDS * 2),
+		));
+		if (false === $var)
+		{
+			set_alert(lang('CSK_USERS_ERROR_ACTIVATE_CODE'), 'error');
+			return false;
+		}
+
+		/**
+		 * If the user does not exists, we fake the message telling that
+		 * the key is invalid instead of saying the user does not exist.
+		 */
+		if (false === ($user = $this->get($var->guid)))
+		{
+			// First purge activation codes.
+			$this->_parent->auth->delete_activation_codes($var->guid);
+
+			set_alert(lang('CSK_USERS_ERROR_ACTIVATE_CODE'), 'error');
+			return false;
+		}
+
+		// Successfully activated?
+		if (false !== $user->update('enabled', 1))
+		{
+			// TODO: Send email to use.
+			// TODO: Log the activity.
+
+			// Purge activation codes.
+			$this->_parent->auth->delete_activation_codes($var->guid);
+
+			set_alert(line('CSK_USERS_SUCCESS_ACTIVATE_LOGIN'), 'success');
+			return true;
+		}
+
+		// Otherwise, an error occurred somewhere.
+		set_alert(line('CSK_USERS_ERROR_ACTIVATE'), 'error');
+		return false;
+	}
+
+	// ------------------------------------------------------------------------
+	// Utilities.
+	// ------------------------------------------------------------------------
 
 	/**
 	 * Count all users.

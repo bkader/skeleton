@@ -70,7 +70,7 @@ $route['default_controller'] = (null !== ($result = $db->where('name', 'base_con
  */
 Route::any(KB_LOGIN, 'users/login', array('as' => 'login'), function() {
 	Route::any('recover', 'users/recover', array('as' => 'lost-password'));
-	Route::any('reset', 'users/reset');
+	Route::any('reset', 'users/reset', array('as' => 'reset-password'));
 	Route::any('restore', 'users/restore', array('as' => 'restore-account'));
 });
 Route::any(KB_LOGOUT, 'users/logout', array('as' => 'logout'));
@@ -81,7 +81,7 @@ Route::any(KB_LOGOUT, 'users/logout', array('as' => 'logout'));
  */
 Route::any(KB_REGISTER, 'users/register', array('as' => 'register'), function() {
 	Route::any('resend', 'users/resend', array('as' => 'resend-link'));
-	Route::any('activate', 'users/activate');
+	Route::any('activate', 'users/activate', array('as' => 'activate-account'));
 });
 
 // Prevent direct access to users controller.

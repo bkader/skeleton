@@ -64,7 +64,7 @@ $config['word_length'] = apply_filters('captcha_word_length', 6);
 $config['pool']        = apply_filters('captcha_pool', '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
 
 // Captcha image dimensions and ID.
-$config['img_width']   = apply_filters('captcha_img_width', 150);
+$config['img_width']   = apply_filters('captcha_img_width', 120);
 $config['img_height']  = apply_filters('captcha_img_height', 30);
 $config['img_id']      = apply_filters('captcha_img_id', 'captcha');
 

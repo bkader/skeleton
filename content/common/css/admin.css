@@ -270,6 +270,66 @@ body {
   margin-right: 30px !important;
 }
 
+.of-a {
+  overflow: auto;
+}
+
+.of-h {
+  overflow: hidden;
+}
+
+.of-i {
+  overflow: initial;
+}
+
+.of-s {
+  overflow: scroll;
+}
+
+.of-v {
+  overflow: visible;
+}
+
+.ofx-a {
+  overflow-x: auto;
+}
+
+.ofx-h {
+  overflow-x: hidden;
+}
+
+.ofx-i {
+  overflow-x: initial;
+}
+
+.ofx-s {
+  overflow-x: scroll;
+}
+
+.ofx-v {
+  overflow-x: visible;
+}
+
+.ofy-a {
+  overflow-y: auto;
+}
+
+.ofy-h {
+  overflow-y: hidden;
+}
+
+.ofy-i {
+  overflow-y: initial;
+}
+
+.ofy-s {
+  overflow-y: scroll;
+}
+
+.ofy-v {
+  overflow-y: visible;
+}
+
 .txof {
   max-width: 100%;
   white-space: nowrap;
@@ -3141,6 +3201,22 @@ table.table-striped tr.selected {
 .navbar-admin .navbar-brand:hover, .navbar-admin .navbar-brand:focus, .navbar-admin .navbar-brand:active {
   color: #fff;
 }
+.navbar-admin .navbar-brand.skeleton-logo::after {
+  opacity: 0.8;
+  filter: alpha(opacity=80);
+  content: "";
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-color: transparent;
+  background-image: url("../img/csk-logo-white.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+.navbar-admin .navbar-brand:hover::after {
+  opacity: 1;
+  filter: alpha(opacity=100);
+}
 .navbar-admin .navbar-toggler {
   color: #fff;
 }
@@ -3173,9 +3249,6 @@ table.table-striped tr.selected {
 }
 .navbar-admin .user-menu {
   border-left: 1px solid #092236;
-}
-.navbar-admin .user-menu > a::after {
-  display: none;
 }
 .navbar-admin .user-menu img {
   display: none;
@@ -3397,7 +3470,11 @@ body.csk-clean > .container {
   left: 50%;
   margin-top: -205px;
   margin-left: -152px;
-  width: 304px;
+  width: 320px;
+}
+body.csk-clean.csk-register > .container {
+  margin-top: -265px;
+  padding-bottom: 50px;
 }
 body.csk-clean .card {
   background-color: #e6e6e6;
@@ -3412,10 +3489,11 @@ body.csk-clean .footer {
   box-shadow: none;
   font-size: 13px;
   font-size: 0.8125rem;
-  background: none;
+  background-color: #134d78;
   border: none;
   color: #fff;
   height: 32px;
+  padding: 0;
 }
 body.csk-clean .footer .container {
   position: relative;
@@ -3423,12 +3501,13 @@ body.csk-clean .footer .container {
 body.csk-clean .footer a {
   color: #fff;
 }
-body.csk-clean .footer .skeleton-logo {
+body.csk-clean .footer .skeleton-footer-logo {
   position: absolute;
-  top: -5px;
+  top: 0;
   left: 50%;
   background-color: transparent;
   background-image: url("../img/csk-logo-white.png");
+  background-position: center center;
   background-repeat: no-repeat;
   display: inline-block;
   height: 24px;

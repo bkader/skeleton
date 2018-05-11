@@ -524,7 +524,6 @@ class Route {
 	 * Return a route from routes array using the name is was defined with.
 	 * @access 	public
 	 * @param 	string 	$name 		The route's name.
-	 * @param 	array 	$params 	Parameters to pass to route.
 	 * @return 	string
 	 *
 	 * @example
@@ -534,7 +533,7 @@ class Route {
 	 * 		site_url(Route::named('login'));
 	 * This will generate a URL like <site_url>/login
 	 */
-	public static function named($name, $params = array())
+	public static function named($name)
 	{
 		return (isset(self::$named_routes[$name])) ? self::$named_routes[$name] : null;
 	}

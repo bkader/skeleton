@@ -458,6 +458,7 @@ class Ajax extends AJAX_Controller {
 				// Add language to languages array.
 				$languages[] = $name;
 				asort($languages);
+				$languages = array_values($languages);
 
 				// Successfully updated?
 				if (false !== $this->kbcore->options->set_item('languages', $languages))
@@ -492,6 +493,7 @@ class Ajax extends AJAX_Controller {
 					}
 				}
 				asort($languages);
+				$languages = array_values($languages);
 
 				// Successfully updated?
 				if (false !== $this->kbcore->options->set_item('languages', $languages))

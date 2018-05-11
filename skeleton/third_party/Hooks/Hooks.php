@@ -38,7 +38,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Plugins Class
+ * Hooks Class
  *
  * This class allows you to add filters and actions
  * not only to your themes but all your application.
@@ -48,7 +48,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 	Kader Bouyakoub <bkader@mail.com>
  * @link 	https://goo.gl/wGXHO9
  */
-class CI_Plugins
+class Hooks
 {
 	/**
 	 * Holds the list of registered hooks.
@@ -83,7 +83,7 @@ class CI_Plugins
 	/**
 	 * This method allow you to call this class methods 
 	 * statically without loading it.
-	 * @example 	CI_Plugins::instance()->add_filter().
+	 * @example 	Hooks::instance()->add_filter().
 	 * @access 	public
 	 * @param 	none
 	 * @return 	object
@@ -339,8 +339,15 @@ class CI_Plugins
 	 *
 	 * @see  https://developer.wordpress.org/reference/functions/remove_all_filters/
 	 */
-	public function remove_all_filters($tag, $priority = false)
+	public function remove_all_filters($tag = null, $priority = false)
 	{
+		if (null === $tag)
+		{
+			$this->_filters = array();
+			$this->_merged_filters = array();
+			return true;
+		}
+
 		if (isset($this->_filters[$tag]))
 		{
 			if ($priority !== false && isset($this->_filters[$tag][$priority]))
@@ -388,7 +395,7 @@ class CI_Plugins
 	 */
 	public function current_action()
 	{
-		return $this->_current_filter();
+		return $this->current_filter();
 	}
 
 	// ------------------------------------------------------------------------
@@ -696,7 +703,7 @@ class CI_Plugins
 	 * @param 	int|bool 	$pririty 	The priority number to remove them from.
 	 * @return 	bool 	true when finished.
 	 */
-	public function remove_all_actions($tag, $priority = false)
+	public function remove_all_actions($tag = null, $priority = false)
 	{
 		return $this->remove_all_filters($tag, $priority);
 	}
@@ -815,7 +822,7 @@ if ( ! function_exists('add_filter'))
 	 */
 	function add_filter($tag, $function_to_add, $priority = 10, $accepted_args = 1)
 	{
-		return CI_Plugins::instance()->add_filter($tag, $function_to_add, $priority, $accepted_args);
+		return Hooks::instance()->add_filter($tag, $function_to_add, $priority, $accepted_args);
 	}
 }
 
@@ -828,7 +835,7 @@ if ( ! function_exists('remove_filter'))
 	 */
 	function remove_filter($tag, $function_to_remove, $priority = 10)
 	{
-		return CI_Plugins::instance()->remove_filter($tag, $function_to_remove, $priority);
+		return Hooks::instance()->remove_filter($tag, $function_to_remove, $priority);
 	}
 }
 
@@ -839,9 +846,9 @@ if ( ! function_exists('remove_all_filters'))
 	/**
 	 * Remove all of the hooks from a filter.
 	 */
-	function remove_all_filters($tag, $priority = false)
+	function remove_all_filters($tag = null, $priority = false)
 	{
-		return CI_Plugins::instance()->remove_all_filters($tag, $priority);
+		return Hooks::instance()->remove_all_filters($tag, $priority);
 	}
 }
 
@@ -854,7 +861,7 @@ if ( ! function_exists('has_filter'))
 	 */
 	function has_filter($tag, $function_to_check = false)
 	{
-		return CI_Plugins::instance()->has_filter($tag, $function_to_check);
+		return Hooks::instance()->has_filter($tag, $function_to_check);
 	}
 }
 
@@ -865,7 +872,7 @@ if ( ! function_exists('apply_filters'))
 	 */
 	function apply_filters($tag, $value)
 	{
-		return CI_Plugins::instance()->apply_filters($tag, $value);
+		return Hooks::instance()->apply_filters($tag, $value);
 	}
 }
 
@@ -879,7 +886,7 @@ if ( ! function_exists('apply_filters_ref_array'))
 	 */
 	function apply_filters_ref_array($tag, $args)
 	{
-		return CI_Plugins::instance()->apply_filters_ref_array($tag, $args);
+		return Hooks::instance()->apply_filters_ref_array($tag, $args);
 	}
 }
 
@@ -894,7 +901,7 @@ if ( ! function_exists('add_action'))
 	 */
 	function add_action($tag, $function_to_add, $priority = 10, $accepted_args = 1)
 	{
-		return CI_Plugins::instance()->add_action($tag, $function_to_add, $priority, $accepted_args);
+		return Hooks::instance()->add_action($tag, $function_to_add, $priority, $accepted_args);
 	}
 }
 
@@ -907,7 +914,7 @@ if ( ! function_exists('has_action'))
 	 */
 	function has_action($tag, $function_to_check = false)
 	{
-		return CI_Plugins::instance()->has_action($tag, $function_to_check);
+		return Hooks::instance()->has_action($tag, $function_to_check);
 	}
 }
 
@@ -920,7 +927,7 @@ if ( ! function_exists('remove_action'))
 	 */
 	function remove_action($tag, $function_to_remove, $priority = 10)
 	{
-		return CI_Plugins::instance()->remove_action($tag, $function_to_remove, $priority);
+		return Hooks::instance()->remove_action($tag, $function_to_remove, $priority);
 	}
 }
 
@@ -931,9 +938,9 @@ if ( ! function_exists('remove_all_actions'))
 	/**
 	 * Remove all of the hooks from an action.
 	 */
-	function remove_all_actions($tag, $priority = false)
+	function remove_all_actions($tag = null, $priority = false)
 	{
-		return CI_Plugins::instance()->remove_all_actions($tag, $priority);
+		return Hooks::instance()->remove_all_actions($tag, $priority);
 	}
 }
 
@@ -946,7 +953,7 @@ if ( ! function_exists('do_action'))
 	 */
 	function do_action($tag, $arg = '')
 	{
-		return CI_Plugins::instance()->do_action($tag, $arg);
+		return Hooks::instance()->do_action($tag, $arg);
 	}
 }
 
@@ -960,7 +967,7 @@ if ( ! function_exists('do_action_ref_array'))
 	 */
 	function do_action_ref_array($tag, $args)
 	{
-		return CI_Plugins::instance()->do_action_ref_array($tag, $args);
+		return Hooks::instance()->do_action_ref_array($tag, $args);
 	}
 }
 
@@ -973,6 +980,6 @@ if ( ! function_exists('did_action'))
 	 */
 	function did_action($tag)
 	{
-		return CI_Plugins::instance()->did_action($tag);
+		return Hooks::instance()->did_action($tag);
 	}
 }

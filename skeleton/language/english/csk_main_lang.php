@@ -51,18 +51,30 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 
 $lang['CSK_SKELETON_OPEN_SOURCE'] = 'CodeIgniter Skeleton is free software released under the MIT License.';
+$lang['CSK_SKELETON_COPYRIGHT']   = '&copy; %s CodeIgniter Skeleton';
 // ------------------------------------------------------------------------
 // General Buttons and Links.
 // ------------------------------------------------------------------------
-$lang['CSK_BTN_HOME']        = 'Home';
-$lang['CSK_BTN_LOGIN']       = 'Sign In';
-$lang['CSK_BTN_LOGOUT']      = 'Sign Out';
-$lang['CSK_BTN_REGISTER']    = 'Register';
-$lang['CSK_BTN_CLICK_HERE']  = 'Click Here';
-$lang['CSK_BTN_SEND_LINK']   = 'Send link';
-$lang['CSK_BTN_RESEND_LINK'] = 'Resend link';
-$lang['CSK_BTN_SETTINGS']    = 'Settings';
-$lang['CSK_BTN_GO_HOMEPAGE'] = 'Go to site homepage';
+$lang['CSK_BTN_PROFILE']         = 'Profile';
+$lang['CSK_BTN_ADMIN_PANEL']     = 'Admin Panel';
+$lang['CSK_BTN_CLICK_HERE']      = 'Click Here';
+$lang['CSK_BTN_CREATE_ACCOUNT']  = 'Create Account';
+$lang['CSK_BTN_DASHBOARD']       = 'Dashboard';
+$lang['CSK_BTN_EDIT_PROFILE']    = 'Edit Profile';
+$lang['CSK_BTN_FORGOT_PASSWORD'] = 'Forgot password?';
+$lang['CSK_BTN_GO_HOMEPAGE']     = 'Go to site homepage';
+$lang['CSK_BTN_HOME']            = 'Home';
+$lang['CSK_BTN_LOGIN']           = 'Sign In';
+$lang['CSK_BTN_LOGOUT']          = 'Sign Out';
+$lang['CSK_BTN_LOST_PASSWORD']   = 'Lost Password';
+$lang['CSK_BTN_REGISTER']        = 'Register';
+$lang['CSK_BTN_RESEND_LINK']     = 'Resend link';
+$lang['CSK_BTN_RESET_PASSWORD']  = 'Reset Password';
+$lang['CSK_BTN_RESTORE_ACCOUNT'] = 'Restore account';
+$lang['CSK_BTN_SEND_LINK']       = 'Send link';
+$lang['CSK_BTN_SETTINGS']        = 'Settings';
+$lang['CSK_BTN_VIEW_PROFILE']    = 'View Profile';
+$lang['CSK_BTN_VIEW_SITE']       = 'View Site';
 
 // ------------------------------------------------------------------------
 // Forms Input.
@@ -71,6 +83,7 @@ $lang['CSK_BTN_GO_HOMEPAGE'] = 'Go to site homepage';
 $lang['CSK_INPUT_USERNAME'] = 'Username';
 $lang['CSK_INPUT_IDENTITY'] = 'Username or email address';
 
+$lang['CSK_INPUT_EMAIL']             = 'Email address';
 $lang['CSK_INPUT_EMAIL_ADDRESS']     = 'Email address';
 $lang['CSK_INPUT_NEW_EMAIL_ADDRESS'] = 'New email address';
 
@@ -88,6 +101,8 @@ $lang['CSK_INPUT_UNSPECIFIED'] = 'Unspecified';
 $lang['CSK_INPUT_GENDER']      = 'Gender';
 $lang['CSK_INPUT_MALE']        = 'Male';
 $lang['CSK_INPUT_FEMALE']      = 'Female';
+
+$lang['CSK_INPUT_CAPTCHA'] = 'captcha';
 
 $lang['CSK_INPUT_COMPANY']  = 'Company';
 $lang['CSK_INPUT_PHONE']    = 'Phone';

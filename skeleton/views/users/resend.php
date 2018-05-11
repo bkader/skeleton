@@ -38,7 +38,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Dashboard login view.
+ * Users Controller - Default resend link view.
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
@@ -50,52 +50,52 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @version 	2.0.0
  */
 
-// Form open tag.
-echo form_open('admin/login', 'id="login"'),
-form_nonce('admin-login');
+// Tip.
+echo '<p class="mb-3">', line('CSK_USERS_RESEND_TIP'), '</p>',
 
-// Username form.
-echo '<div class="form-group">',
-print_input($username, array(
-	'class' => 'form-control form-control-sm'.(has_error('username') ? ' is-invalid' : '')
+// Form opening tag and nonce.
+form_open('register/resend', 'role="form" id="resend"'),
+form_nonce('user-resend-link'),
+
+// Identity field.
+'<div class="form-group">',
+print_input($identity, array(
+	'class' => 'form-control form-control-sm'.(has_error('identity') ? ' is-invalid' : '')
 )),
-form_error('username', '<div class="form-text invalid-feedback">', '</div>'),
+form_error('identity', '<div class="form-text invalid-feedback">', '</div>'),
 '</div>';
 
-// Password field.
-echo '<div class="form-group">',
-print_input($password, array(
-	'class' => 'form-control form-control-sm'.(has_error('password') ? ' is-invalid' : '')
-)),
-form_error('password', '<div class="form-text invalid-feedback">', '</div>'),
-'</div>';
-
-if (null !== $languages)
-{
-	echo '<div class="form-group">',
-	print_input($languages, array('class' => 'form-control form-control-sm')),
-	'</div>';
+// Captcha field.
+if (false !== get_option('use_captcha', false)) {
+	echo '<div class="form-group">';
+	if (false !== get_option('use_recaptcha', false)) {
+		echo $captcha;
+	} else {
+		echo '<div class="input-group">', 
+		'<div class="input-group-prepend ofy-h" tabindex="-1">', $captcha_image, '</div>',
+			print_input($captcha, array(
+				'class' => 'form-control form-control-sm'.(has_error('identity') ? ' is-invalid' : '')
+			)),
+		form_error('captcha', '<div class="form-text invalid-feedback">', '</div>'),
+		'</div>';
+	}
+	echo '</div>';
 }
 
-// Login button.
+// Submit and login buttons.
 echo '<div class="form-group clearfix mb-0">',
+
 html_tag('button', array(
 	'type' => 'submit',
-	'class' => 'btn btn-primary btn-sm btn-icon pull-right',
-), '<i class="fa fa-fw fa-sign-in"></i>'.line('CSK_BTN_LOGIN'));
+	'class' => 'btn btn-primary btn-sm btn-icon pull-right'
+), fa_icon('paper-plane').line('CSK_BTN_RESEND_LINK')),
 
-// Lost password button.
-$recover_text = apply_filters('login_recover_text', line('CSK_BTN_LOST_PASSWORD'));
-$recover_link = apply_filters('login_recover_link', site_url('login/recover'));
+html_tag('a', array(
+	'href' => site_url('login'),
+	'class' => 'btn btn-default btn-sm btn-icon',
+), fa_icon('sign-in').line('CSK_BTN_LOGIN')),
 
-if ( ! empty($recover_link)) {
-	echo html_tag('a', array(
-		'role'     =>'button',
-		'href'     => $recover_link,
-		'class'    => 'btn btn-default btn-sm btn-icon',
-		'tabindex' => '-1',
-	), '<i class="fa fa-fw fa-question-circle"></i>'.$recover_text);
-}
+'</div>',
 
-echo '</div>',
+// Form closing tag.
 form_close();
