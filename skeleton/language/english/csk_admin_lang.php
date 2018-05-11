@@ -85,7 +85,6 @@ $lang['CSK_ADMIN_LANGUAGES_DEFAULT'] = 'Language - Default';
 $lang['CSK_ADMIN_REPORTS'] = 'Reports';
 
 // Help menu.
-$lang['CSK_ADMIN_HELP']          = 'Help';
 $lang['CSK_ADMIN_DOCUMENTATION'] = 'Documentation';
 $lang['CSK_ADMIN_TRANSLATIONS']  = 'Translations';
 $lang['CSK_ADMIN_SKELETON_SHOP'] = 'Skeleton Shop';

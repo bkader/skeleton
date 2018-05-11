@@ -55,132 +55,127 @@ $lang['CSK_SKELETON_COPYRIGHT']   = '&copy; %s CodeIgniter Skeleton';
 // ------------------------------------------------------------------------
 // General Buttons and Links.
 // ------------------------------------------------------------------------
-$lang['CSK_BTN_PROFILE']         = 'Profile';
+
+// Application buttons.
+$lang['CSK_BTN_ACTIVATE']        = 'Activate';
+$lang['CSK_BTN_ACTIVATE_COM']    = 'Activate %s';
+$lang['CSK_BTN_ADD']             = 'Add';
+$lang['CSK_BTN_ADD_NEW']         = 'Add New';
 $lang['CSK_BTN_ADMIN_PANEL']     = 'Admin Panel';
+$lang['CSK_BTN_ADVANCED']        = 'Advanced';
+$lang['CSK_BTN_APPLY']           = 'Apply';
+$lang['CSK_BTN_BACK']            = 'Back';
+$lang['CSK_BTN_CANCEL']          = 'Cancel';
 $lang['CSK_BTN_CLICK_HERE']      = 'Click Here';
+$lang['CSK_BTN_CREATE']          = 'Create';
 $lang['CSK_BTN_CREATE_ACCOUNT']  = 'Create Account';
 $lang['CSK_BTN_DASHBOARD']       = 'Dashboard';
+$lang['CSK_BTN_DEACTIVATE']      = 'Deactivate';
+$lang['CSK_BTN_DEACTIVATE_COM']  = 'Deactivate %s';
+$lang['CSK_BTN_DELETE']          = 'Delete';
+$lang['CSK_BTN_DELETE_COM']      = 'Delete %s';
+$lang['CSK_BTN_DISABLE']         = 'Disable';
+$lang['CSK_BTN_DISABLE_COM']     = 'Disable %s';
+$lang['CSK_BTN_DISCARD_CHANGES'] = 'Discard Changes';
+$lang['CSK_BTN_DONATE']          = 'Donate';
+$lang['CSK_BTN_EDIT']            = 'Edit';
+$lang['CSK_BTN_EDIT_COM']        = 'Edit %s';
 $lang['CSK_BTN_EDIT_PROFILE']    = 'Edit Profile';
+$lang['CSK_BTN_ENABLE']          = 'Enable';
+$lang['CSK_BTN_ENABLE_COM']      = 'Enable %s';
 $lang['CSK_BTN_FORGOT_PASSWORD'] = 'Forgot password?';
 $lang['CSK_BTN_GO_HOMEPAGE']     = 'Go to site homepage';
+$lang['CSK_BTN_HELP']            = 'Help';
 $lang['CSK_BTN_HOME']            = 'Home';
 $lang['CSK_BTN_LOGIN']           = 'Sign In';
 $lang['CSK_BTN_LOGOUT']          = 'Sign Out';
 $lang['CSK_BTN_LOST_PASSWORD']   = 'Lost Password';
+$lang['CSK_BTN_NEW']             = 'New';
+$lang['CSK_BTN_PROFILE']         = 'Profile';
 $lang['CSK_BTN_REGISTER']        = 'Register';
+$lang['CSK_BTN_REMOVE']          = 'Remove';
+$lang['CSK_BTN_REMOVE_COM']      = 'Remove %s';
 $lang['CSK_BTN_RESEND_LINK']     = 'Resend link';
 $lang['CSK_BTN_RESET_PASSWORD']  = 'Reset Password';
 $lang['CSK_BTN_RESTORE_ACCOUNT'] = 'Restore account';
+$lang['CSK_BTN_SAVE']            = 'Save';
+$lang['CSK_BTN_SAVE_CHANGES']    = 'Save Changes';
+$lang['CSK_BTN_SAVE_COM']        = 'Save %s';
+$lang['CSK_BTN_SELECT']          = 'Select';
 $lang['CSK_BTN_SEND_LINK']       = 'Send link';
 $lang['CSK_BTN_SETTINGS']        = 'Settings';
+$lang['CSK_BTN_SETTINGS']        = 'Settings';
+$lang['CSK_BTN_SETTINGS_COM']    = '%s Settings';
+$lang['CSK_BTN_SUPPORT']         = 'Support';
+$lang['CSK_BTN_UPDATE']          = 'Update';
+$lang['CSK_BTN_UPDATE_COM']      = 'Update %s';
 $lang['CSK_BTN_VIEW_PROFILE']    = 'View Profile';
 $lang['CSK_BTN_VIEW_SITE']       = 'View Site';
+$lang['CSK_BTN_WEBSITE']         = 'Website';
 
-// Application buttons.
+// ------------------------------------------------------------------------
+// Application misc.
+// ------------------------------------------------------------------------
 
+// Yes and no.
 $lang['CSK_NO']  = 'NO';
 $lang['CSK_YES'] = 'Yes';
 
+// On and off.
 $lang['CSK_OFF'] = 'Off';
 $lang['CSK_ON']  = 'On';
 
+// All both and none.
 $lang['CSK_ALL']  = 'All';
 $lang['CSK_BOTH'] = 'Both';
 $lang['CSK_NONE'] = 'None';
 
-$lang['CSK_BTN_ADD']     = 'Add';
-$lang['CSK_BTN_NEW']     = 'New';
-$lang['CSK_BTN_ADD_NEW'] = 'Add New';
-$lang['CSK_BTN_CREATE']  = 'Create';
-
-$lang['CSK_BTN_EDIT']       = 'Edit';
-$lang['CSK_BTN_EDIT_COM']   = 'Edit %s';
-
-$lang['CSK_BTN_SAVE']       = 'Save';
-$lang['CSK_BTN_SAVE_COM']   = 'Save %s';
-$lang['CSK_BTN_UPDATE']     = 'Update';
-$lang['CSK_BTN_UPDATE_COM'] = 'Update %s';
-
-$lang['CSK_BTN_DISCARD_CHANGES'] = 'Discard Changes';
-$lang['CSK_BTN_SAVE_CHANGES']    = 'Save Changes';
-
-$lang['CSK_BTN_DELETE']     = 'Delete';
-$lang['CSK_BTN_DELETE_COM'] = 'Delete %s';
-
-$lang['CSK_BTN_REMOVE']     = 'Remove';
-$lang['CSK_BTN_REMOVE_COM'] = 'Remove %s';
-
-$lang['CSK_BTN_APPLY']   = 'Apply';
-$lang['CSK_BTN_DONATE']  = 'Donate';
-$lang['CSK_BTN_SUPPORT'] = 'Support';
-$lang['CSK_BTN_WEBSITE'] = 'Website';
-
-$lang['CSK_BTN_ENABLE']      = 'Enable';
-$lang['CSK_BTN_ENABLE_COM']  = 'Enable %s';
-$lang['CSK_BTN_DISABLE']     = 'Disable';
-$lang['CSK_BTN_DISABLE_COM'] = 'Disable %s';
-
-$lang['CSK_BTN_ACTIVATE']       = 'Activate';
-$lang['CSK_BTN_ACTIVATE_COM']   = 'Activate %s';
-$lang['CSK_BTN_DEACTIVATE']     = 'Deactivate';
-$lang['CSK_BTN_DEACTIVATE_COM'] = 'Deactivate %s';
-
-$lang['CSK_BTN_SETTINGS']     = 'Settings';
-$lang['CSK_BTN_SETTINGS_COM'] = '%s Settings';
-
-$lang['CSK_BTN_ADVANCED'] = 'Advanced';
-$lang['CSK_BTN_BACK']     = 'Back';
-$lang['CSK_BTN_CANCEL']   = 'Cancel';
-
-$lang['CSK_BTN_SELECT'] = 'Select';
-
 // ------------------------------------------------------------------------
 // Forms Input.
 // ------------------------------------------------------------------------
-
-$lang['CSK_INPUT_USERNAME'] = 'Username';
-$lang['CSK_INPUT_IDENTITY'] = 'Username or email address';
-
+$lang['CSK_INPUT_ADDRESS']           = 'Address';
+$lang['CSK_INPUT_AVATAR']            = 'Avatar';
+$lang['CSK_INPUT_CAPTCHA']           = 'captcha';
+$lang['CSK_INPUT_COMPANY']           = 'Company';
+$lang['CSK_INPUT_CONFIRM_PASSWORD']  = 'Confirm password';
+$lang['CSK_INPUT_CURRENT_PASSWORD']  = 'Current password';
+$lang['CSK_INPUT_DESCRIPTION']       = 'Description';
 $lang['CSK_INPUT_EMAIL']             = 'Email address';
 $lang['CSK_INPUT_EMAIL_ADDRESS']     = 'Email address';
+$lang['CSK_INPUT_FEMALE']            = 'Female';
+$lang['CSK_INPUT_FIRST_NAME']        = 'First name';
+$lang['CSK_INPUT_FULL_NAME']         = 'Full name';
+$lang['CSK_INPUT_GENDER']            = 'Gender';
+$lang['CSK_INPUT_IDENTITY']          = 'Username or email address';
+$lang['CSK_INPUT_LAST_NAME']         = 'Last name';
+$lang['CSK_INPUT_LOCATION']          = 'Location';
+$lang['CSK_INPUT_MALE']              = 'Male';
+$lang['CSK_INPUT_META_DESCRIPTION']  = 'Meta Description';
+$lang['CSK_INPUT_META_KEYWORDS']     = 'Meta Keywords';
+$lang['CSK_INPUT_META_TITLE']        = 'Meta Title';
+$lang['CSK_INPUT_NAME']              = 'Name';
 $lang['CSK_INPUT_NEW_EMAIL_ADDRESS'] = 'New email address';
+$lang['CSK_INPUT_NEW_PASSWORD']      = 'New password';
+$lang['CSK_INPUT_ORDER']             = 'Order';
+$lang['CSK_INPUT_PASSWORD']          = 'Password';
+$lang['CSK_INPUT_PHONE']             = 'Phone';
+$lang['CSK_INPUT_PRIVACY']           = 'Privacy';
+$lang['CSK_INPUT_SLUG']              = 'Slug';
+$lang['CSK_INPUT_TITLE']             = 'Title';
+$lang['CSK_INPUT_UNSPECIFIED']       = 'Unspecified';
+$lang['CSK_INPUT_URL']               = 'URL';
+$lang['CSK_INPUT_USERNAME']          = 'Username';
 
-$lang['CSK_INPUT_PASSWORD']         = 'Password';
-$lang['CSK_INPUT_NEW_PASSWORD']     = 'New password';
-$lang['CSK_INPUT_CONFIRM_PASSWORD'] = 'Confirm password';
-$lang['CSK_INPUT_CURRENT_PASSWORD'] = 'Current password';
-
-$lang['CSK_INPUT_FIRST_NAME'] = 'First name';
-$lang['CSK_INPUT_LAST_NAME']  = 'Last name';
-$lang['CSK_INPUT_FULL_NAME']  = 'Full name';
-
+// ------------------------------------------------------------------------
 // Gender lines.
-$lang['CSK_INPUT_UNSPECIFIED'] = 'Unspecified';
-$lang['CSK_INPUT_GENDER']      = 'Gender';
-$lang['CSK_INPUT_MALE']        = 'Male';
-$lang['CSK_INPUT_FEMALE']      = 'Female';
+// ------------------------------------------------------------------------
+$lang['CSK_GENDER_UNSPECIFIED'] = 'Unspecified';
+$lang['CSK_GENDER_MALE']        = 'Male';
+$lang['CSK_GENDER_FEMALE']      = 'Female';
 
-$lang['CSK_INPUT_CAPTCHA'] = 'captcha';
-
-$lang['CSK_INPUT_COMPANY']  = 'Company';
-$lang['CSK_INPUT_PHONE']    = 'Phone';
-$lang['CSK_INPUT_ADDRESS']  = 'Address';
-$lang['CSK_INPUT_LOCATION'] = 'Location';
-$lang['CSK_INPUT_AVATAR']   = 'Avatar';
-
-$lang['CSK_INPUT_META_TITLE']       = 'Meta Title';
-$lang['CSK_INPUT_META_DESCRIPTION'] = 'Meta Description';
-$lang['CSK_INPUT_META_KEYWORDS']    = 'Meta Keywords';
-
-$lang['CSK_INPUT_NAME']        = 'Name';
-$lang['CSK_INPUT_TITLE']       = 'Title';
-$lang['CSK_INPUT_SLUG']        = 'Slug';
-$lang['CSK_INPUT_DESCRIPTION'] = 'Description';
-$lang['CSK_INPUT_URL']         = 'URL';
-$lang['CSK_INPUT_ORDER']       = 'Order';
-
+// ------------------------------------------------------------------------
 // Privacy fields.
-$lang['CSK_INPUT_PRIVACY']   = 'Privacy';
+// ------------------------------------------------------------------------
 $lang['CSK_PRIVACY_HIDDEN']  = 'Hidden';
 $lang['CSK_PRIVACY_PRIVATE'] = 'Private';
 $lang['CSK_PRIVACY_PUBLIC']  = 'Public';
