@@ -19,66 +19,74 @@ textarea {
     font-family: $font__droid;
 }
 
-.navbar-brand::before {
-    margin-right: 0!important;
-    margin-left: $gutters;
-}
+// Float.
+.pull-left { float: right; }
+.pull-right { float: left; }
 
-// User menu.
-.user-menu {
-    border-left: none;
-    border-right: 1px solid darken($header__background, 5%);
+// ------------------------------------------------------------
+// Buttons.
+// ------------------------------------------------------------
 
-    img {
-        margin-right: $gutters / 2;
-        margin-left: 0;
+// App buttons.
+.btn-app > .badge { right: auto; left: -10px; }
+.btn-group > .btn-app > .badge { left: 0; right: auto; }
+.btn-app + .btn-app,
+.btn-group + .btn-app,
+.btn-app + .btn-group { margin-left: 0; margin-right: 10px; }
+
+// Icon buttons.
+.btn-icon {
+
+    // Icon.
+    > [class^="fa"] {
+        @include border-radius(0 4px 4px 0);
+        border-left: 1px solid transparent;        
+        border-right: none;
+        margin: 0 -13px 0 12px;
+    }
+
+    // Sizes.
+    &.btn-xs > [class^="fa"] {
+        @include border-radius(0 3px 3px 0);
+        margin-right: -5px;
+        margin-left: 5px;
+    }
+    &.btn-sm > [class^="fa"] {
+        @include border-radius(0 3.2px 3.2px 0);
+        margin-right: -8px;
+        margin-left: 8px;
+    }
+    &.btn-lg > [class^="fa"] {
+        @include border-radius(0 4.8px 4.8px 0);
+        margin-right: -16px;
+        margin-left: 16px;
     }
 }
 
-// Page wrapper.
-.wrapper {
-    @include screen-sm {
-        margin-right: $sidebar__width;
-        margin-left: 0;
+// ------------------------------------------------------------
+// Navbar.
+// ------------------------------------------------------------
+.navbar-admin {
 
-        // Change footer position.
-        .footer { left: 0; right: $sidebar__width; }
+    .user-menu {
+        border-left: none;
+        border-right: 1px solid darken($navbar__background, 5%);
+
+        img { margin-left: 0; margin-right: 10px; }
     }
 }
 
-.nav-sidebar > li {
-    @include screen-sm {
-        ul {
-            left: auto;
-            right: 100%;
+// ------------------------------------------------------------
+// Header.
+// ------------------------------------------------------------
+.header {
+
+    .page-title > .page-icon { margin-right: 0; margin-left: $gutters; }
+
+    .logo-container {
+        @include screen-md {
+            right: auto;
+            left: $gutters;
         }
     }
-
-    &.active > ul {
-        @include box-shadow(none);
-        top: 0;
-        right: 0;
-    }
 }
-
-// Change dashboard statuses font.
-.status { font-family: $font__droid; }
-
-// Menus
-.menu-item {
-
-    .menu-item-title {
-        padding-left: $gutters * 5;
-        padding-right: 0;
-    }
-
-    .menu-item-controls {
-        left: 0;
-        right: auto;
-
-        a { float: right; }
-
-    }
-}
-
-.dz-preview { float: right; }

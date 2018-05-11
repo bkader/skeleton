@@ -173,9 +173,15 @@ class Admin_Controller extends KB_Controller
 			if ( ! empty($this->styles))
 			{
 				// Are we using a right-to-left language? Add RTL files.
-				if ('rtl' === langinfo('direction'))
+				if ('rtl' === $this->lang->lang('direction'))
 				{
-					array_push($this->styles, 'bootstrap-rtl', 'admin-rtl');
+					// Replace Bootstrap.
+					if (false !== ($i = array_search('bootstrap', $this->styles)))
+					{
+						$this->styles[$i] = 'bootstrap-rtl';
+					}
+
+					$this->styles[] = 'admin-rtl';
 				}
 
 				$this->styles = array_map('trim', $this->styles);
