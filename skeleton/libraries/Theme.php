@@ -549,8 +549,9 @@ EOT;
 		$this->controller = $this->ci->router->fetch_class();
 		$this->method     = $this->ci->router->fetch_method();
 
-		global $back_contexts;
+		global $back_contexts, $csk_modules;
 		if (in_array($this->controller, $back_contexts) 
+			OR in_array($this->controller, $csk_modules)
 			OR 'admin' === $this->controller 
 			OR 'admin' === $this->ci->uri->segment(1))
 		{
@@ -681,7 +682,7 @@ EOT;
 		$css_headers = get_file_data($theme_css, $this->_css_headers);
 
 		// We make sure to have at least something.
-		array_clean($css_headers);
+		$css_headers = array_clean($css_headers);
 		if (empty($css_headers))
 		{
 			log_message('error', 'Theme CSS file is missing details: {$folder}.');
@@ -2483,7 +2484,7 @@ EOT;
 			: apply_filters('body_class', $this->_body_classes);
 
 		// We make sure to clear classes.
-		array_clean($this->_body_classes);
+		$this->_body_classes = array_clean($this->_body_classes);
 
 		// Stile not empty? Add everything.
 		if ( ! empty($this->_body_classes))
@@ -4804,7 +4805,7 @@ if ( ! function_exists('array_clean'))
 	 * @param 	array
 	 * @return 	void
 	 */
-	function array_clean(&$array)
+	function array_clean($array)
 	{
 		if (is_array($array))
 		{
@@ -4812,6 +4813,8 @@ if ( ! function_exists('array_clean'))
 			$array = array_filter($array);
 			$array = array_unique($array);
 		}
+
+		return $array;
 	}
 }
 

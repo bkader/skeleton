@@ -683,6 +683,7 @@ class KB_Router extends CI_Router
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://goo.gl/wGXHO9
 	 * @since 	1.4.0
+	 * @since 	2.0.0 	Fixed loading ini.php files for only enabled modules.
 	 *
 	 * @access 	public
 	 * @param 	none
@@ -690,12 +691,18 @@ class KB_Router extends CI_Router
 	 */
 	public function _load_modules()
 	{
-		$modules = isset($this->_modules) ? $this->_modules : $this->list_modules();
-		foreach ($modules as $folder => $path)
+		$modules = $this->list_modules(true);
+		foreach ($modules as $folder => $details)
 		{
-			if (false !== is_file($path.'init.php'))
+			// Ignore disabled modules.
+			if (true !== $details['enabled'])
 			{
-				require_once($path.'init.php');
+				continue;
+			}
+
+			if (false !== is_file($details['full_path'].'init.php'))
+			{
+				require_once($details['full_path'].'init.php');
 				/**
 				 * Fetches right after the module's "init.php" file is loaded.
 				 * @since 	1.4.0

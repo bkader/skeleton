@@ -122,9 +122,9 @@ class Ajax extends AJAX_Controller {
 	// ------------------------------------------------------------------------
 
 	/**
-	 * _reports
+	 * _languages
 	 *
-	 * Method for interacting with reports.
+	 * Method for interacting with languages.
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://goo.gl/wGXHO9
@@ -132,48 +132,132 @@ class Ajax extends AJAX_Controller {
 	 *
 	 * @access 	public
 	 * @param 	string 	$action 	The action to perform.
-	 * @param 	int  	$id 		The report ID.
+	 * @param 	string 	$name 		The plugin's folder name;
 	 * @return 	void
 	 */
-	public function _reports($action = null, $id = 0)
+	public function _languages($action = null, $name = null)
 	{
-		// We make sure to load Reports language file.
-		$this->load->language('csk_reports');
-
-		// Array of available reports action.
-		$actions = array('delete');
+		$this->load->language('csk_languages');
+		$actions = array('enable', 'disable', 'make_default');
 
 		/**
-		 * In order to proceed, the following conditions are required:
-		 * 1. The action is provided and is available.
-		 * 2. The is is provided and is numeric.
+		 * Here are conditions in order to proceed:
+		 * 1. The action is provided and available.
+		 * 2. The language name is provided and available.
 		 * 3. The action passes nonce check.
 		 */
-		if ((null === $action OR ! in_array($action, $actions)) 
-			OR ( ! is_numeric($id) OR $id < 0)
+		if ((null === $action OR ! in_array($action, $actions))
+			OR (null === $name OR ! array_key_exists($name, $this->lang->languages()))
 			OR true !== $this->check_nonce())
 		{
-			$this->response->header  = self::HTTP_NOT_ACCEPTABLE;
+			$this->response->header = self::HTTP_NOT_ACCEPTABLE;
 			$this->response->message = line('CSK_ERROR_NONCE_URL');
 			return;
 		}
 
-		switch ($action) {
-			
-			// Delete report.
-			case 'delete':
-				
-				// Successfully deleted?
-				if (false !== $this->kbcore->activities->delete($id))
+		// Get database languages for later use.
+		$languages = $this->config->item('languages');
+		$languages OR $languages = array();
+
+		switch ($action)
+		{
+			// Enabling a language.
+			case 'enable':
+
+				// Already enabled? Nothing to do..
+				if (in_array($name, $languages))
 				{
-					$this->response->header  = self::HTTP_OK;
-					$this->response->message = line('CSK_REPORTS_SUCCESS_DELETE');
+					$this->response->header = self::HTTP_NOT_MODIFIED;
+					$this->response->message = line('CSK_LANGUAGES_ALREADY_ENABLE');
 					return;
 				}
 
-				// Otherwise, the activity could not be deleted.
-				$this->response->message = line('CSK_REPORTS_ERROR_DELETE');
-				return;
+				// Add language to languages array.
+				$languages[] = $name;
+				asort($languages);
+				$languages = array_values($languages);
+
+				// Successfully updated?
+				if (false !== $this->kbcore->options->set_item('languages', $languages))
+				{
+					$this->response->header = self::HTTP_OK;
+					$this->response->message = line('CSK_LANGUAGES_SUCCESS_ENABLE');
+					return;
+				}
+				
+				$this->response->message = line('CSK_LANGUAGES_ERROR_ENABLE');
+
+				break;
+
+			// Disabling a language.
+			case 'disable':
+
+				// Already disabled? Nothing to do..
+				if ( ! in_array($name, $languages))
+				{
+					$this->response->header = self::HTTP_NOT_MODIFIED;
+					$this->response->message = line('CSK_LANGUAGES_ALREADY_DISABLE');
+					return;
+				}
+
+				// Remove language from languages array.
+				$languages[] = $name;
+				foreach ($languages as $i => $lang)
+				{
+					if ($lang === $name)
+					{
+						unset($languages[$i]);
+					}
+				}
+				asort($languages);
+				$languages = array_values($languages);
+
+				// Successfully updated?
+				if (false !== $this->kbcore->options->set_item('languages', $languages))
+				{
+					/**
+					 * If the language is the site's default language, we make
+					 * sure to set English as the default one.
+					 */
+					if ($name === $this->kbcore->options->item('language'))
+					{
+						$this->kbcore->options->set_item('language', 'english');
+					}
+
+					$this->response->header = self::HTTP_OK;
+					$this->response->message = line('CSK_LANGUAGES_SUCCESS_DISABLE');
+					return;
+				}
+				
+				$this->response->message = line('CSK_LANGUAGES_ERROR_DISABLE');
+
+				break;
+			
+			// Making language default.
+			case 'make_default':
+
+				// If the language is not enabled, we make sure to enable it first.
+				if ( ! in_array($name, $languages))
+				{
+					$languages[] = $name;
+					asort($languages);
+					if (false === $this->kbcore->options->set_item('languages', $languages))
+					{
+						$this->response->header = self::HTTP_CONFLICT;
+						$this->response->message = line('CSK_LANGUAGES_ERROR_DEFAULT');
+						return;
+					}
+				}
+
+				// Successfully changed?
+				if (false !== $this->kbcore->options->set_item('language', $name))
+				{
+					$this->response->header = self::HTTP_OK;
+					$this->response->message = line('CSK_LANGUAGES_SUCCESS_DEFAULT');
+					return;
+				}
+
+				$this->response->message = line('CSK_LANGUAGES_ERROR_DEFAULT');
 
 				break;
 		}
@@ -405,9 +489,9 @@ class Ajax extends AJAX_Controller {
 	// ------------------------------------------------------------------------
 
 	/**
-	 * _languages
+	 * _reports
 	 *
-	 * Method for interacting with languages.
+	 * Method for interacting with reports.
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://goo.gl/wGXHO9
@@ -415,132 +499,48 @@ class Ajax extends AJAX_Controller {
 	 *
 	 * @access 	public
 	 * @param 	string 	$action 	The action to perform.
-	 * @param 	string 	$name 		The plugin's folder name;
+	 * @param 	int  	$id 		The report ID.
 	 * @return 	void
 	 */
-	public function _languages($action = null, $name = null)
+	public function _reports($action = null, $id = 0)
 	{
-		$this->load->language('csk_languages');
-		$actions = array('enable', 'disable', 'make_default');
+		// We make sure to load Reports language file.
+		$this->load->language('csk_reports');
+
+		// Array of available reports action.
+		$actions = array('delete');
 
 		/**
-		 * Here are conditions in order to proceed:
-		 * 1. The action is provided and available.
-		 * 2. The language name is provided and available.
+		 * In order to proceed, the following conditions are required:
+		 * 1. The action is provided and is available.
+		 * 2. The is is provided and is numeric.
 		 * 3. The action passes nonce check.
 		 */
-		if ((null === $action OR ! in_array($action, $actions))
-			OR (null === $name OR ! array_key_exists($name, $this->lang->languages()))
+		if ((null === $action OR ! in_array($action, $actions)) 
+			OR ( ! is_numeric($id) OR $id < 0)
 			OR true !== $this->check_nonce())
 		{
-			$this->response->header = self::HTTP_NOT_ACCEPTABLE;
+			$this->response->header  = self::HTTP_NOT_ACCEPTABLE;
 			$this->response->message = line('CSK_ERROR_NONCE_URL');
 			return;
 		}
 
-		// Get database languages for later use.
-		$languages = $this->config->item('languages');
-		$languages OR $languages = array();
-
-		switch ($action)
-		{
-			// Enabling a language.
-			case 'enable':
-
-				// Already enabled? Nothing to do..
-				if (in_array($name, $languages))
-				{
-					$this->response->header = self::HTTP_NOT_MODIFIED;
-					$this->response->message = line('CSK_LANGUAGES_ALREADY_ENABLE');
-					return;
-				}
-
-				// Add language to languages array.
-				$languages[] = $name;
-				asort($languages);
-				$languages = array_values($languages);
-
-				// Successfully updated?
-				if (false !== $this->kbcore->options->set_item('languages', $languages))
-				{
-					$this->response->header = self::HTTP_OK;
-					$this->response->message = line('CSK_LANGUAGES_SUCCESS_ENABLE');
-					return;
-				}
-				
-				$this->response->message = line('CSK_LANGUAGES_ERROR_ENABLE');
-
-				break;
-
-			// Disabling a language.
-			case 'disable':
-
-				// Already disabled? Nothing to do..
-				if ( ! in_array($name, $languages))
-				{
-					$this->response->header = self::HTTP_NOT_MODIFIED;
-					$this->response->message = line('CSK_LANGUAGES_ALREADY_DISABLE');
-					return;
-				}
-
-				// Remove language from languages array.
-				$languages[] = $name;
-				foreach ($languages as $i => $lang)
-				{
-					if ($lang === $name)
-					{
-						unset($languages[$i]);
-					}
-				}
-				asort($languages);
-				$languages = array_values($languages);
-
-				// Successfully updated?
-				if (false !== $this->kbcore->options->set_item('languages', $languages))
-				{
-					/**
-					 * If the language is the site's default language, we make
-					 * sure to set English as the default one.
-					 */
-					if ($name === $this->kbcore->options->item('language'))
-					{
-						$this->kbcore->options->set_item('language', 'english');
-					}
-
-					$this->response->header = self::HTTP_OK;
-					$this->response->message = line('CSK_LANGUAGES_SUCCESS_DISABLE');
-					return;
-				}
-				
-				$this->response->message = line('CSK_LANGUAGES_ERROR_DISABLE');
-
-				break;
+		switch ($action) {
 			
-			// Making language default.
-			case 'make_default':
-
-				// If the language is not enabled, we make sure to enable it first.
-				if ( ! in_array($name, $languages))
+			// Delete report.
+			case 'delete':
+				
+				// Successfully deleted?
+				if (false !== $this->kbcore->activities->delete($id))
 				{
-					$languages[] = $name;
-					asort($languages);
-					if (false === $this->kbcore->options->set_item('languages', $languages))
-					{
-						$this->response->header = self::HTTP_CONFLICT;
-						$this->response->message = line('CSK_LANGUAGES_ERROR_DEFAULT');
-						return;
-					}
-				}
-
-				// Successfully changed?
-				if (false !== $this->kbcore->options->set_item('language', $name))
-				{
-					$this->response->header = self::HTTP_OK;
-					$this->response->message = line('CSK_LANGUAGES_SUCCESS_DEFAULT');
+					$this->response->header  = self::HTTP_OK;
+					$this->response->message = line('CSK_REPORTS_SUCCESS_DELETE');
 					return;
 				}
 
-				$this->response->message = line('CSK_LANGUAGES_ERROR_DEFAULT');
+				// Otherwise, the activity could not be deleted.
+				$this->response->message = line('CSK_REPORTS_ERROR_DELETE');
+				return;
 
 				break;
 		}

@@ -72,7 +72,28 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	</div>
 	<p>All modules <strong>MUST</strong> contain a <code>manifest.json</code> file in their root folders. This file will be used to list details about the module and make sure to display its links within the dashboard.</p>
 	<p>Below is an example of the file (menus module):</p>
-	<pre class="mt-2 mb-2"><code><?php echo $manifest; ?></code></pre>
+	<pre class="mt-2 mb-2"><code>{
+	"name":"Menus Manager",
+	"module_uri":null,
+	"description":"Manage site menus and locations.",
+	"version":"1.0.0",
+	"license":"MIT",
+	"license_uri":"http://opensource.org/licenses/MIT",
+	"author":"Kader Bouyakoub",
+	"author_uri":"https://goo.gl/wGXHO9",
+	"author_email":"bkade@mail.com",
+	"tags":null,
+	"enabled":true,
+	"routes":[],
+	"admin_menu":"Menus",
+	"admin_order":2,
+	"translations":{
+		"admin_menu":{
+			"french":"Menus"
+			}
+		}
+	}
+}</code></pre>
 	<p>The <code>admin_menu</code> element if what's displayed on the dashboard menu. If none provided, it will use <code>ucwords('module_name')</code>.</p>
 	<p>Right below it, you see the <code>admin_order</code>. That what determines the order of the element. <strong>0</strong> is at the very top... etc.</p>
 </div>

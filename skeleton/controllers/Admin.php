@@ -101,9 +101,6 @@ EOT;
 		// Count all languages.
 		$this->data['count_languages'] = count($this->config->item('languages'));
 
-		// FEEL FREE TO REMOVE THE FOLLOWING LINE.
-		$this->data['manifest'] = file_get_contents(KBPATH.'modules/menus/manifest.json');
-
 		// Set page title and render view.
 		$this->theme
 			->set_title(line('CSK_ADMIN_ADMIN_PANEL'))

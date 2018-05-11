@@ -58,7 +58,7 @@
 
                         // We reload UI if not in delete action.
                         if (action !== "delete") {
-                            csk.ui.reload("#" + id);
+                            location.reload();
                             return;
                         }
 

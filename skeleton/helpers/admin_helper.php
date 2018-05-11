@@ -97,63 +97,141 @@ if ( ! function_exists('fa_icon'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('bs_button'))
+if ( ! function_exists('submit_button'))
 {
 	/**
-	 * bs_button
+	 * submit_button
 	 *
-	 * Function for generating a Bootstrap 4 button.
+	 * Function display a submit button.
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://goo.gl/wGXHO9
 	 * @since 	2.0.0
 	 *
-	 * @param 	string 	$title 	The text to display within the button.
-	 * @param 	string 	$type 	The type of button.
-	 * @param 	string 	$href 	URL in case of using an anchor.
-	 * @param 	string 	$icon 	Whether to add an icon.
-	 * @param 	mixed 	$attrs 	Array of extra attributes.
+	 * @param 	string 	$text
+	 * @param 	mixed 	$type
+	 * @param 	string 	$name
+	 * @param 	bool 	$wrap
+	 * @param 	array 	$attrs
 	 * @return 	string
 	 */
-	function bs_button(
-		$title,
-		$type = 'default', 	// You can add sizes classes: "default btn-sm"
-		$href = null,
-		$icon = null, 		// Check font-awesome icons.
-		$attrs = array())
+	function submit_button($text = '', $type = 'primary btn-sm', $name = 'submit', $wrap = true, $attrs = '')
 	{
-		// No title provided? Nothing to do...
-		if (empty($title))
-		{
-			return null;
+		// Make sure to explode types if string.
+		is_array($type) OR $type = explode(' ', $type);
+
+		// Array of Skeleton available button.
+		$types = array(
+			'add', 'apply',
+			'black', 'blue', 'brown',
+			'create',
+			'danger', 'default', 'delete', 'donate',
+			'green', 'grey',
+			'info',
+			'new',
+			'olive', 'orange',
+			'pink', 'primary', 'purple',
+			'red', 'remove',
+			'save', 'secondary', 'submit', 'success',
+			'teal',
+			'update',
+			'violet',
+			'warning', 'white',
+			'yellow',
+		);
+
+		$classes = array('btn');
+		foreach ($type as $t) {
+			if (('secondary' === $t OR 'btn-secondary' === $t)
+				OR ('default' === $t OR 'btn-default' === $t)) {
+				continue;
+			}
+
+			$classes[] = in_array($t, $types) ? 'btn-'.$t : $t;
 		}
 
-		// Always add the button role attribute.
-		$attributes['role'] = 'button';
-
-		// In case of an anchor.
-		if (null !== $href)
-		{
-			$tag = 'a';
-			$attributes['href'] = $href;
+		if (function_exists('array_clean')) {
+			$classes = array_clean($classes);
+		} else {
+			$classes = array_unique(array_filter(array_map('trim', $classes)));
 		}
-		// In case of a button.
-		else
-		{
+
+		// See if we provide a size.
+		if (false !== ($i = array_search('tiny', $classes))) {
+			$classes[$i] = 'btn-xs';
+		} elseif (false !== ($i = array_search('small', $classes))) {
+			$classes[$i] = 'btn-sm';
+		} elseif (false !== ($i = array_search('large', $classes))) {
+			$classes[$i] = 'btn-lg';
+		}
+
+		// Shall we use an icon?
+		$icon = null;
+		foreach ($classes as $k => $v) {
+			if (1 === sscanf($v, 'icon:%s', $i)) {
+				$icon = fa_icon($i);
+				$classes[$k] = 'btn-icon';
+				break;
+			}
+		}
+
+		// Possibility to disable to wrap.
+		if (false !== ($w = array_search('nowrap', $classes))) {
+			$wrap = false;
+			unset($classes[$w]);
+		}
+
+		// Add the default submit button.
+		$attributes['type'] = 'submit';
+
+		// Prepare button class.
+		$attributes['class'] = implode(' ', $classes);
+
+		/**
+		 * Prepare text to be used.
+		 * 1. If nothing provided, we use default "Save Changes".
+		 * 2. If it starts with "lang:", we try to translate it.
+		 * 3. If it starts with "config:" we try to get config item.
+		 */
+		if (empty($text)) { // Use default "Save Changes"
+			$text = line('CSK_BTN_SAVE_CHANGES');
+		} elseif (1 === sscanf($text, 'lang:%s', $line)) {
+			$text = line($line);
+		} elseif (1 === sscanf($text, 'config:%s', $item)) {
+			$text = config_item($item);
+
+			// In case the item was not found, we use default text.
+			$text OR $text = line('CSK_BTN_SAVE_CHANGES');
+		}
+
+		empty($icon) OR $text = $icon.$text;
+
+		// Use the $name as the default id unless provided in $attrs.
+		$attributes['name'] = $name;
+		$attributes['id']   = $name;
+		if (is_array($attrs) && isset($attrs['id'])) {
+			$attributes['id'] = $attrs['id'];
+			unset($attrs['id']);
+		}
+
+		if (is_array($attrs) && ! empty($attrs)) {
+			$attributes = array_merge($attributes, $attrs);
+		}
+
+		if (null === $icon) {
+			$tag                = 'input';
+			$attributes['type'] = 'submit';
+			$attributes['value'] = $text;
+		} else {
 			$tag = 'button';
-			$attributes['type'] = 'button';
 		}
 
-		$attributes['class'] = "btn btn-{$type}";
+		function_exists('html_tag') OR get_instance()->load->helper('html');
 
-		if (null !== $icon)
-		{
-			$attributes['class'] .= ' btn-icon';
-			$title = fa_icon($icon).$title;
-		}
+		$button = html_tag($tag, $attributes, $text);
 
-		empty($attrs) OR $attributes = arra_merge($attributes, $attrs);
+		$output = $wrap ? '<div class="form-group">'.$button.'</div>' : $button;
 
-		return html_tag($tag, $attributes, $title);
+		return $output;
 	}
 }

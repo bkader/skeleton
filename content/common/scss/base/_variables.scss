@@ -28,6 +28,21 @@ $color__success: $color__green;
 $color__warning: $color__orange;
 $color__default: darken($color__white, 2.5%);
 
+// Application buttons.
+$color__add: $color__green;
+$color__create: $color__green;
+$color__new: $color__green;
+
+$color__save: $color__blue;
+$color__submit: $color__blue;
+$color__update: $color__blue;
+$color__apply: $color__blue;
+
+$color__delete: $color__red;
+$color__remove: $color__red;
+
+$color__donate: $color__olive;
+
 // --------------------------------------------------------------
 // Different background colors.
 // --------------------------------------------------------------
@@ -126,7 +141,19 @@ $color__list: (
     "white": $color__white,
     "yahoo": $color__yahoo,
     "yellow": $color__yellow,
-    "youtube": $color__youtube
+    "youtube": $color__youtube,
+
+    // Application buttons.
+    "add": $color__add,
+    "create": $color__create,
+    "new": $color__new,
+    "save": $color__save,
+    "submit": $color__submit,
+    "update": $color__update,
+    "apply": $color__apply,
+    "delete": $color__delete,
+    "remove": $color__remove,
+    "donate": $color__donate
 );
 
 // --------------------------------------------------------------
