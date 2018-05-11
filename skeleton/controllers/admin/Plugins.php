@@ -218,7 +218,7 @@ class Plugins extends Admin_Controller
 							'href'   => $p['plugin_uri'],
 							'target' => '_blank',
 							'rel'    => 'nofollow',
-						), line('CSK_ADMIN_BTN_WEBSITE'));
+						), line('CSK_BTN_WEBSITE'));
 					}
 					if ( ! empty($p['author_email'])) {
 						$details[] = sprintf(
