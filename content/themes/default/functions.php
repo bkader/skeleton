@@ -183,6 +183,9 @@ class Default_theme {
 	 * @return 	string
 	 */
 	public function theme_images() {
+		if ( ! function_exists('add_image_size')) {
+			return;
+		}
 		// These sizes are dummy ones. Use yours depending on your theme.
 		add_image_size( 'thumb', 260, 180, true );
 		add_image_size( 'avatar', 100, 100, true );
