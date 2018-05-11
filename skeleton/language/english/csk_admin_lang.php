@@ -113,63 +113,9 @@ $lang['CSK_ADMIN_COMPONENT_DISABLED'] = 'This component is disabled. Enable it o
 $lang['CSK_ADMIN_ANCHOR_TEMPLATE']          = '<a href="%2$s">%1$s</a>';
 $lang['CSK_ADMIN_ANCHOR_TEMPLATE_NOFOLLOW'] = '<a href="%2$s" target="_blank" rel="nofollow">%1$s</a>';
 
-// Application buttons.
+// Table actions.
 $lang['CSK_ADMIN_ACTION']  = 'Action';
 $lang['CSK_ADMIN_ACTIONS'] = 'Actions';
-
-$lang['CSK_ADMIN_NO']  = 'NO';
-$lang['CSK_ADMIN_YES'] = 'Yes';
-
-$lang['CSK_ADMIN_OFF'] = 'Off';
-$lang['CSK_ADMIN_ON']  = 'On';
-
-$lang['CSK_ADMIN_ALL']  = 'All';
-$lang['CSK_ADMIN_BOTH'] = 'Both';
-$lang['CSK_ADMIN_NONE'] = 'None';
-
-$lang['CSK_ADMIN_BTN_ADD']     = 'Add';
-$lang['CSK_ADMIN_BTN_NEW']     = 'New';
-$lang['CSK_ADMIN_BTN_ADD_NEW'] = 'Add New';
-$lang['CSK_ADMIN_BTN_CREATE']  = 'Create';
-
-$lang['CSK_ADMIN_BTN_EDIT']       = 'Edit';
-$lang['CSK_ADMIN_BTN_EDIT_COM']   = 'Edit %s';
-
-$lang['CSK_ADMIN_BTN_SAVE']       = 'Save';
-$lang['CSK_ADMIN_BTN_SAVE_COM']   = 'Save %s';
-$lang['CSK_ADMIN_BTN_UPDATE']     = 'Update';
-$lang['CSK_ADMIN_BTN_UPDATE_COM'] = 'Update %s';
-
-$lang['CSK_ADMIN_BTN_DISCARD_CHANGES'] = 'Discard Changes';
-$lang['CSK_ADMIN_BTN_SAVE_CHANGES']    = 'Save Changes';
-
-$lang['CSK_ADMIN_BTN_DELETE']     = 'Delete';
-$lang['CSK_ADMIN_BTN_DELETE_COM'] = 'Delete %s';
-
-$lang['CSK_ADMIN_BTN_REMOVE']     = 'Remove';
-$lang['CSK_ADMIN_BTN_REMOVE_COM'] = 'Remove %s';
-
-$lang['CSK_ADMIN_BTN_APPLY']   = 'Apply';
-$lang['CSK_ADMIN_BTN_DONATE']  = 'Donate';
-$lang['CSK_ADMIN_BTN_SUPPORT'] = 'Support';
-$lang['CSK_ADMIN_BTN_WEBSITE'] = 'Website';
-
-$lang['CSK_ADMIN_BTN_ENABLE']      = 'Enable';
-$lang['CSK_ADMIN_BTN_ENABLE_COM']  = 'Enable %s';
-$lang['CSK_ADMIN_BTN_DISABLE']     = 'Disable';
-$lang['CSK_ADMIN_BTN_DISABLE_COM'] = 'Disable %s';
-
-$lang['CSK_ADMIN_BTN_ACTIVATE']       = 'Activate';
-$lang['CSK_ADMIN_BTN_ACTIVATE_COM']   = 'Activate %s';
-$lang['CSK_ADMIN_BTN_DEACTIVATE']     = 'Deactivate';
-$lang['CSK_ADMIN_BTN_DEACTIVATE_COM'] = 'Deactivate %s';
-
-$lang['CSK_ADMIN_BTN_SETTINGS']     = 'Settings';
-$lang['CSK_ADMIN_BTN_SETTINGS_COM'] = '%s Settings';
-
-$lang['CSK_ADMIN_BTN_ADVANCED'] = 'Advanced';
-$lang['CSK_ADMIN_BTN_BACK']     = 'Back';
-$lang['CSK_ADMIN_BTN_CANCEL']   = 'Cancel';
 
 // ------------------------------------------------------------------------
 // Different statuses.

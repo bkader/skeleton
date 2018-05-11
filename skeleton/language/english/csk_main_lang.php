@@ -76,6 +76,64 @@ $lang['CSK_BTN_SETTINGS']        = 'Settings';
 $lang['CSK_BTN_VIEW_PROFILE']    = 'View Profile';
 $lang['CSK_BTN_VIEW_SITE']       = 'View Site';
 
+// Application buttons.
+
+$lang['CSK_NO']  = 'NO';
+$lang['CSK_YES'] = 'Yes';
+
+$lang['CSK_OFF'] = 'Off';
+$lang['CSK_ON']  = 'On';
+
+$lang['CSK_ALL']  = 'All';
+$lang['CSK_BOTH'] = 'Both';
+$lang['CSK_NONE'] = 'None';
+
+$lang['CSK_BTN_ADD']     = 'Add';
+$lang['CSK_BTN_NEW']     = 'New';
+$lang['CSK_BTN_ADD_NEW'] = 'Add New';
+$lang['CSK_BTN_CREATE']  = 'Create';
+
+$lang['CSK_BTN_EDIT']       = 'Edit';
+$lang['CSK_BTN_EDIT_COM']   = 'Edit %s';
+
+$lang['CSK_BTN_SAVE']       = 'Save';
+$lang['CSK_BTN_SAVE_COM']   = 'Save %s';
+$lang['CSK_BTN_UPDATE']     = 'Update';
+$lang['CSK_BTN_UPDATE_COM'] = 'Update %s';
+
+$lang['CSK_BTN_DISCARD_CHANGES'] = 'Discard Changes';
+$lang['CSK_BTN_SAVE_CHANGES']    = 'Save Changes';
+
+$lang['CSK_BTN_DELETE']     = 'Delete';
+$lang['CSK_BTN_DELETE_COM'] = 'Delete %s';
+
+$lang['CSK_BTN_REMOVE']     = 'Remove';
+$lang['CSK_BTN_REMOVE_COM'] = 'Remove %s';
+
+$lang['CSK_BTN_APPLY']   = 'Apply';
+$lang['CSK_BTN_DONATE']  = 'Donate';
+$lang['CSK_BTN_SUPPORT'] = 'Support';
+$lang['CSK_BTN_WEBSITE'] = 'Website';
+
+$lang['CSK_BTN_ENABLE']      = 'Enable';
+$lang['CSK_BTN_ENABLE_COM']  = 'Enable %s';
+$lang['CSK_BTN_DISABLE']     = 'Disable';
+$lang['CSK_BTN_DISABLE_COM'] = 'Disable %s';
+
+$lang['CSK_BTN_ACTIVATE']       = 'Activate';
+$lang['CSK_BTN_ACTIVATE_COM']   = 'Activate %s';
+$lang['CSK_BTN_DEACTIVATE']     = 'Deactivate';
+$lang['CSK_BTN_DEACTIVATE_COM'] = 'Deactivate %s';
+
+$lang['CSK_BTN_SETTINGS']     = 'Settings';
+$lang['CSK_BTN_SETTINGS_COM'] = '%s Settings';
+
+$lang['CSK_BTN_ADVANCED'] = 'Advanced';
+$lang['CSK_BTN_BACK']     = 'Back';
+$lang['CSK_BTN_CANCEL']   = 'Cancel';
+
+$lang['CSK_BTN_SELECT'] = 'Select';
+
 // ------------------------------------------------------------------------
 // Forms Input.
 // ------------------------------------------------------------------------
