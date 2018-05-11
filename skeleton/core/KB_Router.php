@@ -99,7 +99,6 @@ class KB_Router extends CI_Router
 		'routes'       => array(),
 		'admin_menu'   => null,
 		'admin_order'  => 0,
-		'submenu'      => array(),
 		'translations' => array(),
 		'contexts' => array(),
 	);
@@ -519,10 +518,13 @@ class KB_Router extends CI_Router
 		empty($headers['admin_menu']) && $headers['admin_menu'] = $module;
 
 		// List module's context.
-		$headers['contexts'] = $this->module_contexts($module, $module_path);
-		foreach ($headers['contexts'] as $key => $val)
+		if (empty($headers['contexts']))
 		{
-			$headers['has_'.$key] = (false !== $val);
+			$headers['contexts'] = $this->module_contexts($module, $module_path);
+			foreach ($headers['contexts'] as $key => $val)
+			{
+				$headers['has_'.$key] = (false !== $val);
+			}
 		}
 
 		/**
