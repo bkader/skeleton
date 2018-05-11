@@ -91,7 +91,6 @@ class Kbcore extends CI_Driver_Library
 			'entities',
 			'groups',
 			'menus',
-			'media',
 			'metadata',
 			'options',
 			'objects',
@@ -99,7 +98,6 @@ class Kbcore extends CI_Driver_Library
 			'relations',
 			'users',
 			'variables',
-			// 'theme',
 		);
 
 		// Here we load all what we need.
