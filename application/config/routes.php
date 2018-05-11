@@ -68,19 +68,19 @@ $route['default_controller'] = (null !== ($result = $db->where('name', 'base_con
  * Authentication routes.
  * @since 	2.0.0
  */
-Route::any(KB_LOGIN, 'users/login', function() {
-	Route::any('recover', 'users/recover');
+Route::any(KB_LOGIN, 'users/login', array('as' => 'login'), function() {
+	Route::any('recover', 'users/recover', array('as' => 'lost-password'));
 	Route::any('reset', 'users/reset');
-	Route::any('restore', 'users/restore');
+	Route::any('restore', 'users/restore', array('as' => 'restore-account'));
 });
-Route::any(KB_LOGOUT, 'users/logout');
+Route::any(KB_LOGOUT, 'users/logout', array('as' => 'logout'));
 
 /**
  * Account creation routes.
  * @since 	2.0.0
  */
-Route::any(KB_REGISTER, 'users/register', function() {
-	Route::any('resend', 'users/resend');
+Route::any(KB_REGISTER, 'users/register', array('as' => 'register'), function() {
+	Route::any('resend', 'users/resend', array('as' => 'resend-link'));
 	Route::any('activate', 'users/activate');
 });
 
@@ -98,8 +98,7 @@ Route::block('users(.*)');
 Route::prefix(KB_ADMIN, function() {
 
 	// Admin login section.
-	Route::any('login/(:any)', 'admin/login/$1');
-	Route::any('login',        'admin/login/index');
+	Route::any('login', 'admin/login/index', array('as' => 'admin-login'));
 
 	// System information route first.
 	Route::any('settings/sysinfo', 'admin/settings/sysinfo');
@@ -117,8 +116,8 @@ Route::prefix(KB_ADMIN, function() {
 	global $csk_modules;
 	$modules_routes = implode('|', $csk_modules);
 	Route::any("({$modules_routes})/(:any)/(:any)", 'admin/$1/$2/$3');
-	Route::any("({$modules_routes})/(:any)",        'admin/$1/$2');
-	Route::any("({$modules_routes})",                     'admin/$1/index');
+	Route::any("({$modules_routes})/(:any)", 'admin/$1/$2');
+	Route::any("({$modules_routes})", 'admin/$1/index');
 
 	/**
 	 * Reserved back-end contexts.
@@ -143,7 +142,11 @@ Route::prefix('ajax', function () {
 	Route::any("({$modules_routes})/(:any)", "ajax/index/$1/$2");
 	Route::any("({$modules_routes})", "ajax/index/$1");
 });
-Route::any('process/set_language(.*)', 'process/set_language$1');
+Route::any(
+	'process/set_language(.*)',
+	'process/set_language$1',
+	array('as' => 'change-language')
+);
 
 /**
  * Front-end context.
