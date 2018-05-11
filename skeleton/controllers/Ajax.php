@@ -687,7 +687,7 @@ class Ajax extends AJAX_Controller {
 					'href'   => "mailto:{$theme['author_email']}?subject=".rawurlencode("Support: {$theme['name']}"),
 					'target' => '_blank',
 					'rel'    => 'nofollow',
-				), line('CSK_ADMIN_BTN_SUPPORT'));
+				), line('CSK_BTN_SUPPORT'));
 			}
 
 			// Actions buttons.
