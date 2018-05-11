@@ -339,11 +339,14 @@ class Admin_Controller extends KB_Controller
 					('admin' !== $context) && $uri = $context.'/'.$uri;
 
 					$title_line = isset($module[$context.'_menu']) ? $context.'_menu' : 'admin_menu';
-					if (isset($module['translations'][$title_line][$lang])) {
-						$title = $module['translations'][$title_line][$lang];
-					} elseif (1 === sscanf($title_line, 'lang:%s', $line)) {
+
+					// Translation present?
+					if (isset($module['translations'][$lang][$title_line])) {
+						$title = $module['translations'][$lang][$title_line];
+					}
+					// May be we use 
+					elseif (isset($module[$title_line]) && 1 === sscanf($module[$title_line], 'lang:%s', $line)) {
 						$title = line($line);
-						(false !== strpos($title, 'FIXME')) && $title = ucwords($module[$title_line]);
 					} else {
 						$title = ucwords($module[$title_line]);
 					}
@@ -370,21 +373,19 @@ class Admin_Controller extends KB_Controller
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://goo.gl/wGXHO9
 	 * @since 	1.4.0
+	 * @since 	2.0.0 	Dropped the LazyLoad. THe dashboard has built-in images lazy loading.
 	 *
 	 * @copyright 	Matias Meno (https://github.com/enyo)
 	 * @link 		https://github.com/enyo/dropzone
 	 *
 	 * @access 	protected
-	 * @param 	bool 	$lazyload 	Whether to enqueue LazyLoad.
+	 * @param 	void
 	 * @return 	void
 	 */
-	protected function _dropzone($lazyload = false)
+	protected function _dropzone()
 	{
 		in_array('dropzone', $this->styles) OR $this->styles[]  = 'dropzone';
 		in_array('dropzone', $this->scripts) OR $this->scripts[] = 'dropzone';
-		
-		(true === $lazyload) && $this->_lazyload();
-		
 		return $this;
 	}
 
@@ -563,30 +564,6 @@ class Admin_Controller extends KB_Controller
 	// ------------------------------------------------------------------------
 
 	/**
-	 * _lazyload
-	 *
-	 * Method to enqueue LazyLoad library.
-	 *
-	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
-	 * @since 	1.4.0
-	 *
-	 * @copyright 	Andrea Verlicchi (https://github.com/verlok)
-	 * @link 		https://github.com/verlok/lazyload
-	 *
-	 * @access 	protected
-	 * @param 	none
-	 * @return 	void
-	 */
-	protected function _lazyload()
-	{
-		in_array('lazyload', $this->scripts) OR $this->scripts[] = 'lazyload';
-		return $this;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
 	 * _select2
 	 *
 	 * Method to enqueue Select2 files with optional Bootstrap theme.
@@ -714,7 +691,7 @@ class Admin_Controller extends KB_Controller
 		$anchor = html_tag('a', array(
 			'href' => admin_url($module),
 			'class' => 'btn btn-default btn-sm btn-icon',
-		), fa_icon($icon).line('CSK_ADMIN_BTN_BACK'));
+		), fa_icon($icon).line('CSK_BTN_BACK'));
 
 		if (false === $echo)
 		{
@@ -920,7 +897,7 @@ class Settings_Controller extends Admin_Controller {
 		$this->scripts[] = 'settings';
 
 		$this->data['page_icon']  = 'sliders';
-		$this->data['page_title'] = line('CSK_ADMIN_BTN_SETTINGS');
+		$this->data['page_title'] = line('CSK_BTN_SETTINGS');
 		$this->data['page_help']  = 'https://goo.gl/H9giKR';
 	}
 
