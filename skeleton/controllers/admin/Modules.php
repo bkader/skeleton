@@ -102,9 +102,18 @@ class Modules extends Admin_Controller {
 	public function index()
 	{
 		$modules = $this->router->list_modules(true);
+		$i18n = $this->config->item('language');
 
 		foreach ($modules as $folder => &$m)
 		{
+			// Attempt to translate name and description.
+			if (isset($m['translations'][$i18n]['name'])) {
+				$m['name'] = $m['translations'][$i18n]['name'];
+			}
+			if (isset($m['translations'][$i18n]['description'])) {
+				$m['description'] = $m['translations'][$i18n]['description'];
+			}
+
 			// Add module actions.
 			$m['actions'] = array();
 
@@ -173,7 +182,7 @@ class Modules extends Admin_Controller {
 					'href'   => $m['module_uri'],
 					'target' => '_blank',
 					'rel'    => 'nofollow',
-				), line('CSK_ADMIN_BTN_WEBSITE'));
+				), line('CSK_BTN_WEBSITE'));
 			}
 			if ( ! empty($m['author_email'])) {
 				$details[] = sprintf(
