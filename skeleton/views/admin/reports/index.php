@@ -83,7 +83,7 @@ if ($reports) {
 						'delete-report_'.$report->id
 					),
 					'class' => 'btn btn-default btn-xs btn-icon report-delete',
-				), fa_icon('trash-o text-danger').line('CSK_ADMIN_BTN_DELETE')),
+				), fa_icon('trash-o text-danger').line('CSK_BTN_DELETE')),
 			'</td>',
 			
 		'</tr>';

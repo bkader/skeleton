@@ -51,7 +51,7 @@ if ( ! function_exists('label_condition'))
 	 * @param 	string 	$false 	String to output if false.
 	 * @return 	string
 	 */
-	function label_condition($cond, $true = 'lang:CSK_ADMIN_YES', $false = 'lang:CSK_ADMIN_NO')
+	function label_condition($cond, $true = 'lang:CSK_YES', $false = 'lang:CSK_NO')
 	{
 		// Prepare the empty label.
 		$label = '<span class="badge badge-%s">%s</span>';

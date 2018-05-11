@@ -405,14 +405,14 @@ if (has_action('admin_subhead') OR true === $module['has_help'] OR isset($page_h
 			echo html_tag('a', array(
 				'href'  => admin_url('settings/'.$module['folder']),
 				'class' => 'btn btn-white btn-sm btn-icon ml5',
-			), fa_icon('cog').line('CSK_ADMIN_BTN_SETTINGS'));
+			), fa_icon('cog').line('CSK_BTN_SETTINGS'));
 		}
 
 		if (isset($page_donate)) {
 			echo html_tag('a', array(
 				'href'  => $page_donate,
 				'class' => 'btn btn-olive btn-sm btn-icon ml15',
-			), fa_icon('money').line('CSK_ADMIN_BTN_DONATE'));
+			), fa_icon('money').line('CSK_BTN_DONATE'));
 		}
 
 		echo '</div>';

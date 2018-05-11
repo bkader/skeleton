@@ -65,7 +65,7 @@ form_nonce('bulk-update-plugins'),
 		'delete-selected'     => line('CSK_PLUGINS_DELETE'),
 	), 'activate-selected', 'class="form-control form-control-sm"'),
 
-	form_submit('doaction', line('CSK_ADMIN_BTN_APPLY'), 'class="btn btn-primary btn-sm ml-1"'),
+	form_submit('doaction', line('CSK_BTN_APPLY'), 'class="btn btn-primary btn-sm ml-1"'),
 
 '</div>',
 
