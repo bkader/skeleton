@@ -90,7 +90,7 @@ form_nonce('bulk-update-plugins'),
 if ($plugins) {
 	echo '<tbody>';
 	foreach ($plugins as $folder => $plugin) {
-		echo '<tr id="plugin-'.$folder.'" data-plugin="'.$folder.'">',
+		echo '<tr id="plugin-'.$folder.'" data-plugin="'.$folder.'" data-name="'.$plugin['name'].'">',
 			// Plugin selection.
 			'<td>',
 				form_label('Select '.$plugin['name'], 'checkbox-'.$folder, 'class="sr-only"'),
