@@ -126,7 +126,7 @@ $lang['CSK_PLUGINS_FILTER_INACTIVE'] = 'Désactivés (%s)';
 // Plugin install filters.
 $lang['CSK_PLUGINS_FILTER_FEATURED']    = 'Mis en avant';
 $lang['CSK_PLUGINS_FILTER_POPULAR']     = 'Populaires';
-$lang['CSK_PLUGINS_FILTER_RECOMMENDED'] = 'Recommandées';
+$lang['CSK_PLUGINS_FILTER_RECOMMENDED'] = 'Recommandés';
 $lang['CSK_PLUGINS_FILTER_NEW']         = 'Nouveaux';
 $lang['CSK_PLUGINS_SEARCH']             = 'Rechercher des plug-ins...';
 
