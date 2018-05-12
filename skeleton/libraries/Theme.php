@@ -3662,11 +3662,28 @@ if ( ! function_exists('is_admin'))
 {
 	/**
 	 * This function returns TRUE if we are on the admin controller.
+	 * @since 	1.0.0
+	 * @since 	2.0.0 	Updated because we added more contexts.
 	 * @return boolean
 	 */
 	function is_admin()
 	{
-		return (get_instance()->router->fetch_class() === 'admin');
+		$CI =& get_instance();
+		
+		global $back_contexts, $csk_modules;
+
+		$is_admin = false;
+		$controller = $CI->router->fetch_class();
+
+		if (in_array($controller, $back_contexts)
+			OR in_array($controller, $csk_modules)
+			OR 'admin' === $controller
+			OR 'admin' === $CI->uri->segment(1))
+		{
+			$is_admin = true;
+		}
+
+		return $is_admin;
 	}
 }
 
