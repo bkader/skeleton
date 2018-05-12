@@ -549,14 +549,11 @@ EOT;
 		$this->controller = $this->ci->router->fetch_class();
 		$this->method     = $this->ci->router->fetch_method();
 
-		global $back_contexts, $csk_modules;
-		if (in_array($this->controller, $back_contexts) 
-			OR in_array($this->controller, $csk_modules)
-			OR 'admin' === $this->controller 
-			OR 'admin' === $this->ci->uri->segment(1))
-		{
-			$this->_is_admin = true;
-		}
+		/**
+		 * Check for dashboard section moved to KB_Router class.
+		 * @since 	2.0.0
+		 */
+		$this->_is_admin = $this->ci->router->is_admin();
 
 		// We store the real path to theme's folder.
 		$theme_path = FCPATH.$this->_themes_dir.'/'.$this->_theme;
@@ -3664,27 +3661,12 @@ if ( ! function_exists('is_admin'))
 	/**
 	 * This function returns TRUE if we are on the admin controller.
 	 * @since 	1.0.0
-	 * @since 	2.0.0 	Updated because we added more contexts.
+	 * @since 	2.0.0 	The method was moved from Theme class to KB_Router.
 	 * @return boolean
 	 */
 	function is_admin()
 	{
-		$CI =& get_instance();
-		
-		global $back_contexts, $csk_modules;
-
-		$is_admin = false;
-		$controller = $CI->router->fetch_class();
-
-		if (in_array($controller, $back_contexts)
-			OR in_array($controller, $csk_modules)
-			OR 'admin' === $controller
-			OR 'admin' === $CI->uri->segment(1))
-		{
-			$is_admin = true;
-		}
-
-		return $is_admin;
+		return get_instance()->router->is_admin();
 	}
 }
 

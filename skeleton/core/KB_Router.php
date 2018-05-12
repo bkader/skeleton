@@ -736,6 +736,36 @@ class KB_Router extends CI_Router
 
 	// ------------------------------------------------------------------------
 
+	/**
+	 * is_admin
+	 *
+	 * Method for checking if we are on the dashboard section.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	bool
+	 */
+	public function is_admin()
+	{
+		global $back_contexts, $csk_modules;
+
+		if (in_array($this->class, $back_contexts)
+			OR in_array($this->class, $csk_modules)
+			OR 'admin' === $this->class
+			OR 'admin' === $this->uri->segment(1))
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	// ------------------------------------------------------------------------
+
     /**
      * This method attempts to locate the controller of a module if 
      * detected in the URI.
