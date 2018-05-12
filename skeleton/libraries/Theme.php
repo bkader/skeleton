@@ -2392,7 +2392,7 @@ EOT;
 		$output = '';
 
 		// Add the first attributes which is the language set in config.
-		$attrs[] = ('english' !== $this->ci->config->item('language')) ? $this->language('code') : 'en';
+		$attrs = array($this->language('code'));
 
 		// Apply any filters targeting these attributes only.
 		$attrs = (true === $this->_is_admin)
@@ -2417,11 +2417,7 @@ EOT;
 		}
 
 		// Ignore dynamically changed language.
-		if ('english' !== $this->ci->config->item('language')
-			&& 'rtl' === $this->language('direction'))
-		{
-			$output .= ' dir="rtl"';
-		}
+		('rtl' === $this->language('direction')) && $output .= ' dir="rtl"';
 
 		// Return the final output.
 		return $output;
@@ -2460,15 +2456,7 @@ EOT;
 		{
 			$classes[] = 'csk-admin';
 			$classes[] = 'ver-'.str_replace('.', '-', KB_VERSION);
-
-			/**
-			 * Ignore this if english is dynamically set.
-			 * @since 	2.0.0
-			 */
-			if ('english' !== $this->ci->config->item('language'))
-			{
-				$classes[] = 'locale-'.strtolower($this->language('locale'));
-			}
+			$classes[] = 'locale-'.strtolower($this->language('locale'));
 
 			(null !== $this->module) && $classes[] = 'csk-'.$this->module;
 		}
@@ -2481,15 +2469,7 @@ EOT;
 		// We add the module, controller and method.
 		('index' !== $this->method) && $classes[] = 'csk-'.$this->method;
 
-		/**
-		 * We ignore this if the language is dynamically set to English.
-		 * @since 	2.0.0
-		 */
-		if ('english' !== $this->ci->config->item('language')
-			&& 'rtl' === $this->language('direction'))
-		{
-			$classes[] = 'rtl';
-		}
+		('rtl' === $this->language('direction')) && $classes[] = 'rtl';
 		
 		// Merge things.
 		$this->_body_classes = array_merge($this->_body_classes, $classes);
