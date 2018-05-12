@@ -2314,11 +2314,22 @@ EOT;
 		// If any class is provided, add it.
 		(null !== $class) && array_unshift($this->_html_classes, $class);
 
+		/**
+		 * Added flipped FontAwesome.
+		 * @since 	2.0.0
+		 */
+		if ('rtl' === $this->language('direction') 
+			&& ! in_array('fa-dir-flip', $this->_html_classes))
+		{
+			$this->_html_classes[] = 'fa-dir-flip';
+		}
+
 		// We proceed only if there are some classes.
 		if ( ! empty($this->_html_classes) && is_array($this->_html_classes))
 		{
 			// We make sure classes are in an array
 			(is_array($this->_html_classes)) OR $this->_html_classes = (array) $this->_html_classes;
+
 
 			// We remove empty elements, trim spaces, and keep only unique classes.
 			$this->_html_classes = array_filter($this->_html_classes);

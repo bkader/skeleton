@@ -175,6 +175,12 @@ class Admin_Controller extends KB_Controller
 				// Are we using a right-to-left language? Add RTL files.
 				if ('rtl' === $this->lang->lang('direction'))
 				{
+					// Add RTL Font-Awesome.
+					if (in_array('font-awesome', $this->styles))
+					{
+						$this->styles[] = 'font-awesome-rtl';
+					}
+
 					// Replace Bootstrap.
 					if (false !== ($i = array_search('bootstrap', $this->styles)))
 					{
