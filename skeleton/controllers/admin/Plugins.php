@@ -129,6 +129,12 @@ class Plugins extends Admin_Controller
 						if (isset($p['translations'][$i18n]['description'])) {
 							$p['description'] = $p['translations'][$i18n]['description'];
 						}
+						if (isset($p['translations'][$i18n]['license'])) {
+							$p['license'] = $p['translations'][$i18n]['license'];
+						}
+						if (isset($p['translations'][$i18n]['author'])) {
+							$p['author'] = $p['translations'][$i18n]['author'];
+						}
 					}
 
 					if (('active' === $filter && ! $p['enabled']) 
@@ -312,6 +318,16 @@ class Plugins extends Admin_Controller
 			{
 				$plugin['description'] = $plugin['translations'][$lang]['description'];
 			}
+		}
+
+		// Add link to plugin's help and donation.
+		if ( ! empty($plugin['plugin_uri']))
+		{
+			$this->data['page_help'] = $plugin['plugin_uri'];
+		}
+		if ( ! empty($plugin['donation_uri']))
+		{
+			$this->data['page_donate'] = $plugin['donation_uri'];
 		}
 
 		$this->data['page_title'] = sprintf(line('CSK_PLUGINS_SETTINGS_NAME'), $plugin['name']);
