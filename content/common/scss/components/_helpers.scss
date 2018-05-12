@@ -48,6 +48,13 @@
 .mr15 {margin-right:15px!important}
 .mr30 {margin-right:30px!important}
 
+// Opacity.
+.op-0 { opacity: 0 !important; };
+.op-1 { opacity: 0.10 !important; };
+.op-2 { opacity: 0.25 !important; };
+.op-3 { opacity: 0.5 !important; };
+.op-4 { opacity: 0.75 !important; };
+
 // Overflow helpers;
 .of-a { overflow: auto; }
 .of-h { overflow: hidden; }
