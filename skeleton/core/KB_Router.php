@@ -478,8 +478,6 @@ class KB_Router extends CI_Router
 			return false;
 		}
 
-		$path = null;
-
 		// Locate the module first.
 		if (null === $path)
 		{
@@ -614,19 +612,25 @@ class KB_Router extends CI_Router
 			// Reserved modules.
 			global $csk_modules;
 			
+			/**
+			 * Moved out of the foreach loop for better performance.
+			 * @since 	2.0.0
+			 * @var 	array
+			 */
+			$_to_eliminate = array(
+				'.',
+				'..',
+				'.gitkeep',
+				'index.html',
+				'.htaccess',
+				'__MACOSX',
+			);
+
 			// Let's go through folders and check if there are any.
 			foreach ($this->modules_locations() as $location)
 			{
 				if ($handle = opendir($location))
-				{
-					$_to_eliminate = array(
-						'.',
-						'..',
-						'.gitkeep',
-						'index.html',
-						'.htaccess'
-					);
-					
+				{		
 					while (false !== ($file = readdir($handle)))
 					{
 						// Must be a directory and has "manifest.json".
