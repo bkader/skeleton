@@ -454,28 +454,34 @@ if (has_action('admin_subhead') OR true === $module['has_help'] OR isset($page_h
 		do_action('in_admin_footer');
 
 		/**
-		 * Footer thank you line.
+		 * Filters the "Thank you" text displayed in the dashboard footer.
 		 * @since 	1.3.3
 		 * This line can be removed/overridden using the "admin_footer_text".
 		 */
-		echo '<span class="text-muted" id="footer-thankyou">';
 		$thankyou = sprintf(line('CSK_ADMIN_FOOTER_TEXT'), 'https://goo.gl/jb4nQC');
-		/**
-		 * Filters the "Thank you" text displayed in the admin footer.
-		 * @since 	1.3.3
-		 */
-		echo apply_filters('admin_footer_text', $thankyou),
-		'</span>',
+		$thankyou = apply_filters('admin_footer_text', $thankyou);
+		if ( ! empty($thankyou))
+		{
+			echo html_tag('span', array(
+				'class' => 'text-muted',
+				'id'    => 'footer-thankyou',
+			), $thankyou);
+		}
 
 		/**
 		 * Footer version text.
 		 * @since 	1.4.0
 		 * Can be removed or overridden using the "admin_version_text" fitler.
 		 */
-		'<span class="text-muted pull-right" id="footer-upgrade">';
 		$version = sprintf(line('CSK_ADMIN_VERSION_TEXT'), KB_VERSION);
-		echo apply_filters('admin_version_text', $version),
-		'</span>';
+		$version = apply_filters('admin_version_text', $version);
+		if ( ! empty($version))
+		{
+			echo html_tag('span', array(
+				'class' => 'text-muted pull-right',
+				'id'    => 'footer-upgrade',
+			), $version);
+		}
 		?>
 	</div>
 </footer>
