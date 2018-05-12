@@ -122,8 +122,11 @@ class KB_Lang extends CI_Lang
 			&& isset($_SESSION['language']) 
 			&& in_array($_SESSION['language'], $this->config->item('languages')))
 		{
-			// Set the language and update config item.
-			$idiom = $_SESSION['language'];
+			/**
+			 * Ignore session if "English" was dynamically set.
+			 * @since 	2.0.0
+			 */
+			$idiom = ('english' === $this->config->item('language')) ? 'english' : $_SESSION['language'];
 		}
 
 		if (empty($idiom) OR ! preg_match('/^[a-z_-]+$/i', $idiom))
