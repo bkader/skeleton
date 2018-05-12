@@ -81,6 +81,7 @@ class KB_Lang extends CI_Lang
 		parent::__construct();
 
 		$this->config =& load_class('Config', 'core');
+		$this->router =& load_class('Router', 'core');
 	}
 
 	// --------------------------------------------------------------------
@@ -98,6 +99,17 @@ class KB_Lang extends CI_Lang
 	 */
 	public function load($langfile, $idiom = '', $return = false, $add_suffix = true, $alt_path = '')
 	{
+		/**
+		 * The only section of the website we language should ALWAYS be 
+		 * english is the dashboard login page.
+		 * @since 	2.0.0
+		 */
+		if (true === $this->router->is_admin() 
+			&& 'login' === $this->router->fetch_class())
+		{
+			$idiom = 'english';
+		}
+
 		if (is_array($langfile))
 		{
 			foreach ($langfile as $value)
