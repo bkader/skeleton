@@ -107,11 +107,14 @@ class Modules extends Admin_Controller {
 		foreach ($modules as $folder => &$m)
 		{
 			// Attempt to translate name and description.
-			if (isset($m['translations'][$i18n]['name'])) {
-				$m['name'] = $m['translations'][$i18n]['name'];
-			}
-			if (isset($m['translations'][$i18n]['description'])) {
-				$m['description'] = $m['translations'][$i18n]['description'];
+			if ('english' !== $i18n)
+			{
+				if (isset($m['translations'][$i18n]['name'])) {
+					$m['name'] = $m['translations'][$i18n]['name'];
+				}
+				if (isset($m['translations'][$i18n]['description'])) {
+					$m['description'] = $m['translations'][$i18n]['description'];
+				}
 			}
 
 			// Add module actions.
