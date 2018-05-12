@@ -26,9 +26,9 @@
 
 .btn-group-xs > .btn,
 .btn-xs {
-    @include font-size(11);
+    @include font-size(12);
     @include border-radius(3px);
-    padding: 3px 5px;
+    padding: 1px 5px;
     line-height: 1.5;
 }
 
@@ -37,6 +37,7 @@
     vertical-align: top;
 }
 
+.btn-group > .btn-icon,
 .btn-icon {
     padding-bottom: 0;
     padding-top: 0;
@@ -47,7 +48,7 @@
         @include border-radius(4px 0 0 4px);
         border-right: 1px solid transparent;
         font-size: inherit;
-        line-height: 34px;
+        line-height: 36px;
         margin: 0 12px 0 -12px;
         text-align: center;
         width: 36px;
@@ -55,25 +56,61 @@
 
     &.btn-xs > [class^="fa"] {
         @include border-radius(3px 0 0 3px);
-        line-height: 22px;
+        line-height: 20px;
         margin-left: -5px;
         margin-right: 5px;
         width: 24px;
     }
     &.btn-sm > [class^="fa"] {
         @include border-radius(3.2px 0 0 3.2px);
-        line-height: 28px;
+        line-height: 26px;
         margin-left: -8px;
         margin-right: 8px;
         width: 28px;
     }
     &.btn-lg > [class^="fa"] {
         @include border-radius(4.8px 0 0 4.8px);
-        line-height: 48px;
+        line-height: 46px;
         margin-left: -16px;
         margin-right: 16px;
         width: 48px;
     }
+}
+
+// Button groups with icon buttons.
+.btn-group > .btn-icon:not(:first-child) > [class^="fa"] { @include border-radius(0); }
+
+.btn-group.btn-group-xs > .btn-icon,
+.btn-group > .btn-icon.btn-xs {
+    > [class^="fa"] {
+        line-height: 20px;
+        margin-left: -5px;
+        margin-right: 5px;
+        width: 24px;
+    }
+    &:not(:first-child) > [class^="fa"] { @include border-radius(0); }
+}
+
+.btn-group.btn-group-sm > .btn-icon,
+.btn-group > .btn-icon.btn-sm {
+    > [class^="fa"] {
+        line-height: 26px;
+        margin-left: -8px;
+        margin-right: 8px;
+        width: 28px;
+    }
+    &:not(:first-child) > [class^="fa"] { @include border-radius(0); }
+}
+
+.btn-group.btn-group-lg > .btn-icon,
+.btn-group > .btn-icon.btn-lg {
+    > [class^="fa"] {
+        line-height: 46px;
+        margin-left: -16px;
+        margin-right: 16px;
+        width: 48px;
+    }
+    &:not(:first-child) > [class^="fa"] { @include border-radius(0); }
 }
 
 

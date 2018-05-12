@@ -3570,12 +3570,12 @@ body {
 
 .btn-group-xs > .btn,
 .btn-xs {
-  font-size: 11px;
-  font-size: 0.6875rem;
+  font-size: 12px;
+  font-size: 0.75rem;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
-  padding: 3px 5px;
+  padding: 1px 5px;
   line-height: 1.5;
 }
 
@@ -3584,49 +3584,102 @@ body {
   vertical-align: top;
 }
 
+.btn-group > .btn-icon,
 .btn-icon {
   padding-bottom: 0;
   padding-top: 0;
   text-align: left;
   line-height: initial;
 }
+.btn-group > .btn-icon > [class^="fa"],
 .btn-icon > [class^="fa"] {
   -webkit-border-radius: 4px 0 0 4px;
   -moz-border-radius: 4px 0 0 4px;
   border-radius: 4px 0 0 4px;
   border-right: 1px solid transparent;
   font-size: inherit;
-  line-height: 34px;
+  line-height: 36px;
   margin: 0 12px 0 -12px;
   text-align: center;
   width: 36px;
 }
+.btn-group > .btn-icon.btn-xs > [class^="fa"],
 .btn-icon.btn-xs > [class^="fa"] {
   -webkit-border-radius: 3px 0 0 3px;
   -moz-border-radius: 3px 0 0 3px;
   border-radius: 3px 0 0 3px;
-  line-height: 22px;
+  line-height: 20px;
   margin-left: -5px;
   margin-right: 5px;
   width: 24px;
 }
+.btn-group > .btn-icon.btn-sm > [class^="fa"],
 .btn-icon.btn-sm > [class^="fa"] {
   -webkit-border-radius: 3.2px 0 0 3.2px;
   -moz-border-radius: 3.2px 0 0 3.2px;
   border-radius: 3.2px 0 0 3.2px;
-  line-height: 28px;
+  line-height: 26px;
   margin-left: -8px;
   margin-right: 8px;
   width: 28px;
 }
+.btn-group > .btn-icon.btn-lg > [class^="fa"],
 .btn-icon.btn-lg > [class^="fa"] {
   -webkit-border-radius: 4.8px 0 0 4.8px;
   -moz-border-radius: 4.8px 0 0 4.8px;
   border-radius: 4.8px 0 0 4.8px;
-  line-height: 48px;
+  line-height: 46px;
   margin-left: -16px;
   margin-right: 16px;
   width: 48px;
+}
+
+.btn-group > .btn-icon:not(:first-child) > [class^="fa"] {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+}
+
+.btn-group.btn-group-xs > .btn-icon > [class^="fa"],
+.btn-group > .btn-icon.btn-xs > [class^="fa"] {
+  line-height: 20px;
+  margin-left: -5px;
+  margin-right: 5px;
+  width: 24px;
+}
+.btn-group.btn-group-xs > .btn-icon:not(:first-child) > [class^="fa"],
+.btn-group > .btn-icon.btn-xs:not(:first-child) > [class^="fa"] {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+}
+
+.btn-group.btn-group-sm > .btn-icon > [class^="fa"],
+.btn-group > .btn-icon.btn-sm > [class^="fa"] {
+  line-height: 26px;
+  margin-left: -8px;
+  margin-right: 8px;
+  width: 28px;
+}
+.btn-group.btn-group-sm > .btn-icon:not(:first-child) > [class^="fa"],
+.btn-group > .btn-icon.btn-sm:not(:first-child) > [class^="fa"] {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+}
+
+.btn-group.btn-group-lg > .btn-icon > [class^="fa"],
+.btn-group > .btn-icon.btn-lg > [class^="fa"] {
+  line-height: 46px;
+  margin-left: -16px;
+  margin-right: 16px;
+  width: 48px;
+}
+.btn-group.btn-group-lg > .btn-icon:not(:first-child) > [class^="fa"],
+.btn-group > .btn-icon.btn-lg:not(:first-child) > [class^="fa"] {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
 }
 
 select.form-control-sm:not([size]):not([multiple]),

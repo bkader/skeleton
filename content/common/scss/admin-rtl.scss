@@ -23,6 +23,33 @@ textarea {
 .pull-left { float: right; }
 .pull-right { float: left; }
 
+// Bootstrap spacers.
+.ml-0 { margin-left: initial !important; margin-right: 0 !important; }
+.ml-1 { margin-left: initial !important; margin-right: 0.25rem !important; }
+.ml-2 { margin-left: initial !important; margin-right: 0.5rem !important; }
+.ml-3 { margin-left: initial !important; margin-right: 1rem !important; }
+.ml-4 { margin-left: initial !important; margin-right: 1.5rem !important; }
+.ml-5 { margin-left: initial !important; margin-right: 3rem !important; }
+
+.mr-0 { margin-right: initial !important; margin-left: 0 !important; }
+.mr-1 { margin-right: initial !important; margin-left: 0.25rem !important; }
+.mr-2 { margin-right: initial !important; margin-left: 0.5rem !important; }
+.mr-3 { margin-right: initial !important; margin-left: 1rem !important; }
+.mr-4 { margin-right: initial !important; margin-left: 1.5rem !important; }
+.mr-5 { margin-right: initial !important; margin-left: 3rem !important; }
+
+/* Helpers */
+.ml0 { margin-left: initial !important; margin-right: 0 !important; }
+.ml5 { margin-left: initial !important; margin-right: 5px !important; }
+.ml10 { margin-left: initial !important; margin-right: 10px !important; }
+.ml15 { margin-left: initial !important; margin-right: 15px !important; }
+.ml30 { margin-left: initial !important; margin-right: 30px !important; }
+.mr0 { margin-right: initial !important; margin-right: 0 !important; }
+.mr5 { margin-right: initial !important; margin-right: 5px !important; }
+.mr10 { margin-right: initial !important; margin-right: 10px !important; }
+.mr15 { margin-right: initial !important; margin-right: 15px !important; }
+.mr30 { margin-right: initial !important; margin-right: 30px !important; }
+
 // ------------------------------------------------------------
 // Buttons.
 // ------------------------------------------------------------
@@ -35,6 +62,7 @@ textarea {
 .btn-app + .btn-group { margin-left: 0; margin-right: 10px; }
 
 // Icon buttons.
+.btn-group > .btn-icon,
 .btn-icon {
 
     // Icon.
@@ -61,6 +89,34 @@ textarea {
         margin-right: -16px;
         margin-left: 16px;
     }
+}
+
+// Button groups with icon buttons.
+.btn-group.btn-group-xs > .btn-icon,
+.btn-group > .btn-icon.btn-xs {
+    > [class^="fa"] {
+        margin-right: -5px;
+        margin-left: 5px;
+    }
+    &:not(:first-child) > [class^="fa"] { @include border-radius(0); }
+}
+
+.btn-group.btn-group-sm > .btn-icon,
+.btn-group > .btn-icon.btn-sm {
+    > [class^="fa"] {
+        margin-right: -8px;
+        margin-left: 8px;
+    }
+    &:not(:first-child) > [class^="fa"] { @include border-radius(0); }
+}
+
+.btn-group.btn-group-lg > .btn-icon,
+.btn-group > .btn-icon.btn-lg {
+    > [class^="fa"] {
+        margin-right: -16px;
+        margin-left: 16px;
+    }
+    &:not(:first-child) > [class^="fa"] { @include border-radius(0); }
 }
 
 // ------------------------------------------------------------

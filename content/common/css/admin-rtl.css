@@ -26,6 +26,117 @@ textarea {
   float: left;
 }
 
+.ml-0 {
+  margin-left: initial !important;
+  margin-right: 0 !important;
+}
+
+.ml-1 {
+  margin-left: initial !important;
+  margin-right: 0.25rem !important;
+}
+
+.ml-2 {
+  margin-left: initial !important;
+  margin-right: 0.5rem !important;
+}
+
+.ml-3 {
+  margin-left: initial !important;
+  margin-right: 1rem !important;
+}
+
+.ml-4 {
+  margin-left: initial !important;
+  margin-right: 1.5rem !important;
+}
+
+.ml-5 {
+  margin-left: initial !important;
+  margin-right: 3rem !important;
+}
+
+.mr-0 {
+  margin-right: initial !important;
+  margin-left: 0 !important;
+}
+
+.mr-1 {
+  margin-right: initial !important;
+  margin-left: 0.25rem !important;
+}
+
+.mr-2 {
+  margin-right: initial !important;
+  margin-left: 0.5rem !important;
+}
+
+.mr-3 {
+  margin-right: initial !important;
+  margin-left: 1rem !important;
+}
+
+.mr-4 {
+  margin-right: initial !important;
+  margin-left: 1.5rem !important;
+}
+
+.mr-5 {
+  margin-right: initial !important;
+  margin-left: 3rem !important;
+}
+
+/* Helpers */
+.ml0 {
+  margin-left: initial !important;
+  margin-right: 0 !important;
+}
+
+.ml5 {
+  margin-left: initial !important;
+  margin-right: 5px !important;
+}
+
+.ml10 {
+  margin-left: initial !important;
+  margin-right: 10px !important;
+}
+
+.ml15 {
+  margin-left: initial !important;
+  margin-right: 15px !important;
+}
+
+.ml30 {
+  margin-left: initial !important;
+  margin-right: 30px !important;
+}
+
+.mr0 {
+  margin-right: initial !important;
+  margin-right: 0 !important;
+}
+
+.mr5 {
+  margin-right: initial !important;
+  margin-right: 5px !important;
+}
+
+.mr10 {
+  margin-right: initial !important;
+  margin-right: 10px !important;
+}
+
+.mr15 {
+  margin-right: initial !important;
+  margin-right: 15px !important;
+}
+
+.mr30 {
+  margin-right: initial !important;
+  margin-right: 30px !important;
+}
+
 .btn-app > .badge {
   right: auto;
   left: -10px;
@@ -43,6 +154,7 @@ textarea {
   margin-right: 10px;
 }
 
+.btn-group > .btn-icon > [class^="fa"],
 .btn-icon > [class^="fa"] {
   -webkit-border-radius: 0 4px 4px 0;
   -moz-border-radius: 0 4px 4px 0;
@@ -51,6 +163,7 @@ textarea {
   border-right: none;
   margin: 0 -13px 0 12px;
 }
+.btn-group > .btn-icon.btn-xs > [class^="fa"],
 .btn-icon.btn-xs > [class^="fa"] {
   -webkit-border-radius: 0 3px 3px 0;
   -moz-border-radius: 0 3px 3px 0;
@@ -58,6 +171,7 @@ textarea {
   margin-right: -5px;
   margin-left: 5px;
 }
+.btn-group > .btn-icon.btn-sm > [class^="fa"],
 .btn-icon.btn-sm > [class^="fa"] {
   -webkit-border-radius: 0 3.2px 3.2px 0;
   -moz-border-radius: 0 3.2px 3.2px 0;
@@ -65,12 +179,49 @@ textarea {
   margin-right: -8px;
   margin-left: 8px;
 }
+.btn-group > .btn-icon.btn-lg > [class^="fa"],
 .btn-icon.btn-lg > [class^="fa"] {
   -webkit-border-radius: 0 4.8px 4.8px 0;
   -moz-border-radius: 0 4.8px 4.8px 0;
   border-radius: 0 4.8px 4.8px 0;
   margin-right: -16px;
   margin-left: 16px;
+}
+
+.btn-group.btn-group-xs > .btn-icon > [class^="fa"],
+.btn-group > .btn-icon.btn-xs > [class^="fa"] {
+  margin-right: -5px;
+  margin-left: 5px;
+}
+.btn-group.btn-group-xs > .btn-icon:not(:first-child) > [class^="fa"],
+.btn-group > .btn-icon.btn-xs:not(:first-child) > [class^="fa"] {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+}
+
+.btn-group.btn-group-sm > .btn-icon > [class^="fa"],
+.btn-group > .btn-icon.btn-sm > [class^="fa"] {
+  margin-right: -8px;
+  margin-left: 8px;
+}
+.btn-group.btn-group-sm > .btn-icon:not(:first-child) > [class^="fa"],
+.btn-group > .btn-icon.btn-sm:not(:first-child) > [class^="fa"] {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+}
+
+.btn-group.btn-group-lg > .btn-icon > [class^="fa"],
+.btn-group > .btn-icon.btn-lg > [class^="fa"] {
+  margin-right: -16px;
+  margin-left: 16px;
+}
+.btn-group.btn-group-lg > .btn-icon:not(:first-child) > [class^="fa"],
+.btn-group > .btn-icon.btn-lg:not(:first-child) > [class^="fa"] {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
 }
 
 .navbar-admin .user-menu {
