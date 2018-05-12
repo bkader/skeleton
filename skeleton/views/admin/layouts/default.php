@@ -183,7 +183,7 @@
 				'href'        => '#',
 				'class'       => 'nav-link dropdown-toggle',
 				'data-toggle' => 'dropdown',
-			), line('CSK_ADMIN_HELP')),
+			), line('CSK_BTN_HELP')),
 			'<div class="dropdown-menu">';
 
 			// Skeleton documentation.
@@ -392,26 +392,26 @@ if (has_action('admin_subhead') OR true === $module['has_help'] OR isset($page_h
 				'href'   => (true === $module['contexts']['help'] ? admin_url('help/'.$module['folder']) : $module['contexts']['help']),
 				'target' => '_blank',
 				'class'  => 'btn btn-white btn-sm btn-icon',
-			), fa_icon('question-circle').line('help'));
+			), fa_icon('question-circle').line('CSK_BTN_HELP'));
 		} elseif (isset($page_help)) {
 			echo html_tag('a', array(
 				'href'   => $page_help,
 				'target' => '_blank',
 				'class'  => 'btn btn-white btn-sm btn-icon',
-			), fa_icon('question-circle').line('CSK_ADMIN_HELP'));
+			), fa_icon('question-circle').line('CSK_BTN_HELP'));
 		}
 
 		if (true === $module['has_settings']) {
 			echo html_tag('a', array(
 				'href'  => admin_url('settings/'.$module['folder']),
-				'class' => 'btn btn-white btn-sm btn-icon ml5',
+				'class' => 'btn btn-white btn-sm btn-icon ml-2',
 			), fa_icon('cog').line('CSK_BTN_SETTINGS'));
 		}
 
 		if (isset($page_donate)) {
 			echo html_tag('a', array(
 				'href'  => $page_donate,
-				'class' => 'btn btn-olive btn-sm btn-icon ml15',
+				'class' => 'btn btn-olive btn-sm btn-icon ml-2',
 			), fa_icon('money').line('CSK_BTN_DONATE'));
 		}
 
