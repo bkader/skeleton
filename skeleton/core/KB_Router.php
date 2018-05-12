@@ -753,15 +753,17 @@ class KB_Router extends CI_Router
 	{
 		global $back_contexts, $csk_modules;
 
+		$is_admin = false;
+
 		if (in_array($this->class, $back_contexts)
 			OR in_array($this->class, $csk_modules)
 			OR 'admin' === $this->class
 			OR 'admin' === $this->uri->segment(1))
 		{
-			return true;
+			$is_admin = true;
 		}
 
-		return false;
+		return (true === $is_admin && 'users' !== $this->class);
 	}
 
 	// ------------------------------------------------------------------------
