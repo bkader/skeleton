@@ -118,6 +118,14 @@ class Users extends KB_Controller {
 				'bootstrap'    => $this->theme->common_url('css/bootstrap.min.css'),
 				'admin'        => $this->theme->common_url('css/admin.min.css'),
 			);
+
+			// RTL languages.
+			if ('rtl' === $this->lang->lang('direction'))
+			{
+				$default_styles['bootstrap'] = $this->theme->common_url('css/bootstrap-rtl.min.css');
+				$default_styles['admin-rtl'] = $this->theme->common_url('css/admin-rtl.min.css');
+			}
+
 			$login_styles = apply_filters('login_styles', array());
 			if (empty($login_styles) OR ! is_array($login_styles)) {
 				$login_styles = $default_styles;
