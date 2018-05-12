@@ -96,7 +96,7 @@ EOT;
 		$this->data['count_themes'] = count($this->theme->get_themes());
 
 		// Count all plugins.
-		$this->data['count_plugins'] = count($this->kbcore->plugins->get_plugins());
+		$this->data['count_plugins'] = count($this->kbcore->plugins->list_plugins());
 
 		// Count all languages.
 		$this->data['count_languages'] = count($this->config->item('languages'));
