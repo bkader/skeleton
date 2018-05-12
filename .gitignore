@@ -55,6 +55,7 @@ content/modules/*
 # if you want your plugins to be pushed to your repo.
 !content/plugins/
 content/plugins/*
+!content/plugins/index.html
 !content/plugins/cache-assets/*
 !content/plugins/extra-profile-fields/*
 !content/plugins/helloworld/*
