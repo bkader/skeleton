@@ -575,7 +575,6 @@ $config['modules_locations'] = array(
 	 * NOTE: Modules' assets cannot be loaded from within those directories.
 	 */
 	APPPATH.'modules/',
-	KBPATH.'modules/',
 );
 
 /* End of file config.php */

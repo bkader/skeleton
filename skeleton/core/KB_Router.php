@@ -150,11 +150,11 @@ class KB_Router extends CI_Router
 
 			if (null === $this->_locations)
 			{
-				$this->_locations = array(APPPATH.'modules/', KBPATH.'modules/');
+				$this->_locations = array(APPPATH.'modules/');
 			}
-			elseif ( ! in_array(KBPATH.'modules/', $this->_locations))
+			elseif ( ! in_array(APPPATH.'modules/', $this->_locations))
 			{
-				$this->_locations[] = KBPATH.'modules/';
+				$this->_locations[] = APPPATH.'modules/';
 			}
 			
 			foreach ($this->_locations as $i => &$location)
