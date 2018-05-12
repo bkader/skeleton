@@ -133,7 +133,6 @@ $lang['CSK_PLUGINS_FILTER_NEW']         = 'New';
 $lang['CSK_PLUGINS_SEARCH']             = 'Search plugins...';
 
 // Plugin details with links.
-$lang['CSK_PLUGINS_AUTHOR_URI']   = '<a href="%1$s" target="_blank" rel="nofollow">Website</a>';
 $lang['CSK_PLUGINS_LICENSE_URI']  = '<a href="%2$s" target="_blank" rel="nofollow">%1$s</a>';
 $lang['CSK_PLUGINS_AUTHOR_URI']   = '<a href="%2$s" target="_blank" rel="nofollow">%1$s</a>';
 $lang['CSK_PLUGINS_AUTHOR_EMAIL_URI'] = '<a href="mailto:%1$s?subject=%2$s" target="_blank" rel="nofollow">Support</a>';
