@@ -131,6 +131,23 @@ if ( ! function_exists('html_tag'))
 			"menuitem",
 		);
 
+		/**
+		 * Add a custom tag so we can define language direction.
+		 * @since	 2.0.0
+		 */
+		if ('rtl' === get_instance()->lang->lang('direction') 
+			&& ('input' === $tag OR ! in_array($tag, $void_elements)))
+		{
+			if (is_array($attr))
+			{
+				isset($attr['dir']) OR $attr['dir'] = 'rtl';
+			}
+			elseif (is_string($attr) && false === stripos($attr, 'dir="'))
+			{
+				$attr .= ' dir="rtl"';
+			}
+		}
+
 		// construct the HTML
 		$html = '<'.$tag;
 		$html .= ( ! empty($attr)) ? (is_array($attr) ? _stringify_attributes($attr) : ' '.$attr) : '';
