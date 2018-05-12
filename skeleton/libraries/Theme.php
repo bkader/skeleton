@@ -1252,7 +1252,8 @@ EOT;
 		// We add "Skeleton" to the end only on the dashboard.
 		if (true === $this->_is_admin)
 		{
-			$this->_title .= apply_filters('skeleton_title', ' &lsaquo; Skeleton');
+			$skeleton = line('CSK_SKELETON');
+			$this->_title .= apply_filters('skeleton_title', " &lsaquo; {$skeleton}");
 
 			// We add site name to the end.
 			if (null !== $site_name = $this->ci->config->item('site_name'))
@@ -2391,7 +2392,7 @@ EOT;
 		$output = '';
 
 		// Add the first attributes which is the language set in config.
-		$attrs = array($this->language('code'));
+		$attrs[] = ('english' !== $this->ci->config->item('language')) ? $this->language('code') : 'en';
 
 		// Apply any filters targeting these attributes only.
 		$attrs = (true === $this->_is_admin)
@@ -2415,7 +2416,9 @@ EOT;
 			$output .= ' lang="'.implode(' ', $attrs).'"';
 		}
 
-		if ('rtl' === $this->language('direction'))
+		// Ignore dynamically changed language.
+		if ('english' !== $this->ci->config->item('language')
+			&& 'rtl' === $this->language('direction'))
 		{
 			$output .= ' dir="rtl"';
 		}
@@ -2457,7 +2460,15 @@ EOT;
 		{
 			$classes[] = 'csk-admin';
 			$classes[] = 'ver-'.str_replace('.', '-', KB_VERSION);
-			$classes[] = 'locale-'.strtolower($this->language('locale'));
+
+			/**
+			 * Ignore this if english is dynamically set.
+			 * @since 	2.0.0
+			 */
+			if ('english' !== $this->ci->config->item('language'))
+			{
+				$classes[] = 'locale-'.strtolower($this->language('locale'));
+			}
 
 			(null !== $this->module) && $classes[] = 'csk-'.$this->module;
 		}
@@ -2470,8 +2481,15 @@ EOT;
 		// We add the module, controller and method.
 		('index' !== $this->method) && $classes[] = 'csk-'.$this->method;
 
-		('rtl' === $this->language('direction')) && $classes[] = 'rtl';
-		// We add the current language.
+		/**
+		 * We ignore this if the language is dynamically set to English.
+		 * @since 	2.0.0
+		 */
+		if ('english' !== $this->ci->config->item('language')
+			&& 'rtl' === $this->language('direction'))
+		{
+			$classes[] = 'rtl';
+		}
 		
 		// Merge things.
 		$this->_body_classes = array_merge($this->_body_classes, $classes);
