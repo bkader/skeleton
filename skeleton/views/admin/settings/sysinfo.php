@@ -79,14 +79,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 						<td><?php
 						switch ($p_val) {
 							case '1':
-								_e('CSK_ADMIN_ON');
+								_e('CSK_ON');
 								break;
 							case '0':
-								_e('CSK_ADMIN_OFF');
+								_e('CSK_OFF');
 								break;
 							case null:
 							case empty($p_val):
-								_e('CSK_ADMIN_NONE');
+								_e('CSK_NONE');
 								break;
 							default:
 								echo $p_val;
