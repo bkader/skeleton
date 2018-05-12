@@ -71,6 +71,7 @@ class Plugins extends Admin_Controller
 
 		// Add our head string.
 		add_filter('admin_head', array($this, '_admin_head'));
+		$this->_jquery_sprintf();
 		$this->scripts[] = 'plugins';
 
 		// Page icon, title and help URL.
@@ -101,35 +102,12 @@ class Plugins extends Admin_Controller
 
 		if ($this->form_validation->run() == false)
 		{
-			// Get plugins stored in database and plugins folder.
-			$db_plugins     = $this->kbcore->options->get('plugins');
-			$folder_plugins = $this->kbcore->plugins->get_plugins();
-
-			// If the options is not set, we create it.
-			if (false === $db_plugins)
-			{
-				$this->kbcore->options->create(array(
-					'name'  => 'plugins',
-					'value' => $folder_plugins,
-					'tab'   => 'plugin',
-				));
-
-				// Then we get it.
-				$db_plugins = $this->kbcore->options->get('plugins');
-			}
-			// Was plugins folder updated for some reason?
-			elseif ($folder_plugins <> $db_plugins->value)
-			{
-				// we make sure to update in databae.
-				$db_plugins->set('value', $folder_plugins);
-				$db_plugins->save();
-			}
-
 			// Let's get our plugins.
-			$plugins = $db_plugins->value;
+			$plugins = $this->kbcore->plugins->list_plugins(true);
 
 			// Filter displayed plugins.
 			$filter = $this->input->get('status');
+
 			if ( ! in_array($filter, array('active', 'inactive')))
 			{
 				$filter = null;
@@ -138,8 +116,21 @@ class Plugins extends Admin_Controller
 			// Add action buttons.
 			if ($plugins)
 			{
+				$i18n = $this->config->item('language');
+
 				foreach ($plugins as $folder => &$p)
 				{
+					// Attempt to translate name and description.
+					if ('english' !== $i18n)
+					{
+						if (isset($p['translations'][$i18n]['name'])) {
+							$p['name'] = $p['translations'][$i18n]['name'];
+						}
+						if (isset($p['translations'][$i18n]['description'])) {
+							$p['description'] = $p['translations'][$i18n]['description'];
+						}
+					}
+
 					if (('active' === $filter && ! $p['enabled']) 
 						OR ('inactive' === $filter && $p['enabled']))
 					{
@@ -440,7 +431,11 @@ class Plugins extends Admin_Controller
 	 */
 	public function _admin_head($output)
 	{
-		$lines = array('delete' => line('CSK_PLUGINS_CONFIRM_DELETE'));
+		$lines = array(
+			'activate'   => line('CSK_PLUGINS_CONFIRM_ACTIVATE'),
+			'deactivate' => line('CSK_PLUGINS_CONFIRM_DEACTIVATE'),
+			'delete'     => line('CSK_PLUGINS_CONFIRM_DELETE'),
+		);
 		$output .= '<script type="text/javascript">';
 		$output .= 'csk.i18n = csk.i18n || {};';
 		$output .= ' csk.i18n.plugins = '.json_encode($lines).';';
@@ -501,7 +496,7 @@ class Plugins extends Admin_Controller
 			// Main page.
 			default:
 				add_action('admin_subhead', function() {
-					$folder_plugins = $this->kbcore->plugins->get_plugins();
+					$folder_plugins = $this->kbcore->plugins->list_plugins();
 					$active_plugins = $this->kbcore->options->get('active_plugins');
 					$filter         = $this->input->get('status');
 
@@ -516,7 +511,7 @@ class Plugins extends Admin_Controller
 					), fa_icon('upload').line('CSK_PLUGINS_ADD')),
 
 					// Filters toolbar.
-					'<div class="btn-group ml15" role="group">',
+					'<div class="btn-group ml-3" role="group">',
 
 						// All plugins.
 						html_tag('a', array(

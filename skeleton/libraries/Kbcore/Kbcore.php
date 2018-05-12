@@ -154,9 +154,6 @@ class Kbcore extends CI_Driver_Library
 		// Load main language file.
 		$this->ci->load->language('csk_main');
 
-		// Initialize plugins if plugins system is enabled.
-		$this->plugins->load_plugins();
-
 		log_message('info', 'Kbcore Class Initialized');
 	}
 

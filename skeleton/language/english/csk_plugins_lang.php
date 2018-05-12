@@ -73,7 +73,9 @@ $lang['CSK_PLUGINS_UPLOAD']     = 'Upload Plugin';
 $lang['CSK_PLUGINS_UPLOAD_TIP'] = 'If you have a plugin in a .zip format, you may install it by uploading it here.';
 
 // Confirmation messages.
-$lang['CSK_PLUGINS_CONFIRM_DELETE'] = 'Are you sure you want to delete this plugin and its data?';
+$lang['CSK_PLUGINS_CONFIRM_ACTIVATE']   = 'Are you sure you want to activate %s plugin?';
+$lang['CSK_PLUGINS_CONFIRM_DEACTIVATE'] = 'Are you sure you want to deactivate %s plugin?';
+$lang['CSK_PLUGINS_CONFIRM_DELETE']     = 'Are you sure you want to delete %s plugin and its data?';
 
 // Success messages.
 $lang['CSK_PLUGINS_SUCCESS_ACTIVATE']   = 'Plugin successfully activated.';

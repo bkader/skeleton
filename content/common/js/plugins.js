@@ -47,7 +47,7 @@
                 return false;
             }
 
-            csk.ui.confirm(csk.i18n.plugins.delete, function () {
+            csk.ui.confirm($.sprintf(csk.i18n.plugins[action], name), function () {
                 csk.ajax.request(href, {
                     type: "POST",
                     data: {action: action + "-plugin_" + plugin},

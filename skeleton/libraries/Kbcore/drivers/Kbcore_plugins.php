@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://goo.gl/wGXHO9
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -48,7 +48,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  * @version 	2.0.0
  */
 
@@ -58,13 +58,20 @@ class Kbcore_plugins extends CI_Driver
 	 * Holds the path where plugins are located.
 	 * @var string
 	 */
-	private $_plugins_dir;
+	protected $_plugins_dir;
 
 	/**
 	 * Array of all available plugins.
 	 * @var array
 	 */
-	private $_plugins;
+	protected $_plugins;
+
+	/**
+	 * Array of all plugins and their details.
+	 * @since 	2.0.0
+	 * @var 	array
+	 */
+	protected $_plugins_details = array();
 
 	/**
 	 * Holds the array of active plugins.
@@ -73,43 +80,25 @@ class Kbcore_plugins extends CI_Driver
 	private $_active_plugins;
 
 	/**
-	 * Array of plugin's headers to retrieve.
-	 * @since 	1.3.4
-	 * @var 	array
-	 */
-	private $_plugin_headers = array(
-		'Plugin Name',
-		'Plugin URI',
-		'Description',
-		'Version',
-		'License',
-		'License URI',
-		'Author',
-		'Author URI',
-		'Author Email',
-		'Tags',
-		'Language Folder',
-		'Language Index',
-	);
-
-	/**
 	 * Array of plugins default headers.
 	 * @since 	1.3.4
+	 * @since 	2.0.0 	Fall-back to manifest.json for better performance.
 	 * @var 	array
 	 */
-	private $_default_headers = array(
-		'name',
-		'plugin_uri',
-		'description',
-		'version',
-		'license',
-		'license_uri',
-		'author',
-		'author_uri',
-		'author_email',
-		'tags',
-		'language_folder',
-		'language_index',
+	private $_headers = array(
+		'name'            => null,
+		'plugin_uri'      => null,
+		'description'     => null,
+		'version'         => null,
+		'license'         => null,
+		'license_uri'     => null,
+		'author'          => null,
+		'author_uri'      => null,
+		'author_email'    => null,
+		'tags'            => null,
+		'language_folder' => null,
+		'language_index'  => null,
+		'translations'    => array(),
 	);
 
 	// --------------------------------------------------------------------
@@ -121,10 +110,40 @@ class Kbcore_plugins extends CI_Driver
 	 */
 	public function initialize()
 	{
-		// Always keep the path to plugins directory.
-		$this->_plugins_dir = FCPATH.(config_item('plugins_dir') ?: 'content/plugins/');
-
 		log_message('info', 'Kbcore_plugins Class Initialize');
+
+		// Register the action after controller constructor.
+		add_action('post_controller_constructor', array($this, '_load_plugins'));
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * plugins_dir
+	 *
+	 * Method for returning the full path to modules directory.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	string 	$uri 	String to append to uri.
+	 * @return 	string
+	 */
+	public function plugins_dir($uri = '')
+	{
+		if ( ! isset($this->_plugins_dir))
+		{
+			$plugins_dir = $this->ci->config->item('plugins_dir');
+			$plugins_dir OR $plugins_dir = 'content/plugins/';
+			$this->_plugins_dir = rtrim(str_replace('\\', '/', FCPATH.$plugins_dir), '/').'/';
+		}
+
+		// Provided a $uri? Format it first.
+		empty($uri) OR $uri = ltrim(str_replace('\\', '/', $uri), '/');
+
+		return $this->_plugins_dir.$uri;
 	}
 
 	// ------------------------------------------------------------------------
@@ -135,15 +154,65 @@ class Kbcore_plugins extends CI_Driver
 	 * @param 	bool 	$details Whether to get details
 	 * @return 	array
 	 */
-	public function get_plugins($details = true)
+	public function list_plugins($details = true)
 	{
 		// Not cached? Cache them first.
 		if ( ! isset($this->_plugins))
 		{
-			$this->_plugins = array_filter($this->_fetch_plugins_dir($details));
+			$this->_plugins = array();
+
+			$plugins_dir = $this->plugins_dir();
+
+			if (false !== ($handle = opendir($plugins_dir)))
+			{
+				// Files and directories to ignore.
+				$_to_eliminate = array(
+					'.',
+					'..',
+					'.gitkeep',
+					'index.html',
+					'.htaccess',
+					'__MACOSX',
+				);
+
+				while (false !== ($file = readdir($handle)))
+				{
+					if ( ! in_array($file, $_to_eliminate) // Ignore some files.
+						&& is_dir($plugins_dir.$file) // Valid directory.
+						&& is_file($plugins_dir.$file.'/'.$file.'.php') // Plugin main file
+						&& is_file($plugins_dir.$file.'/manifest.json')) // manifest.json file.
+					{
+						$this->_plugins[$file] = rtrim(str_replace('\\', '/', $plugins_dir.$file), '/').'/';
+					}
+				}
+			}
 		}
 
-		return $this->_plugins;
+		// Alphabetically order plugins.
+		ksort($this->_plugins);
+
+		$return = $this->_plugins;
+
+		if (true === $details)
+		{
+			$_plugins_details = array();
+
+			foreach ($this->_plugins as $folder => $path)
+			{
+				if (isset($this->_plugins_details[$folder]))
+				{
+					$_plugins_details[$folder] = $this->_plugins_details[$folder];
+				}
+				elseif (false !== ($details = $this->plugin_details($folder, $path)))
+				{
+					$_plugins_details[$folder] = $details;
+				}
+			}
+
+			empty($_plugins_details) OR $return = $_plugins_details;
+		}
+
+		return $return;
 	}
 
 	// ------------------------------------------------------------------------
@@ -174,7 +243,7 @@ class Kbcore_plugins extends CI_Driver
 	 */
 	public function get_plugin($name)
 	{
-		$plugins = $this->get_plugins();
+		$plugins = $this->list_plugins();
 		return (isset($plugins[$name])) ? $plugins[$name] : false;
 	}
 
@@ -185,125 +254,69 @@ class Kbcore_plugins extends CI_Driver
 	 *
 	 * @since 	1.0.0
 	 * @since 	1.3.4 	Added a property for whether to check existence.
+	 * @since 	2.0.0 	Fall-back to "manifest.json" for better performance.
 	 * 
 	 * @access 	public
-	 * @param 	string 	$name 	the plugin's name.
-	 * @param 	bool 	$check 	Whether to check existence or not.
+	 * @param 	string 	$folder 	the plugin's name.
+	 * @param 	string 	$path 	Path to plugin's folder.
 	 * @return 	array if found, else false.
 	 */
-	public function get_plugin_info($name, $check = true)
+	public function plugin_details($folder, $path = null)
 	{
-		// Do we need to check exists?
-		if (true === $check && false === $this->_is_valid($name))
+		if (empty($folder))
 		{
 			return false;
 		}
 
-		// We grab plugin's file to read its data.
-		$plugin_path = $this->plugins_path($name);
-		$plugin_file = $plugin_path.DS.$name.'.php';
-		if (true !== is_file($plugin_file))
+		// Prepare path to plugin first.
+		if (null === $path && isset($this->_plugins[$folder]))
+		{
+			$path = $this->_plugins[$folder];
+		}
+		elseif (null === $path && is_dir($dir = $this->plugins_dir($folder.'/')))
+		{
+			$path = $dir;
+			unset($dir);
+		}
+
+		$plugin_path = $path;
+		$manifest_file = $plugin_path.'manifest.json';
+
+		// Second check.
+		if (null === $plugin_path OR ! is_file($manifest_file))
 		{
 			return false;
 		}
 
-		// Load our custom file helper if not loaded.
-		(function_exists('get_file_data')) OR $this->ci->load->helper('file');
+		$content = file_get_contents($manifest_file);
+		$headers = json_decode($content, true);
 
-		// Second check function existence just in case.
-		if ( ! function_exists('get_file_data'))
+		// Make sure a good array is provided.
+		if ( ! is_array($headers))
 		{
 			return false;
 		}
 
-		// Get plugin headers.
-		$plugin_headers = get_file_data($plugin_file, $this->_plugin_headers);
+		$headers = array_replace_recursive($this->_headers, $headers);
 
-		// Not header? Nothing to do.
-		if (empty(array_filter($plugin_headers)))
+		// Format license.
+		if (false !== stripos($headers['license'], 'mit') && empty($heades['license_uri']))
 		{
-			return false;
+			$headers['license_uri'] = 'http://opensource.org/licenses/MIT';
 		}
 
-		// We now prepare our final output.
-		$headers = array_fill_keys($this->_default_headers, false);
-		foreach ($plugin_headers as $index => $value)
-		{
-			$headers[$this->_default_headers[$index]] = $value;
-		}
-
-		// We add extra details about the plugin.
-		$headers['folder']       = $name;
+		// Add some useful stuff.
+		$headers['enabled']      = $this->is_enabled($folder);
+		$headers['has_settings'] = has_filter('plugin_settings_'.$folder);
+		$headers['folder']       = $folder;
 		$headers['full_path']    = $plugin_path;
-		$headers['enabled']      = $this->is_enabled($name);
-		$headers['has_settings'] = has_filter('plugin_settings_'.$name);
 
-		// The language folder not provided? Use default one.
-		(empty($headers['language_folder'])) && $headers['language_folder'] = 'language';
+		// Send default language folder and index.
+		empty($headers['language_folder']) && $headers['language_folder'] = 'language';
+		empty($headers['language_index']) && $headers['language_index'] = $folder;
 
-		// Set up plugin language index.
-		(empty($headers['language_index'])) && $headers['language_index'] = $name;
-
-		/**
-		 * We translate plugin's name and description only if it is not activated,
-		 * just to avoid loading language files again and again.
-		 */
-		if (true !== $this->is_enabled($name))
-		{
-			// Path to languages files and make sure it's found.
-			$lang_path = $this->plugins_path($name.'/'.$headers['language_folder']);
-			if (false === $lang_path)
-			{
-				return $headers;
-			}
-
-			// We first load the English translation but check if first.
-			$english = $lang_path.DS.'english.php';
-			if (true !== is_file($english))
-			{
-				return $headers;
-			}
-
-			// Include the language file and make sure the $lang array is found.
-			require_once($english);
-			if ( ! isset($lang))
-			{
-				return $headers;
-			}
-
-			// Prepare default description and name if found.
-			if (isset($lang['plugin_name']))
-			{
-				$headers['name'] = $lang['plugin_name'];
-			}
-			if (isset($lang['plugin_description']))
-			{
-				$headers['description'] = $lang['plugin_description'];
-			}
-			unset($lang);
-
-			// Now we see if we are using a different language.
-			$current = $this->ci->config->item('language');
-			if ('english' !== $current && false !== is_file($lang_path.DS.$current.'.php'))
-			{
-				require_once($lang_path.DS.$current.'.php');
-
-				// We translate both name and description if found in $lang array.
-				if (isset($lang) && isset($lang['plugin_name']))
-				{
-					$headers['name'] = $lang['plugin_name'];
-				}
-				if (isset($lang) && isset($lang['plugin_description']))
-				{
-					$headers['description'] = $lang['plugin_description'];
-				}
-				unset($lang);
-			}
-
-			return $headers;
-		}
-
-		// We now return the final output.
+		// Cache everything before returning.
+		$this->_plugins_details[$folder] = $headers;
 		return $headers;
 	}
 
@@ -317,7 +330,7 @@ class Kbcore_plugins extends CI_Driver
 	 */
 	public function activate($name)
 	{
-		$plugins        = $this->get_plugins();
+		$plugins        = $this->list_plugins();
 		$active_plugins = $this->get_active_plugins();
 
 		if (is_array($name))
@@ -356,7 +369,7 @@ class Kbcore_plugins extends CI_Driver
 	 */
 	public function deactivate($name)
 	{
-		$plugins        = $this->get_plugins();
+		$plugins        = $this->list_plugins();
 		$active_plugins = $this->get_active_plugins();
 
 		if (is_array($name))
@@ -405,7 +418,7 @@ class Kbcore_plugins extends CI_Driver
 	public function delete($name)
 	{
 		// Make sure the plugins exists.
-		$plugins = $this->get_plugins(false);
+		$plugins = $this->list_plugins(false);
 		$active_plugins = $this->get_active_plugins();
 		function_exists('directory_delete') OR $this->ci->load->helper('directory');
 
@@ -447,24 +460,27 @@ class Kbcore_plugins extends CI_Driver
 	 * @access 	public
 	 * @return 	void
 	 */
-	public function load_plugins()
+	public function _load_plugins()
 	{
 		// Get the list of active plugins.
 		$plugins = $this->get_active_plugins();
 
 		// Lopp through all plugins.
-		foreach ($plugins as $plugin)
+		if ( ! empty($plugins))
 		{
-			if (false !== $file = $this->plugins_path("{$plugin}/{$plugin}.php"))
+			foreach ($plugins as $folder)
 			{
-				// Include their main file if found.
-				include_once($file);
-				
-				// Get details so we can load their translations.
-				$this->_load_plugin_language($plugin);
+				if (false !== ($file = $this->plugins_dir("{$folder}/{$folder}.php")))
+				{
+					// Include their main file if found.
+					require_once($file);
+					
+					// Get details so we can load their translations.
+					$this->_load_plugin_language($folder);
 
-				// Do the action related to each plugin.
-				do_action('plugin_install_'.$plugin);
+					// Do the action related to each plugin.
+					do_action('plugin_install_'.$folder);
+				}
 			}
 		}
 	}
@@ -477,104 +493,59 @@ class Kbcore_plugins extends CI_Driver
 	 * @since 	1.3.4
 	 * 
 	 * @access 	private
-	 * @param 	string 	$name 	The plugin's name (folder).
+	 * @param 	string 	$folder 	The plugin's name (folder).
 	 * @return 	void
 	 */
-	private function _load_plugin_language($name)
+	private function _load_plugin_language($folder)
 	{
-		// Retrieve plugin's details.
-		$details = $this->get_plugin_info($name);
+		if ( ! isset($this->_plugins_details[$folder]))
+		{
+			$this->_plugins_details[$folder] = $this->plugin_details($folder);
+		}
 
-		// Prepare path to languages fiels.
-		$lang_path = $details['full_path'].DS.$details['language_folder'].DS;
-
-		// See if we have the English version and skip if it's not found.
-		$english   = $lang_path.'english.php';
-		if (true !== is_file($english))
+		// Get details make sure they are valid.
+		if (false === ($details = $this->_plugins_details[$folder]))
 		{
 			return;
 		}
 
-		// Include plugin english translation first.
+		// Make sure the language folder exists.
+		$lang_path = rtrim(str_replace('\\', '/', $details['full_path'].$details['language_folder']), '/').'/';
+		if (true !== is_dir($lang_path))
+		{
+			return;
+		}
+
+		/**
+		 * "English" is required as the first language. It will be used as a
+		 * fall-back language if other languages cannot be found;
+		 */
+		if (false === is_file($english = $lang_path.'english.php'))
+		{
+			return;
+		}
+
+		// Include plugin "English" translation first.
 		require_once($english);
-		$full_lang = (isset($lang)) ? $lang : array();
+		$lines = (isset($lang)) ? $lang : array();
 		unset($lang);
 
-		// Using a different language?
-		$current = $this->ci->config->item('language');
-		if ('english' !== $current && false !== is_file($lang_path.$current.'.php'))
+		// Using a different language? Make sure it's found.
+		$language = $this->ci->config->item('language');
+		if ('english' !== $language 
+			&& false !== is_file($lang_path.$language.'.php'))
 		{
-			require_once($lang_path.$current.'.php');
-			if (isset($lang))
-			{
-				$full_lang = array_replace_recursive($full_lang, $lang);
-			}
+			// Load the file and merge things if found.
+			require_once($lang_path.$language.'.php');
+			isset($lang) && $lines = array_replace_recursive($lines, $lang);
 		}
 
-		// We merge arrays.
-		if ( ! empty($full_lang))
+		// We add plugin's language lines.
+		if ( ! empty($lines))
 		{
-			$this->ci->lang->language[$details['language_index']] = $full_lang;
+			$index = isset($details['language_index']) ? $details['language_index'] : $folder;
+			$this->ci->lang->language[$index] = $lines;
 		}
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * List all plugins found inside plugins folder.
-	 * @access 	public
-	 * @param 	bool 	$details 	whether to retrieve details or not.
-	 * @return 	array
-	 */
-	public function _fetch_plugins_dir($details = true)
-	{
-		// Prepare empty array of plugins.
-		$plugins = array();
-
-		// Let's go through folders and check if there are any.
-		if ($handle = opendir($this->_plugins_dir))
-		{
-			$_to_eliminate = array(
-				'.',
-				'..',
-				'index.html',
-				'.htaccess',
-				'__MACOSX',
-			);
-
-			while (false !== ($file = readdir($handle)))
-			{
-				if ( ! in_array($file, $_to_eliminate) && is_dir($this->_plugins_dir.$file))
-				{
-					$plugins[] = $file;
-				}
-			}
-		}
-
-		// Sort plugins alphabetically.
-		ksort($plugins);
-
-		// No details needed?
-		if ($details === false)
-		{
-			return $plugins;
-		}
-
-		// If there are folders, we get plug-ins details.
-		if ( ! empty($plugins))
-		{
-			foreach ($plugins as $key => $plugin)
-			{
-				if ($this->_is_valid($plugin))
-				{
-					$plugins[$plugin] = $this->get_plugin_info($plugin, false);
-				}
-				unset($plugins[$key]);
-			}
-		}
-
-		// Return the result.
-		return $plugins;
 	}
 
 	// ------------------------------------------------------------------------
