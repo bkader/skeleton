@@ -31,6 +31,8 @@ application/controllers/Test.php
 content/captcha/*
 !content/captcha/index.html
 
+content/cache-assets/*
+
 # Ignore all uploaded files.
 !content/uploads/
 content/uploads/*
