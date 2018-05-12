@@ -449,6 +449,7 @@ class KB_Router extends CI_Router
 	 *
 	 * @since 	1.0.0
 	 * @since 	1.4.0 	Rewritten for better code.
+	 * @since 	2.0.0 	Added a little check for module.
 	 * 
 	 * @access 	public
 	 * @param 	string 	$module 	Module name.
@@ -456,6 +457,8 @@ class KB_Router extends CI_Router
 	 */
 	public function module_path($module = null)
 	{
+		empty($module) && $module = $this->module;
+
 		$modules = isset($this->_modules)
 			? $this->_modules
 			: $this->list_modules();
