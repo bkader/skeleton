@@ -302,6 +302,18 @@ class Plugins extends Admin_Controller
 			exit;
 		}
 
+		if ('english' !== ($lang = $this->config->item('language')))
+		{
+			if (isset($plugin['translations'][$lang]['name']))
+			{
+				$plugin['name'] = $plugin['translations'][$lang]['name'];
+			}
+			if (isset($plugin['translations'][$lang]['description']))
+			{
+				$plugin['description'] = $plugin['translations'][$lang]['description'];
+			}
+		}
+
 		$this->data['page_title'] = sprintf(line('CSK_PLUGINS_SETTINGS_NAME'), $plugin['name']);
 		$this->data['plugin']     = $plugin;
 
