@@ -1,4 +1,4 @@
-<?php
+	<?php
 /**
  * CodeIgniter Skeleton
  *
@@ -152,6 +152,17 @@ class Ajax extends AJAX_Controller {
 		{
 			$this->response->header = self::HTTP_NOT_ACCEPTABLE;
 			$this->response->message = line('CSK_ERROR_NONCE_URL');
+			return;
+		}
+
+		// Make sure to lower the name.
+		ctype_lower($name) OR $name = strtolower($name);
+
+		// We cannot touch "English" language.
+		if ('english' === $name && 'make_default' !== $action)
+		{
+			$this->response->header = self::HTTP_NOT_ACCEPTABLE;
+			$this->response->message = line('CSK_LANGUAGES_ERROR_ENGLISH_REQUIRED');
 			return;
 		}
 

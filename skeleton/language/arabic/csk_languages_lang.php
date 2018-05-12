@@ -82,7 +82,7 @@ $lang['CSK_LANGUAGES_SUCCESS_DEFAULT'] = 'تم تغيير اللغة الافت�
 $lang['CSK_LANGUAGES_ERROR_ENABLE']           = 'تعذر تفعيل اللغة.';
 $lang['CSK_LANGUAGES_ERROR_DISABLE']          = 'تعذر تعطيل اللغة.';
 $lang['CSK_LANGUAGES_ERROR_DEFAULT']          = 'تعذر تغيير اللغة الافتراضية للموقع.';
-$lang['CSK_LANGUAGES_ERROR_ENGLISH_REQUIRED'] = 'إجباري ولا يمكن المساس به.';
+$lang['CSK_LANGUAGES_ERROR_ENGLISH_REQUIRED'] = 'اللغة الإنجليزية إجبارية، لذلك لا يمكن لمسها.';
 
 // Missing language errors.
 $lang['CSK_LANGUAGES_MISSING_FOLDER']  = 'مجلد اللغة مفقود. يستحيل الترجمة لهاته اللغة.';

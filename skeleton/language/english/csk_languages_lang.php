@@ -82,7 +82,7 @@ $lang['CSK_LANGUAGES_SUCCESS_DEFAULT'] = 'Default language successfully changed.
 $lang['CSK_LANGUAGES_ERROR_ENABLE']           = 'Unable to enable language.';
 $lang['CSK_LANGUAGES_ERROR_DISABLE']          = 'Unable to disable language.';
 $lang['CSK_LANGUAGES_ERROR_DEFAULT']          = 'Unable to change default language.';
-$lang['CSK_LANGUAGES_ERROR_ENGLISH_REQUIRED'] = 'Required and untouchable.';
+$lang['CSK_LANGUAGES_ERROR_ENGLISH_REQUIRED'] = 'The English language is required, thus it cannot be touched.';
 
 // Missing language errors.
 $lang['CSK_LANGUAGES_MISSING_FOLDER']  = 'The language folder is missing. Lines may not be translated.';
