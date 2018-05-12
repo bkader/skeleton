@@ -56,6 +56,12 @@
                             return;
                         }
 
+                        // Refresh the page is we disable the current language.
+                        if (action === "disable" && lang === csk.config.lang.folder) {
+                            location.reload();
+                            return;
+                        }
+
                         // Simply reload the UI.
                         csk.ui.reload();
                     }

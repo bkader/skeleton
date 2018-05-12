@@ -158,40 +158,73 @@ class Languages extends Admin_Controller
 			// Make default action.
 			if ($folder !== $this->data['language'])
 			{
-				$lang['actions'][] = html_tag('button', array(
-					'type' => 'button',
-					'data-endpoint' => nonce_ajax_url(
-						"languages/make_default/{$folder}",
-						"default-language_{$folder}"
-					),
-					'class' => 'btn btn-default btn-xs btn-icon language-default ml-2',
-				), fa_icon('lock').line('CSK_LANGUAGES_MAKE_DEFAULT'));
+				if (true === $lang['available'])
+				{
+					$lang['actions'][] = html_tag('button', array(
+						'type' => 'button',
+						'data-endpoint' => nonce_ajax_url(
+							"languages/make_default/{$folder}",
+							"default-language_{$folder}"
+						),
+						'class' => 'btn btn-default btn-xs btn-icon language-default ml-2',
+					), fa_icon('lock').line('CSK_LANGUAGES_MAKE_DEFAULT'));
+				}
+				else
+				{
+					$lang['actions'][] = html_tag('button', array(
+						'type'     => 'button',
+						'class'    => 'btn btn-default btn-xs btn-icon ml-2 op-2',
+						'disabled' => 'disabled',
+					), fa_icon('lock').line('CSK_LANGUAGES_MAKE_DEFAULT'));
+				}
 			}
 
 			// Disable language action.
 			if (in_array($folder, $this->data['available_languages']))
 			{
-				$lang['actions'][] = html_tag('button', array(
-					'type' => 'button',
-					'data-endpoint' => nonce_ajax_url(
-						"languages/disable/{$folder}",
-						"disable-language_{$folder}"
-					),
-					'class' => 'btn btn-default btn-xs btn-icon language-disable ml-2',
-				), fa_icon('times text-danger').line('CSK_LANGUAGES_DISABLE'));
+				if (true === $lang['available'])
+				{
+					$lang['actions'][] = html_tag('button', array(
+						'type' => 'button',
+						'data-endpoint' => nonce_ajax_url(
+							"languages/disable/{$folder}",
+							"disable-language_{$folder}"
+						),
+						'class' => 'btn btn-default btn-xs btn-icon language-disable ml-2',
+					), fa_icon('times text-danger').line('CSK_LANGUAGES_DISABLE'));
+				}
+				else
+				{
+					$lang['actions'][] = html_tag('button', array(
+						'type'     => 'button',
+						'class'    => 'btn btn-default btn-xs btn-icon ml-2 op-2',
+						'disabled' => 'disabled',
+					), fa_icon('times text-danger').line('CSK_LANGUAGES_DISABLE'));
+				}
 			}
 
 			// Enable language action.
 			else
 			{
-				$lang['actions'][] = html_tag('button', array(
-					'type' => 'button',
-					'data-endpoint' => nonce_ajax_url(
-						"languages/enable/{$folder}",
-						"enable-language_{$folder}"
-					),
-					'class' => 'btn btn-default btn-xs btn-icon language-enable ml-2',
-				), fa_icon('check text-success').line('CSK_LANGUAGES_ENABLE'));
+				if (true === $lang['available'])
+				{
+					$lang['actions'][] = html_tag('button', array(
+						'type' => 'button',
+						'data-endpoint' => nonce_ajax_url(
+							"languages/enable/{$folder}",
+							"enable-language_{$folder}"
+						),
+						'class' => 'btn btn-default btn-xs btn-icon language-enable ml-2',
+					), fa_icon('check text-success').line('CSK_LANGUAGES_ENABLE'));
+				}
+				else
+				{
+					$lang['actions'][] = html_tag('button', array(
+						'type'     => 'button',
+						'class'    => 'btn btn-default btn-xs btn-icon ml-2 op-2',
+						'disabled' => 'disabled',
+					), fa_icon('check text-success').line('CSK_LANGUAGES_ENABLE'));
+				}
 			}
 		}
 
