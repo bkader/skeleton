@@ -429,6 +429,16 @@ class Ajax extends AJAX_Controller {
 			return;
 		}
 
+		$details = $this->kbcore->plugins->plugin_details($name);
+		$plugin = $details['name'];
+		if ('english' !== ($lang = $this->config->item('language')))
+		{
+			if (isset($details['translations'][$lang]['name']))
+			{
+				$plugin = $details['translations'][$lang]['name'];
+			}
+		}
+
 
 		switch ($action) {
 			
@@ -439,13 +449,13 @@ class Ajax extends AJAX_Controller {
 				if (false !== $this->kbcore->plugins->activate($name))
 				{
 					$this->response->header = self::HTTP_OK;
-					$this->response->message = line('CSK_PLUGINS_SUCCESS_ACTIVATE');
+					$this->response->message = sprintf(line('CSK_PLUGINS_SUCCESS_ACTIVATE'), $plugin);
 					return;
 				}
 
 				// An error occurred somewhere?
 				$this->response->header = self::HTTP_CONFLICT;
-				$this->response->message = line('CSK_PLUGINS_ERROR_ACTIVATE');
+				$this->response->message = sprintf(line('CSK_PLUGINS_ERROR_ACTIVATE'), $plugin);
 				return;
 
 				break;
@@ -456,13 +466,13 @@ class Ajax extends AJAX_Controller {
 				if (false !== $this->kbcore->plugins->deactivate($name))
 				{
 					$this->response->header = self::HTTP_OK;
-					$this->response->message = line('CSK_PLUGINS_SUCCESS_DEACTIVATE');
+					$this->response->message = sprintf(line('CSK_PLUGINS_SUCCESS_DEACTIVATE'), $plugin);
 					return;
 				}
 
 				// An error occurred somewhere?
 				$this->response->header = self::HTTP_CONFLICT;
-				$this->response->message = line('CSK_PLUGINS_ERROR_DEACTIVATE');
+				$this->response->message = sprintf(line('CSK_PLUGINS_ERROR_DEACTIVATE'), $plugin);
 				return;
 				break;
 
@@ -473,13 +483,13 @@ class Ajax extends AJAX_Controller {
 				if (false !== $this->kbcore->plugins->delete($name))
 				{
 					$this->response->header = self::HTTP_OK;
-					$this->response->message = line('CSK_PLUGINS_SUCCESS_DELETE');
+					$this->response->message = sprintf(line('CSK_PLUGINS_SUCCESS_DELETE'), $plugin);
 					return;
 				}
 
 				// An error occurred somewhere?
 				$this->response->header = self::HTTP_CONFLICT;
-				$this->response->message = line('CSK_PLUGINS_ERROR_DELETE');
+				$this->response->message = sprintf(line('CSK_PLUGINS_ERROR_DELETE'), $plugin);
 				return;
 
 				break;

@@ -420,7 +420,6 @@ class Kbcore_plugins extends CI_Driver
 		// Make sure the plugins exists.
 		$plugins = $this->list_plugins(false);
 		$active_plugins = $this->get_active_plugins();
-		function_exists('directory_delete') OR $this->ci->load->helper('directory');
 
 		if (is_array($name))
 		{
@@ -435,21 +434,20 @@ class Kbcore_plugins extends CI_Driver
 			return true;
 		}
 		
-		if ( ! in_array($name, $plugins) OR in_array($name, $active_plugins))
-		{
-			return false;
-		}
-
-		// We cannot delete a plugin that does not exist or a plugin that is active.
-		if (false === $this->plugins_path($name) 
-			OR false !== $this->is_enabled($name))
+		if ( ! isset($plugins[$name]) OR in_array($name, $active_plugins))
 		{
 			return false;
 		}
 
 		// Proceed to plugin deletion after deactivation.
 		$this->deactivate($name);
-		directory_delete($this->plugins_path($name));
+
+		if (false !== is_dir($plugins[$name]))
+		{
+			function_exists('directory_delete') OR $this->ci->load->helper('directory');
+			directory_delete($plugins[$name]);
+		}
+		
 		return true;
 	}
 

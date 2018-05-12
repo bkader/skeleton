@@ -73,23 +73,21 @@ $lang['CSK_PLUGINS_UPLOAD']     = 'رفع إضافة';
 $lang['CSK_PLUGINS_UPLOAD_TIP'] = 'إذا كانت الإضافة في ملف .zip مضغوط, يمكنك تنصيبها بواسطة رفعها هنا.';
 
 // Confirmation messages.
-$lang['CSK_PLUGINS_CONFIRM_ACTIVATE']   = 'ل أنت متأكد من أنك تريد تفعيل %s؟';
-$lang['CSK_PLUGINS_CONFIRM_DEACTIVATE'] = 'ل أنت متأكد من أنك تريد تعطيل %s؟';
-$lang['CSK_PLUGINS_CONFIRM_DELETE']     = 'ل أنت متأكد من أنك تريد حذف %s وبياناتها؟';
+$lang['CSK_PLUGINS_CONFIRM_ACTIVATE']   = 'هل أنت متأكد من أنك تريد تفعيل %s؟';
+$lang['CSK_PLUGINS_CONFIRM_DEACTIVATE'] = 'هل أنت متأكد من أنك تريد تعطيل %s؟';
+$lang['CSK_PLUGINS_CONFIRM_DELETE']     = 'هل أنت متأكد من أنك تريد حذف %s وبياناتها؟';
 
 // Success messages.
-$lang['CSK_PLUGINS_SUCCESS_ACTIVATE']   = 'تم تفعيل الاضافة بنجاح.';
-$lang['CSK_PLUGINS_SUCCESS_DEACTIVATE'] = 'تم إلغاء تفعيل الاضافة بنجاح.';
-$lang['CSK_PLUGINS_SUCCESS_DELETE']     = 'تم حذف الاضافة بنجاح.';
-$lang['CSK_PLUGINS_SUCCESS_INSTALL']    = 'تم تنصيب الاضافة بنجاح.';
+$lang['CSK_PLUGINS_SUCCESS_ACTIVATE']   = 'تم تفعيل الاضافة %s بنجاح.';
+$lang['CSK_PLUGINS_SUCCESS_DEACTIVATE'] = 'تم إلغاء تفعيل الاضافة %s بنجاح.';
+$lang['CSK_PLUGINS_SUCCESS_DELETE']     = 'تم حذف الاضافة %s بنجاح.';
 $lang['CSK_PLUGINS_SUCCESS_SETTINGS']   = 'تم تحديث إعدادات الاضافة بنجاح.';
 $lang['CSK_PLUGINS_SUCCESS_UPLOAD']     = 'تم تحميل الاضافة بنجاح.';
 
 // Error messages.
-$lang['CSK_PLUGINS_ERROR_ACTIVATE']   = 'تعذر تفعيل الاضافة.';
-$lang['CSK_PLUGINS_ERROR_DEACTIVATE'] = 'تعذر إلغاء تفعيل الاضافة.';
-$lang['CSK_PLUGINS_ERROR_DELETE']     = 'تعذر حذف الاضافة.';
-$lang['CSK_PLUGINS_ERROR_INSTALL']    = 'تعذر تنصيب الاضافة.';
+$lang['CSK_PLUGINS_ERROR_ACTIVATE']   = 'تعذر تفعيل الاضافة %s.';
+$lang['CSK_PLUGINS_ERROR_DEACTIVATE'] = 'تعذر إلغاء تفعيل الاضافة %s.';
+$lang['CSK_PLUGINS_ERROR_DELETE']     = 'تعذر حذف الاضافة %s.';
 $lang['CSK_PLUGINS_ERROR_SETTINGS']   = 'تعذر تحديث إعدادات الاضافة.';
 $lang['CSK_PLUGINS_ERROR_UPLOAD']     = 'تعذر تحميل الاضافة.';
 

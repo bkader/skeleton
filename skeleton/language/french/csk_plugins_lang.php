@@ -78,18 +78,16 @@ $lang['CSK_PLUGINS_CONFIRM_DEACTIVATE'] = 'Êtes-vous sûr de vouloir désactive
 $lang['CSK_PLUGINS_CONFIRM_DELETE']     = 'Êtes-vous sûr de vouloir supprimer le plug-in %s et toutes ses données?';
 
 // Success messages.
-$lang['CSK_PLUGINS_SUCCESS_ACTIVATE']   = 'Plug-in activé avec succès.';
-$lang['CSK_PLUGINS_SUCCESS_DEACTIVATE'] = 'Plug-in désactivé avec succès.';
-$lang['CSK_PLUGINS_SUCCESS_DELETE']     = 'Plug-in supprimé avec succès.';
-$lang['CSK_PLUGINS_SUCCESS_INSTALL']    = 'Plug-in installé avec succès.';
+$lang['CSK_PLUGINS_SUCCESS_ACTIVATE']   = 'Plug-in %s activé avec succès.';
+$lang['CSK_PLUGINS_SUCCESS_DEACTIVATE'] = 'Plug-in %s désactivé avec succès.';
+$lang['CSK_PLUGINS_SUCCESS_DELETE']     = 'Plug-in %s supprimé avec succès.';
 $lang['CSK_PLUGINS_SUCCESS_SETTINGS']   = 'Les paramètres du plug-in ont bien été mis à jour.';
 $lang['CSK_PLUGINS_SUCCESS_UPLOAD']     = 'Plug-in téléversé avec succès.';
 
 // Error messages.
-$lang['CSK_PLUGINS_ERROR_ACTIVATE']   = 'Impossible d\'activer le plug-in.';
-$lang['CSK_PLUGINS_ERROR_DEACTIVATE'] = 'Impossible de désactiver le plug-in.';
-$lang['CSK_PLUGINS_ERROR_DELETE']     = 'Impossible de supprimer le plug-in.';
-$lang['CSK_PLUGINS_ERROR_INSTALL']    = 'Impossible d\'installer le plug-in.';
+$lang['CSK_PLUGINS_ERROR_ACTIVATE']   = 'Impossible d\'activer le plug-in %s.';
+$lang['CSK_PLUGINS_ERROR_DEACTIVATE'] = 'Impossible de désactiver le plug-in %s.';
+$lang['CSK_PLUGINS_ERROR_DELETE']     = 'Impossible de supprimer le plug-in %s.';
 $lang['CSK_PLUGINS_ERROR_SETTINGS']   = 'Impossible de mettre à jour les paramètres du plug-in.';
 $lang['CSK_PLUGINS_ERROR_UPLOAD']     = 'Impossible de téléverser le plug-in.';
 
@@ -126,7 +124,7 @@ $lang['CSK_PLUGINS_FILTER_ACTIVE']   = 'Activés (%s)';
 $lang['CSK_PLUGINS_FILTER_INACTIVE'] = 'Désactivés (%s)';
 
 // Plugin install filters.
-$lang['CSK_PLUGINS_FILTER_FEATURED']    = 'Mises en avant';
+$lang['CSK_PLUGINS_FILTER_FEATURED']    = 'Mis en avant';
 $lang['CSK_PLUGINS_FILTER_POPULAR']     = 'Populaires';
 $lang['CSK_PLUGINS_FILTER_RECOMMENDED'] = 'Recommandées';
 $lang['CSK_PLUGINS_FILTER_NEW']         = 'Nouveaux';
