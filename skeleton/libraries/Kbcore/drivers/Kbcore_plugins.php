@@ -95,6 +95,7 @@ class Kbcore_plugins extends CI_Driver
 		'author'          => null,
 		'author_uri'      => null,
 		'author_email'    => null,
+		'donation_uri'    => null,
 		'tags'            => null,
 		'language_folder' => null,
 		'language_index'  => null,
