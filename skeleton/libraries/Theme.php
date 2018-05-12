@@ -2417,7 +2417,10 @@ EOT;
 		}
 
 		// Ignore dynamically changed language.
-		('rtl' === $this->language('direction')) && $output .= ' dir="rtl"';
+		if ('login' !== $this->controller && 'rtl' === $this->language('direction'))
+		{
+			$output .= ' dir="rtl"';
+		}
 
 		// Return the final output.
 		return $output;
@@ -2469,7 +2472,10 @@ EOT;
 		// We add the module, controller and method.
 		('index' !== $this->method) && $classes[] = 'csk-'.$this->method;
 
-		('rtl' === $this->language('direction')) && $classes[] = 'rtl';
+		if ('login' !== $this->controller && 'rtl' === $this->language('direction'))
+		{
+			$classes[] = 'rtl';
+		}
 		
 		// Merge things.
 		$this->_body_classes = array_merge($this->_body_classes, $classes);
