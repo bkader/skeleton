@@ -81,6 +81,7 @@ $lang['CSK_PLUGINS_CONFIRM_DELETE']     = 'هل أنت متأكد من أنك ت
 $lang['CSK_PLUGINS_SUCCESS_ACTIVATE']   = 'تم تفعيل الاضافة %s بنجاح.';
 $lang['CSK_PLUGINS_SUCCESS_DEACTIVATE'] = 'تم إلغاء تفعيل الاضافة %s بنجاح.';
 $lang['CSK_PLUGINS_SUCCESS_DELETE']     = 'تم حذف الاضافة %s بنجاح.';
+$lang['CSK_PLUGINS_SUCCESS_INSTALL']    = 'تم تنصيب الاضافة بنجاح.';
 $lang['CSK_PLUGINS_SUCCESS_SETTINGS']   = 'تم تحديث إعدادات الاضافة بنجاح.';
 $lang['CSK_PLUGINS_SUCCESS_UPLOAD']     = 'تم تحميل الاضافة بنجاح.';
 
@@ -88,11 +89,12 @@ $lang['CSK_PLUGINS_SUCCESS_UPLOAD']     = 'تم تحميل الاضافة بنج
 $lang['CSK_PLUGINS_ERROR_ACTIVATE']   = 'تعذر تفعيل الاضافة %s.';
 $lang['CSK_PLUGINS_ERROR_DEACTIVATE'] = 'تعذر إلغاء تفعيل الاضافة %s.';
 $lang['CSK_PLUGINS_ERROR_DELETE']     = 'تعذر حذف الاضافة %s.';
+$lang['CSK_PLUGINS_ERROR_INSTALL']    = 'تعذر تنصيب الاضافة.';
 $lang['CSK_PLUGINS_ERROR_SETTINGS']   = 'تعذر تحديث إعدادات الاضافة.';
 $lang['CSK_PLUGINS_ERROR_UPLOAD']     = 'تعذر تحميل الاضافة.';
 
 // Errors when performing actions.
-$lang['CSK_PLUGINS_ERROR_PLUGIN_MISSING']    = 'هذه الاضافة غير موجود.';
+$lang['CSK_PLUGINS_ERROR_PLUGIN_MISSING']    = 'هذه الاضافة غير موجودة.';
 $lang['CSK_PLUGINS_ERROR_SETTINGS_DISABLED'] = 'يمكنك فقط تحديث إعدادات الإضافات المفعّلة.';
 $lang['CSK_PLUGINS_ERROR_SETTINGS_MISSING']  = 'لا تحتوي هذه الاضافة على صفحة إعدادات.';
 
@@ -126,7 +128,7 @@ $lang['CSK_PLUGINS_FILTER_INACTIVE'] = 'غير مفعّلة (%s)';
 // Plugin install filters.
 $lang['CSK_PLUGINS_FILTER_FEATURED']    = 'البارزة';
 $lang['CSK_PLUGINS_FILTER_POPULAR']     = 'الأكثر شعبية';
-$lang['CSK_PLUGINS_FILTER_RECOMMENDED'] = 'موصى به';
+$lang['CSK_PLUGINS_FILTER_RECOMMENDED'] = 'موصى بها';
 $lang['CSK_PLUGINS_FILTER_NEW']         = 'جديدة';
 $lang['CSK_PLUGINS_SEARCH']             = 'بحث في الإضافات...';
 
