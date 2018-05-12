@@ -56,17 +56,16 @@
                             return;
                         }
 
-                        // We reload UI if not in delete action.
-                        if (action !== "delete") {
-                            location.reload();
+                        // Delete action.
+                        if (action === "delete") {
+                            row.fadeOut(function () {
+                                $(this).remove();
+                                csk.ui.reload();
+                            });
                             return;
                         }
-
-                        // We remove the item then refresh the UI.
-                        row.fadeOut(function() {
-                            $(this).remove();
-                            csk.ui.reload();
-                        });
+                        
+                        csk.ui.reload();
                     }
                 });
             });

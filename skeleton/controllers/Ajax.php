@@ -316,6 +316,14 @@ class Ajax extends AJAX_Controller {
 			$this->load->helper('directory');
 		}
 
+		$module = $details['name'];
+		if ('english' !== ($lang = $this->config->item('language')))
+		{
+			if (isset($details['translations'][$lang]['name']))
+			{
+				$module = $details['translations'][$lang]['name'];
+			}
+		}
 
 		switch ($action) {
 			
@@ -325,7 +333,7 @@ class Ajax extends AJAX_Controller {
 				if (true === $details['enabled'])
 				{
 					$this->response->header = self::HTTP_CONFLICT;
-					$this->response->message = line('CSK_MODULES_ERROR_ACTIVATE');
+					$this->response->message = sprintf(line('CSK_MODULES_ERROR_ACTIVATE'), $module);
 					return;
 				}
 
@@ -335,16 +343,13 @@ class Ajax extends AJAX_Controller {
 				if (true === write_file($manifest, json_encode($details)))
 				{
 					$this->response->header = self::HTTP_OK;
-					$this->response->message = sprintf(
-						line('CSK_MODULES_SUCCESS_ACTIVATE'),
-						$details['name']
-					);
+					$this->response->message = sprintf(line('CSK_MODULES_SUCCESS_ACTIVATE'), $module);
 					return;
 				}
 
 				// An error occurred somewhere!
 				$this->response->header = self::HTTP_CONFLICT;
-				$this->response->message = line('CSK_MODULES_ERROR_ACTIVATE');
+				$this->response->message = sprintf(line('CSK_MODULES_ERROR_ACTIVATE'), $module);
 				break;
 			
 			// In case of deactivating a module.
@@ -353,7 +358,7 @@ class Ajax extends AJAX_Controller {
 				if (true !== $details['enabled'])
 				{
 					$this->response->header = self::HTTP_CONFLICT;
-					$this->response->message = line('CSK_MODULES_ERROR_DEACTIVATE');
+					$this->response->message = sprintf(line('CSK_MODULES_ERROR_DEACTIVATE'), $module);
 					return;
 				}
 
@@ -363,35 +368,37 @@ class Ajax extends AJAX_Controller {
 				if (true === write_file($manifest, json_encode($details)))
 				{
 					$this->response->header = self::HTTP_OK;
-					$this->response->message = sprintf(
-						line('CSK_MODULES_SUCCESS_DEACTIVATE'),
-						$details['name']
-					);
+					$this->response->message = sprintf(line('CSK_MODULES_SUCCESS_DEACTIVATE'), $module);
 					return;
 				}
 
 				// An error occurred somewhere!
 				$this->response->header = self::HTTP_CONFLICT;
-				$this->response->message = line('CSK_MODULES_ERROR_DEACTIVATE');
+				$this->response->message = sprintf(line('CSK_MODULES_ERROR_DEACTIVATE'), $module);
 				break;
 
 			// In case of deleting a module.
 			case 'delete':
-				$modules = $this->router->list_modules(false);
+				
+				// Enabled? We cannot delete it.
+				if (false !== $details['enabled'])
+				{
+					$this->response->header = self::HTTP_NOT_ACCEPTABLE;
+					$this->response->message = sprintf(line('CSK_MODULES_ERROR_DELETE_ACTIVE'), $module);
+					return;
+				}
+
 				// Passed?
-				if (isset($modules[$name]) && true === directory_delete($modules[$name]))
+				if (false !== directory_delete($details['full_path']))
 				{
 					$this->response->header = self::HTTP_OK;
-					$this->response->message = sprintf(
-						line('CSK_MODULES_SUCCESS_DELETE'),
-						$details['name']
-					);
+					$this->response->message = sprintf(line('CSK_MODULES_SUCCESS_DELETE'), $module);
 					return;
 				}
 
 				// An error occurred somewhere!
 				$this->response->header = self::HTTP_CONFLICT;
-				$this->response->message = line('CSK_MODULES_ERROR_DELETE');
+				$this->response->message = sprintf(line('CSK_MODULES_ERROR_DELETE'), $module);
 				break;
 		}
 	}

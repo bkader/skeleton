@@ -73,20 +73,22 @@ $lang['CSK_MODULES_CONFIRM_DEACTIVATE'] = 'Are you sure you want to deactivate %
 $lang['CSK_MODULES_CONFIRM_DELETE']     = 'Are you sure you want to delete %s module and all its data?';
 
 // Success messages.
-$lang['CSK_MODULES_SUCCESS_ACTIVATE']   = '<strong>%s</strong> module successfully activated.';
-$lang['CSK_MODULES_SUCCESS_DEACTIVATE'] = '<strong>%s</strong> module successfully deactivated.';
-$lang['CSK_MODULES_SUCCESS_DELETE']     = '<strong>%s</strong> module successfully delete.';
+$lang['CSK_MODULES_SUCCESS_ACTIVATE']   = '%s module successfully activated.';
+$lang['CSK_MODULES_SUCCESS_DEACTIVATE'] = '%s module successfully deactivated.';
+$lang['CSK_MODULES_SUCCESS_DELETE']     = '%s module successfully delete.';
+$lang['CSK_MODULES_SUCCESS_INSTALL']    = 'Module successfully installed.';
 $lang['CSK_MODULES_SUCCESS_UPLOAD']     = 'Module successfully uploaded.';
 
 // Error messages.
-$lang['CSK_MODULES_ERROR_ACTIVATE']   = 'Unable to activate <strong>%s</strong> module.';
-$lang['CSK_MODULES_ERROR_DEACTIVATE'] = 'Unable to deactivate <strong>%s</strong> module.';
-$lang['CSK_MODULES_ERROR_DELETE']     = 'Unable to delete <strong>%s</strong> module.';
-$lang['CSK_MODULES_ERROR_INSTALL']    = 'Unable to install <strong>%s</strong> module.';
-$lang['CSK_MODULES_ERROR_UPLOAD']     = 'Unable to upload module.';
+$lang['CSK_MODULES_ERROR_ACTIVATE']      = 'Unable to activate %s module.';
+$lang['CSK_MODULES_ERROR_DEACTIVATE']    = 'Unable to deactivate %s module.';
+$lang['CSK_MODULES_ERROR_DELETE']        = 'Unable to delete %s module.';
+$lang['CSK_MODULES_ERROR_INSTALL']       = 'Unable to install module.';
+$lang['CSK_MODULES_ERROR_UPLOAD']        = 'Unable to upload module.';
+$lang['CSK_MODULES_ERROR_DELETE_ACTIVE'] = 'You must disable the %s module before deleting it.';
 
 // Errors when performing actions.
-$lang['CSK_MODULES_ERROR_MODULE_MISSING']    = 'This module does not exist.';
+$lang['CSK_MODULES_ERROR_MODULE_MISSING'] = 'This module does not exist.';
 
 // Module upload location.
 $lang['CSK_MODULES_LOCATION_SELECT']      = '&#151; Select location &#151;';
@@ -123,7 +125,6 @@ $lang['CSK_MODULES_FILTER_NEW']         = 'New';
 $lang['CSK_MODULES_SEARCH']             = 'Search modules...';
 
 // Module details with links.
-$lang['CSK_MODULES_AUTHOR_URI']   = '<a href="%1$s" target="_blank" rel="nofollow">Website</a>';
 $lang['CSK_MODULES_LICENSE_URI']  = '<a href="%2$s" target="_blank" rel="nofollow">%1$s</a>';
 $lang['CSK_MODULES_AUTHOR_URI']   = '<a href="%2$s" target="_blank" rel="nofollow">%1$s</a>';
 $lang['CSK_MODULES_AUTHOR_EMAIL_URI'] = '<a href="mailto:%1$s?subject=%2$s" target="_blank" rel="nofollow">Support</a>';
