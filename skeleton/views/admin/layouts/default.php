@@ -73,9 +73,20 @@
 				'data-toggle' => 'dropdown',
 			)),
 			'<div class="dropdown-menu">',
-			admin_anchor('users', line('CSK_ADMIN_USERS_MANAGE'), 'class="dropdown-item"'),
-			admin_anchor('users/groups', line('CSK_ADMIN_USERS_GROUPS'), 'class="dropdown-item"'),
-			admin_anchor('users/levels', line('CSK_ADMIN_USERS_LEVELS'), 'class="dropdown-item"');
+			// Manage users.
+			html_tag('a', array(
+				'href'  => admin_url('users'),
+				'class' => 'dropdown-item',
+			), line('CSK_ADMIN_USERS_MANAGE')),
+			// Users groups.
+			html_tag('a', array(
+				'href' => 'javascript:void(0)',
+				'class' => 'dropdown-item disabled',
+			), line('CSK_ADMIN_USERS_GROUPS')),
+			html_tag('a', array(
+				'href' => 'javascript:void(0)',
+				'class' => 'dropdown-item disabled',
+			), line('CSK_ADMIN_USERS_LEVELS'));
 
 			/**
 			 * Fires inside users menu.
@@ -213,20 +224,20 @@
 
 			// Link to extensions page.
 			html_tag('a', array(
-				'href' => '#',
-				'class' => 'dropdown-item',
+				'href' => 'javascript:void(0)',
+				'class' => 'dropdown-item disabled',
 			), line('CSK_ADMIN_EXTENSIONS')),
 
 			// Link to translations page.
 			html_tag('a', array(
-				'href' => '#',
-				'class' => 'dropdown-item',
+				'href' => 'javascript:void(0)',
+				'class' => 'dropdown-item disabled',
 			), line('CSK_ADMIN_TRANSLATIONS')),
 
 			// Link to shop page.
 			html_tag('a', array(
-				'href' => '#',
-				'class' => 'dropdown-item',
+				'href' => 'javascript:void(0)',
+				'class' => 'dropdown-item disabled',
 			), line('CSK_ADMIN_SKELETON_SHOP'));
 			
 			// Menu closing tag.
