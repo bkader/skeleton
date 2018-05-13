@@ -665,31 +665,36 @@ class Jquery_validation {
 		 */
 		$jqv_ignoreTitle  = false;
 
-		$jqv_submitHandler       = apply_filters('jquery_validate_submitHandler'.$filter, $jqv_submitHandler);
-		$jqv_invalidHandler      = apply_filters('jquery_validate_invalidHandler'.$filter, $jqv_invalidHandler);
-		$jqv_ignore              = apply_filters('jquery_validate_ignore'.$filter, $jqv_ignore);
-		$jqv_groups              = apply_filters('jquery_validate_groups'.$filter, $jqv_groups);
-		$jqv_normalizer          = apply_filters('jquery_validate_normalizer'.$filter, $jqv_normalizer);
-		$jqv_onsubmit            = apply_filters('jquery_validate_onsubmit'.$filter, $jqv_onsubmit);
-		$jqv_onfocusout          = apply_filters('jquery_validate_onfocusout'.$filter, $jqv_onfocusout);
-		$jqv_onkeyup             = apply_filters('jquery_validate_onkeyup'.$filter, $jqv_onkeyup);
-		$jqv_onclick             = apply_filters('jquery_validate_onclick'.$filter, $jqv_onclick);
-		$jqv_focusInvalid        = apply_filters('jquery_validate_focusInvalid'.$filter, $jqv_focusInvalid);
-		$jqv_focusCleanup        = apply_filters('jquery_validate_focusCleanup'.$filter, $jqv_focusCleanup);
-		$jqv_errorClass          = apply_filters('jquery_validate_errorClass'.$filter, $jqv_errorClass);
-		$jqv_validClass          = apply_filters('jquery_validate_validClass'.$filter, $jqv_validClass);
-		$jqv_errorElement        = apply_filters('jquery_validate_errorElement'.$filter, $jqv_errorElement);
-		$jqv_wrapper             = apply_filters('jquery_validate_wrapper'.$filter, $jqv_wrapper);
-		$jqv_errorLabelContainer = apply_filters('jquery_validate_errorLabelContainer'.$filter, $jqv_errorLabelContainer);
-		$jqv_errorContainer      = apply_filters('jquery_validate_errorContainer'.$filter, $jqv_errorContainer);
-		$jqv_showErrors          = apply_filters('jquery_validate_showErrors'.$filter, $jqv_showErrors);
-		$jqv_errorPlacement      = apply_filters('jquery_validate_errorPlacement'.$filter, $jqv_errorPlacement);
-		$jqv_success             = apply_filters('jquery_validate_success'.$filter, $jqv_success);
-		$jqv_highlight           = apply_filters('jquery_validate_highlight'.$filter, $jqv_highlight);
-		$jqv_unhighlight         = apply_filters('jquery_validate_unhighlight'.$filter, $jqv_unhighlight);
-		$jqv_ignoreTitle         = apply_filters('jquery_validate_ignoreTitle'.$filter, $jqv_ignoreTitle);
-
-		// We allow themes/plugins alter these.
+		/**
+		 * Filters are ignored on the dashboard.
+		 * @since 	2.0.0
+		 */
+		if (true !== $this->_ci->router->is_admin())
+		{
+			$jqv_submitHandler       = apply_filters('jquery_validate_submitHandler'.$filter, $jqv_submitHandler);
+			$jqv_invalidHandler      = apply_filters('jquery_validate_invalidHandler'.$filter, $jqv_invalidHandler);
+			$jqv_ignore              = apply_filters('jquery_validate_ignore'.$filter, $jqv_ignore);
+			$jqv_groups              = apply_filters('jquery_validate_groups'.$filter, $jqv_groups);
+			$jqv_normalizer          = apply_filters('jquery_validate_normalizer'.$filter, $jqv_normalizer);
+			$jqv_onsubmit            = apply_filters('jquery_validate_onsubmit'.$filter, $jqv_onsubmit);
+			$jqv_onfocusout          = apply_filters('jquery_validate_onfocusout'.$filter, $jqv_onfocusout);
+			$jqv_onkeyup             = apply_filters('jquery_validate_onkeyup'.$filter, $jqv_onkeyup);
+			$jqv_onclick             = apply_filters('jquery_validate_onclick'.$filter, $jqv_onclick);
+			$jqv_focusInvalid        = apply_filters('jquery_validate_focusInvalid'.$filter, $jqv_focusInvalid);
+			$jqv_focusCleanup        = apply_filters('jquery_validate_focusCleanup'.$filter, $jqv_focusCleanup);
+			$jqv_errorClass          = apply_filters('jquery_validate_errorClass'.$filter, $jqv_errorClass);
+			$jqv_validClass          = apply_filters('jquery_validate_validClass'.$filter, $jqv_validClass);
+			$jqv_errorElement        = apply_filters('jquery_validate_errorElement'.$filter, $jqv_errorElement);
+			$jqv_wrapper             = apply_filters('jquery_validate_wrapper'.$filter, $jqv_wrapper);
+			$jqv_errorLabelContainer = apply_filters('jquery_validate_errorLabelContainer'.$filter, $jqv_errorLabelContainer);
+			$jqv_errorContainer      = apply_filters('jquery_validate_errorContainer'.$filter, $jqv_errorContainer);
+			$jqv_showErrors          = apply_filters('jquery_validate_showErrors'.$filter, $jqv_showErrors);
+			$jqv_errorPlacement      = apply_filters('jquery_validate_errorPlacement'.$filter, $jqv_errorPlacement);
+			$jqv_success             = apply_filters('jquery_validate_success'.$filter, $jqv_success);
+			$jqv_highlight           = apply_filters('jquery_validate_highlight'.$filter, $jqv_highlight);
+			$jqv_unhighlight         = apply_filters('jquery_validate_unhighlight'.$filter, $jqv_unhighlight);
+			$jqv_ignoreTitle         = apply_filters('jquery_validate_ignoreTitle'.$filter, $jqv_ignoreTitle);
+		}
 
 		// Prepare the final output.
 		$output = '<script type="text/javascript">';
