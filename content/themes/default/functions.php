@@ -477,3 +477,96 @@ add_filter('jquery_validate_highlight', function($function) {
 add_filter('jquery_validate_unhighlight', function($function) {
 	return 'function (element, errorClass, validClass) { $(element).parents(".form-group").addClass("has-success").removeClass("has-error"); }';
 });
+
+
+/**
+ * Example filters on how to edit captcha the way you want
+ * @since 	1.0.0
+ * We use a class for better performance and to avoid any possible
+ * conflict with other components.
+ */
+if ( ! class_exists('Csk200_captcha_class', false))
+{
+	class Csk200_captcha_class {
+
+		public function __construct() {}
+
+		public function init() {
+			add_filter('captcha_font_path',        array($this, 'font_path'));
+			add_filter('captcha_font_size',        array($this, 'font_size'));
+			add_filter('captcha_word_length',      array($this, 'word_length'));
+			add_filter('captcha_img_width',        array($this, 'img_width'));
+			add_filter('captcha_img_height',       array($this, 'img_height'));
+			add_filter('captcha_background_color', array($this, 'background_color'));
+			add_filter('captcha_border_color',     array($this, 'border_color'));
+			add_filter('captcha_text_color',       array($this, 'text_color'));
+			add_filter('captcha_grid_color',       array($this, 'grid_color'));
+		}
+
+		// Font file.
+		public function font_path($path) {
+			// To use theme's provided font.
+			return get_theme_path('assets/fonts/Vigasr.ttf');
+
+			// To use CodeIgniter texb.ttf:
+			return BASEPATH.'fonts/texb.ttf';
+
+			// To use GD ugly font:
+			return false;
+		}
+
+		// Font size.
+		public function font_size($size) {
+			$size = 16;
+			return $size;
+		}
+
+		// Word length.
+		public function word_length($length) {
+			$length = 7;
+			return $length;
+		}
+
+		// Image width.
+		public function img_width($w) {
+			$w = 150;
+			return $w;
+		}
+
+		// Image height.
+		public function img_height($h) {
+			$h = 32;
+			return $h;
+		}
+
+		// Background color.
+		public function background_color($rgb) {
+			// Return RGB color.
+			return array(255, 255, 255);
+		}
+
+		// Border color:
+		public function border_color($rgb) {
+			// Return RGB color.
+			return array(255, 255, 255);
+		}
+
+		// Text Color:
+		public function text_color($rgb) {
+			// Return RGB color.
+			return array(200, 200, 200);
+		}
+
+		// Grid color.
+		public function grid_color($rgb) {
+			// Return RGB color.
+			return array(235, 235, 235);
+		}
+
+	}
+
+	// Initialize class.
+	$csk200_captcha_class = new Csk200_captcha_class();
+	$csk200_captcha_class->init();
+
+}
