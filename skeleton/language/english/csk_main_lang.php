@@ -87,6 +87,7 @@ $lang['CSK_BTN_HOME']            = 'Home';
 $lang['CSK_BTN_LOGIN']           = 'Sign In';
 $lang['CSK_BTN_LOGOUT']          = 'Sign Out';
 $lang['CSK_BTN_LOST_PASSWORD']   = 'Lost Password';
+$lang['CSK_BTN_MANAGE']          = 'Manage';
 $lang['CSK_BTN_MORE']            = 'More';
 $lang['CSK_BTN_MORE_INFO']       = 'More Info';
 $lang['CSK_BTN_NEW']             = 'New';
