@@ -1,3 +1,20 @@
+// Float
+.float-auto { float: auto; }
+.float-none { float: none; }
+
+.pull-left,
+.float-left {
+    float: left;
+    @include rtl { float: right; }
+}
+
+.pull-right,
+.float-right {
+    float: right;
+    @include rtl { float: left; }
+}
+
+// Text size
 .text-small { font-size: 0.83em; }
 .text-normal { font-weight: normal; }
 .text-italic { font-style: italic !important; }

@@ -23,6 +23,7 @@ h6 {
     font-family: $font__ruda;
     font-weight: 400;
     line-height: 18px;
+    @include rtl { font-family: $font__droid; }
 }
 
 h1 { font-size: 23px; line-height: 29px; }
@@ -73,12 +74,18 @@ body {
     background-color: $color__background-body;
     color: $color__text-main;
     font-family: $font__base;
-    position: relative;
     padding-top: $navbar__height;
+    position: relative;
+
+    @include rtl { font-family: $font__droid; }
 }
 
-@each $side in left, right, auto, none {
-	.float-#{$side} {float: $side !important;}
+.form-control,
+.btn,
+input,
+textarea {
+    font-family: inherit;
+    font-size: inherit;
 }
 
 // Make pagination centered.

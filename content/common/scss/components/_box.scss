@@ -1,0 +1,231 @@
+// Boxes
+.box {
+    @include border-radius(3px);
+    @include box-shadow(0 1px 1px rgba(#000, 0.1));
+    background-color: $color__white;
+    border-top: 2px solid darken($color__white, 10%);
+    margin-bottom: $gutters;
+    width: 100%;
+
+    @each $color in $color__list {
+
+        @if nth($color, 1) != 'default' and nth($color, 1) != 'white' {
+            &.box-#{nth($color, 1)} { border-top-color: #{nth($color, 2)}; }
+        }
+    }
+}
+
+.box-header,
+.box-body,
+.box-footer { @extend %clearfix; }
+
+.box-header {
+    display: block;
+    padding: 10px;
+    position: relative;
+
+    > .fa,
+    > .glyphicon,
+    .box-title {
+        @include font-size(18);
+        display: inline-block;
+        line-height: 1;
+        margin: 0;
+    }
+
+    > .fa,
+    > .glyphicon { margin-right: 0.3125rem; }
+
+    > .box-tools {
+        @include absolute(top 5px right 10px);
+
+        [rel="tooltip"],
+        [data-toggle="tooltip"] { position: relative; }
+
+        &.pull-right .dropdown-menu {
+            right: 0;
+            left: auto;
+        }
+    }
+
+    @include rtl {
+        > .fa,
+        > .glyphicon { margin-right: 0; margin-left: 0.3125rem; }
+
+        > .box-tools {
+            right: auto;
+            left: 10px;
+
+            &.pull-right .dropdown-menu {
+                left: 0;
+                right: auto;
+            }
+        }
+    }
+}
+
+.box-body {
+    @include border-radius(0 0 3px 3px);
+    padding: 10px;
+
+    > .table {
+        margin-bottom: 0;
+    }
+}
+
+.no-header .box-body { @include border-radius(3px); }
+
+.box-footer {
+    @include border-radius(0 0 3px 3px);
+    background-color: $color__white;
+    border-top: 1px solid #f4f4f4;
+    padding: 10px;
+}
+
+// Status boxes.
+.status-box {
+    @include box-shadow(0 1px 1px rgba(#000, 0.1));
+    @include border-radius(2px);
+    background-color: $color__white;
+    display: block;
+    margin-bottom: 15px;
+    min-height: 90px;
+    width: 100%;
+
+    small { @include font-size(14); }
+
+    .progress {
+        @include border-radius(0);
+        background-color: rgba(#000, 0.2);
+        height: 2px;
+        margin: 5px -10px;
+
+        .progress-bar {
+            @include border-radius(0);
+            background-color: $color__white;
+        }
+    }
+
+    .status-box-icon {
+        @include border-radius(2px 0 0 2px);
+        @include font-size(45);
+        @include line-height(90);
+        background-color: rgba(#000, 0.2);
+        display: block;
+        float: left;
+        height: 90px;
+        text-align: center;
+        width: 90px;
+
+        > img { max-width: 100%; }
+    }
+
+    .status-box-content {
+        margin-left: 90px;
+        padding: 5px 10px;
+    }
+
+    .infor-box-number {
+        @include font-size(18);
+        display: block;
+        font-weight: 700;
+    }
+
+    .status-box-text {
+        @include font-size(14);
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .status-box-more { display: block; }
+
+    @include rtl {
+        .status-box-icon {
+            @include border-radius(0 2px 2px 0);
+            float: right;
+        }
+
+        .status-box-content {
+            margin-left: 0;
+            margin-right: 90px;
+        }
+    }
+}
+
+// Info boxes.
+.info-box {
+    @include border-radius(2px);
+    @include box-shadow(0 1px 1px rgba(#000, 0.1));
+    display: block;
+    margin-bottom: $gutters;
+    overflow: hidden;
+    position: relative;
+
+    > .inner { padding: 10px; }
+
+    > .info-box-footer {
+        background-color: rgba(#000, 0.1);
+        color: $color__white;
+        display: block;
+        padding: 3px 0;
+        position: relative;
+        text-align: center;
+        text-decoration: none;
+        z-index: 10;
+
+        &:hover {
+            background-color: rgba(#000, 0.15);
+            color: $color__white;
+        }
+    }
+
+    h3 {
+        @include font-size(38);
+        font-weight: 700;
+        margin: 0 0 10px;
+        padding: 0;
+        white-space: nowrap;
+        z-index: 5;
+    }
+
+    p {
+        @include font-size(15);
+        z-index: 5;
+
+        > small {
+            @include font-size(13);
+            color: #f9f9f9;
+            display: block;
+            margin-top: 5px;
+        }
+    }
+
+    .icon {
+        @include font-size(65);
+        @include transition(all 0.1s linear);
+        @include absolute(top 5px right 10px);
+        color: rgba(#000, 0.15);
+        z-index: 0;
+    }
+
+    &:hover {
+        text-decoration: none;
+        color: #f9f9f9;
+
+        .icon { @include font-size(70); }
+    }
+
+    @include screen-max-sm {
+        text-align: center;
+
+        .icon { display: none; }
+        .info-box p { @include font-size(12); }
+    }
+
+    @include rtl {
+        .icon { right: auto; left: 10px; }
+    }
+}

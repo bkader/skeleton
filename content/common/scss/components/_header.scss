@@ -31,4 +31,9 @@
             }
         }
     }
+
+    @include rtl {
+        .page-title > .page-icon { margin-right: 0; margin-left: $gutters; }
+        .logo-container { right: auto; left: $gutters; }
+    }
 }

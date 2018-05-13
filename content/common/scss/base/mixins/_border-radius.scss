@@ -1,43 +1,41 @@
 // Border Radius.
 
 @mixin border-radius($radius: 0) {
-	-webkit-border-radius: $radius;
-	-moz-border-radius: $radius;
-	border-radius: $radius;
+    @include prefix(border-radius, $radius, wekbit moz);
 }
 
-@mixin border-top-radius($radius) {
-	-webkit-border-top-left-radius: $radius;
-	-webkit-border-top-right-radius: $radius;
-	-moz-border-top-left-radius: $radius;
-	-moz-border-top-right-radius: $radius;
-	border-top-left-radius: $radius;
-	border-top-right-radius: $radius;
+@mixin border-top-radius($radius: 0) {
+    @include prefix(border-top-left-radius, $radius, wekbit moz);
+    @include prefix(border-top-right-radius, $radius, wekbit moz);
 }
 
-@mixin border-right-radius($radius) {
-	-webkit-border-top-right-radius: $radius;
-	-webkit-border-bottom-right-radius: $radius;
-	-moz-border-top-right-radius: $radius;
-	-moz-border-bottom-right-radius: $radius;
-	border-top-right-radius: $radius;
-	border-bottom-right-radius: $radius;
+@mixin border-right-radius($radius: 0) {
+    @include prefix(border-top-right-radius, $radius, wekbit moz);
+    @include prefix(border-bottom-right-radius, $radius, wekbit moz);
 }
 
-@mixin border-bottom-radius($radius) {
-	-webkit-border-bottom-right-radius: $radius;
-    -webkit-border-bottom-left-radius: $radius;
-	-moz-border-bottom-right-radius: $radius;
-    -moz-border-bottom-left-radius: $radius;
-    border-bottom-right-radius: $radius;
-	border-bottom-left-radius: $radius;
+@mixin border-bottom-radius($radius: 0) {
+    @include prefix(border-bottom-right-radius, $radius, wekbit moz);
+    @include prefix(border-bottom-left-radius, $radius, wekbit moz);
 }
 
-@mixin border-left-radius($radius) {
-	-webkit-border-top-left-radius: $radius;
-    -webkit-border-bottom-left-radius: $radius;
-    -moz-border-top-left-radius: $radius;
-    -moz-border-bottom-left-radius: $radius;
-    border-top-left-radius: $radius;
-    border-bottom-left-radius: $radius;
+@mixin border-left-radius($radius: 0) {
+    @include prefix(border-top-left-radius, $radius, wekbit moz);
+    @include prefix(border-bottom-left-radius, $radius, wekbit moz);
+}
+
+@mixin border-top-left-radius($radius: 0) {
+    @include prefix(border-top-left-radius, $radius, wekbit moz);
+}
+
+@mixin border-top-right-radius($radius: 0) {
+    @include prefix(border-top-right-radius, $radius, wekbit moz);
+}
+
+@mixin border-bottom-right-radius($radius: 0) {
+    @include prefix(border-bottom-right-radius, $radius, wekbit moz);
+}
+
+@mixin border-bottom-right-radius($radius: 0) {
+    @include prefix(border-bottom-right-radius, $radius, wekbit moz);
 }

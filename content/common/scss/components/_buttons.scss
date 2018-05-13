@@ -2,14 +2,13 @@
 .btn-app {
     @include border-radius(0 !important);
     position: relative;
-    // padding: 15px 5px;
-    // margin: 0 0 10px 10px;
+    padding: 15px 5px;
     min-width: 80px;
 
     > .fa,
     > .glyphicon {
+        @include font-size(20);
         margin: 0 auto;
-        font-size: 20px;
         display: block;
     }
 
@@ -17,12 +16,31 @@
         @include absolute(top -3px right -10px);
         font-size: 0.835em;
         font-weight: 400;
+        z-index: 5;
+    }
+
+    @include rtl {
+        > .badge { right: auto; left: -10px; }
     }
 }
-.btn-group > .btn-app > .badge {top: 0; right: 0;}
+
+.btn-group > .btn-app > .badge {
+    @include border-radius(0 0 0 4px !important);
+    top: 0;
+    right: 0;
+    @include rtl {
+        right: auto;
+        left: 0;
+        @include border-radius(0 0 4px 0 !important);
+    }
+}
+
 .btn-app + .btn-app,
 .btn-group + .btn-app,
-.btn-app + .btn-group {margin-left: 10px;}
+.btn-app + .btn-group {
+    margin-left: 0.625rem;
+    @include rtl { margin-left: 0; margin-right: 0.625rem; }
+}
 
 .btn-group-xs > .btn,
 .btn-xs {
@@ -33,86 +51,147 @@
 }
 
 .form-control-sm, .btn-sm {
-    font-size: 12px;
+    @include font-size(12);
     vertical-align: top;
 }
 
 .btn-group > .btn-icon,
 .btn-icon {
-    padding-bottom: 0;
-    padding-top: 0;
+    position: relative;
     text-align: left;
     line-height: initial;
+    vertical-align: baseline;
+    padding-left: 47px;
 
     > [class^="fa"] {
-        @include border-radius(4px 0 0 4px);
+        @include absolute(top 0 left 0);
+        @include border-left-radius(4px);
         border-right: 1px solid transparent;
         font-size: inherit;
-        line-height: 36px;
-        margin: 0 12px 0 -12px;
+        height: 100%;
+        display: block;
+        line-height: 1;
         text-align: center;
-        width: 36px;
+        width: 35px;
+
+        &::before {
+            @include absolute(top 50% left 50%);
+            @include transform(translate(-50%, -50%));
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
     }
 
-    &.btn-xs > [class^="fa"] {
-        @include border-radius(3px 0 0 3px);
-        line-height: 20px;
-        margin-left: -5px;
-        margin-right: 5px;
-        width: 24px;
+    &.btn-xs {
+        padding-left: 25px;
+        > [class^="fa"] {
+            @include border-left-radius(3px);
+            width: 20px;
+        }
     }
-    &.btn-sm > [class^="fa"] {
-        @include border-radius(3.2px 0 0 3.2px);
-        line-height: 26px;
-        margin-left: -8px;
-        margin-right: 8px;
-        width: 28px;
+    &.btn-sm {
+        padding-left: 34px;
+        > [class^="fa"] {
+            @include border-left-radius(3.2px);
+            width: 26px;
+        }
     }
-    &.btn-lg > [class^="fa"] {
-        @include border-radius(4.8px 0 0 4.8px);
-        line-height: 46px;
-        margin-left: -16px;
-        margin-right: 16px;
-        width: 48px;
+    &.btn-lg {
+        padding-left: 61px;
+        > [class^="fa"] {
+            @include border-left-radius(4.8px);
+            width: 45px;
+        }
+    }
+
+    @include rtl {
+        padding-left: 0.75rem;
+        padding-right: 47px;
+
+        > [class^="fa"] {
+            @include border-left-radius(0);
+            @include border-right-radius(4px);
+            left: auto;
+            right: 0;
+            border-right: none;
+            border-left: 1px solid transparent;
+
+            &::before {
+                @include absolute(top 50% left 50%);
+                @include transform(translate(-50%, -50%));
+                display: block;
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        &.btn-xs {
+            padding-left: 0.3125rem;
+            padding-right: 25px;
+            > [class^="fa"] {
+                @include border-left-radius(0);
+                @include border-right-radius(3px);
+            }
+        }
+        &.btn-sm {
+            padding-left: 0.5rem;
+            padding-right: 34px;
+            > [class^="fa"] {
+                @include border-left-radius(0);
+                @include border-right-radius(3.2px);
+            }
+        }
+        &.btn-lg {
+            padding-left: 1rem;
+            padding-right: 61px;
+            > [class^="fa"] {
+                @include border-left-radius(0);
+                @include border-right-radius(4.8px);
+            }
+        }
     }
 }
 
 // Button groups with icon buttons.
-.btn-group > .btn-icon:not(:first-child) > [class^="fa"] { @include border-radius(0); }
+.btn-group {
+    > .btn-icon > [class^="fa"] { @include border-radius(0!important); }
 
-.btn-group.btn-group-xs > .btn-icon,
-.btn-group > .btn-icon.btn-xs {
-    > [class^="fa"] {
-        line-height: 20px;
-        margin-left: -5px;
-        margin-right: 5px;
-        width: 24px;
+    &.btn-group-xs > .btn-icon {
+        padding-left: 25px;
+        > [class^="fa"] { width: 20px; }
     }
-    &:not(:first-child) > [class^="fa"] { @include border-radius(0); }
-}
 
-.btn-group.btn-group-sm > .btn-icon,
-.btn-group > .btn-icon.btn-sm {
-    > [class^="fa"] {
-        line-height: 26px;
-        margin-left: -8px;
-        margin-right: 8px;
-        width: 28px;
+    &.btn-group-sm > .btn-icon {
+        padding-left: 34px;
+        > [class^="fa"] { width: 26px; }
     }
-    &:not(:first-child) > [class^="fa"] { @include border-radius(0); }
-}
 
-.btn-group.btn-group-lg > .btn-icon,
-.btn-group > .btn-icon.btn-lg {
-    > [class^="fa"] {
-        line-height: 46px;
-        margin-left: -16px;
-        margin-right: 16px;
-        width: 48px;
+    &.btn-group-lg > .btn-icon {
+        padding-left: 61px;
+        > [class^="fa"] { width: 45px; }
     }
-    &:not(:first-child) > [class^="fa"] { @include border-radius(0); }
-}
 
+    @include rtl {
+        &.btn-group-xs > .btn-icon {
+            padding-left: 0.3125rem;
+            padding-right: 25px;
+            > [class^="fa"] { width: 20px; }
+        }
+
+        &.btn-group-sm > .btn-icon {
+            padding-left: 0.5rem;
+            padding-right: 34px;
+            > [class^="fa"] { width: 26px; }
+        }
+
+        &.btn-group-lg > .btn-icon {
+            padding-left: 1rem;
+            padding-right: 61px;
+            > [class^="fa"] { width: 45px; }
+        }
+    }
+}
 
 select.form-control-sm:not([size]):not([multiple]),
 .input-group-sm > select.form-control:not([size]):not([multiple]),

@@ -61,6 +61,16 @@
 
         .user-menu img { display: inline-block; }
     }
+
+    @include rtl {
+        // User menu.
+        .user-menu {
+            border-left: none;
+            border-right: 1px solid darken($navbar__background, 5%);
+
+            img { margin-left: 0; margin-right: 10px; }
+        }
+    }
 }
 
 // Dropdown menus.
