@@ -129,7 +129,7 @@
         },
 
         // Reload main page parts.
-        reload: function(el, navbar) {
+        reload: function(el, navbar, callback) {
             
             // Shall we reload the admin navbar?
             navbar = navbar || true;
@@ -140,7 +140,10 @@
             if (navbar === true) {
                 $("#navbar-admin").load(csk.config.currentURL + " #navbar-admin > *");
             }
-            if (el.length) {
+
+            if (el.length && typeof callback === "function") {
+                $(el).load(csk.config.currentURL + " " + el + " > *", callback);
+            } else if (el.length) {
                 $(el).load(csk.config.currentURL + " " + el + " > *");
             }
         },
