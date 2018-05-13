@@ -85,7 +85,7 @@ $lang['CSK_ADMIN_LANGUAGES_DEFAULT'] = 'اللغة - افتراضية';
 $lang['CSK_ADMIN_REPORTS'] = 'الأنشطة';
 
 // Help menu.
-$lang['CSK_ADMIN_DOCUMENTATION'] = 'مستندات الويكي';
+$lang['CSK_ADMIN_DOCUMENTATION'] = 'دليل سكلتون';
 $lang['CSK_ADMIN_TRANSLATIONS']  = 'ترجمات سكلتون';
 $lang['CSK_ADMIN_SKELETON_SHOP'] = 'سوق سكلتون';
 
