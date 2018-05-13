@@ -133,6 +133,10 @@ body {
   padding: 0.25rem 0.5rem;
 }
 
+.badge {
+  padding: 0.1875rem 0.4rem;
+}
+
 .text-small {
   font-size: 0.83em;
 }
