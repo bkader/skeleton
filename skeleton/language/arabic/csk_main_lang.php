@@ -199,6 +199,10 @@ $lang['CSK_ERROR_LOGGED_OUT']        = 'يجب عليك تسجيل الدخول 
 $lang['CSK_ERROR_ACCOUNT_MISSING']   = 'هذا المستخدم غير موجود.';
 $lang['CSK_ERROR_ACTION_PERMISSION'] = 'ليس لديك الصلاحية اللازمة لتنفيذ هذا الإجراء.';
 
+// manifest.json error.
+$lang['CSK_ADMIN_MANIFEST_MISSING']   = 'ملف "manifest.json" للمكون هذا مفقود أو منسق بشكل سيء.';
+$lang['CSK_ADMIN_COMPONENT_DISABLED'] = 'هذا المكون ليس مفعّل. الرجاء تفعيله على لوحة التحكم إذا أردت إستخدامه.';
+
 // ------------------------------------------------------------------------
 // Form validation lines.
 // ------------------------------------------------------------------------

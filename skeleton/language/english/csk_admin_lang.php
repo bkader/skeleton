@@ -97,14 +97,6 @@ $lang['CSK_ADMIN_FOOTER_TEXT']  = 'Thank your for creating with <a href="%s" tar
 $lang['CSK_ADMIN_VERSION_TEXT'] = 'Version: <strong>%s</strong> &#124; {elapsed_time}';
 
 // ------------------------------------------------------------------------
-// Manifest files.
-// ------------------------------------------------------------------------
-
-// manifest.json error.
-$lang['CSK_ADMIN_MANIFEST_MISSING']   = 'This component\'s "manifest.json" file is either missing or badly formatted.';
-$lang['CSK_ADMIN_COMPONENT_DISABLED'] = 'This component is disabled. Enable it on the dashboard in order to use it.';
-
-// ------------------------------------------------------------------------
 // Misc.
 // ------------------------------------------------------------------------
 

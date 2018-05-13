@@ -95,6 +95,38 @@ class KB_Controller extends CI_Controller {
 		// Get current module's details.
 		$this->module = $this->router->fetch_module();
 		empty($this->module) OR $this->module = $this->router->module_details($this->module);
+
+		/**
+		 * If the "manifest.json" file is missing or badly formatted,
+		 * $module will be set to "FALSE". So we have two options:
+		 * 1. Redirect the user to homepage.
+		 * 2. Show error, this is in case the module is used as the 
+		 * default controller.
+		 */
+		if (false === $this->module)
+		{
+			if (false === stripos($this->uri->uri_string(), $this->router->default_controller))
+			{
+				set_alert(line('CSK_ERROR_MANIFEST_MISSING'), 'error');
+				redirect('');
+				exit;
+			}
+
+			show_error(line('CSK_ERROR_MANIFEST_MISSING'));
+		}
+		// In case the module is disabled.
+		elseif (null !== $this->module 
+			&& ( ! isset($this->module['enabled']) OR true !== $this->module['enabled']))
+		{
+			if (false === stripos($this->uri->uri_string(), $this->router->default_controller))
+			{
+				set_alert(line('CSK_ERROR_COMPONENT_DISABLED'), 'error');
+				redirect('');
+				exit;
+			}
+
+			show_error(line('CSK_ERROR_COMPONENT_DISABLED'));
+		}
 		$this->theme->set('module', $this->module, true);
 
 		// Load authentication library.

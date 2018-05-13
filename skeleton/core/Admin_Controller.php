@@ -113,21 +113,6 @@ class Admin_Controller extends KB_Controller
 		}
 
 		$this->load->language('csk_admin');
-
-		if (null !== $this->router->fetch_module())
-		{
-			if (false === $this->module)
-			{
-				show_error(line('CSK_ADMIN_MANIFEST_MISSING'));
-			}
-			// Disabled module.
-			if (true !== $this->module['enabled'])
-			{
-				set_alert(line('CSK_ADMIN_COMPONENT_DISABLED'), 'warning');
-				redirect('admin');
-				exit;
-			}
-		}
 		
 		add_filter('admin_head', array($this, 'csk_globals'), 0);
 		add_filter('admin_head', array($this, 'admin_head'), 99);

@@ -199,6 +199,10 @@ $lang['CSK_ERROR_LOGGED_OUT']        = 'Vous devez être connecté pour accéder
 $lang['CSK_ERROR_ACCOUNT_MISSING']   = 'Cet utilisateur n\'existe pas.';
 $lang['CSK_ERROR_ACTION_PERMISSION'] = 'Vous n\'êtes pas autorisé à effectuer cette action.';
 
+// manifest.json error.
+$lang['CSK_ERROR_MANIFEST_MISSING']   = 'Le fichier "manifest.json" de ce composant est manquant ou mal formaté.';
+$lang['CSK_ERROR_COMPONENT_DISABLED'] = 'Ce composant est désactivé. Activez-le sur le tableau de bord pour l\'utiliser.';
+
 // ------------------------------------------------------------------------
 // Form validation lines.
 // ------------------------------------------------------------------------

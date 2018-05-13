@@ -199,6 +199,10 @@ $lang['CSK_ERROR_LOGGED_OUT']        = 'You must be logged in to access this pag
 $lang['CSK_ERROR_ACCOUNT_MISSING']   = 'This user does not exist.';
 $lang['CSK_ERROR_ACTION_PERMISSION'] = 'You do not have permission to perform this action.';
 
+// manifest.json error.
+$lang['CSK_ERROR_MANIFEST_MISSING']   = 'This component\'s "manifest.json" file is either missing or badly formatted.';
+$lang['CSK_ERROR_COMPONENT_DISABLED'] = 'This component is disabled. Enable it on the dashboard in order to use it.';
+
 // ------------------------------------------------------------------------
 // Form validation lines.
 // ------------------------------------------------------------------------
