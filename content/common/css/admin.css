@@ -130,9 +130,14 @@ body {
 .form-control,
 .btn,
 input,
+select,
 textarea {
   font-family: inherit;
   font-size: inherit;
+}
+
+select.form-control:not([size]):not([multiple]) {
+  height: auto;
 }
 
 .pagination {
