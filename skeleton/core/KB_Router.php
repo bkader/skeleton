@@ -503,12 +503,21 @@ class KB_Router extends CI_Router
 			return false;
 		}
 
-		$content = file_get_contents($manifest_file);
+		$content = file_get_contents($manifest_file);		
 		$headers = json_decode($content, true);
 
 		if ( ! is_array($headers))
 		{
 			return false;
+		}
+
+		/**
+		 * Create a back-up for the manifest.json file if it does not exist.
+		 * @since 2.0.0
+		 */
+		if ( ! is_file($manifest_file.'.bak'))
+		{
+			copy($manifest_file, $manifest_file.'.bak');
 		}
 
 		$headers = array_replace_recursive($this->_headers, $headers);

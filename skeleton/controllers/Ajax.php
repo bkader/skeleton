@@ -61,7 +61,6 @@ class Ajax extends AJAX_Controller {
 		'plugins',
 		'reports',
 		'themes',
-		'users',
 	);
 
 	/**
@@ -75,7 +74,7 @@ class Ajax extends AJAX_Controller {
 	 *
 	 * @access 	public
 	 * @param 	none
-	 * @return 	void
+	 * @return 	AJAX_Controller::response()
 	 */
 	public function __construct()
 	{
@@ -133,7 +132,7 @@ class Ajax extends AJAX_Controller {
 	 * @access 	public
 	 * @param 	string 	$action 	The action to perform.
 	 * @param 	string 	$name 		The plugin's folder name;
-	 * @return 	void
+	 * @return 	AJAX_Controller::response()
 	 */
 	public function _languages($action = null, $name = null)
 	{
@@ -288,7 +287,7 @@ class Ajax extends AJAX_Controller {
 	 * @access 	public
 	 * @param 	string 	$action 	The action to perform.
 	 * @param 	string 	$name 		The module's folder name;
-	 * @return 	void
+	 * @return 	AJAX_Controller::response()
 	 */
 	public function _modules($action = null, $name = null)
 	{
@@ -320,6 +319,11 @@ class Ajax extends AJAX_Controller {
 		if ('delete' !== $action)
 		{
 			function_exists('write_file') OR $this->load->helper('file');
+			
+			if ('deactivate' === $action)
+			{
+				unset($details['contexts']);
+			}
 		}
 		// Load directory helper for delete action.
 		elseif ( ! function_exists('directory_delete'))
@@ -351,7 +355,7 @@ class Ajax extends AJAX_Controller {
 				// Successfully enabled?
 				$details['enabled'] = true;
 				$manifest = $details['full_path'].'manifest.json';
-				if (true === write_file($manifest, json_encode($details)))
+				if (true === write_file($manifest, json_encode($details, JSON_PRETTY_PRINT)))
 				{
 					$this->response->header = self::HTTP_OK;
 					$this->response->message = sprintf(line('CSK_MODULES_SUCCESS_ACTIVATE'), $module);
@@ -373,10 +377,24 @@ class Ajax extends AJAX_Controller {
 					return;
 				}
 
-				// Successfully enabled?
-				$details['enabled'] = false;
+				// Process status and some needed variables.
+				$status   = false;
 				$manifest = $details['full_path'].'manifest.json';
-				if (true === write_file($manifest, json_encode($details)))
+				$backup   = $manifest.'.bak';
+
+				// See if the back up file is found.
+				if (is_file($backup))
+				{
+					is_file($manifest) && unlink($manifest);
+					$status = (false !== copy($backup, $manifest));
+				}
+
+				if (true !== $status)
+				{
+					$status = (false !== write_file($manifest, json_encode($details, JSON_PRETTY_PRINT)));
+				}
+
+				if (false !== $status)
 				{
 					$this->response->header = self::HTTP_OK;
 					$this->response->message = sprintf(line('CSK_MODULES_SUCCESS_DEACTIVATE'), $module);
@@ -428,7 +446,7 @@ class Ajax extends AJAX_Controller {
 	 * @access 	public
 	 * @param 	string 	$action 	The action to perform.
 	 * @param 	string 	$name 		The plugin's folder name;
-	 * @return 	void
+	 * @return 	AJAX_Controller::response()
 	 */
 	public function _plugins($action = null, $name = null)
 	{
@@ -528,7 +546,7 @@ class Ajax extends AJAX_Controller {
 	 * @access 	public
 	 * @param 	string 	$action 	The action to perform.
 	 * @param 	int  	$id 		The report ID.
-	 * @return 	void
+	 * @return 	AJAX_Controller::response()
 	 */
 	public function _reports($action = null, $id = 0)
 	{
@@ -576,6 +594,20 @@ class Ajax extends AJAX_Controller {
 
 	// ------------------------------------------------------------------------
 
+	/**
+	 * _themes
+	 *
+	 * Method for interacting with themes.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	string 	$action 	The action to perform.
+	 * @param 	string 	$name 		The theme's folder name.
+	 * @return 	AJAX_Controller::response()
+	 */
 	public function _themes($action = null, $name = null)
 	{
 		$this->load->language('csk_admin');
