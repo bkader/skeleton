@@ -87,8 +87,12 @@ $lang['CSK_BTN_HOME']            = 'الرئيسية';
 $lang['CSK_BTN_LOGIN']           = 'تسجيل الدخول';
 $lang['CSK_BTN_LOGOUT']          = 'تسجيل الخروج';
 $lang['CSK_BTN_LOST_PASSWORD']   = 'كلمة مرور مفقودة';
+$lang['CSK_BTN_MORE']            = 'المزيد';
+$lang['CSK_BTN_MORE_INFO']       = 'المزيد من المعلومات';
 $lang['CSK_BTN_NEW']             = 'جديد';
 $lang['CSK_BTN_PROFILE']         = 'الملف الشخصي';
+$lang['CSK_BTN_READ']            = 'قراءة';
+$lang['CSK_BTN_READ_MORE']       = 'إقرأ المزيد';
 $lang['CSK_BTN_REGISTER']        = 'تسجيل';
 $lang['CSK_BTN_REMOVE']          = 'إزالة';
 $lang['CSK_BTN_REMOVE_COM']      = 'إزالة %s';
@@ -105,6 +109,8 @@ $lang['CSK_BTN_SETTINGS_COM']    = 'إعدادات %s';
 $lang['CSK_BTN_SUPPORT']         = 'الدعم';
 $lang['CSK_BTN_UPDATE']          = 'تحديث';
 $lang['CSK_BTN_UPDATE_COM']      = 'تحديث %s';
+$lang['CSK_BTN_VIEW']            = 'عرض';
+$lang['CSK_BTN_VIEW_MORE']       = 'عرض المزيد';
 $lang['CSK_BTN_VIEW_PROFILE']    = 'عرض الصفحة الشخصية';
 $lang['CSK_BTN_VIEW_SITE']       = 'عرض الموقع';
 $lang['CSK_BTN_WEBSITE']         = 'الموقع';
@@ -125,7 +131,7 @@ $lang['CSK_ON']  = 'On';
 $lang['CSK_ALL']  = 'الكل';
 $lang['CSK_BOTH'] = 'على حد سواء';
 $lang['CSK_NONE'] = 'لا شيء';
-$lang['CSK_MORE'] = 'أكثر';
+$lang['CSK_MORE'] = 'المزيد';
 
 // ------------------------------------------------------------------------
 // Forms Input.
