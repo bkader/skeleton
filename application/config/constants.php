@@ -94,7 +94,7 @@ defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest auto
  * class, or the context class if it exits of course.
  */
 static $front_contexts = array('ajax', 'process');
-static $back_contexts  = array('content', 'extensions', 'help', 'reports', 'settings');
+static $back_contexts  = array('content', 'help', 'reports', 'settings');
 
 /**
  * Site reserved constants.
