@@ -125,6 +125,7 @@ $lang['CSK_ON']  = 'On';
 $lang['CSK_ALL']  = 'Tout';
 $lang['CSK_BOTH'] = 'Tous les deux';
 $lang['CSK_NONE'] = 'Aucun';
+$lang['CSK_MORE'] = 'Plus';
 
 // ------------------------------------------------------------------------
 // Forms Input.
