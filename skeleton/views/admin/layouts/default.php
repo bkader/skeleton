@@ -143,7 +143,7 @@
 			}
 
 			/**
-			 * Display menu for modules with extensions controller.
+			 * Extensions menu.
 			 * @since 	2.0.0
 			 */
 			echo '<li class="nav-item dropdown">',
@@ -156,8 +156,17 @@
 			admin_anchor('modules', line('CSK_ADMIN_MODULES'), 'class="dropdown-item"'),
 			admin_anchor('plugins', line('CSK_ADMIN_PLUGINS'), 'class="dropdown-item"'),
 			admin_anchor('themes', line('CSK_ADMIN_THEMES'), 'class="dropdown-item"'),
-			admin_anchor('languages', line('CSK_ADMIN_LANGUAGES'), 'class="dropdown-item"'),
-			'</div></li>';
+			admin_anchor('languages', line('CSK_ADMIN_LANGUAGES'), 'class="dropdown-item"');
+
+			/**
+			 * Display menus for modules with "Extensions.php" controllers.
+			 * @since 	2.0.0
+			 */
+			if (has_action('extensions_menu')) {
+				echo '<div class="dropdown-divider"></div>';
+				do_action('extensions_menu');
+			}
+			echo '</div></li>';
 
 			/**
 			 * Display menu for modules with reports controller.
@@ -351,7 +360,7 @@
 		}
 		$page_icon .= ' page-icon';
 
-		echo '<h1 class="page-title">'.fa_icon($page_icon).$page_title.'</h1>';
+		echo html_tag('h1', array('class' => 'page-title'), fa_icon($page_icon).$page_title);
 
 		/**
 		 * Skeleton logo filter.
@@ -496,9 +505,17 @@ if (has_action('admin_subhead') OR true === $module['has_help'] OR isset($page_h
 		?>
 	</div>
 </footer>
-<script type="text/x-handlebars-template" id="csk-alert-template">
-<div class="alert alert-{{type}} alert-dismissible fade show" role="alert" id="csk-alert">
-	{{{message}}}
-	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-</div>
-</script>
+<script type="text/x-handlebars-template" id="csk-alert-template"><?php
+echo html_tag('div', array(
+	'class' => 'alert alert-{{type}} alert-dismissible fade show',
+	'role'  => 'alert',
+	'id'    => 'csk-alert',
+), '{{{message}}}'.html_tag('button', array(
+	'type'         => 'button',
+	'class'        => 'close',
+	'data-dismiss' => 'alert',
+	'aria-label'   => line('CSK_BTN_CLOSE'),
+), html_tag('span', array(
+	'aria-hidden' => 'true',
+), '&times;')));
+?></script>
