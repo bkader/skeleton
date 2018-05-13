@@ -62,7 +62,7 @@ $lang['CSK_ADMIN_GLOBAL_SETTINGS']    = 'الاعدادات العامة';
 $lang['CSK_ADMIN_SYSTEM_INFORMATION'] = 'معلومات النظام';
 
 // Users menu.
-$lang['CSK_ADMIN_USERS']        = 'المستخدمين';
+$lang['CSK_ADMIN_USERS']        = 'المستخدمون';
 $lang['CSK_ADMIN_USERS_MANAGE'] = 'ادارة المستخدمين';
 $lang['CSK_ADMIN_USERS_GROUPS'] = 'مجموعات المستخدمين';
 $lang['CSK_ADMIN_USERS_LEVELS'] = 'مستويات الوصول';
