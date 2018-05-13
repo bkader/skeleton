@@ -58,11 +58,6 @@ content/modules/*
 !content/plugins/
 content/plugins/*
 !content/plugins/index.html
-!content/plugins/cache-assets/*
-!content/plugins/extra-profile-fields/*
-!content/plugins/helloworld/*
-!content/plugins/social-meta-tags/*
-!content/plugins/the-title/*
 
 # Ignore all themes except the default one.
 # Think of removing or commenting the following lines
