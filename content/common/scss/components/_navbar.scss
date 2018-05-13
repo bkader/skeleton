@@ -44,24 +44,6 @@
         }
     }
 
-    // Dropdown menus.
-    .nav-item.dropdown .dropdown-menu {
-        margin-top: 0;
-        padding: 5px 0;
-
-        .dropdown-item {
-            @include font-size(13);
-            padding: 3px 20px;
-
-            @include hover-focus-active {
-                background-color: $navbar__dropdown-item-hover;
-                color: $color__white;
-
-                > .text-grey { color: darken($color__white, 20%); }
-            }
-        }
-    }
-
     // User menu.
     .user-menu {
         border-left: 1px solid darken($navbar__background, 5%);
@@ -78,5 +60,23 @@
         height: $navbar__height;
 
         .user-menu img { display: inline-block; }
+    }
+}
+
+// Dropdown menus.
+.dropdown-menu {
+    margin-top: 0;
+    padding: 5px 0;
+
+    .dropdown-item {
+        @include font-size(13);
+        padding: 3px 20px;
+
+        @include hover-focus-active {
+            background-color: $navbar__dropdown-item-hover;
+            color: $color__white;
+
+            > .text-grey { color: darken($color__white, 20%); }
+        }
     }
 }
