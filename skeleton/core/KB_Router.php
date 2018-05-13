@@ -763,7 +763,14 @@ class KB_Router extends CI_Router
 			$is_admin = true;
 		}
 
-		return (true === $is_admin && 'users' !== $this->class);
+		// Last check for front-end Users controller.
+		if ('admin' !== $this->uri->segment('1') 
+			&& 'users' === $this->class)
+		{
+			$is_admin = false;
+		}
+
+		return $is_admin;
 	}
 
 	// ------------------------------------------------------------------------
