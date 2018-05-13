@@ -38,7 +38,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Dashboard main language file (English)
+ * Dashboard main language file (French)
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
@@ -53,47 +53,47 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 // Navbar items.
 // ------------------------------------------------------------------------
 
-$lang['CSK_ADMIN_DASHBOARD']   = 'Dashboard';
-$lang['CSK_ADMIN_ADMIN_PANEL'] = 'Admin Panel';
+$lang['CSK_ADMIN_DASHBOARD']   = 'Tableau de bord';
+$lang['CSK_ADMIN_ADMIN_PANEL'] = 'Panneau d\'administration';
 
 // System menu.
-$lang['CSK_ADMIN_SYSTEM']             = 'System';
-$lang['CSK_ADMIN_GLOBAL_SETTINGS']    = 'Global Settings';
-$lang['CSK_ADMIN_SYSTEM_INFORMATION'] = 'System Information';
+$lang['CSK_ADMIN_SYSTEM']             = 'Système';
+$lang['CSK_ADMIN_GLOBAL_SETTINGS']    = 'Configuration';
+$lang['CSK_ADMIN_SYSTEM_INFORMATION'] = 'Informations système';
 
 // Users menu.
-$lang['CSK_ADMIN_USERS']        = 'Users';
-$lang['CSK_ADMIN_USERS_MANAGE'] = 'Manage Users';
-$lang['CSK_ADMIN_USERS_GROUPS'] = 'Groups';
-$lang['CSK_ADMIN_USERS_LEVELS'] = 'Access Levels';
+$lang['CSK_ADMIN_USERS']        = 'Utilisateurs';
+$lang['CSK_ADMIN_USERS_MANAGE'] = 'Gérer les utilisateurs';
+$lang['CSK_ADMIN_USERS_GROUPS'] = 'Groupes';
+$lang['CSK_ADMIN_USERS_LEVELS'] = 'Niveaux d\'accès';
 
 // Content menu.
-$lang['CSK_ADMIN_CONTENT'] = 'Content';
+$lang['CSK_ADMIN_CONTENT'] = 'Contenu';
 
 // Components Menu.
-$lang['CSK_ADMIN_COMPONENTS'] = 'Components';
+$lang['CSK_ADMIN_COMPONENTS'] = 'Composants';
 
 // Extensions menu.
 $lang['CSK_ADMIN_EXTENSIONS']        = 'Extensions';
 $lang['CSK_ADMIN_MODULES']           = 'Modules';
-$lang['CSK_ADMIN_PLUGINS']           = 'Plugins';
-$lang['CSK_ADMIN_THEMES']            = 'Themes';
-$lang['CSK_ADMIN_LANGUAGES']         = 'Languages';
-$lang['CSK_ADMIN_LANGUAGES_DEFAULT'] = 'Language - Default';
+$lang['CSK_ADMIN_PLUGINS']           = 'Plug-ins';
+$lang['CSK_ADMIN_THEMES']            = 'Thèmes';
+$lang['CSK_ADMIN_LANGUAGES']         = 'Langues';
+$lang['CSK_ADMIN_LANGUAGES_DEFAULT'] = 'Langue - Default';
 
 // Reports menu.
-$lang['CSK_ADMIN_REPORTS'] = 'Reports';
+$lang['CSK_ADMIN_REPORTS'] = 'Activités';
 
 // Help menu.
 $lang['CSK_ADMIN_DOCUMENTATION'] = 'Documentation';
-$lang['CSK_ADMIN_TRANSLATIONS']  = 'Translations';
-$lang['CSK_ADMIN_SKELETON_SHOP'] = 'Skeleton Shop';
+$lang['CSK_ADMIN_TRANSLATIONS']  = 'Traductions';
+$lang['CSK_ADMIN_SKELETON_SHOP'] = 'Boutique Skeleton';
 
 // ------------------------------------------------------------------------
 // Footer section.
 // ------------------------------------------------------------------------
 
-$lang['CSK_ADMIN_FOOTER_TEXT']  = 'Thank your for creating with <a href="%s" target="_blank">CodeIgniter Skeleton</a>.';
+$lang['CSK_ADMIN_FOOTER_TEXT']  = 'Merci de votre création avec <a href="%s" target="_blank">CodeIgniter Skeleton</a>.';
 $lang['CSK_ADMIN_VERSION_TEXT'] = 'Version: <strong>%s</strong> &#124; {elapsed_time}';
 
 // ------------------------------------------------------------------------
@@ -101,8 +101,8 @@ $lang['CSK_ADMIN_VERSION_TEXT'] = 'Version: <strong>%s</strong> &#124; {elapsed_
 // ------------------------------------------------------------------------
 
 // manifest.json error.
-$lang['CSK_ADMIN_MANIFEST_MISSING']   = 'This component\'s "manifest.json" file is either missing or badly formatted.';
-$lang['CSK_ADMIN_COMPONENT_DISABLED'] = 'This component is disabled. Enable it on the dashboard in order to use it.';
+$lang['CSK_ADMIN_MANIFEST_MISSING']   = 'Le fichier "manifest.json" de ce composant est manquant ou mal formaté.';
+$lang['CSK_ADMIN_COMPONENT_DISABLED'] = 'Ce composant est désactivé. Activez-le sur le tableau de bord pour l\'utiliser.';
 
 // ------------------------------------------------------------------------
 // Misc.
@@ -115,20 +115,20 @@ $lang['CSK_ADMIN_ACTIONS'] = 'Actions';
 // ------------------------------------------------------------------------
 // Different statuses.
 // ------------------------------------------------------------------------
-$lang['CSK_ADMIN_STATUS']   = 'Status';
-$lang['CSK_ADMIN_STATUSES'] = 'Statuses';
+$lang['CSK_ADMIN_STATUS']   = 'Statut';
+$lang['CSK_ADMIN_STATUSES'] = 'Statuts';
 
-$lang['CSK_ADMIN_ACTIVATED']   = 'Activated';
-$lang['CSK_ADMIN_ACTIVE']      = 'Active';
-$lang['CSK_ADMIN_ADDED']       = 'Added';
-$lang['CSK_ADMIN_CANCELED']    = 'Canceled';
-$lang['CSK_ADMIN_CREATED']     = 'Created';
-$lang['CSK_ADMIN_DEACTIVATED'] = 'Deactivated';
-$lang['CSK_ADMIN_DELETED']     = 'Deleted';
-$lang['CSK_ADMIN_DISABLED']    = 'Disabled';
-$lang['CSK_ADMIN_EDITED']      = 'Edited';
-$lang['CSK_ADMIN_ENABLED']     = 'Enabled';
-$lang['CSK_ADMIN_INACTIVE']    = 'Inactive';
-$lang['CSK_ADMIN_REMOVED']     = 'Removed';
-$lang['CSK_ADMIN_SAVED']       = 'Saved';
-$lang['CSK_ADMIN_UPDATED']     = 'Updated';
+$lang['CSK_ADMIN_ACTIVATED']   = 'Activé';
+$lang['CSK_ADMIN_ACTIVE']      = 'Actif';
+$lang['CSK_ADMIN_ADDED']       = 'Ajouté';
+$lang['CSK_ADMIN_CANCELED']    = 'Annulé';
+$lang['CSK_ADMIN_CREATED']     = 'Créé';
+$lang['CSK_ADMIN_DEACTIVATED'] = 'Désactivé';
+$lang['CSK_ADMIN_DELETED']     = 'Supprimé';
+$lang['CSK_ADMIN_DISABLED']    = 'Désactivé';
+$lang['CSK_ADMIN_EDITED']      = 'Modifié';
+$lang['CSK_ADMIN_ENABLED']     = 'Activé';
+$lang['CSK_ADMIN_INACTIVE']    = 'Inactif';
+$lang['CSK_ADMIN_REMOVED']     = 'Retiré';
+$lang['CSK_ADMIN_SAVED']       = 'Enregistré';
+$lang['CSK_ADMIN_UPDATED']     = 'Mis à jour';

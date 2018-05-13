@@ -49,9 +49,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		1.0.0
  * @version 	2.0.0
  */
-
-$lang['CSK_SKELETON_OPEN_SOURCE'] = 'CodeIgniter Skeleton is free software released under the MIT License.';
-$lang['CSK_SKELETON_COPYRIGHT']   = '&copy; %s CodeIgniter Skeleton';
 // ------------------------------------------------------------------------
 // General Buttons and Links.
 // ------------------------------------------------------------------------
@@ -104,7 +101,6 @@ $lang['CSK_BTN_SAVE_COM']        = 'Save %s';
 $lang['CSK_BTN_SELECT']          = 'Select';
 $lang['CSK_BTN_SEND_LINK']       = 'Send link';
 $lang['CSK_BTN_SETTINGS']        = 'Settings';
-$lang['CSK_BTN_SETTINGS']        = 'Settings';
 $lang['CSK_BTN_SETTINGS_COM']    = '%s Settings';
 $lang['CSK_BTN_SUPPORT']         = 'Support';
 $lang['CSK_BTN_UPDATE']          = 'Update';
@@ -118,7 +114,7 @@ $lang['CSK_BTN_WEBSITE']         = 'Website';
 // ------------------------------------------------------------------------
 
 // Yes and no.
-$lang['CSK_NO']  = 'NO';
+$lang['CSK_NO']  = 'No';
 $lang['CSK_YES'] = 'Yes';
 
 // On and off.
@@ -135,7 +131,7 @@ $lang['CSK_NONE'] = 'None';
 // ------------------------------------------------------------------------
 $lang['CSK_INPUT_ADDRESS']           = 'Address';
 $lang['CSK_INPUT_AVATAR']            = 'Avatar';
-$lang['CSK_INPUT_CAPTCHA']           = 'captcha';
+$lang['CSK_INPUT_CAPTCHA']           = 'Captcha';
 $lang['CSK_INPUT_COMPANY']           = 'Company';
 $lang['CSK_INPUT_CONFIRM_PASSWORD']  = 'Confirm password';
 $lang['CSK_INPUT_CURRENT_PASSWORD']  = 'Current password';
@@ -192,7 +188,7 @@ $lang['CSK_ERROR_FIELDS_REQUIRED']   = 'All fields are required.';
 $lang['CSK_ERROR_PERMISSION']        = 'You do not have permission to access this page.';
 $lang['CSK_ERROR_LOGGED_IN']         = 'You are already logged in.';
 $lang['CSK_ERROR_LOGGED_OUT']        = 'You must be logged in to access this page.';
-$lang['CSK_ERROR_ACCOUNT_MISSING']   = 'That user does not exist.';
+$lang['CSK_ERROR_ACCOUNT_MISSING']   = 'This user does not exist.';
 $lang['CSK_ERROR_ACTION_PERMISSION'] = 'You do not have permission to perform this action.';
 
 // ------------------------------------------------------------------------
@@ -206,3 +202,10 @@ $lang['form_validation_unique_email']      = 'This email address is already in u
 $lang['form_validation_unique_username']   = 'This username is not available.';
 $lang['form_validation_user_exists']       = 'No user was found with that username or email address.';
 $lang['form_validation_user_admin']        = 'You do not have access to the dashboard section of this site.';
+
+// ------------------------------------------------------------------------
+// Skeleton Related Lines.
+// ------------------------------------------------------------------------
+$lang['CSK_SKELETON']             = 'Skeleton';
+$lang['CSK_SKELETON_OPEN_SOURCE'] = 'CodeIgniter Skeleton is free software released under the MIT License.';
+$lang['CSK_SKELETON_COPYRIGHT']   = '&copy; %s CodeIgniter Skeleton';
