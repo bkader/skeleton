@@ -205,17 +205,9 @@
 
     .icon {
         @include font-size(65);
-        @include transition(all 0.1s linear);
         @include absolute(top 5px right 10px);
         color: rgba(#000, 0.15);
         z-index: 0;
-    }
-
-    &:hover {
-        text-decoration: none;
-        color: #f9f9f9;
-
-        .icon { @include font-size(70); }
     }
 
     @include screen-max-sm {

@@ -4514,24 +4514,11 @@ table.table-striped tr.selected {
 .info-box .icon {
   font-size: 65px;
   font-size: 4.0625rem;
-  -webkit-transition: all 0.1s linear;
-  -moz-transition: all 0.1s linear;
-  -ms-transition: all 0.1s linear;
-  -o-transition: all 0.1s linear;
-  transition: all 0.1s linear;
   position: absolute;
   top: 5px;
   right: 10px;
   color: rgba(0, 0, 0, 0.15);
   z-index: 0;
-}
-.info-box:hover {
-  text-decoration: none;
-  color: #f9f9f9;
-}
-.info-box:hover .icon {
-  font-size: 70px;
-  font-size: 4.375rem;
 }
 @media screen and (max-width: 768px) {
   .info-box {
