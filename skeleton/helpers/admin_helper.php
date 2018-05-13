@@ -121,24 +121,7 @@ if ( ! function_exists('submit_button'))
 		is_array($type) OR $type = explode(' ', $type);
 
 		// Array of Skeleton available button.
-		$types = array(
-			'add', 'apply',
-			'black', 'blue', 'brown',
-			'create',
-			'danger', 'default', 'delete', 'donate',
-			'green', 'grey',
-			'info',
-			'new',
-			'olive', 'orange',
-			'pink', 'primary', 'purple',
-			'red', 'remove',
-			'save', 'secondary', 'submit', 'success',
-			'teal',
-			'update',
-			'violet',
-			'warning', 'white',
-			'yellow',
-		);
+		$types = _dashboard_buttons();
 
 		$classes = array('btn');
 		foreach ($type as $t) {
@@ -233,5 +216,51 @@ if ( ! function_exists('submit_button'))
 		$output = $wrap ? '<div class="form-group">'.$button.'</div>' : $button;
 
 		return $output;
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('_dashboard_buttons'))
+{
+	/**
+	 * _dashboard_buttons
+	 *
+	 * Function for returning an array of dashboard available buttons colors.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @param 	none
+	 * @return 	array
+	 */
+	function _dashboard_buttons()
+	{
+		static $dashboard_buttons = null;
+
+		if (null === $dashboard_buttons)
+		{
+			$dashboard_buttons = array(
+				'add', 'apply',
+				'black', 'blue', 'brown',
+				'create',
+				'danger', 'default', 'delete', 'donate',
+				'green', 'grey',
+				'info',
+				'new',
+				'olive', 'orange',
+				'pink', 'primary', 'purple',
+				'red', 'remove',
+				'save', 'secondary', 'submit', 'success',
+				'teal',
+				'update',
+				'violet',
+				'warning', 'white',
+				'yellow',
+			);
+		}
+
+		return $dashboard_buttons;
 	}
 }
