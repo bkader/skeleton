@@ -135,12 +135,13 @@ if ( ! function_exists('html_tag'))
 		 * Add a custom tag so we can define language direction.
 		 * @since	 2.0.0
 		 */
-		if ('rtl' === get_instance()->lang->lang('direction') 
+		if ('login' !== get_instance()->router->fetch_class() 
+			&& 'rtl' === get_instance()->lang->lang('direction') 
 			&& ('input' === $tag OR ! in_array($tag, $void_elements)))
 		{
-			if (is_array($attr))
+			if (is_array($attr) && ! isset($attr['dir']))
 			{
-				isset($attr['dir']) OR $attr['dir'] = 'rtl';
+				$attr['dir'] = 'rtl';
 			}
 			elseif (is_string($attr) && false === stripos($attr, 'dir="'))
 			{
