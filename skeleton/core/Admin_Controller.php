@@ -180,8 +180,6 @@ class Admin_Controller extends KB_Controller
 					{
 						$this->styles[$i] = 'bootstrap-rtl';
 					}
-
-					$this->styles[] = 'admin-rtl';
 				}
 
 				$this->styles = array_map('trim', $this->styles);
