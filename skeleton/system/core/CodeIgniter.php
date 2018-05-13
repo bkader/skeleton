@@ -369,9 +369,7 @@ if ( ! is_php('5.4'))
 	 */
 	function &get_instance()
 	{
-		static $CI;
-		isset($CI) OR $CI = CI_Controller::get_instance();
-		return $CI;
+		return CI_Controller::get_instance();
 	}
 
 	if (file_exists(APPPATH.'core/'.$CFG->config['subclass_prefix'].'Controller.php'))
