@@ -70,14 +70,14 @@ foreach ($inputs as $name => $input) {
 echo '<div class="form-group">',
 
 // Account status
-form_checkbox('enabled', 1, set_checkbox('enabled', '1', false), 'id="enabled"'),
+form_checkbox('enabled', 1, (1 == $user->enabled), 'id="enabled"'),
 html_tag('label', array(
 	'for' => 'enabled',
 ), line('CSK_USERS_ACTIVE')),
 
 // Account type.
 '<span class="float-right">',
-form_checkbox('admin', 1, set_checkbox('admin', '1', false), 'id="admin"'),
+form_checkbox('admin', 1, ('administrator' === $user->subtype), 'id="admin"'),
 html_tag('label', array(
 	'for' => 'admin',
 ), line('CSK_USERS_ROLE_ADMIN')),
