@@ -418,7 +418,7 @@ class Themes extends Admin_Controller {
 				// Upload theme button.
 				echo html_tag('button', array(
 					'role' => 'button',
-					'class' => 'btn btn-primary btn-sm btn-icon mr-2',
+					'class' => 'btn btn-success btn-sm btn-icon mr-2',
 					'data-toggle' => 'collapse',
 					'data-target' => '#theme-install'
 				), fa_icon('upload').line('CSK_THEMES_UPLOAD'));
@@ -435,8 +435,8 @@ class Themes extends Admin_Controller {
 				// Add theme button.
 				echo html_tag('a', array(
 					'href' => admin_url('themes/install'),
-					'class' => 'btn btn-primary btn-sm btn-icon'
-				), fa_icon('plus').line('CSK_THEMES_ADD'));
+					'class' => 'btn btn-success btn-sm btn-icon'
+				), fa_icon('plus-circle').line('CSK_THEMES_ADD'));
 
 			});
 		}

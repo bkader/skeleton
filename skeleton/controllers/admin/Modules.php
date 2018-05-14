@@ -369,7 +369,7 @@ class Modules extends Admin_Controller {
 				// Upload module button.
 				echo html_tag('button', array(
 					'role' => 'button',
-					'class' => 'btn btn-primary btn-sm btn-icon mr-2',
+					'class' => 'btn btn-success btn-sm btn-icon mr-2',
 					'data-toggle' => 'collapse',
 					'data-target' => '#module-install'
 				), fa_icon('upload').line('CSK_MODULES_UPLOAD'));
@@ -384,8 +384,8 @@ class Modules extends Admin_Controller {
 			add_action('admin_subhead', function() {
 				echo html_tag('a', array(
 					'href'  => admin_url('modules/install'),
-					'class' => 'btn btn-primary btn-sm btn-icon mr-2',
-				), fa_icon('upload').line('CSK_MODULES_ADD'));
+					'class' => 'btn btn-success btn-sm btn-icon mr-2',
+				), fa_icon('plus-circle').line('CSK_MODULES_ADD'));
 			});
 		}
 	}

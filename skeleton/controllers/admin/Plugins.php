@@ -503,7 +503,7 @@ class Plugins extends Admin_Controller
 					// Upload plugin button.
 					echo html_tag('button', array(
 						'role' => 'button',
-						'class' => 'btn btn-primary btn-sm btn-icon mr-2',
+						'class' => 'btn btn-success btn-sm btn-icon mr-2',
 						'data-toggle' => 'collapse',
 						'data-target' => '#plugin-install'
 					), fa_icon('upload').line('CSK_PLUGINS_UPLOAD'));
@@ -535,8 +535,8 @@ class Plugins extends Admin_Controller
 					// Upload new plugin.
 					echo html_tag('a', array(
 						'href' => admin_url('plugins/install'),
-						'class' => 'btn btn-primary btn-sm btn-icon'
-					), fa_icon('upload').line('CSK_PLUGINS_ADD')),
+						'class' => 'btn btn-success btn-sm btn-icon'
+					), fa_icon('plus-circle').line('CSK_PLUGINS_ADD')),
 
 					// Filters toolbar.
 					'<div class="btn-group ml-3" role="group">',
