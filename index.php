@@ -111,7 +111,7 @@ switch (ENVIRONMENT)
  * This variable must contain the name of your "system" directory.
  * Set the path if it is not in the same directory as this file.
  */
-	$system_path = 'skeleton/system';
+	$system_path = "{$skeleton_path}/system";
 
 /*
  *---------------------------------------------------------------
@@ -365,6 +365,3 @@ defined('EXT') OR define('EXT', '.php');
  * Calling CodeIgniter.php file is handled by this file as well.
  */
 require_once(KBPATH.'autoloader.php');
-
-/* End of file index.php */
-/* Location: ./index.php */
