@@ -227,7 +227,7 @@ class KB_Controller extends CI_Controller {
 			if (null !== $form)
 			{
 				// Make sure to use _query_validate() method on admin.
-				if ('admin' !== $this->router->fetch_class())
+				if (true !== $this->router->is_admin())
 				{
 					add_script('jquery-validate', get_common_url('js/jquery.validate'));
 
