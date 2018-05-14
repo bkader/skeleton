@@ -50,8 +50,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @version 	2.0.0
  */
 
-echo '<div class="table-responsive-sm">',
-	'<table class="table table-sm table-striped table-hover">',
+echo '<div class="box">',
+'<div class="table-responsive-sm">',
+	'<table class="table table-sm table-striped table-hover mb-0">',
 		'<thead>',
 			'<tr>',
 				'<th class="w-25">', line('CSK_LANGUAGES_LANGUAGE'), '</th>',
@@ -103,4 +104,5 @@ if ($languages) {
 }
 
 echo '</table>',
+'</div>',
 '</div>';

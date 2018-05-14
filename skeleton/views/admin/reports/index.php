@@ -50,7 +50,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @version 	2.0.0
  */
 
-echo '<div class="table-responsive-sm mb15">',
+echo '<div class="box">',
+'<div class="table-responsive-sm mb-3">',
 	'<table class="table table-sm table-hover table-striped">',
 		'<thead>',
 			'<tr>',
@@ -91,5 +92,6 @@ if ($reports) {
 	echo '</tbody>';
 }
 echo '</table>',
+'</div>',
 '</div>',
 $pagination;

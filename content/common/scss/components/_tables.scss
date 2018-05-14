@@ -1,21 +1,6 @@
 table {
-
-    // Align checkboxes.
     th > input[type="checkbox"],
     td > input[type="checkbox"] { vertical-align: middle; }
-
-    &.table-striped {
-        tr {
-            border-left: 1px solid transparent;
-            border-right: 1px solid transparent;
-
-            // Selected rows.
-            &.selected {
-                border-color: $color__blue;
-            }
-        }
-    }
-
 }
 
 .tab-content .table-striped {

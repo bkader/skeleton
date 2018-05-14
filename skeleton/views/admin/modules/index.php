@@ -50,8 +50,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @version 	2.0.0
  */
 
-echo '<div class="table-responsive-md">',
-	'<table class="table table-sm table-hover table-striped">',
+echo '<div class="box">',
+'<div class="table-responsive-md">',
+	'<table class="table table-sm table-hover table-striped mb-0">',
 		'<thead>',
 			'<tr>',
 				'<th class="w-15">', line('CSK_MODULES_MODULE'), '</th>',
@@ -83,4 +84,5 @@ if ($modules) {
 	echo '</tbody>';
 }
 echo '</table>',
+'</div>',
 '</div>';

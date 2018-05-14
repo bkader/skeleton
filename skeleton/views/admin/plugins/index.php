@@ -51,13 +51,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 
 // Form opening tag.
-echo form_open('admin/plugins', 'class="form-inline table-responsive-md"'),
+echo form_open('admin/plugins', 'class="form-inline box"'),
 
 // Form nonce field.
 form_nonce('bulk-update-plugins'),
 
 // Bulk action section.
-'<div class="table-bulk-actions">',
+'<div class="table-bulk-actions box-header">',
 
 	form_dropdown('action', array(
 		'activate-selected'   => line('CSK_PLUGINS_ACTIVATE'),
@@ -70,7 +70,8 @@ form_nonce('bulk-update-plugins'),
 '</div>',
 
 // Plugins list table.
-'<table class="table table-sm table-hover table-striped">',
+'<div class="table-responsive-sm">',
+'<table class="table table-sm table-hover table-striped mb-0">',
 // Table heading.
 '<thead>',
 '<tr>',
@@ -115,5 +116,5 @@ if ($plugins) {
 	echo '</tbody>';
 }
 
-echo '</table>',
+echo '</table></div>',
 form_close();

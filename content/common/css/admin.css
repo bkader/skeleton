@@ -3910,13 +3910,6 @@ table th > input[type="checkbox"],
 table td > input[type="checkbox"] {
   vertical-align: middle;
 }
-table.table-striped tr {
-  border-left: 1px solid transparent;
-  border-right: 1px solid transparent;
-}
-table.table-striped tr.selected {
-  border-color: #2185d0;
-}
 
 .tab-content .table-striped {
   border-left: none;
@@ -4312,6 +4305,9 @@ table.table-striped tr.selected {
 }
 .box.box-donate {
   border-top-color: #b5cc18;
+}
+.box.box-borderless {
+  border-top: none;
 }
 
 .box-header {

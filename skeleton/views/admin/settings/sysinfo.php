@@ -56,7 +56,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	<li role="presentation" class="nav-item"><a href="#phpinfo" class="nav-link" aria-controls="phpinfo" role="tab" data-toggle="tab"><?php _e('CSK_SETTINGS_PHP_INFO'); ?></a></li>
 </ul>
 <div class="tab-content">
-	<div role="tabpanel" class="tab-pane active" id="sysinfo">
+	<div role="tabpanel" class="box box-borderless tab-pane active" id="sysinfo">
 		<div class="table-responsive-sm">
 			<table class="table table-sm table-hover table-striped">
 				<thead><tr><th class="w-25"><?php _e('CSK_SETTINGS_SETTING'); ?></th><th><?php _e('CSK_SETTINGS_VALUE'); ?></th></tr></thead>
@@ -68,7 +68,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			</table>
 		</div>
 	</div>
-	<div role="tabpanel" class="tab-pane" id="phpset">
+	<div role="tabpanel" class="box box-borderless tab-pane" id="phpset">
 		<div class="table-responsive-sm">
 			<table class="table table-sm table-hover table-striped">
 				<thead><tr><th class="w-25"><?php _e('CSK_SETTINGS_SETTING'); ?></th><th><?php _e('CSK_SETTINGS_VALUE'); ?></th></tr></thead>
@@ -99,7 +99,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			</table>
 		</div>
 	</div>
-	<div role="tabpanel" class="tab-pane" id="phpinfo">
+	<div role="tabpanel" class="box box-borderless tab-pane" id="phpinfo">
 		<div class="table-responsive-sm"><?php echo $phpinfo; ?></table>
 		</div>
 	</div>

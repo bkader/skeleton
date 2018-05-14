@@ -50,8 +50,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @version 	2.0.0
  */
 ?>
-<div class="row<?php if ( ! form_error('modulezip')): ?> collapse<?php endif; ?> justify-content-md-center mb15" id="module-install">
-	<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 text-center">
+<div class="row<?php if ( ! form_error('modulezip')): ?> collapse<?php endif; ?> justify-content-center mb-3" id="module-install">
+	<div class="col-sm-8 col-md-6 text-center">
 		<p><?php _e('CSK_MODULES_UPLOAD_TIP'); ?></p><br>
 		<div class="card">
 			<div class="card-body text-center">
@@ -89,13 +89,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		</div>
 	</div>
 </div>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb15" role="navigation">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3" role="navigation">
 	<p class="navbar-brand"><span class="badge badge-white text-red">0</span></p>
 	
 	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#modules-filter" aria-controls="modules-filter" aria-expanded="false" aria-label="Toggle navigation"><i class="fa fa-bars"></i></button>
 
 	<div class="collapse navbar-collapse" id="modules-filter">
-		<ul class="nav navbar-nav mr-auto">
+		<ul class="navbar-nav mr-auto">
 		<?php
 		// Featured.
 		echo html_tag('li', array(
@@ -130,13 +130,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		), line('CSK_MODULES_FILTER_NEW')));
 		?>
 		</ul>
-		<form class="form-inline my-2 my-lg-0" role="search" method="get">
-			<select name="type" id="type" class="form-control-sm">
-				<option value="name" selected="selected"><?php _e('CSK_MODULES_NAME'); ?></option>
-				<option value="tags"><?php _e('CSK_MODULES_TAGS'); ?></option>
-				<option value="author"><?php _e('CSK_MODULES_AUTHOR'); ?></option>
-			</select>
-			<input type="text" class="form-control-sm ml-2" id="search" name="search" placeholder="<?php _e('CSK_MODULES_SEARCH'); ?>">
+		<form class="form-inline my-2 my-lg-0" role="search" method="get" action="javascript:void(0)">
+			<div class="form-group mr-2 mb-0">
+				<select name="type" id="type" class="form-control form-control-sm">
+					<option value="name" selected="selected"><?php _e('CSK_MODULES_NAME'); ?></option>
+					<option value="tags"><?php _e('CSK_MODULES_TAGS'); ?></option>
+					<option value="author"><?php _e('CSK_MODULES_AUTHOR'); ?></option>
+				</select>
+			</div>
+			<div class="form-group mb-0">
+				<input type="text" class="form-control form-control-sm" id="search" name="search" placeholder="<?php _e('CSK_MODULES_SEARCH'); ?>">
+			</div>
 		</form>
 	</div><!-- /.navbar-collapse -->
 </nav>

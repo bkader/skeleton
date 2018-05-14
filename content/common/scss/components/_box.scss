@@ -13,6 +13,8 @@
             &.box-#{nth($color, 1)} { border-top-color: #{nth($color, 2)}; }
         }
     }
+
+    &.box-borderless { border-top: none; }
 }
 
 .box-header,
