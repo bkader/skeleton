@@ -3675,7 +3675,6 @@ select.form-control:not([size]):not([multiple]) {
 .btn-group > .btn-icon, .btn-icon {
   position: relative;
   text-align: left;
-  line-height: initial;
   vertical-align: baseline;
   padding-left: 47px;
 }
