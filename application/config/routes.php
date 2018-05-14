@@ -95,6 +95,7 @@ Route::block('users(.*)');
  * corresponding array ($back_contexts or front_contexts).
  * @since 	1.0.0
  */
+Route::any(KB_ADMIN, 'admin/index');
 Route::prefix(KB_ADMIN, function() {
 
 	// Admin login section.
