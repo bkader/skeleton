@@ -3665,6 +3665,7 @@ select.form-control:not([size]):not([multiple]) {
   line-height: 1.5;
 }
 
+.btn-group-sm > .btn,
 .form-control-sm, .btn-sm {
   font-size: 12px;
   font-size: 0.75rem;
