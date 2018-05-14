@@ -2,6 +2,7 @@
 .DS_Store
 .phpintel
 license.txt
+install/*
 
 # Ignore cache files.
 !application/cache/*
