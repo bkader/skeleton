@@ -400,7 +400,7 @@ class KB_Router extends CI_Router
     	}
 
     	// In dashboard?
-    	('admin' === $module) && $module = $this->uri->segment(3);
+    	(KB_ADMIN === $module) && $module = $this->uri->segment(3);
     	if (null !== $module 
     	    && isset($this->_modules[$module]) 
     	    && true == is_file($this->_modules[$module].'config/routes.php'))
@@ -818,13 +818,13 @@ class KB_Router extends CI_Router
 		if (in_array($this->class, $back_contexts)
 			OR in_array($this->class, $csk_modules)
 			OR 'admin' === $this->class
-			OR 'admin' === $this->uri->segment(1))
+			OR KB_ADMIN === $this->uri->segment(1))
 		{
 			$is_admin = true;
 		}
 
 		// Last check for front-end Users controller.
-		if ('admin' !== $this->uri->segment('1') 
+		if (KB_ADMIN !== $this->uri->segment(1) 
 			&& 'users' === $this->class)
 		{
 			$is_admin = false;
