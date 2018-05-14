@@ -495,10 +495,22 @@ class KB_Router extends CI_Router
 			}
 		}
 
-		$module_path    = $path;
+		$module_path   = $path;
 		$manifest_file = $module_path.'manifest.json';
+		$manifest_dist = $manifest_file.'.dist';
 
-		if (null === $module_path OR false === is_file($manifest_file))
+		if (null === $module_path 
+			OR (false === is_file($manifest_file) && false === is_file($manifest_dist)))
+		{
+			return false;
+		}
+
+		/**
+		 * In case the manifest.json is not found but we have a backup 
+		 * file, we make sure to create the file first.
+		 */
+		if (( ! is_file($manifest_file) && is_file($manifest_dist)) 
+			&& false === copy($manifest_dist, $manifest_file))
 		{
 			return false;
 		}
@@ -515,9 +527,10 @@ class KB_Router extends CI_Router
 		 * Create a back-up for the manifest.json file if it does not exist.
 		 * @since 2.0.0
 		 */
-		if ( ! is_file($manifest_file.'.bak'))
+		if (true !== is_file($manifest_dist) 
+			&& true !== copy($manifest_file, $manifest_dist))
 		{
-			copy($manifest_file, $manifest_file.'.bak');
+			return fales;
 		}
 
 		$headers = array_replace_recursive($this->_headers, $headers);
@@ -648,7 +661,7 @@ class KB_Router extends CI_Router
 						// Must be a directory and has "manifest.json".
 						if ( ! in_array($file, $_to_eliminate) 
 							&& is_dir($location.$file)
-							&& is_file($location.$file."/manifest.json")
+							&& (is_file($location.$file."/manifest.json") OR is_file($location.$file."/manifest.json.dist"))
 							&& ! in_array($file, $csk_modules))
 						{
 							$this->_modules[$file] = rtrim(str_replace('\\', '/', $location.$file), '/').'/';
@@ -720,7 +733,7 @@ class KB_Router extends CI_Router
 				 * So we make sure to load the "init.php" file is found then trigger
 				 * the action before deleting it.
 				 */
-				if (false !== is_file($installed = $details['full_path'].'INSTALLED'))
+				if (false !== is_file($installed = $details['full_path'].'enabled'))
 				{
 					if (false !== is_file($init = $details['full_path'].'init.php'))
 					{
@@ -732,7 +745,7 @@ class KB_Router extends CI_Router
 						do_action('module_deactivate_'.$folder);
 					}
 
-					// We finish by deleting the "INSTALLED" file.
+					// We finish by deleting the "enabled" file.
 					@unlink($installed);
 				}
 
@@ -745,9 +758,9 @@ class KB_Router extends CI_Router
 
 				/**
 				 * If this is the first time the module "init.php" file is loaded,
-				 * we make sure to create the "INSTALLED" file.
+				 * we make sure to create the "enabled" file.
 				 */
-				if (true !== is_file($installed = $details['full_path'].'INSTALLED'))
+				if (true !== is_file($installed = $details['full_path'].'enabled'))
 				{
 					/**
 					 * Triggers upon module's activation.

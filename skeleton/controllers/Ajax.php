@@ -382,7 +382,7 @@ class Ajax extends AJAX_Controller {
 				// Process status and some needed variables.
 				$status   = false;
 				$manifest = $details['full_path'].'manifest.json';
-				$backup   = $manifest.'.bak';
+				$backup   = $manifest.'.dist';
 
 				// See if the back up file is found.
 				if (is_file($backup))
