@@ -309,10 +309,11 @@ class Admin_Controller extends KB_Controller
 				{
 					add_action('help_menu', function() use ($module, $status, $lang) {
 						$title_line = isset($module['help_menu']) ? 'help_menu' : 'admin_menu';
-						$title = isset($module['translations'][$title_line][$lang])
-							? $module['translations'][$title_line][$lang]
-							: $module[$title_line];
-
+						// Translation present?
+						if (isset($module['translations'][$lang][$title_line])) {
+							$title = $module['translations'][$lang][$title_line];
+						}
+						
 						echo html_tag('a', array(
 							'href' => $status,
 							'target' => '_blank',
