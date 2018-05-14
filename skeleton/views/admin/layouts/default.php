@@ -13,7 +13,6 @@
 		if ( ! empty($brand)) {
 			echo $brand;
 		}
-		// echo admin_anchor('', $brand, 'class="navbar-brand"');
 		?>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-admin" aria-controls="navbar-admin" aria-expanded="false" aria-label="Toggle navigation"><i class="fa fa-fw fa-bars"></i></button>
 		<div class="collapse navbar-collapse" id="navbar-admin">
