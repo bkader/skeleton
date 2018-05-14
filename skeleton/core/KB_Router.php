@@ -656,10 +656,10 @@ class KB_Router extends CI_Router
 					}
 				}
 			}
-		}
 
-		// Alphabetically order modules.
-		ksort($this->_modules);
+			// Alphabetically order modules.
+			ksort($this->_modules);
+		}
 
 		$return = $this->_modules;
 
@@ -677,7 +677,6 @@ class KB_Router extends CI_Router
 				{
 					$_modules_details[$module] = $details;
 				}
-				unset($details);
 			}
 
 			empty($_modules_details) OR $return = $_modules_details;
@@ -715,17 +714,56 @@ class KB_Router extends CI_Router
 			// Ignore disabled modules.
 			if (true !== $details['enabled'])
 			{
+				/**
+				 * If the module is disabled but the "INSTALL" file is still there,
+				 * it means that the "module_deactivate_" action was not triggered.
+				 * So we make sure to load the "init.php" file is found then trigger
+				 * the action before deleting it.
+				 */
+				if (false !== is_file($installed = $details['full_path'].'INSTALLED'))
+				{
+					if (false !== is_file($init = $details['full_path'].'init.php'))
+					{
+						require_once($init);
+						/**
+						 * Trigger the deactivation action before proceeding.
+						 * @since 	2.0.0
+						 */
+						do_action('module_deactivate_'.$folder);
+					}
+
+					// We finish by deleting the "INSTALLED" file.
+					@unlink($installed);
+				}
+
 				continue;
 			}
 
-			if (false !== is_file($details['full_path'].'init.php'))
+			if (false !== is_file($init = $details['full_path'].'init.php'))
 			{
-				require_once($details['full_path'].'init.php');
+				require_once($init);
+
 				/**
-				 * Fetches right after the module's "init.php" file is loaded.
+				 * If this is the first time the module "init.php" file is loaded,
+				 * we make sure to create the "INSTALLED" file.
+				 */
+				if (true !== is_file($installed = $details['full_path'].'INSTALLED'))
+				{
+					/**
+					 * Triggers upon module's activation.
+					 * @since 	2.0.0
+					 */
+					do_action('module_activate_'.$folder);
+
+					// Create the file.
+					@touch($installed);
+				}
+
+				/**
+				 * Fires right after the module's "init.php" file is loaded.
 				 * @since 	1.4.0
 				 */
-				do_action('loaded_module_'.$folder);
+				do_action('module_loaded_'.$folder);
 			}
 		}
 	}
