@@ -107,7 +107,7 @@ class Admin_Controller extends KB_Controller
 
 		if ( ! $this->kbcore->auth->is_admin())
 		{
-			set_alert(lang('CSK_ERROR_PERMISSION'), 'error');
+			set_alert(line('CSK_ERROR_PERMISSION'), 'error');
 			redirect('');
 			exit;
 		}
@@ -866,6 +866,12 @@ class Reports_Controller extends Admin_Controller {
 class Settings_Controller extends Admin_Controller {
 
 	/**
+	 * Array of options tabs and their display order.
+	 * @var array
+	 */
+	protected $_tabs = array();
+
+	/**
 	 * __construct
 	 *
 	 * Load needed resources only.
@@ -888,6 +894,261 @@ class Settings_Controller extends Admin_Controller {
 		$this->data['page_icon']  = 'sliders';
 		$this->data['page_title'] = line('CSK_BTN_SETTINGS');
 		$this->data['page_help']  = 'https://goo.gl/H9giKR';
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * _prep_settings
+	 *
+	 * Method for preparing all settings data and their form validation rules.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	1.0.0
+	 * @since 	1.3.3 	Added the base controller setting handler.
+	 * @since 	2.0.0 	Moved to Settings_Controller class.
+	 *
+	 * @access 	protected
+	 * @param 	string
+	 * @return 	array
+	 */
+	protected function _prep_settings($tab = 'general')
+	{
+		$settings = $this->kbcore->options->get_by_tab($tab);
+
+		if (false === $settings)
+		{
+			return array(false, null);
+		}
+
+		if (isset($this->_tabs[$tab]) && ! empty($this->_tabs[$tab]))
+		{
+			$_settings = array();
+			$order = array_flip($this->_tabs[$tab]);
+
+			foreach ($settings as $index => $setting)
+			{
+				$_settings[$order[$setting->name]] = $setting;
+			}
+
+			if ( ! empty($_settings))
+			{
+				ksort($_settings);
+				$settings = $_settings;
+			}
+		}
+
+		// Prepare empty form validation rules.
+		$rules = array();
+
+		foreach ($settings as $option)
+		{
+			$data[$option->name] = array(
+				'type'  => $option->field_type,
+				'name'  => $option->name,
+				'id'    => $option->name,
+				'value' => $option->value,
+			);
+
+			if ($option->required == 1)
+			{
+				$data[$option->name]['required'] = 'required';
+				$rules[$option->name] = array(
+					'field' => $option->name,
+					'label' => "lang:CSK_SETTINGS_{$option->name}",
+					'rules' => 'required',
+				);
+			}
+
+			/**
+			 * In case of the base controller settings, we make sure to 
+			 * grab a list of all available controllers/modules and prepare
+			 * the dropdown list.
+			 */
+			if ('base_controller' === $option->name && empty($option->options))
+			{
+				// We start with an empty controllers list.
+				$controllers = array();
+
+				// We set controllers locations.
+				$app_path = rtrim(str_replace('\\', '/', APPPATH.'controllers/'), '/').'/';
+				$csk_path = rtrim(str_replace('\\', '/', KBPATH.'controllers/'), '/').'/';
+				$locations   = array($app_path => null, $csk_path => null);
+
+				// We add modules locations to controllers locations.
+				$modules = $this->router->list_modules(true);
+				foreach ($modules as $folder => $details)
+				{
+					/**
+					 * Ignore modules that are disabled or modules that do
+					 * not have a controllers directory.
+					 */
+					if (( ! isset($details['enabled']) OR true !== $details['enabled']) 
+						OR true !== is_dir($details['full_path'].'controllers'))
+					{
+						continue;
+					}
+
+					$locations[$details['full_path'].'controllers/'] = $folder;
+				}
+
+				// Array of files to be ignored.
+				$_to_eliminate = array(
+					'.',
+					'..',
+					'.gitkeep',
+					'.htaccess',
+					'Users.php',
+				);
+				
+				global $back_contexts, $front_contexts;
+				
+				$contexts = array_merge($back_contexts, $front_contexts);
+				$contexts = array_map(function($key) {
+					$key = preg_replace('/.php$/', '', $key).'.php';
+					return ucfirst($key);
+				}, $contexts);
+				
+				$_to_eliminate = array_merge($_to_eliminate, $contexts);
+
+				// Fill controllers.
+				foreach ($locations as $location => $module)
+				{
+					// We read the directory.
+					if ($handle = opendir($location))
+					{
+						while (false !== ($file = readdir($handle)))
+						{
+							// We ignore files to eliminate.
+							if ( ! in_array($file, $_to_eliminate))
+							{
+								// We format the file's name.
+								$file = strtolower(str_replace('.php', '', $file));
+
+								/**
+								 * If the controller's name is different from module's, we 
+								 * make sure to add the module to the start.
+								 */
+								if (null !== $module && $file <> $module)
+								{
+									$file = $module.'/'.$file;
+								}
+
+								// We fill $controllers array.
+								$controllers[$file] = $file;
+							}
+						}
+					}
+				}
+
+				// We add controllers list.
+				$option->options = $controllers;
+			}
+			
+			if ($option->field_type == 'dropdown' && ! empty($option->options))
+			{
+				$data[$option->name]['options'] = array_map(function($val) {
+					if (is_numeric($val))
+					{
+						return $val;
+					}
+
+					return (sscanf($val, 'lang:%s', $lang_val) === 1) ? line($lang_val) : $val;
+				}, $option->options);
+
+				if ( ! empty($option->value))
+				{
+					$data[$option->name]['selected'] = $option->value;
+					$rules[$option->name]['rules'] .= '|in_list['.implode(',', array_keys($option->options)).']';
+				}
+				else
+				{
+					$data[$option->name]['selected'] = '';
+				}
+			}
+			else
+			{
+				$data[$option->name]['placeholder'] = line('CSK_SETTINGS_'.$option->name);
+			}
+		}
+
+		return array($data, array_values($rules));
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * _save_settings
+	 *
+	 * Method that handles automatically saving settings.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	protected
+	 * @param 	array
+	 * @param 	string
+	 * @return 	bool
+	 */
+	protected function _save_settings($inputs, $tab = null)
+	{
+		// Nothing provided? Nothing to do.
+		if (empty($inputs) OR (empty($tab) OR ! array_key_exists($tab, $this->_tabs)))
+		{
+			set_alert(line('CSK_ERROR_CSRF'), 'error');
+			return false;
+		}
+
+		// Check nonce.
+		if (true !== $this->check_nonce('settings-'.$tab, false))
+		{
+			set_alert(line('CSK_ERROR_CSRF'), 'error');
+			return false;
+		}
+
+		/**
+		 * We make sure to collect all settings data from the provided
+		 * $inputs array (We use their keys).
+		 * Then, we loop through all elements and remove those that did
+		 * not change to avoid useless update.
+		 */
+		$settings = $this->input->post(array_keys($inputs), true);
+		foreach ($settings as $key => $val)
+		{
+			if (to_bool_or_serialize($inputs[$key]['value']) === $val)
+			{
+				unset($settings[$key]);
+			}
+		}
+
+		/**
+		 * If all settings were removed, we will end up with an empty 
+		 * array, so we simply fake it :) .. We say everything was updated.
+		 */
+		if (empty($settings))
+		{
+			set_alert(line('CSK_SETTINGS_SUCCESS_UPDATE'), 'success');
+			return true;
+		}
+
+		/**
+		 * In case we have some left settings, we make sure to updated them
+		 * one by one and stop in case one of them could not be updated.
+		 */
+		foreach ($settings as $key => $val)
+		{
+			if (false === $this->kbcore->options->set_item($key, $val))
+			{
+				log_message('error', "Unable to update setting {$tab}: {$key}");
+				set_alert(line('CSK_SETTINGS_ERROR_UPDATE'), 'error');
+				return false;
+			}
+		}
+
+		set_alert(line('CSK_SETTINGS_SUCCESS_UPDATE'), 'success');
+		return true;
 	}
 
 }

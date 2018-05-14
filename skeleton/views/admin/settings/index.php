@@ -38,25 +38,54 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Settings controller language file (Arabic).
+ * Global settings view.
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @category 	Language
+ * @category 	Views
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		2.0.0
  * @version 	2.0.0
  */
+?>
+<div class="row justify-content-center">
+	<div class="col-sm-4">
+		<div class="box">
+			<div class="box-body">
+			<?php
+			echo form_open($action, array(
+				'role'  => 'form',
+				'id'    => 'settings-'.$tab,
+			)),
+			form_nonce('settings-'.$tab);
 
-$lang['CSK_SETTINGS']          = 'الإعدادات';
-$lang['CSK_SETTINGS_SETTING']  = 'إعداد';
-$lang['CSK_SETTINGS_SETTINGS'] = 'الإعدادات';
-$lang['CSK_SETTINGS_NAME']     = 'إعدادات: %s';
+			foreach ($inputs as $name => $input) {
 
-// ------------------------------------------------------------------------
-// Settings messages.
-// ------------------------------------------------------------------------
-$lang['CSK_SETTINGS_SUCCESS_UPDATE'] = 'تم تحديث الإعدادات بنجاح.';
-$lang['CSK_SETTINGS_ERROR_UPDATE']   = 'تعذر تحديث الإعدادات.';
+				echo '<div class="form-group">',
+					form_label(line('CSK_SETTINGS_'.$name), $name),
+					print_input($input, array('class' => 'form-control'));
+
+					if (has_error($name)) {
+						echo form_error($name, '<div class="form-text invalid-feedback">', '</div>');
+					} else {
+						echo html_tag('div', array(
+							'class' => 'form-text text-muted'
+						), line('CSK_SETTINGS_'.$name.'_TIP'));
+					}
+
+				echo '</div>';
+			}
+
+			echo html_tag('button', array(
+					'type' => 'submit',
+					'class' => 'btn btn-primary btn-block'
+				), line('CSK_BTN_SAVE_CHANGES')),
+
+			form_close();
+			?>
+			</div>
+		</div>
+	</div>
+</div>

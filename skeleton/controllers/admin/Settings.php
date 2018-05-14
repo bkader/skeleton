@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		2.0.0
  * @version 	2.0.0
  */
-class Settings extends Admin_Controller {
+class Settings extends Settings_Controller {
 
 	/**
 	 * __construct
@@ -67,7 +67,67 @@ class Settings extends Admin_Controller {
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->language('csk_settings');
+
+		$this->load->language('csk_settings_global');
+
+		// Add tabs and fields order.
+		$this->_tabs = array(
+			
+			// Global Settings.
+			'general' => array(
+				'site_name',
+				'site_description',
+				'site_keywords',
+				'site_author',
+				'site_favicon',
+				'base_controller',
+				'per_page',
+				'google_analytics_id',
+				'google_site_verification',
+			),
+
+			// User Settings.
+			'users'   => array(
+				'allow_registration',
+				'email_activation',
+				'manual_activation',
+				'login_type',
+				'allow_multi_session',
+				'use_gravatar',
+			),
+			
+			// Email Settings.
+			'email'   => array(
+				'admin_email',
+				'server_email',
+				'mail_protocol',
+				'sendmail_path',
+				'smtp_host',
+				'smtp_port',
+				'smtp_crypto',
+				'smtp_user',
+				'smtp_pass',
+			),
+
+			// Captcha settings.
+			'captcha' => array(
+				'use_captcha',
+				'use_recaptcha',
+				'recaptcha_site_key',
+				'recaptcha_private_key',
+			),
+
+			// Upload Settings.
+			'upload'  => array(
+				'upload_path',
+				'allowed_types',
+				'max_size',
+				'min_width',
+				'min_height',
+				'max_width',
+				'max_height',
+			),
+		);
 	}
 
 	// ------------------------------------------------------------------------
@@ -87,9 +147,49 @@ class Settings extends Admin_Controller {
 	 */
 	public function index()
 	{
-		$this->theme
-			->set_title(line('CSK_ADMIN_GLOBAL_SETTINGS'))
-			->render($this->data);
+		// Page icon and title.
+		$this->data['page_icon'] = 'sliders';
+		$this->data['page_title'] = line('CSK_ADMIN_GLOBAL_SETTINGS');
+
+		// Let's see what tab we are on.
+		$tab = $this->input->get('tab', true);
+		if (empty($tab) OR true !== array_key_exists($tab, $this->_tabs))
+		{
+			$tab = 'general';
+		}
+
+		if ('general' !== $tab)
+		{
+			$this->data['page_title'] = sprintf(
+				line('CSK_SETTINGS_NAME'),
+				line('CSK_SETTINGS_TAB_'.strtoupper($tab))
+			);
+		}
+
+		list($this->data['inputs'], $rules) = $this->_prep_settings($tab);
+
+		// Set validation rules
+		$this->prep_form($rules, '#settings-'.$tab);
+		$this->data['tab'] = $tab;
+
+		// Prepare form action.
+		$action = '';
+		('general' !== $tab) && $action .= '?tab='.$tab;
+		$this->data['action'] = KB_ADMIN.'/settings'.$action;
+
+		if ($this->form_validation->run() == false)
+		{
+			$this->theme
+				->set_title($this->data['page_title'])
+				->render($this->data);
+		}
+		else
+		{
+			$this->_save_settings($this->data['inputs'], $tab);			
+			redirect(KB_ADMIN.'/settings'.$action, 'refresh');
+			exit;
+		}
+
 	}
 
 	// ------------------------------------------------------------------------
@@ -187,6 +287,56 @@ class Settings extends Admin_Controller {
 		$output = str_replace('</div>', '', $output);
 		
 		return $output;
+	}
+
+	// ------------------------------------------------------------------------
+
+	protected function _subhead()
+	{
+		if ('sysinfo' === $this->router->fetch_method())
+		{
+			return;
+		}
+
+		add_action('admin_subhead', function() {
+
+			$tab = $this->input->get('tab', true);
+			if (empty($tab) OR true !== array_key_exists($tab, $this->_tabs))
+			{
+				$tab = 'general';
+			}
+
+			echo '<div class="btn-group btn-group-sm">',
+
+			html_tag('a', array(
+				'href' => admin_url('settings'),
+				'class' => 'btn btn-'.('general' === $tab ? 'primary' : 'default'),
+			), line('CSK_SETTINGS_TAB_GENERAL')),
+
+			html_tag('a', array(
+				'href' => admin_url('settings?tab=users'),
+				'class' => 'btn btn-'.('users' === $tab ? 'primary' : 'default'),
+			), line('CSK_SETTINGS_TAB_USERS')),
+
+			html_tag('a', array(
+				'href' => admin_url('settings?tab=email'),
+				'class' => 'btn btn-'.('email' === $tab ? 'primary' : 'default'),
+			), line('CSK_SETTINGS_TAB_EMAIL')),
+
+			html_tag('a', array(
+				'href' => admin_url('settings?tab=captcha'),
+				'class' => 'btn btn-'.('captcha' === $tab ? 'primary' : 'default'),
+			), line('CSK_SETTINGS_TAB_CAPTCHA')),
+
+			html_tag('a', array(
+				'href' => admin_url('settings?tab=upload'),
+				'class' => 'btn btn-'.('upload' === $tab ? 'primary' : 'default'),
+			), line('CSK_SETTINGS_TAB_UPLOAD')),
+
+			'</div>';
+
+			// echo print_d($this->_tabs);
+		});
 	}
 
 }
