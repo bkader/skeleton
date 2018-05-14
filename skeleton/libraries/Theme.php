@@ -1160,7 +1160,7 @@ EOT;
 	{
 		$view = $this->controller.'/'.$this->method;
 
-		if ('admin' === $this->ci->uri->segment(1) && null === $this->module)
+		if (KB_ADMIN === $this->ci->uri->segment(1) && null === $this->module)
 		{
 			$view = 'admin/'.str_replace('admin/', '', $view);
 		}
