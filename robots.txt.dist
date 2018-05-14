@@ -16,4 +16,5 @@
 
 User-agent: *
 Disallow: /application/
+Disallow: /install/
 Disallow: /skeleton/
