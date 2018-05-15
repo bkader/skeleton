@@ -211,7 +211,7 @@ class Login extends KB_Controller {
 		else
 		{
 			// Did not pass nonce check?
-			if (true !== $this->check_nonce('admin-login'))
+			if (true !== $this->check_nonce('admin-login', false))
 			{
 				set_alert(line('CSK_ERROR_CSRF'), 'error');
 				redirect('admin-login', 'refresh');
