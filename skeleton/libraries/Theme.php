@@ -3346,7 +3346,8 @@ EOT;
 		 * Ignore files with full URLs. THe user must provided extension.
 		 * @since 	2.0.0
 		 */
-		if (false !== filter_var($file, FILTER_VALIDATE_URL))
+		if (false !== filter_var($file, FILTER_VALIDATE_URL)
+			&& false === stripos($file, base_url()))
 		{
 			return $file;
 		}
