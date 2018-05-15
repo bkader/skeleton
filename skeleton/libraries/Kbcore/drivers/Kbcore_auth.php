@@ -400,6 +400,8 @@ class Kbcore_auth extends CI_Driver
 		if (true === $this->_set_session($user->id, $remember, null, $user->language))
 		{
 			// TODO: Log the activity.
+			// NOTE: This is temporary.
+			log_activity($user->id, 'Logged in.');
 
 			return true;
 		}

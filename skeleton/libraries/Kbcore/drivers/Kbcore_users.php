@@ -757,6 +757,8 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 			));
 
 			// TODO: Log the activity.
+			log_activity($guid, 'Registered.');
+
 			// TODO: Send email to user.
 
 			set_alert(line('CSK_USERS_INFO_CREATE'), 'info');
@@ -850,6 +852,8 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 		if (true === $status)
 		{
 			// TODO: Log the activity.
+			log_activity($user->id, 'Requested new activation link.');
+
 			// TODO: Send the email to user.
 
 			// Delete old captcha.
@@ -921,6 +925,8 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 		if (false !== $status)
 		{
 			// TODO: Log the activity.
+			log_activity($user->id, 'Restored account.');
+
 			// TODO: Send email to user.
 
 			// Delete old captcha codes.
@@ -1026,8 +1032,10 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 		// Successful process?
 		if (true === $status)
 		{
-			// TODO: Send email to user.
 			// TODO: Log the activity.
+			log_activity($user->id, 'Request password reset.');
+
+			// TODO: Send email to user.
 
 			// Set alert and log the activity.
 			set_alert(line('CSK_USERS_SUCCESS_RECOVER'), 'success');
@@ -1120,8 +1128,10 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 		// Successful?
 		if (true === $status)
 		{
-			// TODO: Send email to use.
 			// TODO: Log the activity.
+			log_activity($user->id, 'Reset password.');
+
+			// TODO: Send email to use.
 
 			// Purge password codes.
 			$this->_parent->auth->delete_password_codes($guid);
@@ -1189,8 +1199,10 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 		// Successfully activated?
 		if (false !== $user->update('enabled', 1))
 		{
-			// TODO: Send email to use.
 			// TODO: Log the activity.
+			log_activity($user->id, 'Activated account.');
+
+			// TODO: Send email to use.
 
 			// Purge activation codes.
 			$this->_parent->auth->delete_activation_codes($var->guid);
