@@ -252,19 +252,19 @@ class Plugins extends Admin_Controller
 			$selected = $this->input->post('selected', true);
 			if (empty($selected))
 			{
-				set_alert(line('CSK_PLUGINS_ERROR_'.$action), 'error');
+				set_alert(line('CSK_PLUGINS_ERROR_BULK_'.$action), 'error');
 				redirect('admin/plugins');
 				exit;
 			}
 
 			if (false !== $this->kbcore->plugins->{$action}($selected))
 			{
-				set_alert(line('CSK_PLUGINS_SUCCESS_'.$action), 'success');
+				set_alert(line('CSK_PLUGINS_SUCCESS_BULK_'.$action), 'success');
 				redirect('admin/plugins');
 				exit;
 			}
 
-			set_alert(line('CSK_PLUGINS_ERROR_'.$action), 'error');
+			set_alert(line('CSK_PLUGINS_ERROR_BULK_'.$action), 'error');
 			redirect('admin/plugins');
 			exit;
 		}

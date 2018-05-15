@@ -78,20 +78,26 @@ $lang['CSK_PLUGINS_CONFIRM_DEACTIVATE'] = 'Are you sure you want to deactivate %
 $lang['CSK_PLUGINS_CONFIRM_DELETE']     = 'Are you sure you want to delete %s plugin and its data?';
 
 // Success messages.
-$lang['CSK_PLUGINS_SUCCESS_ACTIVATE']   = '%s plugin successfully activated.';
-$lang['CSK_PLUGINS_SUCCESS_DEACTIVATE'] = '%s plugin successfully deactivated.';
-$lang['CSK_PLUGINS_SUCCESS_DELETE']     = '%s plugin successfully delete.';
-$lang['CSK_PLUGINS_SUCCESS_INSTALL']    = 'Plugin successfully installed.';
-$lang['CSK_PLUGINS_SUCCESS_SETTINGS']   = 'Plugin settings successfully updated.';
-$lang['CSK_PLUGINS_SUCCESS_UPLOAD']     = 'Plugin successfully uploaded.';
+$lang['CSK_PLUGINS_SUCCESS_ACTIVATE']        = '%s plugin successfully activated.';
+$lang['CSK_PLUGINS_SUCCESS_DEACTIVATE']      = '%s plugin successfully deactivated.';
+$lang['CSK_PLUGINS_SUCCESS_DELETE']          = '%s plugin successfully delete.';
+$lang['CSK_PLUGINS_SUCCESS_INSTALL']         = 'Plugin successfully installed.';
+$lang['CSK_PLUGINS_SUCCESS_SETTINGS']        = 'Plugin settings successfully updated.';
+$lang['CSK_PLUGINS_SUCCESS_UPLOAD']          = 'Plugin successfully uploaded.';
+$lang['CSK_PLUGINS_SUCCESS_BULK_ACTIVATE']   = 'Selected plugins successfully activated.';
+$lang['CSK_PLUGINS_SUCCESS_BULK_DEACTIVATE'] = 'Selected plugins successfully deactivated.';
+$lang['CSK_PLUGINS_SUCCESS_BULK_DELETE']     = 'Selected plugins successfully delete.';
 
 // Error messages.
-$lang['CSK_PLUGINS_ERROR_ACTIVATE']   = 'Unable to activate %s plugin.';
-$lang['CSK_PLUGINS_ERROR_DEACTIVATE'] = 'Unable to deactivate %s plugin.';
-$lang['CSK_PLUGINS_ERROR_DELETE']     = 'Unable to delete %s plugin.';
-$lang['CSK_PLUGINS_ERROR_INSTALL']    = 'Unable to install plugin.';
-$lang['CSK_PLUGINS_ERROR_SETTINGS']   = 'Unable to update plugin settings.';
-$lang['CSK_PLUGINS_ERROR_UPLOAD']     = 'Unable to upload plugin.';
+$lang['CSK_PLUGINS_ERROR_ACTIVATE']        = 'Unable to activate %s plugin.';
+$lang['CSK_PLUGINS_ERROR_DEACTIVATE']      = 'Unable to deactivate %s plugin.';
+$lang['CSK_PLUGINS_ERROR_DELETE']          = 'Unable to delete %s plugin.';
+$lang['CSK_PLUGINS_ERROR_INSTALL']         = 'Unable to install plugin.';
+$lang['CSK_PLUGINS_ERROR_SETTINGS']        = 'Unable to update plugin settings.';
+$lang['CSK_PLUGINS_ERROR_UPLOAD']          = 'Unable to upload plugin.';
+$lang['CSK_PLUGINS_ERROR_BULK_ACTIVATE']   = 'Unable to activate selected plugins.';
+$lang['CSK_PLUGINS_ERROR_BULK_DEACTIVATE'] = 'Unable to deactivate selected plugins.';
+$lang['CSK_PLUGINS_ERROR_BULK_DELETE']     = 'Unable to delete selected plugins.';
 
 // Errors when performing actions.
 $lang['CSK_PLUGINS_ERROR_PLUGIN_MISSING']    = 'This plugin does not exist.';

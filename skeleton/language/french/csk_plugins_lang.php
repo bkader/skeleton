@@ -78,20 +78,26 @@ $lang['CSK_PLUGINS_CONFIRM_DEACTIVATE'] = 'Êtes-vous sûr de vouloir désactive
 $lang['CSK_PLUGINS_CONFIRM_DELETE']     = 'Êtes-vous sûr de vouloir supprimer le plug-in %s et toutes ses données?';
 
 // Success messages.
-$lang['CSK_PLUGINS_SUCCESS_ACTIVATE']   = 'Plug-in %s activé avec succès.';
-$lang['CSK_PLUGINS_SUCCESS_DEACTIVATE'] = 'Plug-in %s désactivé avec succès.';
-$lang['CSK_PLUGINS_SUCCESS_DELETE']     = 'Plug-in %s supprimé avec succès.';
-$lang['CSK_PLUGINS_SUCCESS_INSTALL']    = 'Plug-in installé avec succès.';
-$lang['CSK_PLUGINS_SUCCESS_SETTINGS']   = 'Les paramètres du plug-in ont bien été mis à jour.';
-$lang['CSK_PLUGINS_SUCCESS_UPLOAD']     = 'Plug-in téléversé avec succès.';
+$lang['CSK_PLUGINS_SUCCESS_ACTIVATE']        = 'Plug-in %s activé avec succès.';
+$lang['CSK_PLUGINS_SUCCESS_DEACTIVATE']      = 'Plug-in %s désactivé avec succès.';
+$lang['CSK_PLUGINS_SUCCESS_DELETE']          = 'Plug-in %s supprimé avec succès.';
+$lang['CSK_PLUGINS_SUCCESS_INSTALL']         = 'Plug-in installé avec succès.';
+$lang['CSK_PLUGINS_SUCCESS_SETTINGS']        = 'Les paramètres du plug-in ont bien été mis à jour.';
+$lang['CSK_PLUGINS_SUCCESS_UPLOAD']          = 'Plug-in téléversé avec succès.';
+$lang['CSK_PLUGINS_SUCCESS_BULK_ACTIVATE']   = 'Les plug-ins sélectionnés ont été activés avec succès.';
+$lang['CSK_PLUGINS_SUCCESS_BULK_DEACTIVATE'] = 'Les plug-ins sélectionnés ont été désactivés avec succès.';
+$lang['CSK_PLUGINS_SUCCESS_BULK_DELETE']     = 'Les plug-ins sélectionnés ont été supprimés avec succès.';
 
 // Error messages.
-$lang['CSK_PLUGINS_ERROR_ACTIVATE']   = 'Impossible d\'activer le plug-in %s.';
-$lang['CSK_PLUGINS_ERROR_DEACTIVATE'] = 'Impossible de désactiver le plug-in %s.';
-$lang['CSK_PLUGINS_ERROR_DELETE']     = 'Impossible de supprimer le plug-in %s.';
-$lang['CSK_PLUGINS_ERROR_INSTALL']    = 'Impossible d\'installer le plug-in.';
-$lang['CSK_PLUGINS_ERROR_SETTINGS']   = 'Impossible de mettre à jour les paramètres du plug-in.';
-$lang['CSK_PLUGINS_ERROR_UPLOAD']     = 'Impossible de téléverser le plug-in.';
+$lang['CSK_PLUGINS_ERROR_ACTIVATE']        = 'Impossible d\'activer le plug-in %s.';
+$lang['CSK_PLUGINS_ERROR_DEACTIVATE']      = 'Impossible de désactiver le plug-in %s.';
+$lang['CSK_PLUGINS_ERROR_DELETE']          = 'Impossible de supprimer le plug-in %s.';
+$lang['CSK_PLUGINS_ERROR_INSTALL']         = 'Impossible d\'installer le plug-in.';
+$lang['CSK_PLUGINS_ERROR_SETTINGS']        = 'Impossible de mettre à jour les paramètres du plug-in.';
+$lang['CSK_PLUGINS_ERROR_UPLOAD']          = 'Impossible de téléverser le plug-in.';
+$lang['CSK_PLUGINS_ERROR_BULK_ACTIVATE']   = 'Impossible d\'activer les plug-ins sélectionnés.';
+$lang['CSK_PLUGINS_ERROR_BULK_DEACTIVATE'] = 'Impossible de désactiver les plug-ins sélectionnés.';
+$lang['CSK_PLUGINS_ERROR_BULK_DELETE']     = 'Impossible de supprimer les plug-ins sélectionnés.';
 
 // Errors when performing actions.
 $lang['CSK_PLUGINS_ERROR_PLUGIN_MISSING']    = 'Ce plug-in n\'existe pas.';

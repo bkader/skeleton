@@ -78,20 +78,26 @@ $lang['CSK_PLUGINS_CONFIRM_DEACTIVATE'] = 'هل أنت متأكد من أنك ت
 $lang['CSK_PLUGINS_CONFIRM_DELETE']     = 'هل أنت متأكد من أنك تريد حذف %s وبياناتها؟';
 
 // Success messages.
-$lang['CSK_PLUGINS_SUCCESS_ACTIVATE']   = 'تم تفعيل الاضافة %s بنجاح.';
-$lang['CSK_PLUGINS_SUCCESS_DEACTIVATE'] = 'تم إلغاء تفعيل الاضافة %s بنجاح.';
-$lang['CSK_PLUGINS_SUCCESS_DELETE']     = 'تم حذف الاضافة %s بنجاح.';
-$lang['CSK_PLUGINS_SUCCESS_INSTALL']    = 'تم تنصيب الاضافة بنجاح.';
-$lang['CSK_PLUGINS_SUCCESS_SETTINGS']   = 'تم تحديث إعدادات الاضافة بنجاح.';
-$lang['CSK_PLUGINS_SUCCESS_UPLOAD']     = 'تم تحميل الاضافة بنجاح.';
+$lang['CSK_PLUGINS_SUCCESS_ACTIVATE']        = 'تم تفعيل الاضافة %s بنجاح.';
+$lang['CSK_PLUGINS_SUCCESS_DEACTIVATE']      = 'تم تعطيل الاضافة %s بنجاح.';
+$lang['CSK_PLUGINS_SUCCESS_DELETE']          = 'تم حذف الاضافة %s بنجاح.';
+$lang['CSK_PLUGINS_SUCCESS_INSTALL']         = 'تم تنصيب الاضافة بنجاح.';
+$lang['CSK_PLUGINS_SUCCESS_SETTINGS']        = 'تم تحديث إعدادات الاضافة بنجاح.';
+$lang['CSK_PLUGINS_SUCCESS_UPLOAD']          = 'تم تحميل الاضافة بنجاح.';
+$lang['CSK_PLUGINS_SUCCESS_BULK_ACTIVATE']   = 'تم تفعيل الإضافات المحددة بنجاح.';
+$lang['CSK_PLUGINS_SUCCESS_BULK_DEACTIVATE'] = 'تم تعطيل الإضافات المحددة بنجاح.';
+$lang['CSK_PLUGINS_SUCCESS_BULK_DELETE']     = 'تم حذف الإضافات المحددة بنجاح.';
 
 // Error messages.
-$lang['CSK_PLUGINS_ERROR_ACTIVATE']   = 'تعذر تفعيل الاضافة %s.';
-$lang['CSK_PLUGINS_ERROR_DEACTIVATE'] = 'تعذر إلغاء تفعيل الاضافة %s.';
-$lang['CSK_PLUGINS_ERROR_DELETE']     = 'تعذر حذف الاضافة %s.';
-$lang['CSK_PLUGINS_ERROR_INSTALL']    = 'تعذر تنصيب الاضافة.';
-$lang['CSK_PLUGINS_ERROR_SETTINGS']   = 'تعذر تحديث إعدادات الاضافة.';
-$lang['CSK_PLUGINS_ERROR_UPLOAD']     = 'تعذر تحميل الاضافة.';
+$lang['CSK_PLUGINS_ERROR_ACTIVATE']        = 'تعذر تفعيل الاضافة %s.';
+$lang['CSK_PLUGINS_ERROR_DEACTIVATE']      = 'تعذر تعطيل الاضافة %s.';
+$lang['CSK_PLUGINS_ERROR_DELETE']          = 'تعذر حذف الاضافة %s.';
+$lang['CSK_PLUGINS_ERROR_INSTALL']         = 'تعذر تنصيب الاضافة.';
+$lang['CSK_PLUGINS_ERROR_SETTINGS']        = 'تعذر تحديث إعدادات الاضافة.';
+$lang['CSK_PLUGINS_ERROR_UPLOAD']          = 'تعذر تحميل الاضافة.';
+$lang['CSK_PLUGINS_ERROR_BULK_ACTIVATE']   = 'تعذر تفعيل الإضافات المحددة.';
+$lang['CSK_PLUGINS_ERROR_BULK_DEACTIVATE'] = 'تعذر تعطيل الإضافات المحددة.';
+$lang['CSK_PLUGINS_ERROR_BULK_DELETE']     = 'تعذر حذف الإضافات المحددة.';
 
 // Errors when performing actions.
 $lang['CSK_PLUGINS_ERROR_PLUGIN_MISSING']    = 'هذه الاضافة غير موجودة.';
