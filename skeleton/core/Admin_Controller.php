@@ -167,26 +167,25 @@ class Admin_Controller extends KB_Controller
 					}
 				}
 
-				$this->styles = array_map('trim', $this->styles);
-				$this->styles = array_filter($this->styles);
-				$this->styles = array_unique($this->styles);
-				$this->styles = implode(',', $this->styles);
+				$this->styles = (function_exists('array_clean'))
+					? array_clean($this->styles)
+					: array_unique(array_filter(array_map('trim', $this->styles)));
 
 				$this->theme
 					->no_extension()
-					->add('css', admin_url("load/styles?load=".rawurlencode($this->styles)), null, null, true);
+					->add('css', admin_url("load/styles?load=".implode(',', $this->styles)), null, null, true);
 			}
 
 			// Do we have any JS files to laod?
 			if ( ! empty($this->scripts))
 			{
-				$this->scripts = array_map('trim', $this->scripts);
-				$this->scripts = array_filter($this->scripts);
-				$this->scripts = array_unique($this->scripts);
-				$this->scripts = implode(',', $this->scripts);
+				$this->scripts = (function_exists('array_clean'))
+					? array_clean($this->scripts)
+					: array_unique(array_filter(array_map('trim', $this->scripts)));
+				
 				$this->theme
 					->no_extension()
-					->add('js', admin_url("load/scripts?load=".rawurlencode($this->scripts)), null, null, true);
+					->add('js', admin_url("load/scripts?load=".implode(',', $this->scripts)), null, null, true);
 			}
 
 			/**
