@@ -317,6 +317,15 @@ class Ajax extends AJAX_Controller {
 			return;
 		}
 
+		$module = $details['name'];
+		if ('english' !== ($lang = $this->config->item('language')))
+		{
+			if (isset($details['translations'][$lang]['name']))
+			{
+				$module = $details['translations'][$lang]['name'];
+			}
+		}
+
 		// Load file helper for other actions.
 		if ('delete' !== $action)
 		{
@@ -331,15 +340,6 @@ class Ajax extends AJAX_Controller {
 		elseif ( ! function_exists('directory_delete'))
 		{
 			$this->load->helper('directory');
-		}
-
-		$module = $details['name'];
-		if ('english' !== ($lang = $this->config->item('language')))
-		{
-			if (isset($details['translations'][$lang]['name']))
-			{
-				$module = $details['translations'][$lang]['name'];
-			}
 		}
 
 		switch ($action) {
