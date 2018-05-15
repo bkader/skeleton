@@ -3342,19 +3342,41 @@ EOT;
 			return $file;
 		}
 
-		// Let's make sure to remove all dots first.
-		$ext = preg_replace("/^\.+|\.+$/", '', strtolower($ext));
+		/**
+		 * Ignore files with full URLs. THe user must provided extension.
+		 * @since 	2.0.0
+		 */
+		if (false !== filter_var($file, FILTER_VALIDATE_URL))
+		{
+			return $file;
+		}
 
-		// Use minified versions on production.
-		('production' === ENVIRONMENT) && $file .= '.min';
+		/**
+		 * If the file comes with extension, return in as it is.
+		 * @since 	2.0.0
+		 */
+		if ($ext === substr($file, - strlen($ext)))
+		{
+			return $file;
+		}
+
+		/**
+		 * Added the minified version of the file if not already set.
+		 * @since 	2.0.0
+		 */
+		if ('production' === ENVIRONMENT && '.min' !== substr($file, -4))
+		{
+			$file .= '.min';
+		}
 
 		/**
 		 * Let's first check if the file extension is
 		 * present or not. If not, add it.
 		 */
-		$found_ext = pathinfo($file, PATHINFO_EXTENSION);
-
-		($found_ext === $ext) OR $file = $file.'.'.$ext;
+		if ($ext !== pathinfo($file, PATHINFO_EXTENSION))
+		{
+			$file .= '.'.$ext;
+		}
 
 		return $file;
 	}
