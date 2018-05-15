@@ -65,6 +65,7 @@ class Reports extends Reports_Controller
 		$this->data['back_anchor'] = null;
 		if ( ! empty($get))
 		{
+			$this->load->helper('security');
 			$this->data['back_anchor'] = admin_anchor('reports', line('back'), array(
 				'class' => 'btn btn-default btn-sm pull-right'
 			));
@@ -73,8 +74,30 @@ class Reports extends Reports_Controller
 		// Custom $_GET appended to pagination links and WHERE clause.
 		$_get  = null;
 		$where = null;
-		(isset($get['user'])) && $_get['user'] = $where['user_id'] = $get['user'];
-		(isset($get['module'])) && $_get['module'] = $where['module'] = $get['module'];
+		
+		// Filtering by module, controller or method?
+		foreach (array('module', 'controller', 'method') as $filter)
+		{
+			if (isset($get[$filter]))
+			{
+				$_get[$filter]  = $get[$filter];
+				$where[$filter] = strval(xss_clean($get[$filter]));
+			}
+		}
+
+		// We cannot search by method :D.
+		if (isset($where['method']) 
+			&& ( ! isset($where['controller']) OR empty($where['controller'])))
+		{
+			unset($where['method']);
+		}
+
+		// Filtering by user ID?
+		if (isset($get['user']))
+		{
+			$_get['user']     = $get['user'];
+			$where['user_id'] = intval(xss_clean($get['user']));
+		}
 
 		// Build the query appended to pagination links.
 		(empty($_get)) OR $_get = '?'.http_build_query($_get);
@@ -156,7 +179,9 @@ class Reports extends Reports_Controller
 					$report->method_anchor = html_tag('a', array(
 						'href' => $method_url,
 						'class' => 'btn btn-default btn-xs btn-icon',
-					), fa_icon('link').$report->method);
+						'rel' => 'tooltip',
+						'title' => $report->activity,
+					), fa_icon('info-circle').$report->method);
 				}
 
 				// IP location link.
