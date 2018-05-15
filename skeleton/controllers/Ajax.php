@@ -192,6 +192,9 @@ class Ajax extends AJAX_Controller {
 				// Successfully updated?
 				if (false !== $this->kbcore->options->set_item('languages', $languages))
 				{
+					// TODO: Log the activity.
+					log_activity($this->c_user->id, 'Enabled language: '.$name);
+
 					$this->response->header = self::HTTP_OK;
 					$this->response->message = line('CSK_LANGUAGES_SUCCESS_ENABLE');
 					return;
@@ -236,6 +239,9 @@ class Ajax extends AJAX_Controller {
 						$this->kbcore->options->set_item('language', 'english');
 					}
 
+					// TODO: Log the activity.
+					log_activity($this->c_user->id, 'Disabled language: '.$name);
+
 					$this->response->header = self::HTTP_OK;
 					$this->response->message = line('CSK_LANGUAGES_SUCCESS_DISABLE');
 					return;
@@ -264,6 +270,9 @@ class Ajax extends AJAX_Controller {
 				// Successfully changed?
 				if (false !== $this->kbcore->options->set_item('language', $name))
 				{
+					// TODO: Log the activity.
+					log_activity($this->c_user->id, 'Set default language: '.$name);
+
 					$this->response->header = self::HTTP_OK;
 					$this->response->message = line('CSK_LANGUAGES_SUCCESS_DEFAULT');
 					return;
@@ -359,6 +368,9 @@ class Ajax extends AJAX_Controller {
 				$manifest = $details['full_path'].'manifest.json';
 				if (true === write_file($manifest, json_encode($details, JSON_PRETTY_PRINT)))
 				{
+					// TODO: Log the activity.
+					log_activity($this->c_user->id, 'Activated module: '.$module);
+
 					$this->response->header = self::HTTP_OK;
 					$this->response->message = sprintf(line('CSK_MODULES_SUCCESS_ACTIVATE'), $module);
 					return;
@@ -398,6 +410,9 @@ class Ajax extends AJAX_Controller {
 
 				if (false !== $status)
 				{
+					// TODO: Log the activity.
+					log_activity($this->c_user->id, 'Deactivated module: '.$module);
+
 					$this->response->header = self::HTTP_OK;
 					$this->response->message = sprintf(line('CSK_MODULES_SUCCESS_DEACTIVATE'), $module);
 					return;
@@ -422,6 +437,9 @@ class Ajax extends AJAX_Controller {
 				// Passed?
 				if (false !== directory_delete($details['full_path']))
 				{
+					// TODO: Log the activity.
+					log_activity($this->c_user->id, 'Deleted module: '.$module);
+
 					$this->response->header = self::HTTP_OK;
 					$this->response->message = sprintf(line('CSK_MODULES_SUCCESS_DELETE'), $module);
 					return;
@@ -486,6 +504,9 @@ class Ajax extends AJAX_Controller {
 				// Successfully activated?
 				if (false !== $this->kbcore->plugins->activate($name))
 				{
+					// TODO: Log the activity.
+					log_activity($this->c_user->id, 'Activated plugin: '.$plugin);
+
 					$this->response->header = self::HTTP_OK;
 					$this->response->message = sprintf(line('CSK_PLUGINS_SUCCESS_ACTIVATE'), $plugin);
 					return;
@@ -503,6 +524,9 @@ class Ajax extends AJAX_Controller {
 				// Successfully deactivated?
 				if (false !== $this->kbcore->plugins->deactivate($name))
 				{
+					// TODO: Log the activity.
+					log_activity($this->c_user->id, 'Deactivated plugin: '.$plugin);
+
 					$this->response->header = self::HTTP_OK;
 					$this->response->message = sprintf(line('CSK_PLUGINS_SUCCESS_DEACTIVATE'), $plugin);
 					return;
@@ -520,6 +544,9 @@ class Ajax extends AJAX_Controller {
 				// Successfully deleted?
 				if (false !== $this->kbcore->plugins->delete($name))
 				{
+					// TODO: Log the activity.
+					log_activity($this->c_user->id, 'Deleted plugin: '.$plugin);
+
 					$this->response->header = self::HTTP_OK;
 					$this->response->message = sprintf(line('CSK_PLUGINS_SUCCESS_DELETE'), $plugin);
 					return;
@@ -655,6 +682,9 @@ class Ajax extends AJAX_Controller {
 					}
 				}
 
+				// TODO: Log the activity.
+				log_activity($this->c_user->id, 'Activated theme: '.$name);
+
 				$this->response->header = self::HTTP_OK;
 				$this->response->message = line('CSK_THEMES_SUCCESS_ACTIVATE');
 				return;
@@ -688,6 +718,9 @@ class Ajax extends AJAX_Controller {
 			{
 				delete_option('theme_images_'.$name);
 				delete_option('theme_menus_'.$name);
+
+				// TODO: Log the activity.
+				log_activity($this->c_user->id, 'Deleted theme: '.$name);
 
 				$this->response->header = self::HTTP_OK;
 				$this->response->message = line('CSK_THEMES_SUCCESS_DELETE');
@@ -834,6 +867,9 @@ class Ajax extends AJAX_Controller {
 			case 'activate':
 				if (0 == $user->enabled && false !== $user->update('enabled', 1))
 				{
+					// TODO: Log the activity.
+					log_activity($this->c_user->id, 'Activated account: #'.$id);
+
 					$this->response->header = self::HTTP_OK;
 					$this->response->message = line('CSK_USERS_ADMIN_SUCCESS_ACTIVATE');
 					return;
@@ -847,6 +883,9 @@ class Ajax extends AJAX_Controller {
 			case 'deactivate':
 				if (1 == $user->enabled && false !== $user->update('enabled', 0))
 				{
+					// TODO: Log the activity.
+					log_activity($this->c_user->id, 'Deactivated account: #'.$id);
+
 					$this->response->header = self::HTTP_OK;
 					$this->response->message = line('CSK_USERS_ADMIN_SUCCESS_DEACTIVATE');
 					return;
@@ -860,6 +899,9 @@ class Ajax extends AJAX_Controller {
 			case 'delete':
 				if (0 == $user->deleted && false !== $this->kbcore->users->delete($id))
 				{
+					// TODO: Log the activity.
+					log_activity($this->c_user->id, 'Deleted account: #'.$id);
+
 					$this->response->header = self::HTTP_OK;
 					$this->response->message = line('CSK_USERS_ADMIN_SUCCESS_DELETE');
 					return;
@@ -873,6 +915,9 @@ class Ajax extends AJAX_Controller {
 			case 'restore':
 				if (1 == $user->deleted && false !== $this->kbcore->users->restore($id))
 				{
+					// TODO: Log the activity.
+					log_activity($this->c_user->id, 'Restored account: #'.$id);
+
 					$this->response->header = self::HTTP_OK;
 					$this->response->message = line('CSK_USERS_ADMIN_SUCCESS_RESTORE');
 					return;
@@ -886,6 +931,9 @@ class Ajax extends AJAX_Controller {
 			case 'remove':
 				if (false !== $this->kbcore->users->remove($id))
 				{
+					// TODO: Log the activity.
+					log_activity($this->c_user->id, 'Removed account: '.$user->username);
+
 					$this->response->header = self::HTTP_OK;
 					$this->response->message = line('CSK_USERS_ADMIN_SUCCESS_REMOVE');
 					return;
