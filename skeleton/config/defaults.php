@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://goo.gl/wGXHO9
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -47,8 +47,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
- * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @since 		1.0.0
+ * @version 	2.0.0
  */
 
 // ------------------------------------------------------------------------
@@ -57,8 +57,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $config['site_name']        = 'Skeleton';
 $config['site_description'] = 'A skeleton application for building CodeIgniter application.';
 $config['site_keywords']    = 'these, are, site, keywords';
-$config['site_favicon']     = 'favicon.ico';
-$config['site_author']      = 'Kader Bouyakoub';
+$config['site_favicon']     = '';
+$config['site_author']      = 'CodeIgniter Skeleton';
+
+// Site base controller.
+$config['bae_controller'] = 'welcome';
 
 // Elements per page.
 $config['per_page'] = 10;
@@ -96,19 +99,25 @@ $config['smtp_pass']     = '';
 // ------------------------------------------------------------------------
 // Language settings.
 // ------------------------------------------------------------------------
-$config['language'] = 'french';
+$config['language'] = 'english';
 $config['languages'] = array('arabic', 'english', 'french');
 
 // ------------------------------------------------------------------------
 // Themes settings.
 // ------------------------------------------------------------------------
-$config['theme'] = 'default';
+$config['theme']  = 'default';
+$config['themes'] = array();
 
 // ------------------------------------------------------------------------
 // Upload settings.
 // ------------------------------------------------------------------------
 $config['upload_path']   = 'content/uploads';
 $config['allowed_types'] = 'gif|png|jpeg|jpg|pdf|doc|txt|docx|xls|zip|rar|xls|mp4';
+$config['max_height']    = 0;
+$config['max_size']      = 0;
+$config['max_width']     = 0;
+$config['min_height']    = 0;
+$config['min_width']     = 0;
 
 // ------------------------------------------------------------------------
 // Captcha settings.
@@ -119,45 +128,6 @@ $config['recaptcha_site_key']    = '';
 $config['recaptcha_private_key'] = '';
 
 // ------------------------------------------------------------------------
-// Roles and permissions.
+// Active plugins.
 // ------------------------------------------------------------------------
-$config['default_role'] = 'regular';
-$config['user_roles']   = array(
-
-	// Administrator
-	'administrator' => array(
-		'name'        => 'lang:administrator',
-		'permissions' => array(
-
-			// Themes actions.
-			'delete_themes' => true,
-			'switch_themes' => true,
-			'update_themes' => true,
-			'upload_themes' => true,
-
-			// Plugins.
-			'activate_plugins' => true,
-			'update_plugins'   => true,
-			'install_plugins'  => true,
-			'delete_plugins'   => true,
-
-			// Users
-			'edit_users'    => true,
-			'delete_users'  => true,
-			'create_users'  => true,
-			'list_users'    => true,
-			'remove_users'  => true,
-			'promote_users' => true,
-
-			// Site settings.
-			'manage_options' => true,
-
-		),
-	),
-
-	// Regular users
-	'regular' => array(
-		'name'        => 'lang:regular',
-		'permissions' => array(),
-	),
-);
+$config['active_plugins'] = array();
