@@ -584,6 +584,12 @@ class Kbcore_plugins extends CI_Driver
 	 */
 	private function _set_plugins($plugins = array())
 	{
+		if ( ! empty($plugins))
+		{
+			asort($plugins);
+			$plugins = array_values($plugins);
+		}
+
 		// Check if the option exists first.
 		$found = $this->_parent->options->get('active_plugins');
 

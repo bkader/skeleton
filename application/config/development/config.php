@@ -23,4 +23,4 @@ $config['language']	= 'english';
  * Error Logging Threshold
  * @see application/config/config.php:206
  */
-$config['log_threshold'] = 4;
+$config['log_threshold'] = 2;

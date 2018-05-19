@@ -399,10 +399,7 @@ if ( ! function_exists('_unzip_file_pclzip'))
 	function _unzip_file_pclzip($file, $path, $needed_dirs = array())
 	{
 		// We make sure to load pclzip file if the class is missing.
-		if ( ! class_exists('PclZip', false))
-		{
-			require_once(KBPATH.'third_party/pclzip/pclzip.lib.php');
-		}
+		class_exists('PclZip', false) OR import('pclzip/pclzip.lib.php', 'third_party');
 
 		// We create instance of the class then prepare all files.
 		$zip = new PclZip($file);

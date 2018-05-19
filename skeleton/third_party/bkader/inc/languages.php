@@ -52,17 +52,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 return array(
 
-	// Armenian
-	'armenian' => array(
-		'name'      => 'հայերեն',
-		'name_en'   => 'Armenian',
-		'folder'    => 'armenian',
-		'locale'    => 'hy-AM',
-		'direction' => 'ltr',
-		'code'      => 'hy',
-		'flag'      => 'AM',
-	),
-
 	// Arabic
 	'arabic' => array(
 		'name'      => 'العربية',
@@ -72,6 +61,17 @@ return array(
 		'direction' => 'rtl',
 		'code'      => 'ar',
 		'flag'      => 'dz',
+	),
+
+	// Armenian
+	'armenian' => array(
+		'name'      => 'հայերեն',
+		'name_en'   => 'Armenian',
+		'folder'    => 'armenian',
+		'locale'    => 'hy-AM',
+		'direction' => 'ltr',
+		'code'      => 'hy',
+		'flag'      => 'AM',
 	),
 
 	// Czech
@@ -127,17 +127,6 @@ return array(
 		'direction' => 'ltr',
 		'code'      => 'el',
 		'flag'      => 'gr',
-	),
-
-	// Hebrew
-	'hebrew' => array(
-		'name'      => 'עִברִית',
-		'name_en'   => 'Hebrew',
-		'folder'    => 'hebrew',
-		'locale'    => 'he-IL',
-		'direction' => 'rtl',
-		'code'      => 'he',
-		'flag'      => 'il',
 	),
 
 	// Hindi

@@ -1,0 +1,184 @@
+arabic: # Arabic
+  name: العربية
+  name_en: Arabic
+  folder: arabic
+  locale: ar-DZ
+  direction: rtl
+  code: ar
+  flag: dz
+
+---
+
+armenian: # Armenian
+  name: հայերեն
+  name_en: Armenian
+  folder: armenian
+  locale: hy-AM
+  direction: ltr
+  code: hy
+  flag: AM
+
+---
+
+czech: # Czech
+  name: Čeština
+  name_en: Czech
+  folder: czech
+  locale: cs-CZ
+  direction: ltr
+  code: cs
+  flag: cz
+
+---
+
+english: # English
+  name: English
+  name_en: English
+  folder: english
+  locale: en-US
+  direction: ltr
+  code: en
+  flag: us
+
+---
+
+french: # French
+  name: Français
+  name_en: French
+  folder: french
+  locale: fr-FR
+  direction: ltr
+  code: fr
+  flag: fr
+
+---
+
+german: # German
+  name: Deutsch
+  name_en: German
+  folder: german
+  locale: de-DE
+  direction: ltr
+  code: de
+  flag: de
+
+---
+
+greek: # Greek
+  name: ελληνικά
+  name_en: Greek
+  folder: greek
+  locale: el-GR
+  direction: ltr
+  code: el
+  flag: gr
+
+---
+
+hindi: # Hindi
+  name: हिन्दी
+  name_en: Hindi
+  folder: hindi
+  locale: hi-IN
+  direction: ltr
+  code: hi
+  flag: in
+
+---
+
+italian: # Italian
+  name: Italiano
+  name_en: Italian
+  folder: italian
+  locale: it-IT
+  direction: ltr
+  code: it
+  flag: it
+
+---
+
+japanese: # Japanese
+  name: 日本語
+  name_en: Japanese
+  folder: japanese
+  locale: ja-JP
+  direction: ltr
+  code: ja
+  flag: jp
+
+---
+
+persian: # Persian
+  name: فارسی
+  name_en: Persian
+  folder: persian
+  locale: fa-IR
+  direction: rtl
+  code: fa
+  flag: ir
+
+---
+
+portuguese: # Portuguese
+  name: Português
+  name_en: Portuguese
+  folder: portuguese
+  locale: pt-PT
+  direction: ltr
+  code: pt
+  flag: pt
+
+---
+
+russian: # Russian
+  name: ру́сский
+  name_en: Russian
+  folder: russian
+  locale: ru-RU
+  direction: ltr
+  code: ru
+  flag: ru
+
+---
+
+spanish: # Spanish
+  name: Español
+  name_en: Spanish
+  folder: spanish
+  locale: es-ES
+  direction: ltr
+  code: es
+  flag: es
+
+---
+
+turkish: # Turkish
+  name: Türkçe
+  name_en: Turkish
+  folder: turkish
+  locale: tr-TR
+  direction: ltr
+  code: tr
+  flag: tr
+
+---
+
+ukrainian: # Ukrainian
+  name: українська мова
+  name_en: Ukrainian
+  folder: ukrainian
+  locale: uk-ua
+  direction: ltr
+  code: uk
+  flag: ua
+
+---
+
+vietnamese: # Vietnamese
+  name: tiếng Việt
+  name_en: Vietnamese
+  folder: vietnamese
+  locale: vi-VN
+  direction: ltr
+  code: vi
+  flag: vn

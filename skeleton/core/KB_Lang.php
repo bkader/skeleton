@@ -411,9 +411,9 @@ class KB_Lang extends CI_Lang
 				$this->_languages = require_once(APPPATH.'third_party/languages.php');
 			}
 			// If not found, use our.
-			elseif (is_file(KBPATH.'third_party/languages.php'))
+			elseif (is_file(KBPATH.'third_party/bkader/inc/languages.php'))
 			{
-				$this->_languages = require_once(KBPATH.'third_party/languages.php');
+				$this->_languages = require_once(KBPATH.'third_party/bkader/inc/languages.php');
 			}
 			// Otherwise, use an empty array.
 			else

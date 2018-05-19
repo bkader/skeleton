@@ -440,12 +440,17 @@ if (has_action('admin_subhead') OR true === $module['has_help'] OR isset($page_h
 	echo '</div></div>';
 }
 ?>
-<main class="wrapper" id="wrapper" role="main">
+<main class="wrapper" role="main">
 	<div class="container">
 		<?php
-		// Bootstrap alert.
+		/**
+		 * The alert is displayed outside the wraper.
+		 * @since 	2.0.0
+		 */
 		the_alert();
-
+		?>
+		<div id="wrapper">
+		<?php
 		/**
 		 * Fires at the top of page content.
 		 * @since 	1.4.0
@@ -461,6 +466,7 @@ if (has_action('admin_subhead') OR true === $module['has_help'] OR isset($page_h
 		 */
 		do_action('admin_page_footer');
 		?>
+		</div>
 	</div>
 </main>
 <footer class="footer" id="footer" role="contactinfo">

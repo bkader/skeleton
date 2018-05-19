@@ -192,11 +192,6 @@ switch (ENVIRONMENT)
  */
 	// $assign_to_config['name_of_config_item'] = 'value of config item';
 
-
-// Define constants representing DIRECTORY_SEPARATOR and PHP extension.
-defined('DS') OR define('DS', DIRECTORY_SEPARATOR);
-defined('EXT') OR define('EXT', '.php');
-
 // --------------------------------------------------------------------
 // END OF USER CONFIGURABLE SETTINGS.  DO NOT EDIT BELOW THIS LINE
 // --------------------------------------------------------------------
@@ -357,11 +352,11 @@ defined('EXT') OR define('EXT', '.php');
 
 /*
  * --------------------------------------------------------------------
- * We load Skeleton Autoloader file.
+ * We load Skeleton Bootstrap file.
  * --------------------------------------------------------------------
  *
  * The reason behind this is to register our classes so that they are
  * easily located if called.
  * Calling CodeIgniter.php file is handled by this file as well.
  */
-require_once(KBPATH.'autoloader.php');
+require_once(KBPATH.'bootstrap.php');

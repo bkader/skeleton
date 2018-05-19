@@ -4816,37 +4816,6 @@ if ( ! function_exists('print_alert'))
 // Utilities.
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('array_clean'))
-{
-	/**
-	 * array_clean
-	 *
-	 * Create specially for this library but it can be used anywhere.
-	 * It make sure to trim array elements first, them remove empty
-	 * element and final keep only unique ones.
-	 *
-	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
-	 * @since 	1.4.0
-	 * 
-	 * @param 	array
-	 * @return 	void
-	 */
-	function array_clean($array)
-	{
-		if (is_array($array))
-		{
-			$array = array_map('trim', $array);
-			$array = array_filter($array);
-			$array = array_unique($array);
-		}
-
-		return $array;
-	}
-}
-
-// ------------------------------------------------------------------------
-
 if ( ! function_exists('compress_html'))
 {
 	/**

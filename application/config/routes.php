@@ -60,9 +60,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * in the KB_BASE constant (application/config/constants.php).
  * @since 	1.3.0
  */
-require_once(BASEPATH .'database/DB.php');
-$db =& DB();
-$route['default_controller'] = (null !== ($result = $db->where('name', 'base_controller')->get('options')->row())) ? $result->value : KB_BASE;
+if (function_exists('_DB')) {
+	$base_controller = config_item('base_controller');
+} else {
+	$base_controller = null;
+	require_once(BASEPATH .'database/DB.php');
+	$db =& DB();
+	if (null !== ($result = $db->where('name', 'base_controller')->get('options')->row())) {
+		$base_controller = $result->value;
+	}
+}
+$route['default_controller'] = $base_controller ? $base_controller : KB_BASE;
 
 /**
  * Authentication routes.
@@ -114,8 +122,7 @@ Route::prefix(KB_ADMIN, function() {
 	 * Reserved dashboard sections.
 	 * @since 	2.0.0
 	 */
-	global $csk_modules;
-	$modules_routes = implode('|', $csk_modules);
+	$modules_routes = implode('|', _csk_modules());
 	Route::any("({$modules_routes})/(:any)/(:any)", 'admin/$1/$2/$3');
 	Route::any("({$modules_routes})/(:any)", 'admin/$1/$2');
 	Route::any("({$modules_routes})", 'admin/$1/index');
@@ -137,8 +144,7 @@ Route::prefix(KB_ADMIN, function() {
  * @since 	2.0.0
  */
 Route::prefix('ajax', function () {
-	global $csk_modules;
-	$modules_routes = implode('|', $csk_modules);
+	$modules_routes = implode('|', _csk_modules());
 	Route::any("({$modules_routes})/(:any)/(:any)", "ajax/index/$1/$2/$3");
 	Route::any("({$modules_routes})/(:any)", "ajax/index/$1/$2");
 	Route::any("({$modules_routes})", "ajax/index/$1");

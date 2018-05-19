@@ -864,10 +864,11 @@ if ( ! function_exists('check_nonce_url'))
 	 * 
 	 * @since 	1.5.0
 	 *
-	 * @param 	string
+	 * @param 	string 	$action
+	 * @param 	string 	$url
 	 * @return 	bool
 	 */
-	function check_nonce_url($url = null, $action = -1)
+	function check_nonce_url($action = -1, $url = null)
 	{
 		// If no URL provided, we use the current one, then format it.
 		(null === $url) && $url = current_url();
@@ -894,7 +895,7 @@ if ( ! function_exists('check_safe_url'))
 	 * @deprecated 	1.5.0 	Kept for backward compatibility.
 	 * @return 	bool
 	 */
-	function check_safe_url($url = null, $action = -1)
+	function check_safe_url($action = -1, $url = null)
 	{
 		return check_nonce_url($url, $action);
 	}

@@ -70,16 +70,6 @@ class Kbcore_options extends CI_Driver implements CRUD_interface
 	 */
 	public function initialize()
 	{
-		// Assign all options to config.
-		foreach ($this->get_many() as $row)
-		{
-			// Cache them first.
-			$this->cached[$row->name] = $row->value;
-
-			// Assign them to config array.
-			$this->ci->config->set_item($row->name, $row->value);
-		}
-
 		log_message('info', 'Kbcore_options Class Initialized');
 	}
 
