@@ -334,8 +334,6 @@ class Settings extends Settings_Controller {
 			), line('CSK_SETTINGS_TAB_UPLOAD')),
 
 			'</div>';
-
-			// echo print_d($this->_tabs);
 		});
 	}
 
