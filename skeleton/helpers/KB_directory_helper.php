@@ -69,17 +69,17 @@ if ( ! function_exists('directory_delete'))
 			foreach ($elements as $element)
 			{
 				// We ignore some of elements.
-				if ($element != "." && $element != "..")
+				if ($element != '.' && $element != '..')
 				{
 					// Directory?
-					if (is_dir($dir."/".$element))
+					if (is_dir($dir.'/'.$element))
 					{
-						directory_delete($dir."/".$element);
+						directory_delete($dir.'/'.$element);
 					}
 					// A file?
 					else
 					{
-						unlink($dir."/".$element);
+						unlink($dir.'/'.$element);
 					}
 				}
 			}
