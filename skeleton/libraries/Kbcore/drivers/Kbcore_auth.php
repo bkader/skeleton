@@ -52,10 +52,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Kbcore_auth extends CI_Driver
 {
 	/**
+	 * Holds the currently logged in user's ID.
+	 * @since 	2.0.0
+	 * @var 	integer
+	 */
+	private $id = 0;
+
+	/**
 	 * Holds the currently logged in user's object.
 	 * @var object
 	 */
 	private $user;
+
+	/**
+	 * Holds whether the current user is an admin or not.
+	 * @since 	2.0.0
+	 * @var 	boolean
+	 */
+	private $admin;
 
 	/**
 	 * Holds the current user's IP address.
@@ -167,60 +181,101 @@ class Kbcore_auth extends CI_Driver
 	 */
 	public function user()
 	{
-		// If the user is already cached, nothing to do.
-		if (isset($this->user))
-		{
-			return $this->user;
-		}
-
-		// Unset any previously cached user.
-		$this->user = false;
-
-		// Make sure required data are stored in session.
-		if ( ! $this->ci->session->user_id OR ! $this->ci->session->token)
-		{
-			return false;
-		}
+		/**
+		 * Make this method remember the current user.
+		 * @since 	2.0.0
+		 * @var 	object
+		 */
+		static $current_user;
 
 		/**
-		 * If multiple sessions are not allowed, we compare 
-		 * stored tokens and make sure only a single user 
-		 * per session is allowed.
+		 * If the method does not remember the current user, we see if this
+		 * class has already cached the object. In case it hasn't, we simply
+		 * attempt to get the user from database.
+		 * @since 	2.0.0
 		 */
-		if (false === $this->ci->config->item('allow_multi_session'))
+		if (empty($current_user))
 		{
-			// Get the variable from database.
-			$var = $this->_parent->variables->get_by(array(
-				'guid'  => $this->ci->session->user_id,
-				'name'  => 'online_token',
-				'value' => $this->ci->session->token,
-			));
-			if ( ! $var)
+			// Not already cached? Get from database and cache the object.
+			if ( ! isset($this->user))
 			{
-				return false;
-			}
-		}
+				// Unset any previously cached data.
+				$this->user = false;
+				
+				do {
 
-		// Get the user from database.
-		$user = $this->_parent->users->get($this->ci->session->user_id);
-		if ( ! $user)
-		{
-			return false;
+					// Nothing stored in session? Nothing to do.
+					if ( ! $this->ci->session->user_id 
+						OR ! $this->ci->session->token)
+					{
+						break;
+					}
+
+					/**
+					 * If multiple sessions are not allowed, we compare 
+					 * stored tokens and make sure only a single user 
+					 * per session is allowed.
+					 */
+					if (false === $this->ci->config->item('allow_multi_session'))
+					{
+						// Get the variable from database.
+						$var = $this->_parent->variables->get_by(array(
+							'guid'  => $this->ci->session->user_id,
+							'name'  => 'online_token',
+							'value' => $this->ci->session->token,
+						));
+						if ( ! $var)
+						{
+							break;
+						}
+					}
+
+					// Get the user from database.
+					$user = $this->_parent->users->get($this->ci->session->user_id);
+					if (false === $user)
+					{
+						break;
+					}
+
+					/**
+					 * This is useful if the user is disabled, deleted or
+					 * banned  while he/she is logged in, we log him/her out.
+					 */
+					if ($user->enabled < 1 OR $user->deleted > 0)
+					{
+						$this->logout($user->id);
+						break;
+					}
+
+					/**
+					 * Now that everything went well, we make sure to cache
+					 * the current user as well as the ID.
+					 */
+					$this->user  = $user;
+					$this->id    = $user->id;
+					$this->admin = $user->admin;
+					break;
+
+				// We make sure required data are stored in session.
+				} while (false);
+			}
+
+			$current_user = $this->user;
 		}
 
 		/**
-		 * This is useful if the user is disabled, deleted or
-		 * banned  while he/she is logged in, we log him/her out.
+		 * Filters the current user.
+		 *
+		 * This was added so we can filter the final result in order to add,
+		 * modify or remove any unwanted before returning the current user.
+		 *
+		 * @since 	2.0.0
 		 */
-		if ($user->enabled < 1 OR $user->deleted > 0)
-		{
-			$this->logout($user->id);
-			return false;
+		if (false !== $current_user && has_filter('get_current_user')) {
+			$current_user = apply_filters('get_current_user', $current_user);
 		}
 
-		// Everthing went right, cache the user.
-		$this->user = $user;
-		return $this->user;
+		return $current_user;
 
 	}
 
@@ -234,7 +289,7 @@ class Kbcore_auth extends CI_Driver
 	 */
 	public function online()
 	{
-		return (bool) $this->user();
+		return (false !== $this->user());
 	}
 
 	// ------------------------------------------------------------------------
@@ -249,26 +304,70 @@ class Kbcore_auth extends CI_Driver
 	 * @param 	none
 	 * @return 	bool
 	 */
+	/**
+	 * is_admin
+	 *
+	 * Method for checking whether the current user is an administrator.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	1.0.0
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	bool 	true if the user is an admin, else false.
+	 */
 	public function is_admin()
 	{
-		return (true === $this->online() && true === $this->user->admin);
+		static $is_admin;
+
+		if (empty($is_admin))
+		{
+			if ( ! isset($this->admin)
+				&& false !== $this->online() 
+				&& isset($this->user->admin))
+			{
+				$this->admin = $this->user->admin;
+			}
+
+			$is_admin = $this->admin;
+		}
+
+		return $is_admin;
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Return the current user's ID.
+	 * user_id
 	 *
-	 * @since 	1.0.0
-	 * @since 	1.3.3 	Reversed check condition.
-	 * 
+	 * Method for returning the currently logged in user's ID
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
 	 * @access 	public
 	 * @param 	none
-	 * @return 	int
+	 * @return 	int 	Returns the current user's ID.
 	 */
 	public function user_id()
 	{
-		return (true === $this->online()) ? $this->user()->id : false;
+		static $current_user_id;
+
+		if (empty($current_user_id))
+		{
+			if ($this->id <= 0 
+				&& false !== $this->online() 
+				&& isset($this->user->id))
+			{
+				$this->id = $this->user->id;
+			}
+
+			$current_user_id = $this->id;
+		}
+
+		return $current_user_id;
 	}
 
 	// ------------------------------------------------------------------------
@@ -580,8 +679,13 @@ class Kbcore_auth extends CI_Driver
 		// Allow themes and plug-ins to alter the cookie name.
 		$cookie_name = apply_filters('user_cookie_name', 'c_user');
 
-		// Allow themes and plug-ins to alter the cookie expiration time.
-		$cookie_expire = apply_filters('user_cookie_life', MONTH_IN_SECONDS * 2);
+		/**
+		 * Filters online token line so plugin can change it.
+		 * @since 	2.0.0
+		 */
+		$expire = apply_filters('user_cookie_life', MONTH_IN_SECONDS * 2);
+		(is_int($expire) && $expire <= 0) OR $expire = MONTH_IN_SECONDS * 2;
+		$cookie_expire = $expire;
 
 		// Now we set the cookie.
 		$this->ci->input->set_cookie($cookie_name, $cookie_value, $cookie_expire);
@@ -642,10 +746,17 @@ class Kbcore_auth extends CI_Driver
 			));
 		}
 
+		/**
+		 * Filters online token line so plugin can change it.
+		 * @since 	2.0.0
+		 */
+		$expired = apply_filters('user_cookie_life', MONTH_IN_SECONDS * 2);
+		(is_int($expired) && $expired <= 0) OR $expired = MONTH_IN_SECONDS * 2;
+
 		// Perform a clean up of older tokens.
 		$this->_parent->variables->delete_by(array(
-			'name' => 'online_token',
-			'created_at <' => time() - (MONTH_IN_SECONDS * 2)
+			'name'         => 'online_token',
+			'created_at <' => time() - $expired,
 		));
 	}
 
@@ -722,4 +833,75 @@ class Kbcore_auth extends CI_Driver
 		));
 	}
 
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('user_anchor'))
+{
+	/**
+	 * user_anchor
+	 *
+	 * Function fro generating an HTML anchor for the user's profile page.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @param 	mixed 	$id
+	 * @param 	string 	$title
+	 * @param 	mixed 	$attrs
+	 * @return 	string
+	 */
+	function user_anchor($id = 0, $title = '', $attrs = array())
+	{
+		$user = ($id instanceof KB_User) ? $id : get_user($id);
+
+		if (false === $user)
+		{
+			return null;
+		}
+
+		// No title provided? Use full name.
+		if ('' === $title)
+		{
+			$title = isset($user->full_name) ? $user->full_name  : $user->username;
+		}
+		// Display the avatar?
+		elseif (0 === strpos($title, 'user.avatar') && isset($user->avatar))
+		{
+			$title = (1 === sscanf($title, 'user.avatar.%d', $size))
+				? user_avatar($size, $user->avatar)
+				: user_avatar(50, $user->avatar);
+		}
+		// Any other key?
+		elseif (1 === sscanf($title, 'user.%s', $key) && isset($user->{$key}))
+		{
+			$title = $user->{$key};
+		}
+		// Translatable string?
+		elseif (1 === sscanf($title, 'lang:%s', $line))
+		{
+			$title = line($line);
+		}
+
+		// Add required attributes first.
+		$attributes = array(
+			'href' => site_url($user->username),
+			'data-userid' => $user->id,
+		);
+
+		// Merge all attributes.
+		if (is_array($attrs))
+		{
+			$attributes = array_merge($attributes, $attrs);
+		}
+		else
+		{
+			$attributes = $attrs._stringify_attributes($attributes);
+		}
+
+		// Render the final anchor tag.
+		return html_tag('a', $attributes, $title);
+	}
 }
