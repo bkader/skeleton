@@ -310,7 +310,7 @@ class Ajax extends AJAX_Controller {
 
 		if ((null === $action OR ! in_array($action, $actions))
 			OR (null === $name OR ! is_string($name))
-			OR true !== $this->check_nonce())
+			OR true !== $this->check_nonce("module-{$action}_".$name))
 		{
 			$this->response->header  = self::HTTP_NOT_ACCEPTABLE;
 			$this->response->message = line('CSK_ERROR_NONCE_URL');
@@ -336,17 +336,7 @@ class Ajax extends AJAX_Controller {
 		}
 
 		// Load file helper for other actions.
-		if ('delete' !== $action)
-		{
-			function_exists('write_file') OR $this->load->helper('file');
-			
-			if ('deactivate' === $action)
-			{
-				unset($details['contexts']);
-			}
-		}
-		// Load directory helper for delete action.
-		elseif ( ! function_exists('directory_delete'))
+		if ('delete' === $action && ! function_exists('directory_delete'))
 		{
 			$this->load->helper('directory');
 		}
@@ -356,7 +346,7 @@ class Ajax extends AJAX_Controller {
 			// In case of activating a module.
 			case 'activate':
 				// Already enabled? Nothing to do...
-				if (true === $details['enabled'])
+				if (false !== $this->router->is_active($name))
 				{
 					$this->response->header = self::HTTP_CONFLICT;
 					$this->response->message = sprintf(line('CSK_MODULES_ERROR_ACTIVATE'), $module);
@@ -364,9 +354,7 @@ class Ajax extends AJAX_Controller {
 				}
 
 				// Successfully enabled?
-				$details['enabled'] = true;
-				$manifest = $details['full_path'].'manifest.json';
-				if (true === write_file($manifest, json_encode($details, JSON_PRETTY_PRINT)))
+				if (false !== $this->router->module_enable($name))
 				{
 					// TODO: Log the activity.
 					log_activity($this->c_user->id, 'Activated module: '.$module);
@@ -384,31 +372,14 @@ class Ajax extends AJAX_Controller {
 			// In case of deactivating a module.
 			case 'deactivate':
 				// Already enabled? Nothing to do...
-				if (true !== $details['enabled'])
+				if (true !== $this->router->is_active($name))
 				{
 					$this->response->header = self::HTTP_CONFLICT;
 					$this->response->message = sprintf(line('CSK_MODULES_ERROR_DEACTIVATE'), $module);
 					return;
 				}
 
-				// Process status and some needed variables.
-				$status   = false;
-				$manifest = $details['full_path'].'manifest.json';
-				$backup   = $manifest.'.dist';
-
-				// See if the back up file is found.
-				if (is_file($backup))
-				{
-					is_file($manifest) && unlink($manifest);
-					$status = (false !== copy($backup, $manifest));
-				}
-
-				if (true !== $status)
-				{
-					$status = (false !== write_file($manifest, json_encode($details, JSON_PRETTY_PRINT)));
-				}
-
-				if (false !== $status)
+				if (false !== $this->router->module_disable($name))
 				{
 					// TODO: Log the activity.
 					log_activity($this->c_user->id, 'Deactivated module: '.$module);

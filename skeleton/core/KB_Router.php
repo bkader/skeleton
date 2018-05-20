@@ -38,12 +38,6 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Make sure to load our custom Route class right here.
- * This class allows us to use static routing like laravel.
- */
-require_once(KBPATH.'third_party/Route/Route.php');
-
-/**
  * KB_Router Class
  *
  * This class extends CI_Router class in order to use HMVC structure.
@@ -79,6 +73,13 @@ class KB_Router extends CI_Router
 	protected $_modules_details = array();
 
 	/**
+	 * Array of active modules.
+	 * @since 	2.0.0
+	 * @var 	array
+	 */
+	protected $_active_modules = array();
+
+	/**
 	 * To avoid creating the variable each time we get 
 	 * a single module details, we create it here.
 	 * @since 	1.4.0
@@ -100,7 +101,6 @@ class KB_Router extends CI_Router
 		'admin_menu'   => null,
 		'admin_order'  => 0,
 		'translations' => array(),
-		'contexts' => array(),
 	);
 
 	/**
@@ -125,6 +125,546 @@ class KB_Router extends CI_Router
 
 		// Register the action after controller constructor.
 		add_action('post_controller_constructor', array($this, '_load_modules'));
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns and array of modules locations.
+	 * @access 	public
+	 * @return 	array.
+	 */
+	public function modules_locations()
+	{
+		isset($this->_locations) OR $this->_prep_locations();
+		return $this->_locations;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Set module name.
+	 * @access 	public
+	 * @param 	string 	$module
+	 * @return 	void
+	 */
+	public function set_module($module)
+	{
+		$this->module = $module;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Fetch the current module name.
+	 * @access 	public
+	 * @return 	string
+	 */
+	public function fetch_module()
+	{
+		return $this->module;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the real path to the selected module.
+	 *
+	 * @since 	1.0.0
+	 * @since 	1.4.0 	Rewritten for better code.
+	 * @since 	2.0.0 	Added a little check for module.
+	 * 
+	 * @access 	public
+	 * @param 	string 	$name 	Module name.
+	 * @return 	the full path if found, else FALSE.
+	 */
+	public function module_path($name = null)
+	{
+		if (empty($name))
+		{
+			$name = $this->module;
+
+			if (empty($name))
+			{
+				return false;
+			}
+		}
+
+		if ( ! isset($this->_modules[$name]))
+		{
+			$path = false;
+
+			foreach ($this->modules_locations() as $location)
+			{
+				if (is_dir($location.$name))
+				{
+					$path = rtrim(str_replace('\\', '/', $location.$name), '/').'/';
+					break;
+				}
+			}
+
+			if (false === $path)
+			{
+				return false;
+			}
+
+			$this->_modules[$name] = $path;
+		}
+
+		return $this->_modules[$name];
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Return an array of the selected module's details.
+	 * @access 	public
+	 * @param 	string 	$name 	The module's name (folder).
+	 * @return 	array if found, else false.
+	 */
+	public function module_details($name = null, $path = null)
+	{
+		if (empty($name))
+		{
+			$name = $this->module;
+
+			if (empty($name))
+			{
+				return false;
+			}
+		}
+
+		$module_path = $path ? $path : $this->module_path($name);
+		$manifest_file = $module_path.'manifest.json';
+		$manifest_dist = $manifest_file.'.dist';
+
+		if ( ! $module_path 
+			OR ( ! is_file($manifest_file) && ! is_file($manifest_dist)))
+		{
+			return false;
+		}
+
+		/**
+		 * In case the manifest.json is not found but we have a backup 
+		 * file, we make sure to create the file first.
+		 */
+		if (( ! is_file($manifest_file) && is_file($manifest_dist)) 
+			&& false === copy($manifest_dist, $manifest_file))
+		{
+			return false;
+		}
+
+		$headers = function_exists('json_read_file')
+			? json_read_file($manifest_file)
+			: json_decode(file_get_contents($manifest_file), true, JSON_PRETTY_PRINT);
+
+		if ( ! $headers OR ! is_array($headers))
+		{
+			return false;
+		}
+
+		/**
+		 * Create a back-up for the manifest.json file if it does not exist.
+		 * @since 2.0.0
+		 */
+		if (true !== is_file($manifest_dist) 
+			&& true !== copy($manifest_file, $manifest_dist))
+		{
+			return fales;
+		}
+
+		$headers = array_replace_recursive($this->_headers, $headers);
+
+		// Added things:
+		empty($headers['admin_menu']) && $headers['admin_menu'] = $name;
+
+		// Is module enabled?
+		$headers['enabled'] = $this->is_active($name);
+
+		// Add all internal details.
+		$headers['contexts'] = $this->module_contexts($name, $module_path);
+		if ( ! empty($headers['contexts']))
+		{
+			foreach ($headers['contexts'] as $key => $val)
+			{
+				$headers['has_'.$key] = (false !== $val);
+			}
+		}
+
+		$headers['folder'] = $name;
+		$headers['full_path'] = $module_path;
+
+		/**
+		 * If the module comes without a "help" controller, we see if
+		 * the developer provided a module URI so we can use it as
+		 * a URL later.
+		 */
+		if (false === $headers['has_help'] && ! empty($headers['module_uri']))
+		{
+			$headers['contexts']['help'] = $headers['module_uri'];
+			$headers['has_help'] = true;
+		}
+
+		if ($headers['license'] == 'MIT' && empty($headers['license_uri']))
+		{
+			$headers['license_uri'] = 'http://opensource.org/licenses/MIT';
+		}
+
+		$this->_modules_details[$name] = $headers;
+
+		return $this->_modules_details[$name];
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * module_contexts
+	 *
+	 * Method for list all module's available contexts.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	string 	$module 	The module name.
+	 * @param 	string 	$path 		The module's directory path.
+	 * @return 	array
+	 */
+	public function module_contexts($module, $path = null)
+	{
+		// Nothing provided? Nothing to do...
+		if (empty($module))
+		{
+			return false;
+		}
+
+		// We start with an empty array.
+		$module_contexts = array();
+
+		// Make sure the module directory path if found.
+		(null === $path) && $path = $this->module_path($module);
+		if (false === $path)
+		{
+			return $module_contexts;
+		}
+
+		// Let's first see if the module has an admin controller.
+		$module_contexts['admin']  = is_file($path.'/controllers/Admin.php');
+
+		// Loop through contexts and see if we find a controller.
+		global $back_contexts;
+		foreach ($back_contexts as $context)
+		{
+			$module_contexts[$context] = is_file($path.'/controllers/'.ucfirst($context).EXT);
+		}
+
+		// Return the final result.
+		return $module_contexts;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * List all available modules.
+	 * @access 	public
+	 * @param 	none
+	 * @return 	array
+	 */
+	public function list_modules($details = false)
+	{
+		if ( ! $this->_modules)
+		{
+			// Prepare an empty array of modules.
+			$this->_modules = array();
+
+			/**
+			 * Moved out of the foreach loop for better performance.
+			 * @since 	2.0.0
+			 * @var 	array
+			 */
+			$_to_eliminate = array(
+				'.',
+				'..',
+				'.gitkeep',
+				'index.html',
+				'.htaccess',
+				'__MACOSX',
+			);
+
+			// Let's go through folders and check if there are any.
+			foreach ($this->modules_locations() as $location)
+			{
+				if ($handle = opendir($location))
+				{		
+					while (false !== ($file = readdir($handle))) {
+						// Must be a directory and has "manifest.json".
+						if ( ! in_array($file, $_to_eliminate) 
+							&& is_dir($location.$file)
+							&& (is_file($location.$file."/manifest.json") OR is_file($location.$file."/manifest.json.dist"))
+							&& ! _csk_reserved_module($file))
+						{
+							$this->_modules[$file] = rtrim(str_replace('\\', '/', $location.$file), '/').'/';
+						}
+					}
+				}
+			}
+
+			// Alphabetically order modules.
+			ksort($this->_modules);
+		}
+
+		$return = $this->_modules;
+
+		if (true === $details)
+		{
+			$_modules_details = array();
+
+			foreach ($this->_modules as $module => $path)
+			{
+				if (isset($this->_modules_details[$module]))
+				{
+					$_modules_details[$module] = $this->_modules_details[$module];
+				}
+				elseif (false !== ($details = $this->module_details($module, $path)))
+				{
+					$_modules_details[$module] = $details;
+				}
+			}
+
+			empty($_modules_details) OR $return = $_modules_details;
+		}
+
+		return $return;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * _load_modules
+	 *
+	 * Because modules are loaded ONLY when they are requested via HTTP and 
+	 * there tons of ways to make them load. We created the "init.php" file
+	 * method.
+	 * You can put anything inside that file and it is loaded as long as it
+	 * exists. This way, not only themes and plugins can affect the website, 
+	 * but even modules. Cool isn't it?
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	1.4.0
+	 * @since 	2.0.0 	Fixed loading ini.php files for only enabled modules.
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
+	public function _load_modules()
+	{
+		// Make sure we have some enabled modules first.
+		$active = $this->active_modules();
+		if (empty($active))
+		{
+			return;
+		}
+
+		// Prepare our list of modules.
+		$modules = $this->list_modules();
+
+		foreach ($active as $folder)
+		{
+			// Module enabled but folder missing? Nothing to do.
+			if ( ! isset($modules[$folder]))
+			{
+				continue;
+			}
+
+			// "init.php" not found? Nothing to do.
+			if ( ! is_file($modules[$folder].'init.php'))
+			{
+				continue;
+			}
+
+			// Import "init.php" file.
+			require_once($modules[$folder].'init.php');
+
+			/**
+			 * If a "module_activate_" action was registered, we fire
+			 * it and make sure to add the "enabled" file. This way we
+			 * avoid firing it again.
+			 */
+			if (has_action('module_activate_'.$folder) 
+				&& ! is_file($modules[$folder].'enabled'))
+			{
+				do_action('module_activate_'.$folder);
+				@touch($modules[$folder].'enabled');
+			}
+
+			// We always fire this action.
+			do_action('module_loaded_'.$folder);
+		}
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * active_modules
+	 *
+	 * List all active modules previously stored in database.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	array
+	 */
+	public function active_modules()
+	{
+		// Active modules not previously cached?
+		if (empty($this->_active_modules))
+		{
+			/**
+			 * Because we are automatically assigning options from database
+			 * to $assign_to_config array, we see if we have the item
+			 */
+			global $assign_to_config;
+			if (isset($assign_to_config['active_modules']))
+			{
+				$modules = $assign_to_config['active_modules'];
+			}
+			// Otherwise, see on database.
+			else
+			{
+				$modules = _DB()
+					->where('name', 'active_modules')
+					->get('options')
+					->row();
+
+				// Not found? We make sure to create the option.
+				if (null === $modules)
+				{
+					$modules = array();
+					_DB()->insert('options', array(
+						'name'  => 'active_modules',
+						'value' => to_bool_or_serialize($modules),
+						'tab'   => 'modules',
+					));
+				}
+
+			}
+
+			// We make sure it's an array before finally caching it.
+			is_array($modules) OR $modules = array();
+			$this->_active_modules = $modules;
+		}
+
+		return $this->_active_modules;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * is_active
+	 *
+	 * Method for checking whether the selected module is available AND active.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	string 	$name 	The module's folder name.
+	 * @return 	bool 	true if the module is active and found, else false.
+	 */
+	public function is_active($name)
+	{
+		$modules = $this->list_modules();
+		$active = $this->active_modules();
+		return (isset($modules[$name]) && in_array($name, $active));
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * module_enable
+	 *
+	 * Method for activating the selected module.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	string 	$name 	The module's folder name.
+	 * @return 	bool 	true if the module is enabled, else false.
+	 */
+	public function module_enable($name)
+	{
+		$modules = $this->list_modules();
+		$active = $this->active_modules();
+
+		// Module don't exists or already enabled? Nothing to do...
+		if ( ! isset($modules[$name]) OR in_array($name, $active))
+		{
+			return false;
+		}
+
+		// Add it to active modules and update database.
+		$active[] = $name;
+		return $this->_set_active_modules($active);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * module_disable
+	 *
+	 * Method for disabling the selected module.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	string 	$name 	The module folder name.
+	 * @return 	bool 	true if the module was disable, else false.
+	 */
+	public function module_disable($name)
+	{
+		$modules = $this->list_modules();
+		$active = $this->active_modules();
+
+		// The module must exists and must be enabled to proceed.
+		if ( ! isset($modules[$name]) 
+			OR false === ($i = array_search($name, $active)))
+		{
+			return false;
+		}
+
+		// we use the $i (index) to remove the module.
+		unset($active[$i]);
+
+		// Fire the "module_deactivate_{folder}" action.
+		do_action('module_deactivate_'.$name);
+
+		// Successfully deactivated?
+		if (false !== $this->_set_active_modules($active))
+		{
+			/**
+			 * We make sure to remove our "enabled" flag file so the module
+			 *  can use its "module_activate_{foler}" action if enabled again.
+			 */
+			if (is_file($modules[$name].'enabled'))
+			{
+				unlink($modules[$name].'enabled');
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 
 	// ------------------------------------------------------------------------
@@ -169,107 +709,6 @@ class KB_Router extends CI_Router
 			}
 		}
 	}
-
-    // ------------------------------------------------------------------------
-
-    /**
-     * The only reason we are add this method is to allow users to create
-     * a "routes" folder inside their application folder in which they can 
-     * store individual routes files which will be included and added to the 
-     * global routes.php file.
-     * @access 	protected
-     * @return 	void
-     */
-    protected function _set_routing()
-    {
-    	$modules = $this->list_modules(true);
-    	foreach ($modules as $folder => $details)
-    	{
-    		// Set module routing.
-    		if ( ! empty($details['routes']))
-    		{
-    			$this->_set_module_routes($details['routes']);
-    		}
-    	}
-
-		// We now let the parent do the heavy work.
-		parent::_set_routing();
-    }
-
-    // ------------------------------------------------------------------------
-
-    /**
-     * _set_module_routes
-     *
-     * Method for automatically register module routes stored in manifest file.
-     *
-     * @author 	Kader Bouyakoub
-     * @link 	https://goo.gl/wGXHO9
-     * @since 	1.4.0
-     *
-     * @access 	protected
-     * @param 	array 	$routes 	Module routes stored in manifest.json file.
-     * @return 	void
-     */
-    protected function _set_module_routes($routes = array())
-    {
-    	if (empty($routes))
-    	{
-    		return;
-    	}
-
-    	foreach ($routes as $route => $original)
-    	{
-    		if (sscanf($route, 'resources:%s', $new_route))
-    		{
-    			Route::resources($new_route, $original);
-    		}
-    		elseif (sscanf($route, 'context:%s', $new_route))
-    		{
-    			Route::context($new_route, $original);
-    		}
-    		elseif (empty($original))
-    		{
-    			Route::block($route);
-    		}
-    		elseif (sscanf($route, 'any:%s', $new_route))
-			{
-    			Route::any($new_route, $original);
-			}
-    		elseif (sscanf($route, 'get:%s', $new_route))
-			{
-    			Route::get($new_route, $original);
-			}
-    		elseif (sscanf($route, 'post:%s', $new_route))
-			{
-    			Route::post($new_route, $original);
-			}
-			elseif (sscanf($route, 'put:%s', $new_route))
-			{
-    			Route::put($new_route, $original);
-			}
-			elseif (sscanf($route, 'delete:%s', $new_route))
-			{
-    			Route::delete($new_route, $original);
-			}
-			elseif (sscanf($route, 'head:%s', $new_route))
-			{
-    			Route::head($new_route, $original);
-			}
-			elseif (sscanf($route, 'patch:%s', $new_route))
-			{
-    			Route::patch($new_route, $original);
-			}
-			elseif (sscanf($route, 'options:%s', $new_route))
-			{
-    			Route::options($new_route, $original);
-			}
-			else
-			{
-				Route::any($route, $original);
-			}
-    	}
-    }
 
     // ------------------------------------------------------------------------
 
@@ -374,6 +813,51 @@ class KB_Router extends CI_Router
 
     // ------------------------------------------------------------------------
 
+    /**
+     * The only reason we are add this method is to allow users to create
+     * a "routes.php" file inside the config folder.
+     * They can either use the "$route" array of our static Routing using
+     * Route class.
+     * @access 	protected
+     * @return 	void
+     */
+    protected function _set_routing()
+    {
+    	// Make the method remember routes, just in case.
+    	static $routes;
+
+    	if (empty($routes))
+    	{
+    		// Let's the parent set it's routes first.
+    		parent::_set_routing();
+
+    		$routes = $this->routes;
+
+    		// Collect modules routes.
+    		$modules = $this->list_modules();
+    		if ( ! empty($modules))
+    		{
+    			foreach ($modules as $folder => $path)
+    			{
+    				if (is_file($path.'config/routes.php'))
+    				{
+    					include_once($path.'config/routes.php');
+    					if (isset($route))
+    					{
+    						$routes = array_merge($routes, $route);
+    						unset($route);
+    					}
+    				}
+    			}
+    		}
+    	}
+
+    	// Now we override routes.
+    	$this->routes = Route::map($routes);
+    }
+
+    // ------------------------------------------------------------------------
+
 	/**
 	 * Parse Routes
 	 *
@@ -384,14 +868,16 @@ class KB_Router extends CI_Router
 	 */
     protected function _parse_routes()
     {
+    	$modules = $this->list_modules();
+		$module  = $this->uri->segment(1);
 
-    	$module = $this->uri->segment(1);
-
-    	// Existing module?
-    	if (isset($this->_modules[$module]) 
-    	    && true == is_file($this->_modules[$module].'config/routes.php'))
+		/**
+		 * If we have an existing module and it has its own routes file,
+		 * we make sure to include it and set routes.
+		 */
+    	if (isset($modules[$module]) && is_file($modules[$module].'config/routes.php'))
     	{
-    		include_once($this->_modules[$module].'config/routes.php');
+    		include($modules[$module].'config/routes.php');
     		if (isset($route) && is_array($route))
     		{
     			$this->routes = array_merge($this->routes, $route);
@@ -399,19 +885,21 @@ class KB_Router extends CI_Router
     		}
     	}
 
-    	// In dashboard?
+    	// On the dashboard?
     	(KB_ADMIN === $module) && $module = $this->uri->segment(3);
-    	if (null !== $module 
-    	    && isset($this->_modules[$module]) 
-    	    && true == is_file($this->_modules[$module].'config/routes.php'))
+
+    	if (isset($modules[$module]) && is_file($modules[$module].'config/routes.php'))
     	{
-    		include_once($this->_modules[$module].'config/routes.php');
+    		include($modules[$module].'config/routes.php');
     		if (isset($route) && is_array($route))
     		{
     			$this->routes = array_merge($this->routes, $route);
     			unset($route);
     		}
     	}
+
+    	// Remapping all routes again.
+    	$this->routes = Route::map($this->routes);
 
         // Let parent do the heavy routing
         return parent::_parse_routes();
@@ -420,378 +908,36 @@ class KB_Router extends CI_Router
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Set module name.
-	 * @access 	public
-	 * @param 	string 	$module
-	 * @return 	void
-	 */
-	public function set_module($module)
-	{
-		$this->module = $module;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Fetch the current module name.
-	 * @access 	public
-	 * @return 	string
-	 */
-	public function fetch_module()
-	{
-		return $this->module;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Returns the real path to the selected module.
+	 * _set_active_modules
 	 *
-	 * @since 	1.0.0
-	 * @since 	1.4.0 	Rewritten for better code.
-	 * @since 	2.0.0 	Added a little check for module.
-	 * 
-	 * @access 	public
-	 * @param 	string 	$module 	Module name.
-	 * @return 	the full path if found, else FALSE.
-	 */
-	public function module_path($module = null)
-	{
-		empty($module) && $module = $this->module;
-
-		$modules = isset($this->_modules)
-			? $this->_modules
-			: $this->list_modules();
-
-		return isset($modules[$module]) ? $modules[$module] : false;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Return an array of the selected module's details.
-	 * @access 	public
-	 * @param 	string 	$module 	The module's name (folder).
-	 * @return 	array if found, else false.
-	 */
-	public function module_details($module, $path = null)
-	{
-		if (empty($module))
-		{
-			return false;
-		}
-
-		// Locate the module first.
-		if (null === $path)
-		{
-			foreach ($this->modules_locations() as $location)
-			{
-				if (is_dir($location.$module))
-				{
-					$path = rtrim(str_replace('\\', '/', $location.$module), '/').'/';
-					$this->_modules[$module] = $path;
-					break;
-				}
-			}
-		}
-
-		$module_path   = $path;
-		$manifest_file = $module_path.'manifest.json';
-		$manifest_dist = $manifest_file.'.dist';
-
-		if (null === $module_path 
-			OR (false === is_file($manifest_file) && false === is_file($manifest_dist)))
-		{
-			return false;
-		}
-
-		/**
-		 * In case the manifest.json is not found but we have a backup 
-		 * file, we make sure to create the file first.
-		 */
-		if (( ! is_file($manifest_file) && is_file($manifest_dist)) 
-			&& false === copy($manifest_dist, $manifest_file))
-		{
-			return false;
-		}
-
-		$content = file_get_contents($manifest_file);		
-		$headers = json_decode($content, true);
-
-		if ( ! is_array($headers))
-		{
-			return false;
-		}
-
-		/**
-		 * Create a back-up for the manifest.json file if it does not exist.
-		 * @since 2.0.0
-		 */
-		if (true !== is_file($manifest_dist) 
-			&& true !== copy($manifest_file, $manifest_dist))
-		{
-			return fales;
-		}
-
-		$headers = array_replace_recursive($this->_headers, $headers);
-
-		// Added things:
-		$headers['folder']    = $module;
-		$headers['full_path'] = $module_path;
-		empty($headers['admin_menu']) && $headers['admin_menu'] = $module;
-
-		// List module's context.
-		if (empty($headers['contexts']))
-		{
-			$headers['contexts'] = $this->module_contexts($module, $module_path);
-			foreach ($headers['contexts'] as $key => $val)
-			{
-				$headers['has_'.$key] = (false !== $val);
-			}
-		}
-
-		/**
-		 * If the module comes without a "help" controller, we see if
-		 * the developer provided a module URI so we can use it as
-		 * a URL later.
-		 */
-		if (false === $headers['has_help'] && ! empty($headers['module_uri']))
-		{
-			$headers['contexts']['help'] = $headers['module_uri'];
-			$headers['has_help'] = true;
-		}
-
-		if ($headers['license'] == 'MIT' && empty($headers['license_uri']))
-		{
-			$headers['license_uri'] = 'http://opensource.org/licenses/MIT';
-		}
-
-		$this->_modules_details[$module] = $headers;
-
-		return $this->_modules_details[$module];
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * module_contexts
-	 *
-	 * Method for list all module's available contexts.
+	 * Method updating active modules stored in database, "options" table.
 	 *
 	 * @author 	Kader Bouyakoub
 	 * @link 	https://goo.gl/wGXHO9
 	 * @since 	2.0.0
 	 *
 	 * @access 	public
-	 * @param 	string 	$module 	The module name.
-	 * @param 	string 	$path 		The module's directory path.
-	 * @return 	array
+	 * @param 	array 	$modules 	Array of modules to activate.
+	 * @return 	bool 	true if successfully updated, else false.
 	 */
-	public function module_contexts($module, $path = null)
+	protected function _set_active_modules($modules)
 	{
-		// Nothing provided? Nothing to do...
-		if (empty($module))
+		if ( ! empty($modules))
 		{
-			return false;
+			// We make sure to reset array indexes.
+			asort($modules);
+			$modules = array_values($modules);
 		}
 
-		// We start with an empty array.
-		$module_contexts = array();
+		// We make sure $modules is always an array.
+		$modules OR $modules = array();
 
-		// Make sure the module directory path if found.
-		(null === $path) && $path = $this->module_path($module);
-		if (false === $path)
-		{
-			return $module_contexts;
-		}
-
-		// Let's first see if the module has an admin controller.
-		$module_contexts['admin']  = is_file($path.'/controllers/Admin.php');
-
-		// Loop through contexts and see if we find a controller.
-		global $back_contexts;
-		foreach ($back_contexts as $context)
-		{
-			$module_contexts[$context] = is_file($path.'/controllers/'.ucfirst($context).EXT);
-		}
-
-		// Return the final result.
-		return $module_contexts;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * List all available modules.
-	 * @access 	public
-	 * @param 	none
-	 * @return 	array
-	 */
-	public function list_modules($details = false)
-	{
-		if ( ! $this->_modules)
-		{
-			// Prepare an empty array of modules.
-			$this->_modules = array();
-
-			// Reserved modules.
-			global $csk_modules;
-			
-			/**
-			 * Moved out of the foreach loop for better performance.
-			 * @since 	2.0.0
-			 * @var 	array
-			 */
-			$_to_eliminate = array(
-				'.',
-				'..',
-				'.gitkeep',
-				'index.html',
-				'.htaccess',
-				'__MACOSX',
-			);
-
-			// Let's go through folders and check if there are any.
-			foreach ($this->modules_locations() as $location)
-			{
-				if ($handle = opendir($location))
-				{		
-					while (false !== ($file = readdir($handle)))
-					{
-						// Must be a directory and has "manifest.json".
-						if ( ! in_array($file, $_to_eliminate) 
-							&& is_dir($location.$file)
-							&& (is_file($location.$file."/manifest.json") OR is_file($location.$file."/manifest.json.dist"))
-							&& ! in_array($file, $csk_modules))
-						{
-							$this->_modules[$file] = rtrim(str_replace('\\', '/', $location.$file), '/').'/';
-						}
-					}
-				}
-			}
-
-			// Alphabetically order modules.
-			ksort($this->_modules);
-		}
-
-		$return = $this->_modules;
-
-		if (true === $details)
-		{
-			$_modules_details = array();
-
-			foreach ($this->_modules as $module => $path)
-			{
-				if (isset($this->_modules_details[$module]))
-				{
-					$_modules_details[$module] = $this->_modules_details[$module];
-				}
-				elseif (false !== ($details = $this->module_details($module, $path)))
-				{
-					$_modules_details[$module] = $details;
-				}
-			}
-
-			empty($_modules_details) OR $return = $_modules_details;
-		}
-
-		return $return;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * _load_modules
-	 *
-	 * Because modules are loaded ONLY when they are requested via HTTP and 
-	 * there tons of ways to make them load. We created the "init.php" file
-	 * method.
-	 * You can put anything inside that file and it is loaded as long as it
-	 * exists. This way, not only themes and plugins can affect the website, 
-	 * but even modules. Cool isn't it?
-	 *
-	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
-	 * @since 	1.4.0
-	 * @since 	2.0.0 	Fixed loading ini.php files for only enabled modules.
-	 *
-	 * @access 	public
-	 * @param 	none
-	 * @return 	void
-	 */
-	public function _load_modules()
-	{
-		$modules = $this->list_modules(true);
-		foreach ($modules as $folder => $details)
-		{
-			// Ignore disabled modules.
-			if (true !== $details['enabled'])
-			{
-				/**
-				 * If the module is disabled but the "INSTALL" file is still there,
-				 * it means that the "module_deactivate_" action was not triggered.
-				 * So we make sure to load the "init.php" file is found then trigger
-				 * the action before deleting it.
-				 */
-				if (false !== is_file($installed = $details['full_path'].'enabled'))
-				{
-					if (false !== is_file($init = $details['full_path'].'init.php'))
-					{
-						require_once($init);
-						/**
-						 * Trigger the deactivation action before proceeding.
-						 * @since 	2.0.0
-						 */
-						do_action('module_deactivate_'.$folder);
-					}
-
-					// We finish by deleting the "enabled" file.
-					@unlink($installed);
-				}
-
-				continue;
-			}
-
-			if (false !== is_file($init = $details['full_path'].'init.php'))
-			{
-				require_once($init);
-
-				/**
-				 * If this is the first time the module "init.php" file is loaded,
-				 * we make sure to create the "enabled" file.
-				 */
-				if (true !== is_file($installed = $details['full_path'].'enabled'))
-				{
-					/**
-					 * Triggers upon module's activation.
-					 * @since 	2.0.0
-					 */
-					do_action('module_activate_'.$folder);
-
-					// Create the file.
-					@touch($installed);
-				}
-
-				/**
-				 * Fires right after the module's "init.php" file is loaded.
-				 * @since 	1.4.0
-				 */
-				do_action('module_loaded_'.$folder);
-			}
-		}
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Returns and array of modules locations.
-	 * @access 	public
-	 * @return 	array.
-	 */
-	public function modules_locations()
-	{
-		$this->_prep_locations();
-		return $this->_locations;
+		// Update the database
+		return _DB()->update('options', array(
+			'value' => to_bool_or_serialize($modules)
+		), array(
+			'name' => 'active_modules'
+		));
 	}
 
 	// ------------------------------------------------------------------------
@@ -811,12 +957,12 @@ class KB_Router extends CI_Router
 	 */
 	public function is_admin()
 	{
-		global $back_contexts, $csk_modules;
+		global $back_contexts;
 
 		$is_admin = false;
 
 		if (in_array($this->class, $back_contexts)
-			OR in_array($this->class, $csk_modules)
+			OR _csk_reserved_module($this->class)
 			OR 'admin' === $this->class
 			OR KB_ADMIN === $this->uri->segment(1))
 		{

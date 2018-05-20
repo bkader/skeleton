@@ -74,8 +74,6 @@ class Modules extends Admin_Controller {
 		// Add our head string.
 		$this->_jquery_sprintf();
 		add_filter('admin_head', array($this, '_admin_head'));
-
-		// Add modules scripts.
 		$this->scripts[] = 'modules';
 
 		// Default page title and icon.
@@ -125,6 +123,7 @@ class Modules extends Admin_Controller {
 				$m['actions'][] = html_tag('a', array(
 					'href'  => admin_url('settings/'.$folder),
 					'class' => 'btn btn-default btn-xs btn-icon ml-2',
+					'aria-label' => sprintf(line('CSK_BTN_ACTIVATE_COM'), $m['name']),
 				), fa_icon('cogs').line('CSK_MODULES_SETTINGS'));
 			}
 
@@ -134,9 +133,10 @@ class Modules extends Admin_Controller {
 					'type' => 'button',
 					'data-endpoint' => nonce_ajax_url(
 						'modules/deactivate/'.$folder,
-						'deactivate-module_'.$folder
+						'module-deactivate_'.$folder
 					),
 					'class' => 'btn btn-default btn-xs btn-icon module-deactivate ml-2',
+					'aria-label' => sprintf(line('CSK_BTN_DEACTIVATE_COM'), $m['name']),
 				), fa_icon('times text-danger').line('CSK_MODULES_DEACTIVATE'));
 			}
 			else
@@ -145,9 +145,10 @@ class Modules extends Admin_Controller {
 					'type' => 'button',
 					'data-endpoint' => nonce_ajax_url(
 						'modules/activate/'.$folder,
-						'activate-module_'.$folder
+						'module-activate_'.$folder
 					),
 					'class' => 'btn btn-default btn-xs btn-icon module-activate ml-2',
+					'aria-label' => sprintf(line('CSK_BTN_ACTIVATE_COM'), $m['name']),
 				), fa_icon('check text-success').line('CSK_MODULES_ACTIVATE'));
 			}
 
@@ -155,9 +156,10 @@ class Modules extends Admin_Controller {
 				'type' => 'button',
 				'data-endpoint' => nonce_ajax_url(
 					'modules/delete/'.$folder,
-					'delete-module_'.$folder
+					'module-delete_'.$folder
 				),
 				'class' => 'btn btn-danger btn-xs btn-icon module-delete ml-2',
+				'aria-label' => sprintf(line('CSK_BTN_REMOVE_COM'), $m['name']),
 			), fa_icon('trash-o').line('CSK_MODULES_DELETE'));
 
 			// Module details.
@@ -252,7 +254,7 @@ class Modules extends Admin_Controller {
 		if ( ! $this->check_nonce('upload-module'))
 		{
 			set_alert(line('CSK_ERROR_NONCE_URL'), 'error');
-			redirect('admin/modules/install');
+			redirect(KB_ADMIN.'/modules/install');
 			exit;
 		}
 
@@ -260,7 +262,7 @@ class Modules extends Admin_Controller {
 		if (empty($_FILES['modulezip']['name']))
 		{
 			set_alert(line('CSK_MODULES_ERROR_UPLOAD'), 'error');
-			redirect('admin/modules/install');
+			redirect(KB_ADMIN.'/modules/install');
 			exit;
 		}
 
@@ -269,7 +271,7 @@ class Modules extends Admin_Controller {
 		if ( ! function_exists('unzip_file'))
 		{
 			set_alert(line('CSK_MODULES_ERROR_UPLOAD'), 'error');
-			redirect('admin/modules/install');
+			redirect(KB_ADMIN.'/modules/install');
 			exit;
 		}
 
@@ -284,7 +286,7 @@ class Modules extends Admin_Controller {
 			OR ! class_exists('ZipArchive', false))
 		{
 			set_alert(line('CSK_MODULES_ERROR_UPLOAD'), 'error');
-			redirect('admin/modules/install');
+			redirect(KB_ADMIN.'/modules/install');
 			exit;
 		}
 
@@ -303,13 +305,13 @@ class Modules extends Admin_Controller {
 		if (true === $status)
 		{
 			set_alert(line('CSK_MODULES_SUCCESS_UPLOAD'), 'success');
-			redirect('admin/modules');
+			redirect(KB_ADMIN.'/modules');
 			exit;
 		}
 
 		// Otherwise, the theme could not be installed.
 		set_alert(line('CSK_MODULES_ERROR_UPLOAD'), 'error');
-		redirect('admin/modules/install');
+		redirect(KB_ADMIN.'/modules/install');
 		exit;
 	}
 
