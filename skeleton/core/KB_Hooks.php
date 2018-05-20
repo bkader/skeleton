@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	1.5.2
+ * @version 	2.0.0
  */
 class KB_Hooks extends CI_Hooks
 {
@@ -70,13 +70,67 @@ class KB_Hooks extends CI_Hooks
 			return;
 		}
 
+		$all_hooks = array();
+
 		// Grab the "hooks" definition file from skeleton path.
 		if (file_exists(KBPATH.'config/hooks.php'))
 		{
 			include(KBPATH.'config/hooks.php');
+
+			if (isset($hook))
+			{
+				$all_hooks = array_merge($all_hooks, $hook);
+				unset($hook);
+			}
 		}
 
-		parent::__construct();
+		// Grab the "hooks" definition file.
+		if (file_exists(APPPATH.'config/hooks.php'))
+		{
+			include(APPPATH.'config/hooks.php');
+		}
+
+		if (file_exists(APPPATH.'config/'.ENVIRONMENT.'/hooks.php'))
+		{
+			include(APPPATH.'config/'.ENVIRONMENT.'/hooks.php');
+		}
+
+		if (isset($hook))
+		{
+			$all_hooks = array_merge($all_hooks, $hook);
+			unset($hook);
+		}
+		
+		// If there are no hooks, we're done.
+		if ( ! is_array($all_hooks) OR empty($all_hooks))
+		{
+			return;
+		}
+
+		$this->hooks =& $all_hooks;
+		$this->enabled = TRUE;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * register
+	 *
+	 * This method is used to register CodeIgniter hooks.
+	 *
+	 * @author 	Kader Bouyakoub
+	 * @link 	https://goo.gl/wGXHO9
+	 * @since 	2.0.0
+	 *
+	 * @access 	public
+	 * @param 	string 	$hook 	The hook name.
+	 * @param 	array 	$data 	The hooks details array.
+	 * @return 	void
+	 */
+	public function register($hook, $data = array())
+	{
+		array_key_exists($hook, $this->hooks) OR $this->hooks[$hook] = array();
+		$this->hooks[$hook][] = $data;
 	}
 
 	// ------------------------------------------------------------------------
