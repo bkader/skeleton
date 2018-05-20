@@ -70,7 +70,7 @@ class Login extends KB_Controller {
 		$this->load->language('csk_admin');
 
 		// Make sure the user is logged in.
-		if (false !== $this->kbcore->auth->is_admin())
+		if (true === $this->kbcore->auth->is_admin())
 		{
 			set_alert(line('CSK_ERROR_LOGGED_IN'), 'warning');
 			redirect('admin');
