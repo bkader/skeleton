@@ -61,8 +61,8 @@ require_once(KBPATH.'third_party/bkader/base.php');
 require_once(KBPATH.'third_party/bkader/format.php');
 require_once(KBPATH.'third_party/bkader/sanitize.php');
 require_once(KBPATH.'third_party/bkader/escape.php');
-require_once(KBPATH.'third_party/Hooks/Hooks.php');
-require_once(KBPATH.'third_party/Route/Route.php');
+require_once(KBPATH.'third_party/bkader/class-hooks.php');
+require_once(KBPATH.'third_party/bkader/class-route.php');
 
 /**
  * KPlatform Class
@@ -94,6 +94,10 @@ class KPlatform {
 
 		if (empty($classes)) {
 			$classes = array(
+
+				// Kader Class.
+				'CS_Hooks' => KBPATH.'third_party/bkader/class-hooks.php',
+				'Route' => KBPATH.'third_party/bkader/class-route.php',
 
 				// Core classes.
 				'Admin_Controller'    => KBPATH.'core/Admin_Controller.php',
