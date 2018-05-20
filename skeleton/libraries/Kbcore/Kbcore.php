@@ -104,9 +104,6 @@ class Kbcore extends CI_Driver_Library
 		$this->ci->load->database();
 		$this->ci->load->library('session');
 
-		// Let's assign options from database to CodeIgniter config.
-		$this->ci->load->config('defaults');
-
 		/**
 		 * Here we are making an instance of this driver global
 		 * so that themes, plugins or others can use it.
@@ -351,7 +348,8 @@ class Kbcore extends CI_Driver_Library
 		$this->ci->email->subject($subject);
 
 		// Set the email message.
-		$this->ci->email->message($message);
+		$this->ci->email->message($this->ci->email->full_html($subject, $message));
+		$this->ci->email->set_alt_message($message);
 
 		// And here we go! Send it.
 		if ( ! $this->ci->email->send())
