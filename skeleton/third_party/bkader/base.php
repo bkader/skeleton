@@ -37,6 +37,30 @@
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+if ( ! function_exists('_guess_base_url'))
+{
+	/**
+	 * This function can be used to automatically guess site
+	 * base URL. On production, make sure to set your base URL
+	 * on the configuration file.
+	 * @since 	2.0.0
+	 * @return 	string
+	 */
+	function _guess_base_url()
+	{
+		static $base_url;
+
+		if (empty($base_url))
+		{
+			$base_url = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https://' : 'http://';
+			$base_url .= $_SERVER['SERVER_NAME'];
+			$base_url .= substr($_SERVER['SCRIPT_NAME'], 0, strpos($_SERVER['SCRIPT_NAME'], basename($_SERVER['SCRIPT_FILENAME'])));
+		}
+
+		return $base_url;
+	}
+}
+
 // ------------------------------------------------------------------------
 // Files importers.
 // ------------------------------------------------------------------------
@@ -284,7 +308,7 @@ if ( ! function_exists('json_read_file')) {
 
 			// Get the content of the file and cache it if found.
 			$content = file_get_contents($path);
-			$content = json_decode($content, true, JSON_PRETTY_PRINT);
+			$content = json_decode($content, true);
 			is_array($content) && $cached[$path] = $content;
 		}
 
