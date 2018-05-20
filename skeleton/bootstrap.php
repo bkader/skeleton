@@ -220,6 +220,9 @@ class KPlatform {
 		define('WEEK_IN_SECONDS',   7 * DAY_IN_SECONDS);
 		define('MONTH_IN_SECONDS',  30 * DAY_IN_SECONDS);
 		define('YEAR_IN_SECONDS',  365 * DAY_IN_SECONDS);
+
+		// We assign database options to configuration.
+		self::setup_options();
 	}
 
 	// ------------------------------------------------------------------------
@@ -253,6 +256,40 @@ class KPlatform {
 		}
 
 		return $DB;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Instead of letting the Kbcore_options library do the job for us,
+	 * we directly assign configuration here.
+	 * @since 	2.0.0
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
+	public static function setup_options()
+	{
+		static $_config, $_options;
+
+		if (empty($config) && is_file(KBPATH.'config/defaults.php'))
+		{
+			require_once(KBPATH.'config/defaults.php');
+			isset($config) && $_config = $config;
+		
+		}
+
+		if (empty($_options) && ! empty($db_options = self::DB()->get('options')->result()))
+		{
+			foreach ($db_options as $option)
+			{
+				$_config[$option->name] = from_bool_or_serialize($option->value);
+			}
+		}
+
+		global $assign_to_config;
+		is_array($assign_to_config) OR $assign_to_config = array();
+		$assign_to_config = array_merge($assign_to_config, $_config);
 	}
 
 	// ------------------------------------------------------------------------
@@ -382,24 +419,6 @@ if ( ! function_exists('_DB'))
 		empty($DB) && $DB = KPlatform::DB();
 		return $DB;
 	}
-}
-
-// ------------------------------------------------------------------------
-
-/**
- * Instead of letting the Kbcore_options library do the job for us,
- * we directly assign configuration here.
- * @since 	2.0.0
- */
-if ( ! empty($_options = _DB()->get('options')->result()))
-{
-	foreach ($_options as $_option)
-	{
-		$assign_to_config[$_option->name] = from_bool_or_serialize($_option->value);
-	}
-
-	// Free memory.
-	unset($_options, $_option);
 }
 
 // ------------------------------------------------------------------------

@@ -418,20 +418,20 @@ class Kbcore_options extends CI_Driver implements CRUD_interface
 			return $this->cached[$name];
 		}
 
-		// Try to get it.
-		if (false !== $item = $this->get_by('name', $name))
-		{
-			// Cached it first.
-			$this->cached[$name] = $item->value;
-			return $item->value;
-		}
-
 		// Found in CodeIgniter config?
-		if (null !== $item = $this->ci->config->item($name))
+		if (null !== ($item = $this->ci->config->item($name)))
 		{
 			// Cached it first.
 			$this->cached[$name] = $item;
 			return $item;
+		}
+
+		// Try to get it.
+		if (false !== ($item = $this->get_by('name', $name)))
+		{
+			// Cached it first.
+			$this->cached[$name] = $item->value;
+			return $item->value;
 		}
 
 		// Return the fall-back value.
