@@ -348,8 +348,7 @@ class Kbcore extends CI_Driver_Library
 		$this->ci->email->subject($subject);
 
 		// Set the email message.
-		$this->ci->email->message($this->ci->email->full_html($subject, $message));
-		$this->ci->email->set_alt_message($message);
+		$this->ci->email->message($message);
 
 		// And here we go! Send it.
 		if ( ! $this->ci->email->send())
