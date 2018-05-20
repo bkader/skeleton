@@ -127,9 +127,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
   "author_uri": "https://goo.gl/wGXHO9",
   "author_email": "bkade@mail.com",
   "tags": "csk, codeigniter, skeleton, media, library",
-  "routes": {
-    "media(.*)": "media/index$1"
-  },
   "translations": {
     "french": {
       "name": "Gestionnaire des médias",
