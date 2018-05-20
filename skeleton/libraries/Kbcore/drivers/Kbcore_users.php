@@ -159,7 +159,7 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 		// Hash the password if present.
 		if (isset($user['password']) && ! empty($user['password']))
 		{
-			$user['password'] = password_hash($user['password'], PASSWORD_BCRYPT);
+			$user['password'] = phpass_hash($user['password']);
 		}
 
 		// Make sure the the gender is valid.
@@ -382,10 +382,26 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 		// Are there any changes to do to "users" table?
 		if ( ! empty($user))
 		{
+			/**
+			 * Filters to apply on user's field before proceeding.
+			 * @since 	2.0.0
+			 */
+			foreach ($user as $key => &$val) {
+				// Global fields.
+				if (has_filter("edit_{$key}")) {
+					$var = apply_filters("edit_{$key}", $val, $key);
+				}
+
+				// "users" table related fields.
+				if (has_filter("edit_user_{$key}")) {
+					$var = apply_filters("edit_user_{$key}", $val, $key);
+				}
+			}
+
 			// Hash the password if present.
 			if (isset($user['password']) && ! empty($user['password']))
 			{
-				$user['password'] = password_hash($user['password'], PASSWORD_BCRYPT);
+				$user['password'] = phpass_hash($user['password']);
 			}
 
 			// Make sure the the gender is valid.
@@ -905,7 +921,7 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 		}
 
 		// Check the password.
-		if ( ! password_verify($password, $user->password))
+		if ( ! phpass_check($password, $user->password))
 		{
 			set_alert(line('CSK_USERS_ERROR_LOGIN_CREDENTIALS'), 'error');
 			return false;
@@ -1120,7 +1136,7 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 		 */
 		
 		// Same password? status is set to true.
-		$status = (false !== password_verify($password, $user->password));
+		$status = (false !== phpass_check($password, $user->password));
 
 		// Different password? The status depends on the update.
 		$status OR $status = $user->update('password', $password);
@@ -1906,23 +1922,75 @@ class KB_User
 	 * @param 	object
 	 */
 	public function init($user) {
-		$this->data = $user;
+
+		// Format user's ID.
 		$this->id   = (int) $user->id;
 
 		// We add user avatar.
-		if ( ! isset($user->avatar)) {
-			$this->data->avatar = md5($user->email);
+		if ( ! isset($user->avatar) && isset($user->email)) {
+			$user->avatar = md5($user->email);
 		}
 
-		// Whether the user is an admin or not.
-		if ( ! isset($user->admin)) {
-			$this->data->admin = ($user->subtype === 'administrator');
+		/**
+		 * Filters the user's avatar.
+		 * @since 	2.0.0
+		 */
+		if (isset($user->avatar)) {
+			// Global users avatars filter.
+			if (has_filter('users_avatar')) {
+				$user->avatar = apply_filters('users_avatar', $user->avatar);
+			}
+
+			// Individual user avatar filter.
+			if (has_filter("user_avatar_{$this->id}")) {
+				$user->avatar = apply_filters("user_avatar_{$this->id}", $user->avatar);
+			}
 		}
 
 		// Add user's full name.
-		if ( ! isset($user->full_name)) {
-			$this->data->full_name = ucwords($user->first_name.' '.$user->last_name);
+		$user->full_name = null;
+		if ( ! isset($user->full_name) && isset($user->first_name)) {
+			$user->full_name = $user->first_name;
+			isset($user->last_name) && $user->full_name .= ' '.$user->last_name;
+
+			/**
+			 * Global filter on users' full names.
+			 * @since 	2.0.0
+			 */
+			if (has_filter('users_fullname')) {
+				$user->full_name = apply_filters('users_fullname', $user->full_name);
+			}
+			
+			/**
+			 * Individual filter on user's full name.
+			 * @since 	2.0.0
+			 */
+			if (has_filter("user_fullname_{$this->id}")) {
+				$user->full_name = apply_filters("user_fullname_{$this->id}", $user->full_name);
+			}
 		}
+
+		/**
+		 * Global filter applied to all retrieved uses.
+		 * @since 	2.0.0
+		 */
+		if (has_filter('get_user')) {
+			$user = apply_filters('get_user', $user);
+		}
+
+		/**
+		 * A filter applied to the user by his/her ID.
+		 * @since 	2.0.0
+		 */
+		if (has_filter("get_user_{$this->id}")) {
+			$user = apply_filters("get_user_{$this->id}", $user);
+		}
+
+		// Now we cache the user.
+		$this->data = $user;
+
+		// Whether the user is an admin or not.
+		$this->data->admin = ('administrator' === $user->subtype);
 	}
 
 	// ------------------------------------------------------------------------
