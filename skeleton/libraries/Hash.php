@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://goo.gl/wGXHO9
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -48,8 +48,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
- * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @since 		1.0.0
+ * @version 	2.0.0
  */
 class Hash
 {
@@ -99,23 +99,11 @@ class Hash
 	 */
 	public function hash($string)
 	{
-		// Load Bcrypt library if not loaded.
-		if (class_exists('CI_Bcrypt', false))
-		{
-			$this->ci->bcrypt->initialize(array(
-				'iteration_count' => 8,
-				'portable_hashes' => true,
-			));
-		}
-		else
-		{
-			$this->ci->load->library('bcrypt', array(
-				'iteration_count' => 8,
-				'portable_hashes' => true,
-			));
-		}
+		static $phpass;
 
-		return $this->ci->bcrypt->hash_password($string);
+		empty($phpass) && $phpass =& phpass_instance(8, true);
+
+		return $phpass->HashPassword($string);
 	}
 
 	// ------------------------------------------------------------------------
@@ -179,15 +167,7 @@ class Hash
 	 */
 	public function hash_password($password)
 	{
-		if (function_exists('password_hash'))
-		{
-			return password_hash($password, PASSWORD_BCRYPT);
-		}
-
-		// Load Bcrypt library if not loaded.
-		(class_exists('CI_Bcrypt', false)) OR $this->ci->load->library('bcrypt');
-
-		return $this->ci->bcrypt->hash_password($password);
+		return phpass_hash($password);
 	}
 
 	/**
@@ -198,15 +178,7 @@ class Hash
 	 */
 	public function check_password($password, $hash)
 	{
-		if (function_exists('password_verify'))
-		{
-			return password_verify($password, $hash);
-		}
-
-		// Load Bcrypt library if not loaded.
-		(class_exists('CI_Bcrypt', false)) OR $this->ci->load->library('bcrypt');
-
-		return $this->ci->bcrypt->check_password($password, $hash);
+		return phpass_check($password, $hash);
 	}
 
 }

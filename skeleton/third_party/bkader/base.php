@@ -357,7 +357,7 @@ if ( ! function_exists('phpass_instance')) {
 	 *
 	 * @return 	mixed 	phpass object if found, else false.
 	 */
-	function phpass_instance($iterations = 8, $portable = false) {
+	function &phpass_instance($iterations = 8, $portable = false) {
 		// Make the function remember the object.
 		static $hasher;
 
@@ -399,7 +399,7 @@ if ( ! function_exists('phpass_hash') && function_exists('phpass_instance')) {
 	 * @return 	string 	the password after being hashed.
 	 */
 	function phpass_hash($password) {
-		if (false !== ($phpass = phpass_instance())) {
+		if (false !== ($phpass =& phpass_instance())) {
 			return $phpass->HashPassword($password);
 		}
 
@@ -426,7 +426,7 @@ if ( ! function_exists('phpass_check')) {
 	 * @return 	bool 	true if valid, else false.
 	 */
 	function phpass_check($password, $stored_hash) {
-		if (false !== ($phpass = phpass_instance())) {
+		if (false !== ($phpass =& phpass_instance())) {
 			return $phpass->CheckPassword($password, $stored_hash);
 		}
 

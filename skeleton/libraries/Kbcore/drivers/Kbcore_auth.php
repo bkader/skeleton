@@ -440,7 +440,7 @@ class Kbcore_auth extends CI_Driver
 		}
 
 		// Check the password.
-		if ( ! password_verify($password, $user->password))
+		if ( ! phpass_check($password, $user->password))
 		{
 			set_alert(line('CSK_USERS_ERROR_LOGIN_CREDENTIALS'), 'error');
 			return false;
