@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.3.3
- * @version 	1.3.3
+ * @version 	2.0.0
  */
 class KB_Table extends CI_Table {
 
@@ -72,11 +72,11 @@ class KB_Table extends CI_Table {
 		 * Because the dashboard is built using Bootstrap, we simply
 		 * ignore any configuration file or template set.
 		 */
-		global $back_contexts, $csk_modules;
+		global $back_contexts;
 		$controller = get_instance()->router->fetch_class();
 		if ('admin' === $controller 
 			OR in_array($controller, $back_contexts) 
-			OR in_array($controller, $csk_modules))
+			OR _csk_reserved_module())
 		{
 			$config = array();
 		}

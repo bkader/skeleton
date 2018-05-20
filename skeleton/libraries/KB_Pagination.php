@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://goo.gl/wGXHO9
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -70,11 +70,11 @@ class KB_Pagination extends CI_Pagination
 		 * pagination configuration will be ignored, we use the default
 		 * one provided by the "_admin_params" method.
 		 */
-		global $back_contexts, $csk_modules;
+		global $back_contexts;
 		$controller = get_instance()->router->fetch_class();
 		if ('admin' === $controller 
 			OR in_array($controller, $back_contexts) 
-			OR in_array($controller, $csk_modules))
+			OR _csk_reserved_module())
 		{
 			$params = $this->_admin_params();
 		}
