@@ -101,5 +101,11 @@ if (false !== get_option('allow_registration', false)) {
 	'</div>';
 }
 
+/**
+ * Fires before the closing login form tag.
+ * @since 	2.0.0
+ */
+do_action('login_form');
+
 // Form closing tag.
 echo form_close();

@@ -149,7 +149,13 @@ html_tag('a', array(
 	'class' => 'btn btn-default btn-sm'
 ), line('CSK_BTN_LOGIN')),
 
-'</div>',
+'</div>';
+
+/**
+ * Fires before the closing registration form tag.
+ * @since 	2.0.0
+ */
+do_action('register_form');
 
 // Form closing tag.
-form_close();
+echo form_close();

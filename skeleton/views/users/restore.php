@@ -103,7 +103,13 @@ html_tag('a', array(
 	'class' => 'btn btn-default btn-sm btn-icon'
 ), fa_icon('sign-in').line('CSK_BTN_LOGIN')),
 
-'</div>',
+'</div>';
+
+/**
+ * Fires before the closing restore account form tag.
+ * @since 	2.0.0
+ */
+do_action('restore_account_form');
 
 // Form closing tag.
-form_close();
+echo form_close();

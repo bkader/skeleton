@@ -96,7 +96,13 @@ html_tag('a', array(
 	'class' => 'btn btn-default btn-icon btn-sm',
 ), fa_icon('sign-in').line('CSK_BTN_LOGIN')),
 
-'</div>',
+'</div>';
+
+/**
+ * Fires before the closing lost password form tag.
+ * @since 	2.0.0
+ */
+do_action('lost_password_form');
 
 // Form closing tag.
-form_close();
+echo form_close();
