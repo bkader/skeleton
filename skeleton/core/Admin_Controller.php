@@ -99,7 +99,7 @@ class Admin_Controller extends KB_Controller
 		parent::__construct();
 
 		// Make sure the user is logged in.
-		if (true !== $this->kbcore->auth->online())
+		if (true !== $this->kbcore->auth->is_admin())
 		{
 			redirect('admin-login?next='.rawurlencode(uri_string()),'refresh');
 			exit;
@@ -277,9 +277,10 @@ class Admin_Controller extends KB_Controller
 	protected function _admin_menu()
 	{
 		global $back_contexts;
+		
 		$ignored_contexts = array('admin', 'users', 'settings');
-		$modules = $this->router->list_modules(true);
-		$lang = $this->config->item('language');
+		$modules          = $this->router->list_modules(true);
+		$lang             = $this->config->item('language');
 
 		if ( ! $modules)
 		{
@@ -289,7 +290,7 @@ class Admin_Controller extends KB_Controller
 		foreach ($modules as $folder => $module)
 		{
 			// we make sure the module is enabled!
-			if (true !== $module['enabled'])
+			if ( ! $module['enabled'])
 			{
 				continue;
 			}
@@ -311,6 +312,12 @@ class Admin_Controller extends KB_Controller
 						// Translation present?
 						if (isset($module['translations'][$lang][$title_line])) {
 							$title = $module['translations'][$lang][$title_line];
+						}
+						// May be we use 
+						elseif (isset($module[$title_line]) && 1 === sscanf($module[$title_line], 'lang:%s', $line)) {
+							$title = line($line);
+						} else {
+							$title = ucwords($module[$title_line]);
 						}
 						
 						echo html_tag('a', array(
