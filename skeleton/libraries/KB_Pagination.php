@@ -74,7 +74,7 @@ class KB_Pagination extends CI_Pagination
 		$controller = get_instance()->router->fetch_class();
 		if ('admin' === $controller 
 			OR in_array($controller, $back_contexts) 
-			OR _csk_reserved_module())
+			OR _csk_reserved_module($controller))
 		{
 			$params = $this->_admin_params();
 		}

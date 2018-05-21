@@ -76,7 +76,7 @@ class KB_Table extends CI_Table {
 		$controller = get_instance()->router->fetch_class();
 		if ('admin' === $controller 
 			OR in_array($controller, $back_contexts) 
-			OR _csk_reserved_module())
+			OR _csk_reserved_module($controller))
 		{
 			$config = array();
 		}
