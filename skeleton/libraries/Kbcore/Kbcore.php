@@ -335,10 +335,7 @@ class Kbcore extends CI_Driver_Library
 		$message .= nl2br($raw_message);
 		$message .= $this->ci->load->view('emails/_footer', null, true);
 
-		echo $message;
-		exit;
-
-		return $this->_send_email($email, $subject, $message, nl2br($alt_message));
+		return $this->_send_email($email, $subject, $message, $alt_message);
 	}
 
 	// --------------------------------------------------------------------
@@ -438,9 +435,13 @@ class Kbcore extends CI_Driver_Library
 		// Prepare the email subject.
 		$this->ci->email->subject($subject);
 
-		// Set the email message.
+		// Set the email message and alternative message.
 		$this->ci->email->message($message);
-		$alt_message && $this->ci->email->set_alt_message($alt_message);
+
+		if ( ! empty($alt_message))
+		{
+			$this->ci->email->set_alt_message(nl2br($alt_message));
+		}
 
 		// And here we go! Send it.
 		if ( ! $this->ci->email->send())
