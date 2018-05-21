@@ -54,10 +54,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * Email footer powered by text.
  * @since 	2.0.0
  */
-$powered_by = sprintf('Powered by %s', html_tag('a', array(
+$powered_by = sprintf(line('CSK_POWERED_BY'), html_tag('a', array(
 	'href'   => 'https://goo.gl/jb4nQC',
 	'target' => '_blank',
-), line('CSK_SKELETON')));
+), line('CSK_CODEIGNITER_SKELETON')));
 $powered_by = apply_filters('email_powered_by', $powered_by);
 
 $email_footer = <<<EOT

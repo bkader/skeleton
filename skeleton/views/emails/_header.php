@@ -50,9 +50,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @version 	2.0.0
  */
 
+// Add language direction.
+$tag = ('rtl' === ($dir = $this->lang->lang('direction'))) ? ' dir="rtl"' : '';
+
 $email_header = <<<EOT
 <!DOCTYPE html>
-<html>
+<html{$tag}>
 <head>
 	<meta name="viewport" content="width=device-width">
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -142,7 +145,7 @@ $email_header = <<<EOT
     }
 	</style>
 </head>
-<body>
+<body{$tag}>
 	<table border="0" cellpadding="0" cellspacing="0" class="body" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background-color: #f6f6f6;">
 		<tr>
 			<td style="vertical-align: top;">&nbsp;</td>
