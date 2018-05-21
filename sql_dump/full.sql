@@ -1,18 +1,3 @@
-/*
-Navicat MySQL Data Transfer
-
-Source Server         : localhost
-Source Server Version : 100122
-Source Host           : localhost:3306
-Source Database       : skeleton
-
-Target Server Type    : MYSQL
-Target Server Version : 100122
-File Encoding         : 65001
-
-Date: 2018-05-14 17:58:08
-*/
-
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
@@ -60,7 +45,7 @@ CREATE TABLE `entities` (
 -- ----------------------------
 -- Records of entities
 -- ----------------------------
-INSERT INTO `entities` VALUES ('1', '0', '0', 'user', 'administrator', 'admin', null, '2', '1', '0', '1525741827', '0', '0');
+INSERT INTO `entities` VALUES ('1', '0', '0', 'user', 'administrator', 'admin', 'english', '2', '1', '0', '1526871009', '0', '0');
 
 -- ----------------------------
 -- Table structure for groups
@@ -127,6 +112,7 @@ CREATE TABLE `options` (
 -- ----------------------------
 -- Records of options
 -- ----------------------------
+INSERT INTO `options` VALUES ('active_modules', 'a:0:{}', 'modules', 'text', '', '1');
 INSERT INTO `options` VALUES ('active_plugins', 'a:0:{}', 'plugins', 'text', '', '1');
 INSERT INTO `options` VALUES ('admin_email', 'admin@localhost', 'email', 'text', '', '1');
 INSERT INTO `options` VALUES ('allowed_types', 'gif|png|jpeg|jpg|pdf|doc|txt|docx|xls|zip|rar|xls|mp4', 'upload', 'text', '', '1');
@@ -220,7 +206,7 @@ CREATE TABLE `users` (
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-INSERT INTO `users` VALUES ('1', 'admin@skeleton.io', '$2y$10$7uGxbijTiPfVvoTRZ1L2wuY5I7g6SxN8Yep4XbMFhDASy5tOBLo.i', 'Admin', 'Skeleton', 'male', '0');
+INSERT INTO `users` VALUES ('1', 'admin@localhost', '$2a$08$MnCsgx3mmz3khvfFfDaEi.BaVS.gXVY/aQ1TmYEJVSAxm3cvfgtQO', 'Admin', 'Skeleton', 'male', '1');
 
 -- ----------------------------
 -- Table structure for variables
