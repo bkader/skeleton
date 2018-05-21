@@ -254,18 +254,109 @@ class Kbcore extends CI_Driver_Library
 	// --------------------------------------------------------------------
 
 	/**
-	 * Quick method to send emails.
+	 * Better way of sending email messages.
+	 *
+	 * @since 	2.0.0
+	 *
 	 * @access 	public
-	 * @param 	string 	$to 		the whom send the email.
-	 * @param 	string 	$subject 	the email's subject?
-	 * @param 	string 	$messages 	the email's body.
-	 * @param 	string 	$cc 		carbon copy.
-	 * @param 	string 	$bcc 		blind carbon copy.
+	 * @param 	mixed 	$user 		The user's ID or object.
+	 * @param 	string 	$subect 	The email subject.
+	 * @param 	string 	$message 	The message to be sent.
+	 * @param 	array 	$data 		Array of data to pass to views.
+	 * @return 	Kbcore::_send_email()
+	 */
+	public function send_email($user, $subject, $message,$data = array())
+	{
+		if (empty($message) OR empty($user))
+		{
+			return false;
+		}
+
+
+		$user = ($user instanceof KB_User) ? $user : $this->users->get($user);
+		if ( ! $user)
+		{
+			return false;
+		}
+
+		$email       = isset($data['email']) ? $data['email'] : $user->email;
+		$name        = isset($data['name']) ? $data['name'] : $user->first_name;
+		$site_name   = $this->ci->config->item('site_name');
+		$site_anchor = anchor('', $site_name, 'target="_blank"');
+
+		/**
+		 * There are three options to load messages
+		 * 1. Just pass the message.
+		 * 2. Use "view:xx" to load a specific view file.
+		 * 3. Use "lang:xx" to use a language file.
+		 */
+		if (1 === sscanf($message, 'view:%s', $view))
+		{
+			$message = $this->ci->load->view($view, null, true);
+		}
+		elseif (1 === sscanf($message, 'lang:%s', $line))
+		{
+			$message = line($line);
+		}
+
+		// Prepare default output replacements.
+		$search  = array('{name}', '{site_name}', '{site_anchor}');
+		$replace = array($name, $site_name, $site_anchor);
+
+		// We add IP Address.
+		if ( ! isset($data['ip_link']))
+		{
+			$ip_address = $this->ci->input->ip_address();
+			$data['ip_link'] = html_tag('a', array(
+				'href'   => 'https://www.iptolocation.net/trace-'.$ip_address,
+				'target' => '_blank',
+				'rel'    => 'nofollow',
+			), $ip_address);
+		}
+
+		// If we have any other elements, use theme.
+		if ( ! empty($data))
+		{
+			foreach ($data as $key => $val)
+			{
+				$search[]  = "{{$key}}";
+				$replace[] = $val;
+			}
+		}
+
+		// Message subject.
+		$subject = str_replace($search, $replace, $subject);
+
+		// Prepare message body and alternative message.
+		$raw_message = str_replace($search, $replace, $message);
+		$alt_message = strip_all_tags($raw_message);
+
+		$message = $this->ci->load->view('emails/_header', null, true);
+		$message .= nl2br($raw_message);
+		$message .= $this->ci->load->view('emails/_footer', null, true);
+
+		echo $message;
+		exit;
+
+		return $this->_send_email($email, $subject, $message, nl2br($alt_message));
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Quick method to send emails.
+	 * @access 	protected
+	 * @param 	string 	$to 			the whom send the email.
+	 * @param 	string 	$subject 		the email's subject?
+	 * @param 	string 	$message 		the email's body.
+	 * @param 	string 	$alt_message 	Alternative message;
+	 * @param 	string 	$cc 			carbon copy.
+	 * @param 	string 	$bcc 			blind carbon copy.
 	 * @author 	Kader Bouyakoub
 	 * @version 1.0
 	 * @return 	bool 	true if the email is sent.
 	 */
-	public function send_email($to, $subject, $message, $cc = null, $bcc = null)
+	protected function _send_email($to, $subject = '', $message = '', $alt_message = null, $cc = null, $bcc = null)
 	{
 		$this->ci->load->library('email');
 
@@ -349,6 +440,7 @@ class Kbcore extends CI_Driver_Library
 
 		// Set the email message.
 		$this->ci->email->message($message);
+		$alt_message && $this->ci->email->set_alt_message($alt_message);
 
 		// And here we go! Send it.
 		if ( ! $this->ci->email->send())
