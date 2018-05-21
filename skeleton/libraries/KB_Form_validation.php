@@ -128,7 +128,7 @@ class KB_Form_validation extends CI_Form_validation
 	 */
 	public function unique_username($str)
 	{
-		return parent::is_unique($str, 'entities.username');
+		return ( ! is_forbidden_username($str) && parent::is_unique($str, 'entities.username'));
 	}
 
 	// ------------------------------------------------------------------------
