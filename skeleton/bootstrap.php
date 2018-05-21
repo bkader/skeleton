@@ -120,10 +120,10 @@ class KPlatform {
 				'API_Controller'      => KBPATH.'core/API_Controller.php',
 
 				// Libraries.
-				'Bcrypt'             => KBPATH.'libraries/Bcrypt.php',
 				'Format'             => KBPATH.'libraries/Format.php',
 				'Hash'               => KBPATH.'libraries/Hash.php',
 				'Jquery_validation'  => KBPATH.'libraries/Jquery_validation.php',
+				'KB_Email'           => KBPATH.'libraries/KB_Email.php',
 				'KB_Form_validation' => KBPATH.'libraries/KB_Form_validation.php',
 				'KB_Image_lib'       => KBPATH.'libraries/KB_Image_lib.php',
 				'KB_Pagination'      => KBPATH.'libraries/KB_Pagination.php',
@@ -137,8 +137,6 @@ class KPlatform {
 				'Kbcore_activities' => KBPATH.'libraries/Kbcore/drivers/Kbcore_activities.php',
 				'Kbcore_entities'   => KBPATH.'libraries/Kbcore/drivers/Kbcore_entities.php',
 				'Kbcore_groups'     => KBPATH.'libraries/Kbcore/drivers/Kbcore_groups.php',
-				'Kbcore_media'      => KBPATH.'libraries/Kbcore/drivers/Kbcore_media.php',
-				'Kbcore_menus'      => KBPATH.'libraries/Kbcore/drivers/Kbcore_menus.php',
 				'Kbcore_metadata'   => KBPATH.'libraries/Kbcore/drivers/Kbcore_metadata.php',
 				'Kbcore_objects'    => KBPATH.'libraries/Kbcore/drivers/Kbcore_objects.php',
 				'Kbcore_options'    => KBPATH.'libraries/Kbcore/drivers/Kbcore_options.php',
