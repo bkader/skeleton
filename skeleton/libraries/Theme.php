@@ -515,6 +515,7 @@ EOT;
 
 		// Make sure URL helper is load then we load our helper
 		(function_exists('base_url')) OR $this->ci->load->helper('url');
+		(function_exists('plural')) OR $this->ci->load->helper('inflector');
 
 		// Let's set class preferences.
 		$this->_config = array_replace_recursive($this->_defaults, $config);
