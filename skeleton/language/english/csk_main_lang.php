@@ -219,5 +219,7 @@ $lang['form_validation_user_admin']        = 'You do not have access to the dash
 // Skeleton Related Lines.
 // ------------------------------------------------------------------------
 $lang['CSK_SKELETON']             = 'Skeleton';
+$lang['CSK_CODEIGNITER_SKELETON'] = 'CodeIgniter Skeleton';
 $lang['CSK_SKELETON_OPEN_SOURCE'] = 'CodeIgniter Skeleton is free software released under the MIT License.';
 $lang['CSK_SKELETON_COPYRIGHT']   = '&copy; %s CodeIgniter Skeleton';
+$lang['CSK_POWERED_BY']           = 'Powered by %s';

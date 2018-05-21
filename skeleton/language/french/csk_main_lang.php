@@ -219,5 +219,7 @@ $lang['form_validation_user_admin']        = 'Vous n\'avez pas au tableau de bor
 // Skeleton Related Lines.
 // ------------------------------------------------------------------------
 $lang['CSK_SKELETON']             = 'Skeleton';
+$lang['CSK_CODEIGNITER_SKELETON'] = 'CodeIgniter Skeleton';
 $lang['CSK_SKELETON_OPEN_SOURCE'] = 'CodeIgniter Skeleton est un logiciel libre publié sous licence MIT.';
 $lang['CSK_SKELETON_COPYRIGHT']   = '&copy; %s CodeIgniter Skeleton';
+$lang['CSK_POWERED_BY']           = 'Propulsé par %s';

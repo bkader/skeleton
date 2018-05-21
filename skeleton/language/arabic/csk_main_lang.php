@@ -219,5 +219,7 @@ $lang['form_validation_user_admin']        = 'ليس لديك الصلاحية �
 // Skeleton Related Lines.
 // ------------------------------------------------------------------------
 $lang['CSK_SKELETON']             = 'سكلتون';
+$lang['CSK_CODEIGNITER_SKELETON'] = 'كوديجنتر سكلتون';
 $lang['CSK_SKELETON_OPEN_SOURCE'] = 'كوديجنتر سكلتون هو برنامج مجاني تم طرحه بموجب ترخيص MIT.';
 $lang['CSK_SKELETON_COPYRIGHT']   = '&copy; %s كوديجنتر سكلتون';
+$lang['CSK_POWERED_BY']           = 'مدعوم من %s';
