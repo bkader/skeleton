@@ -386,7 +386,6 @@ class KPlatform {
 				'languages',
 				'modules',
 				'plugins',
-				'reports',
 				'themes',
 				'users'
 			);
