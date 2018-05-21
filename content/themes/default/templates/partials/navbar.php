@@ -10,13 +10,17 @@
 			<?php echo anchor('', get_option('site_name'), 'class="navbar-brand"') ?>
 		</div>
 		<div class="collapse navbar-collapse navbar-ex1-collapse">
-<?php echo build_menu(array(
-	'location' => 'header-menu',
-	'menu_attr' => array(
-		'class' => 'nav navbar-nav'
-	),
-	'container' => false,
-)); ?>
+<?php
+if (is_callable('build_menu')) {
+	echo build_menu(array(
+		'location' => 'header-menu',
+		'menu_attr' => array(
+			'class' => 'nav navbar-nav'
+		),
+		'container' => false,
+	));
+}
+?>
 			<div class="navbar-right">
 				<ul class="nav navbar-nav">
 				<?php if (isset($site_languages) && count($site_languages) >= 1): ?>

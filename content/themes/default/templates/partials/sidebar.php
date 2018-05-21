@@ -1,5 +1,5 @@
 <?php
-if ( has_menu( 'sidebar-menu' )) {
+if ( is_callable('has_menu') && has_menu( 'sidebar-menu' )) {
 	echo build_menu(array(
 		'location' => 'sidebar-menu',
 		'menu_attr' => array(
