@@ -90,7 +90,6 @@ class Kbcore extends CI_Driver_Library
 			'activities',
 			'entities',
 			'groups',
-			'menus',
 			'metadata',
 			'options',
 			'objects',
@@ -140,7 +139,7 @@ class Kbcore extends CI_Driver_Library
 		$DB =& $this->ci->db;
 
 		// Make sure to load the URL helper.
-		$this->ci->load->helper('url');
+		$this->ci->load->helper('url', 'html');
 
 		// Loading theme library.
 		$this->ci->load->library('theme');

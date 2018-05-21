@@ -166,6 +166,10 @@ class Default_theme {
 	 * @return 	string
 	 */
 	public function theme_menus() {
+		if ( ! is_callable('register_menu')) {
+			return;
+		}
+
 		register_menu( array(
 			'header-menu'  => 'lang:main_menu',		// Main menu (translated)
 			'footer-menu'  => 'lang:footer_menu',	// Footer menu (translated)
