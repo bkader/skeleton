@@ -750,7 +750,12 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 			// Requires a manual activation?
 			if (true === $email_activation && true === $manual_activation)
 			{
-				// TODO: Send email to user.
+				$this->_parent->send_email(
+					$guid,
+					line('CSK_USERS_EMAIL_MANUAL_ACTIVATION'),
+					'view:emails/users/manual_activation'
+				);
+
 				set_alert(line('CSK_USERS_INFO_CREATE_MANUAL'), 'info');
 				return $guid;
 			}
@@ -758,6 +763,12 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 			// No activation required?
 			if (true !== $email_activation)
 			{
+				$this->_parent->send_email(
+					$guid,
+					line('CSK_USERS_EMAIL_WELCOME'),
+					'view:emails/users/welcome'
+				);
+
 				set_alert(line('CSK_USERS_SUCCESS_CREATE_LOGIN'), 'success');
 				return $guid;
 			}
@@ -775,7 +786,14 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 			// TODO: Log the activity.
 			log_activity($guid, 'Registered.');
 
-			// TODO: Send email to user.
+			$this->_parent->send_email(
+				$guid,
+				line('CSK_USERS_EMAIL_REGISTER'),
+				'view:emails/users/register',
+				array(
+					'link' => site_url('activate-account?code='.$code),
+				)
+			);
 
 			set_alert(line('CSK_USERS_INFO_CREATE'), 'info');
 			return $guid;
@@ -870,7 +888,12 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 			// TODO: Log the activity.
 			log_activity($user->id, 'Requested new activation link.');
 
-			// TODO: Send the email to user.
+			$this->_parent->send_email(
+				$user,
+				line('CSK_USERS_EMAIL_RESEND'),
+				'view:emails/users/resend',
+				array('link' => anchor('activate-account?code='.$code))
+			);
 
 			// Delete old captcha.
 			$this->_parent->auth->delete_captcha();
@@ -943,7 +966,11 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 			// TODO: Log the activity.
 			log_activity($user->id, 'Restored account.');
 
-			// TODO: Send email to user.
+			$this->_parent->send_email(
+				$user,
+				line('CSK_USERS_EMAIL_RESTORE'),
+				'view:emails/users/restore'
+			);
 
 			// Delete old captcha codes.
 			$this->_parent->auth->delete_captcha();
@@ -1051,7 +1078,12 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 			// TODO: Log the activity.
 			log_activity($user->id, 'Request password reset.');
 
-			// TODO: Send email to user.
+			$this->_parent->send_email(
+				$user,
+				line('CSK_USERS_EMAIL_RECOVER'),
+				'view:emails/users/recover',
+				array('link' => anchor('reset-password?code='.$code))
+			);
 
 			// Set alert and log the activity.
 			set_alert(line('CSK_USERS_SUCCESS_RECOVER'), 'success');
@@ -1147,7 +1179,11 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 			// TODO: Log the activity.
 			log_activity($user->id, 'Reset password.');
 
-			// TODO: Send email to use.
+			$this->_parent->send_email(
+				$guid,
+				line('CSK_USERS_EMAIL_PASSWORD'),
+				'view:emails/users/password'
+			);
 
 			// Purge password codes.
 			$this->_parent->auth->delete_password_codes($guid);
@@ -1218,7 +1254,11 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 			// TODO: Log the activity.
 			log_activity($user->id, 'Activated account.');
 
-			// TODO: Send email to use.
+			$this->_parent->send_email(
+				$user,
+				line('CSK_USERS_EMAIL_ACTIVATED'),
+				'view:emails/users/activated'
+			);
 
 			// Purge activation codes.
 			$this->_parent->auth->delete_activation_codes($var->guid);

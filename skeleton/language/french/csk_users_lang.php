@@ -218,3 +218,17 @@ $lang['CSK_USERS_SUCCESS_RESTORE'] = 'Compte récupéré avec succès. Bon retou
 // Error messages.
 $lang['CSK_USERS_ERROR_RESTORE']         = 'Impossible de récupérer le compte.';
 $lang['CSK_USERS_ERROR_RESTORE_DELETED'] = 'Seuls les comptes supprimés peuvent être récupérés.';
+
+// ------------------------------------------------------------------------
+// Users emails subjects.
+// ------------------------------------------------------------------------
+$lang['CSK_USERS_EMAIL_ACTIVATED']         = 'Compte activé';
+$lang['CSK_USERS_EMAIL_EMAIL']             = 'changement de l\'adresse e-mail';
+$lang['CSK_USERS_EMAIL_EMAIL_PREP']        = 'Adresse e-mail changée';
+$lang['CSK_USERS_EMAIL_MANUAL_ACTIVATION'] = 'Activation manuelle';
+$lang['CSK_USERS_EMAIL_PASSWORD']          = 'Mot de passe changé';
+$lang['CSK_USERS_EMAIL_RECOVER']           = 'Réinitialisation du mot de passe';
+$lang['CSK_USERS_EMAIL_REGISTER']          = 'Activation de compte';
+$lang['CSK_USERS_EMAIL_RESEND']            = 'Nouveau lien d\'activation';
+$lang['CSK_USERS_EMAIL_RESTORE']           = 'Compte récupéré';
+$lang['CSK_USERS_EMAIL_WELCOME']           = 'Bienvenue sur {site_name}';

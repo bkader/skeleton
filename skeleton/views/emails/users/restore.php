@@ -74,7 +74,7 @@ EOT;
 $messages['french'] = <<<EOT
 Salut {name},
 
-Cet e-mail confirme que votre compte sur {site_anchor} a bien été restauré.
+Cet e-mail confirme que votre compte sur {site_anchor} a bien été récupéré.
 
 Bienvenue à nouveau avec nous et nous espérons que cette fois vous apprécierez votre séjour.
 

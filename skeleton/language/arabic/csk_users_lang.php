@@ -218,3 +218,17 @@ $lang['CSK_USERS_SUCCESS_RESTORE'] = 'تمت استعادة الحساب بنج�
 // Error messages.
 $lang['CSK_USERS_ERROR_RESTORE']         = 'تعذر استعادة الحساب.';
 $lang['CSK_USERS_ERROR_RESTORE_DELETED'] = 'يمكن استعادة الحسابات المحذوفة فقط.';
+
+// ------------------------------------------------------------------------
+// Users emails subjects.
+// ------------------------------------------------------------------------
+$lang['CSK_USERS_EMAIL_ACTIVATED']         = 'تم تنشيط الحساب';
+$lang['CSK_USERS_EMAIL_EMAIL']             = 'تم تغيير البريد الالكتروني';
+$lang['CSK_USERS_EMAIL_EMAIL_PREP']        = 'طلب تغيير البريد الالكتروني';
+$lang['CSK_USERS_EMAIL_MANUAL_ACTIVATION'] = 'تفعيل يدوي';
+$lang['CSK_USERS_EMAIL_PASSWORD']          = 'تم تغيير كلمة السر';
+$lang['CSK_USERS_EMAIL_RECOVER']           = 'إعادة تعيين كلمة المرور';
+$lang['CSK_USERS_EMAIL_REGISTER']          = 'تنشيط الحساب';
+$lang['CSK_USERS_EMAIL_RESEND']            = 'رابط تنشيط الجديد';
+$lang['CSK_USERS_EMAIL_RESTORE']           = 'تم إستعادة الحساب';
+$lang['CSK_USERS_EMAIL_WELCOME']           = 'مرحبًا بك في {site_name}';
