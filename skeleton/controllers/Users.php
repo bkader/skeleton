@@ -208,7 +208,7 @@ class Users extends KB_Controller {
 		}
 
 		// Prepare form validation and form helper.
-		$this->prep_form(array(
+		$rules = array(
 			array(	'field' => 'first_name',
 					'label' => 'lang:CSK_INPUT_FIRST_NAME',
 					'rules' => 'trim|required|max_length[32]'),
@@ -230,10 +230,18 @@ class Users extends KB_Controller {
 			array(	'field' => 'gender',
 					'label' => 'lang:CSK_INPUT_GENDER',
 					'rules' => 'trim|required|in_list[male,female]'),
-			array(	'field' => 'captcha',
-					'label' => 'lang:CSK_INPUT_CAPTCHA',
-					'rules' => 'trim|required|callback_check_captcha'),
-		), '#register');
+		);
+
+		if (true === get_option('use_captcha', false))
+		{
+			$rules[] = array(
+				'field' => 'captcha',
+				'label' => 'lang:CSK_INPUT_CAPTCHA',
+				'rules' => 'trim|required|callback_check_captcha'
+			);
+		}
+
+		$this->prep_form($rules, '#register');
 
 		// Before form processing.
 		if ($this->form_validation->run() == false)
@@ -363,14 +371,22 @@ class Users extends KB_Controller {
 		}
 
 		// Prepare form validation and rules.
-		$this->prep_form(array(
-			array(	'field' => 'identity',
-					'label' => 'lang:CSK_INPUT_IDENTITY',
-					'rules' => 'trim|required|min_length[5]'),
-			array(	'field' => 'captcha',
-					'label' => 'lang:CSK_INPUT_CAPTCHA',
-					'rules' => 'trim|required|callback_check_captcha'),
-		), '#resend');
+		$rules[] = array(
+			'field' => 'identity',
+			'label' => 'lang:CSK_INPUT_IDENTITY',
+			'rules' => 'trim|required|min_length[5]'
+		);
+
+		if (true === get_option('use_captcha', false))
+		{
+			$rules[] = array(
+				'field' => 'captcha',
+				'label' => 'lang:CSK_INPUT_CAPTCHA',
+				'rules' => 'trim|required|callback_check_captcha'
+			);
+		}
+
+		$this->prep_form($rules, '#resend');
 
 		// Before the form is processed.
 		if ($this->form_validation->run() == false)
@@ -397,7 +413,7 @@ class Users extends KB_Controller {
 			if (true !== $this->check_nonce('user-resend-link'))
 			{
 				set_alert(line('CSK_ERROR_CSRF'), 'error');
-				redirect('resent-link', 'refresh');
+				redirect('resend-link', 'refresh');
 				exit;
 			}
 
@@ -428,17 +444,27 @@ class Users extends KB_Controller {
 	public function restore()
 	{
 		// Prepare form validation.
-		$this->prep_form(array(
-			array(	'field' => 'identity',
-					'label' => 'lang:CSK_INPUT_IDENTITY',
-					'rules' => 'trim|required|min_length[5]|max_length[32]'),
-			array(	'field' => 'password',
-					'label' => 'lang:CSK_INPUT_PASSWORD',
-					'rules' => 'trim|required|min_length[8]|max_length[20]'),
-			array(	'field' => 'captcha',
-					'label' => 'lang:CSK_INPUT_CAPTCHA',
-					'rules' => 'trim|required|callback_check_captcha'),
-		), '#restore');
+		$rules[] = array(
+			'field' => 'identity',
+			'label' => 'lang:CSK_INPUT_IDENTITY',
+			'rules' => 'trim|required|min_length[5]|max_length[32]'
+		);
+		$rules[] = array(
+			'field' => 'password',
+			'label' => 'lang:CSK_INPUT_PASSWORD',
+			'rules' => 'trim|required|min_length[8]|max_length[20]'
+		);
+
+		if (true === get_option('use_captcha', false))
+		{
+			$rules[] = array(
+				'field' => 'captcha',
+				'label' => 'lang:CSK_INPUT_CAPTCHA',
+				'rules' => 'trim|required|callback_check_captcha'
+			);
+		}
+
+		$this->prep_form($rules, '#restore');
 
 		// Before the form is processed.
 		if ($this->form_validation->run() == false)
@@ -478,7 +504,7 @@ class Users extends KB_Controller {
 			);
 
 			// The redirection depends on the restore status.
-			redirect((fales !== $status ? '' : 'restore-account'), 'refresh');
+			redirect((false !== $status ? '' : 'restore-account'), 'refresh');
 			exit;
 		}
 	}
@@ -632,14 +658,22 @@ class Users extends KB_Controller {
 	public function recover()
 	{
 		// Prepare form validation and rules.
-		$this->prep_form(array(
-			array(	'field' => 'identity',
-					'label' => 'lang:CSK_INPUT_IDENTITY',
-					'rules' => 'trim|required|min_length[5]|user_exists'),
-			array(	'field' => 'captcha',
-					'label' => 'lang:CSK_INPUT_CAPTCHA',
-					'rules' => 'trim|required|callback_check_captcha'),
-		), '#recover');
+		$rules[] = array(
+			'field' => 'identity',
+			'label' => 'lang:CSK_INPUT_IDENTITY',
+			'rules' => 'trim|required|min_length[5]|user_exists'
+		);
+
+		if (true === get_option('use_captcha', false))
+		{
+			$rules[] = array(
+				'field' => 'captcha',
+				'label' => 'lang:CSK_INPUT_CAPTCHA',
+				'rules' => 'trim|required|callback_check_captcha'
+			);
+		}
+
+		$this->prep_form($rules, '#recover');
 
 		// Before the form is processed.
 		if ($this->form_validation->run() == false)
