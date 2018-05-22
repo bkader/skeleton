@@ -184,8 +184,9 @@
 				// Do the actual action.
 				do_action('reports_menu');
 
-				// Menu closing tag.
-				echo '</div></li>';
+				echo '<div class="dropdown-divider"></div>',
+				admin_anchor('reports', line('CSK_ADMIN_REPORTS'), 'class="dropdown-item"'),
+				'</div></li>';
 			} else {
 				echo '<li class="nav-item dropdown">',
 				admin_anchor('reports', line('CSK_ADMIN_REPORTS'), 'class="nav-link"'),
