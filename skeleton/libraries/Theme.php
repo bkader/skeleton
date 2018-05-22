@@ -2832,6 +2832,10 @@ EOT;
 			$options = $title;
 			$title   = null;
 		}
+		elseif (null !== $title)
+		{
+			$options['title'] = $title;
+		}
 
 		// Loop through all options now.
 		foreach ($options as $key => $val)
