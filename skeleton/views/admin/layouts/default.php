@@ -430,8 +430,9 @@ if (has_action('admin_subhead') OR true === $module['has_help'] OR isset($page_h
 
 		if (isset($page_donate)) {
 			echo html_tag('a', array(
-				'href'  => $page_donate,
-				'class' => 'btn btn-olive btn-sm btn-icon ml-2',
+				'href'   => $page_donate,
+				'target' => '_blank',
+				'class'  => 'btn btn-olive btn-sm btn-icon ml-2',
 			), fa_icon('money').line('CSK_BTN_DONATE'));
 		}
 
