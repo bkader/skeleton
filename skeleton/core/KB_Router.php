@@ -886,7 +886,11 @@ class KB_Router extends CI_Router
     	}
 
     	// On the dashboard?
-    	(KB_ADMIN === $module) && $module = $this->uri->segment(3);
+    	if (KB_ADMIN === $module)
+    	{
+    		$module = $this->uri->segment(3);
+    		isset($modules[$module]) OR $module = $this->uri->segment(2);
+    	}
 
     	if (isset($modules[$module]) && is_file($modules[$module].'config/routes.php'))
     	{
@@ -963,7 +967,7 @@ class KB_Router extends CI_Router
 
 		if (in_array($this->class, $back_contexts)
 			OR _csk_reserved_module($this->class)
-			OR 'admin' === $this->class
+			OR KB_ADMIN === $this->class
 			OR KB_ADMIN === $this->uri->segment(1))
 		{
 			$is_admin = true;
@@ -1045,17 +1049,7 @@ class KB_Router extends CI_Router
 				{
 					$this->class = $directory;
 					$segments[0] = $module;
-
-					if ($controller && 'admin' === $directory)
-					{
-						$segments[1] = $controller;
-						unset($segments[2]);
-					}
-					else
-					{
-						$segments[1] = $directory;
-					}
-
+					$segments[1] = $directory;
 					return array_slice($segments, 1);
 				}
 

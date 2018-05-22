@@ -103,7 +103,6 @@ Route::block('users(.*)');
  * corresponding array ($back_contexts or front_contexts).
  * @since 	1.0.0
  */
-Route::any(KB_ADMIN, 'admin/index');
 Route::prefix(KB_ADMIN, function() {
 
 	// Admin login section.
@@ -138,6 +137,13 @@ Route::prefix(KB_ADMIN, function() {
 		'offset' => 1,
 	));
 });
+
+/**
+ * Admin contexts.
+ * This is kept for security, in case of errors.
+ * @since 	2.0.0
+ */
+// Route::context(KB_ADMIN, 'admin', array('home' => 'admin/index'));
 
 /**
  * Reserved back-end AJAX routes.
