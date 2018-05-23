@@ -1,0 +1,26 @@
+{  
+  "name":"DinaPress",
+  "description":"This module turns your CodeIgniter Skeleton application into a ready-to-use Content Management System.",
+  "version":"1.0.0",
+  "license":"MIT",
+  "license_uri":"http://opensource.org/licenses/MIT",
+  "author":"Kader Bouyakoub",
+  "author_uri":"https://goo.gl/wGXHO9",
+  "author_email":"bkade@mail.com",
+  "tags":"csk, codeigniter, skeleton, blog, cms",
+  "routes":{
+  	"category/(:any)": "dinapress/category/$1",
+  	"post/(:any)": "dinapress/post/$1",
+  	"author/(:any)": "dinapress/author/$1"
+  },
+  "admin_menu":"DinaPress",
+  "admin_order":0,
+  "translations": {
+  	"french": {
+  		"description": "Ce module transforme votre application CodeIgniter Skeleton en un système de gestion de contenu."
+  	},
+  	"arabic": {
+  		"description": "يحول هذا الموديول تطبيق كوديجنتر سكلتون إلى نظام إدارة محتوى جاهز للاستخدام."
+  	}
+  }
+}

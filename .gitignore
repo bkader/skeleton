@@ -52,6 +52,7 @@ content/uploads/avatars/*
 !content/modules/
 content/modules/*
 !content/modules/index.html
+!content/modules/dummy
 
 # Ignore all plugins except default ones.
 # Think of removing or commenting the following lines
