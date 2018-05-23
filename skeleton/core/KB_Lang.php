@@ -50,7 +50,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	1.3.4
+ * @version 	2.0.1
  */
 class KB_Lang extends CI_Lang
 {
@@ -325,6 +325,29 @@ class KB_Lang extends CI_Lang
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Singular and plural language line.
+	 *
+	 * Fetches a single line of text from the language array depending on the
+	 * given $n (number). Fake "ngettext".
+	 *
+	 * @since 	2.0.1
+	 *
+	 * @param	string	$singular 	The singular form of the line.
+	 * @param	string	$plural 	The plural form of the line.
+	 * @param	int 	$number 	The number used for comparison.
+	 * @param	string	$index 		Acts like gettext domain.
+	 * @return	string	Translation.
+	 */
+	public function nline(string $singular, string $plural, int $number, $index = '')
+	{
+		return ($number == 1) 
+			? $this->line($singular, $index)
+			: $this->line($plural, $index);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Returns the name or details about the language currently in use.
 	 * @access 	public
 	 * @param 	mixed 	what to retrieve.
@@ -487,7 +510,7 @@ if ( ! function_exists('lang'))
 if ( ! function_exists('line'))
 {
 	/**
-	 * Alias of Lang::line with optional arguments.
+	 * Alias of KB_Lang::line with optional arguments.
 	 *
 	 * @since 	1.0.0
 	 * @since 	1.3.4 	Added $before and $after.
@@ -521,7 +544,7 @@ if ( ! function_exists('line'))
 if ( ! function_exists('__'))
 {
 	/**
-	 * Alias of Lang::line with optional arguments.
+	 * Alias of KB_Lang::line with optional arguments.
 	 *
 	 * @since 	1.0.0
 	 * @since 	1.3.4 	Added $before and $after.
@@ -555,7 +578,7 @@ if ( ! function_exists('__'))
 if ( ! function_exists('_e'))
 {
 	/**
-	 * Alias of Lang::line with optional arguments.
+	 * Alias of KB_Lang::line with optional arguments.
 	 *
 	 * @since 	1.0.0
 	 * @since 	1.3.4 	Added $before and $after.
@@ -569,5 +592,62 @@ if ( ! function_exists('_e'))
 	function _e($line, $index = '', $before = '', $after = '')
 	{
 		echo line($line, $index, $before, $after);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('nline'))
+{
+	/**
+	 * This function is wrapper of 'KB_Lang::nline()' method.
+	 * @param	string	$singular 	The singular form of the line.
+	 * @param	string	$plural 	The plural form of the line.
+	 * @param	int 	$number 	The number used for comparison.
+	 * @param	string	$index 		Acts like gettext domain.
+	 * @return	string	Translation.
+	 */
+	function nline($singular, $plural, $number, $index = '')
+	{
+		return get_instance()->lang->nline($singular, $plural, $number, $index);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('_n'))
+{
+	/**
+	 * This function is wrapper of 'KB_Lang::nline()' method.
+	 * @param	string	$singular 	The singular form of the line.
+	 * @param	string	$plural 	The plural form of the line.
+	 * @param	int 	$number 	The number used for comparison.
+	 * @param	string	$index 		Acts like gettext domain.
+	 * @return	string	Translation.
+	 */
+	function _n($singular, $plural, $number, $index = '')
+	{
+		return get_instance()->lang->nline($singular, $plural, $number, $index);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('_en'))
+{
+	/**
+	 * Alias of the "nline" function, the only different is that this 
+	 * function echoes the line directly.
+	 *
+	 * @since 	2.0.0
+	 * @param	string	$singular 	The singular form of the line.
+	 * @param	string	$plural 	The plural form of the line.
+	 * @param	int 	$number 	The number used for comparison.
+	 * @param	string	$index 		Acts like gettext domain.
+	 * @return	void
+	 */
+	function _en($singular, $plural, $number, $index = '')
+	{
+		echo nline($singular, $plural, $number, $index);
 	}
 }
