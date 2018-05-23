@@ -64,6 +64,7 @@ $lang['CSK_BTN_APPLY']           = 'Appliquer';
 $lang['CSK_BTN_BACK']            = 'Retour';
 $lang['CSK_BTN_CANCEL']          = 'Annuler';
 $lang['CSK_BTN_CLICK_HERE']      = 'Cliquer ici';
+$lang['CSK_BTN_CLOSE']           = 'Fermer';
 $lang['CSK_BTN_CREATE']          = 'Créer';
 $lang['CSK_BTN_CREATE_ACCOUNT']  = 'Ouvrir un compte';
 $lang['CSK_BTN_DASHBOARD']       = 'Tableau de bord';
