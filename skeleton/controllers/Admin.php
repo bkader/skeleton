@@ -47,39 +47,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	2.0.0
+ * @version 	2.1.0
  */
 class Admin extends Admin_Controller
 {
-
-	/**
-	 * Class constructor.
-	 * @access 	public
-	 * @return 	void
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-
-		// Feel free to remove the following lines.
-		$this->_highlight();
-
-		add_action('after_admin_scripts', function($content) {
-			$content .= <<<EOT
-<script type="text/javascript">
-	$(document).ready(function() {
-		$("pre code").each(function(i, block) {
-			hljs.highlightBlock(block);
-		});
-	});
-</script>
-EOT;
-			return $content;
-		});
-	}
-
-	// ------------------------------------------------------------------------
-
 	/**
 	 * Main admin panel page.
 	 * @access 	public
@@ -88,23 +59,69 @@ EOT;
 	public function index()
 	{
 		// EDIT THIS METHOD TO SUIT YOUR NEEDS.
-
-		// Count all users.
-		$this->data['count_users'] = $this->kbcore->users->count();
-
-		// Count all themes.
-		$this->data['count_themes'] = count($this->theme->get_themes());
-
-		// Count all plugins.
-		$this->data['count_plugins'] = count($this->kbcore->plugins->list_plugins());
-
-		// Count all languages.
-		$this->data['count_languages'] = count($this->config->item('languages'));
+		add_action('admin_index_stats', array($this, '_stats'), 0);
 
 		// Set page title and render view.
 		$this->theme
 			->set_title(line('CSK_ADMIN_ADMIN_PANEL'))
 			->render($this->data);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Collect all regular status.
+	 *
+	 * @since 	2.1.0
+	 *
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
+	public function _stats()
+	{
+		$output = '<div class="col-xs-6 col-sm-6 col-md-3">';
+
+		// Users count.
+		$boxes[] = info_box(
+			$this->kbcore->users->count(),
+			line('CSK_ADMIN_USERS'),
+			'users',
+			admin_url('users'),
+			'green'
+		);
+
+		// Themes count.
+		$boxes[] = info_box(
+			count($this->theme->get_themes()),
+			line('CSK_ADMIN_THEMES'),
+			'paint-brush',
+			admin_url('themes'),
+			'orange'
+		);
+
+		// Plugins count.
+		$boxes[] = info_box(
+			count($this->theme->get_themes()),
+			line('CSK_ADMIN_PLUGINS'),
+			'plug',
+			admin_url('plugins'),
+			'red'
+		);
+
+		// Languages count.
+		$boxes[] = info_box(
+			count($this->config->item('languages')),
+			line('CSK_ADMIN_LANGUAGES'),
+			'globe',
+			admin_url('languages'),
+			'teal'
+		);
+
+		$output .= implode('</div><div class="col-xs-6 col-sm-6 col-md-3">', $boxes);
+
+		$output .= '</div>';
+		echo $output;
 	}
 
 }
