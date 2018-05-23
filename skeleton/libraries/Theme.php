@@ -64,7 +64,7 @@ class Theme
 	 */
 	private $_skeleton_copyright = <<<EOT
 \n<!--
-This website is proudly powered by: CodeIgniter Skeleton (https://goo.gl/wGXHO9/skeleton)
+This website is proudly powered by: CodeIgniter Skeleton (https://goo.gl/jb4nQC)
 A project developed and maintained by: Kader Bouyakoub (https://goo.gl/wGXHO9)
 -->
 EOT;
