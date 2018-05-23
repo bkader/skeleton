@@ -264,3 +264,53 @@ if ( ! function_exists('_dashboard_buttons'))
 		return $dashboard_buttons;
 	}
 }
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('info_box'))
+{
+	/**
+	 * Generates an info box
+	 *
+	 * @since 	2.0.1
+	 *
+	 * @param 	string 	$head
+	 * @param 	string 	$text
+	 * @param 	string 	$icon
+	 * @param 	string 	$url
+	 * @param 	string 	$color
+	 * @return 	string
+	 */
+	function info_box($head = null, $text = null, $icon = null, $url = null, $color = 'primary')
+	{
+		$color && $color = ' bg-'.$color;
+
+		// Opening tag.
+		$output = "<div class=\"info-box{$color}\">";
+
+		// Info box content.
+		if ($head OR $text)
+		{
+			$output .= '<div class="inner">';
+			$head && $output .= '<h3>'.$head.'</h3>';
+			$text && $output .= '<p>'.$text.'</p>';
+			$output .= '</div>';
+		}
+
+		// Add the icon.
+		$icon && $output .= '<div class="icon">'.fa_icon($icon).'</div>';
+
+		if ($url)
+		{
+			$output .= html_tag('a', array(
+				'href'  => $url,
+				'class' => 'info-box-footer',
+			), line('CSK_BTN_MANAGE').fa_icon('arrow-circle-right ml-1'));
+		}
+
+		// Closing tag.
+		$output .= '</div>';
+
+		return $output;
+	}
+}
