@@ -6,19 +6,19 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * delete this dummy module, it's not needed.
  */
 add_action('admin_page_header', function() {
-	$message = <<<EOT
+  $message = <<<EOT
 The <strong>Dummy Module</strong> is kept to fill dashboard with dummy content, but also to show you how you can add content to it.
 Action: <code>admin_page_header</code>, so this content is visible at the top of all dashboard pages.
 EOT;
 	print_alert(nl2br($message), 'warning');
 });
-add_action('admin_page_footer', function() {
-	$message = <<<EOT
-The <strong>Dummy Module</strong> is kept to fill dashboard with dummy content, but also to show you how you can add content to it.
-Action: <code>admin_page_footer</code>, so this content is visible at the bottom of all dashboard pages.
-EOT;
-	print_alert(nl2br($message), 'warning');
-});
+// add_action('admin_page_footer', function() {
+// 	$message = <<<EOT
+// The <strong>Dummy Module</strong> is kept to fill dashboard with dummy content, but also to show you how you can add content to it.
+// Action: <code>admin_page_footer</code>, so this content is visible at the bottom of all dashboard pages.
+// EOT;
+// 	print_alert(nl2br($message), 'warning');
+// });
 
 // ------------------------------------------------------------------------
 
