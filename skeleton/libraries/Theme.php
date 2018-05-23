@@ -32,7 +32,7 @@
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
- * @link 		https://goo.gl/wGXHO9
+ * @link 		https://github.com/bkader
  * @since 		1.0.0
  */
 defined('BASEPATH') or exit('No direct script access allowed');
@@ -47,8 +47,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @subpackage 	Skeleton
  * @category 	Libraries
  * @author 		Kader Bouyakoub <bkader@mail.com>
- * @link 		https://goo.gl/wGXHO9
- * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @link 		https://github.com/bkader
+ * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
  * @since 		1.3.3 	changed "metadata" to "meta_tags" to avoid conflict with
  *          			the "Kbcore_metadata" library and added themes count.
@@ -64,8 +64,8 @@ class Theme
 	 */
 	private $_skeleton_copyright = <<<EOT
 \n<!--
-This website is proudly powered by: CodeIgniter Skeleton (https://goo.gl/jb4nQC)
-A project developed and maintained by: Kader Bouyakoub (https://goo.gl/wGXHO9)
+Website is powered by CodeIgniter Skeleton (https://github.com/bkader/skeleton)
+A project developed and maintained by Kader Bouyakoub (https://github.com/bkader)
 -->
 EOT;
 	/**
@@ -1044,7 +1044,7 @@ EOT;
 	 * Method for checking the existence of the layout.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	https://github.com/bkader
 	 * @since 	2.0.0
 	 *
 	 * @access 	public
@@ -1134,7 +1134,7 @@ EOT;
 	 * Method for checking the existence of the current view.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	https://github.com/bkader
 	 * @since 	2.0.0
 	 *
 	 * @access 	public
@@ -3307,7 +3307,7 @@ EOT;
 	 * call the late one.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	https://github.com/bkader
 	 * @since 	1.5.0
 	 *
 	 * @access 	public
@@ -3553,7 +3553,7 @@ EOT;
 	 * The real method behind final output compression.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	https://github.com/bkader
 	 * @since 	1.4.1
 	 *
 	 * @access 	private
@@ -4829,7 +4829,7 @@ if ( ! function_exists('compress_html'))
 	 * Uses the Theme::compress_output method to compress the given string.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	https://github.com/bkader
 	 * @since 	1.4.1
 	 *
 	 * @param 	string 	$html 	The HTML string to compress.
