@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	2.0.0
+ * @version 	2.1.0
  */
 class Admin_Controller extends KB_Controller
 {
@@ -116,7 +116,6 @@ class Admin_Controller extends KB_Controller
 		
 		add_filter('admin_head', array($this, 'csk_globals'), 0);
 		add_filter('admin_head', array($this, 'admin_head'), 99);
-		$this->_admin_menu();
 		$this->load->helper('admin');
 	}
 
@@ -193,6 +192,12 @@ class Admin_Controller extends KB_Controller
 			 * @since 	1.5.0
 			 */
 			$this->theme->do_extension();
+
+			/**
+			 * Admin menu is called only of method that load views.
+			 * @since 	2.1.0
+			 */
+			$this->_admin_menu();
 
 			// If we have a heading method, use it.
 			method_exists($this, '_subhead') && $this->_subhead();
@@ -279,8 +284,8 @@ class Admin_Controller extends KB_Controller
 		global $back_contexts;
 		
 		$ignored_contexts = array('admin', 'users', 'settings');
-		$modules          = $this->router->list_modules(true);
-		$lang             = $this->config->item('language');
+		$modules = $this->router->list_modules(true);
+		$lang = $this->config->item('language');
 
 		if ( ! $modules)
 		{
@@ -292,6 +297,44 @@ class Admin_Controller extends KB_Controller
 			// we make sure the module is enabled!
 			if ( ! $module['enabled'])
 			{
+				continue;
+			}
+
+			/**
+			 * If the module comes with a top level menu item using
+			 * "admin_navbar-name" or "admin_navbar_right-name", we make
+			 * sure to display the menu then stop the script.
+			 * @since 	2.1.0
+			 */
+			if (has_action('admin_navbar-'.$folder) 
+				OR has_action('admin_navbar_right-'.$folder))
+			{
+				// See if we have a top level menu.
+				if (has_action('admin_navbar-'.$folder))
+				{
+					add_action('_admin_navbar', function() use ($folder) {
+						do_action('admin_navbar-'.$folder);
+					});
+				}
+
+				// See if we have a top level menu (right menu).
+				if (has_action('admin_navbar_right-'.$folder))
+				{
+					add_action('_admin_navbar_right', function() use ($folder) {
+						do_action('admin_navbar_right-'.$folder);
+					});
+				}
+
+				continue;
+			}
+
+			// See if we have a top level menu (right menu).
+			if (has_action('admin_navbar_right-'.$folder))
+			{
+				add_action('_admin_navbar_right', function() use ($folder) {
+					do_action('admin_navbar_right-'.$folder);
+				});
+
 				continue;
 			}
 
@@ -307,7 +350,7 @@ class Admin_Controller extends KB_Controller
 				// Help context.
 				if ('help' === $context && true !== $status)
 				{
-					add_action('help_menu', function() use ($module, $status, $lang) {
+					add_action('_help_menu', function() use ($module, $status, $lang) {
 						$title_line = isset($module['help_menu']) ? 'help_menu' : 'admin_menu';
 						// Translation present?
 						if (isset($module['translations'][$lang][$title_line])) {
@@ -330,7 +373,7 @@ class Admin_Controller extends KB_Controller
 				}
 
 				// Add other context.
-				add_action($context.'_menu', function() use ($module, $status, $context, $lang) {
+				add_action("_{$context}_menu", function() use ($module, $status, $context, $lang) {
 					$uri = $module['folder'];
 					('admin' !== $context) && $uri = $context.'/'.$uri;
 
