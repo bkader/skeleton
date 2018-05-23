@@ -50,9 +50,9 @@
 				 * Fires inside the settings menu.
 				 * @since 	2.0.0
 				 */
-				if (has_action('settings_menu')) {
+				if (has_action('_settings_menu')) {
 					echo '<div class="dropdown-divider"></div>';
-					do_action('settings_menu');
+					do_action('_settings_menu');
 				}
 
 				echo '<div class="dropdown-divider"></div>',
@@ -63,10 +63,16 @@
 				);
 
 			// Closing tag.
-			echo '</div>',
+			echo '</div>';
+
+			/**
+			 * Fires right after system dropdown menu.
+			 * @since 	2.1.0
+			 */
+			do_action('_admin_navbar');
 
 			// 2. Users menu.
-			'<li class="nav-item dropdown">',
+			echo '<li class="nav-item dropdown">',
 			admin_anchor('users', line('CSK_ADMIN_USERS'), array(
 				'class' => 'nav-link dropdown-toggle',
 				'data-toggle' => 'dropdown',
@@ -93,7 +99,7 @@
 			 */
 			if (has_action('users_menu')) {
 				echo '<div class="dropdown-divider"></div>';
-				do_action('users_menu');;
+				do_action('users_menu');
 			}
 
 			// Closing tag (users menu).
@@ -103,7 +109,7 @@
 			 * Display menu for modules with content controller.
 			 * @since 	2.0.0
 			 */
-			if (has_action('content_menu')) {
+			if (has_action('_content_menu')) {
 				// Menu opening tag.
 				echo '<li class="nav-item dropdown">',
 				html_tag('a', array(
@@ -114,7 +120,7 @@
 				'<div class="dropdown-menu">';
 
 				// Do the actual action.
-				do_action('content_menu');
+				do_action('_content_menu');
 
 				// Menu closing tag.
 				echo '</div></li>';
@@ -124,7 +130,7 @@
 			 * Display menu for modules with admin controller.
 			 * @since 	2.0.0
 			 */
-			if (has_action('admin_menu')) {
+			if (has_action('_admin_menu')) {
 				// Menu opening tag.
 				echo '<li class="nav-item dropdown">',
 				html_tag('a', array(
@@ -135,7 +141,7 @@
 				'<div class="dropdown-menu">';
 
 				// Do the actual action.
-				do_action('admin_menu');
+				do_action('_admin_menu');
 
 				// Menu closing tag.
 				echo '</div></li>';
@@ -220,9 +226,9 @@
 			 * Display modules with "Help.php" controllers.
 			 * @since 	2.0.0
 			 */
-			if (has_action('help_menu')) {
+			if (has_action('_help_menu')) {
 				echo '<div class="dropdown-divider"></div>';
-				do_action('help_menu');
+				do_action('_help_menu');
 			}
 
 			/**
@@ -259,6 +265,12 @@
 			// Dashboard right menu.
 			// ------------------------------------------------------------------------
 			'<ul class="navbar-nav my-2 my-lg-0">';
+
+			/**
+			 * Fires right after users dropdown menu.
+			 * @since 	2.1.0
+			 */
+			do_action('_admin_navbar_right');
 
 			// 1. Languages dropdown.
 			if ($site_languages) {
@@ -387,7 +399,9 @@
  * Subhead section.
  * @since 	2.0.0
  */
-if (has_action('admin_subhead') OR true === $module['has_help'] OR isset($page_help)) {
+if (has_action('admin_subhead') 
+	OR true === $module['has_help'] 
+	OR isset($page_help)) {
 
 	// Opening tags.
 	echo '<div class="navbar navbar-expand-lg subhead">',
