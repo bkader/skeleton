@@ -166,7 +166,7 @@ class KPlatform {
 	public static function constants()
 	{
 		// We define useful Skeleton constants first.
-		define('KB_VERSION', '2.0.0');
+		define('KB_VERSION', '2.0.1');
 		define('DS', DIRECTORY_SEPARATOR);
 		define('EXT', '.php');
 
@@ -218,6 +218,12 @@ class KPlatform {
 		define('WEEK_IN_SECONDS',   7 * DAY_IN_SECONDS);
 		define('MONTH_IN_SECONDS',  30 * DAY_IN_SECONDS);
 		define('YEAR_IN_SECONDS',  365 * DAY_IN_SECONDS);
+
+		// Default Skeleton path.
+		define('CONTENT_DIR', normalize_path(FCPATH.'content'.DS));
+		define('MODULES_DIR', normalize_path(CONTENT_DIR.'modules'.DS));
+		define('PLUGINS_DIR', normalize_path(CONTENT_DIR.'plugins'.DS));
+		define('THEMES_DIR', normalize_path(CONTENT_DIR.'themes'.DS));
 
 		// We assign database options to configuration.
 		self::setup_options();
