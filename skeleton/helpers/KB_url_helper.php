@@ -424,16 +424,19 @@ if ( ! function_exists('admin_url'))
 
 		$exp = explode('/', $uri);
 
-		list($module, $method, $controller) = array_pad($exp, 3, null);
-
-		if ( ! empty($contexts = $CI->router->module_contexts(strtok($module, '?'))))
+		if (count($exp) === 1)
 		{
-			foreach ($contexts as $context => $status)
+			list($module, $method, $controller) = array_pad($exp, 3, null);
+
+			if ( ! empty($contexts = $CI->router->module_contexts(strtok($module, '?'))))
 			{
-				if ('admin' !== $context && true === $status)
+				foreach ($contexts as $context => $status)
 				{
-					$uri = $context.'/'.ltrim(str_replace($context, '', $uri), '/');
-					break;
+					if ('admin' !== $context && true === $status)
+					{
+						$uri = $context.'/'.ltrim(str_replace($context, '', $uri), '/');
+						break;
+					}
 				}
 			}
 		}
@@ -467,16 +470,19 @@ if ( ! function_exists('admin_anchor'))
 
 		$exp = explode('/', $uri);
 
-		list($module, $method, $controller) = array_pad($exp, 3, null);
-
-		if ( ! empty($contexts = $CI->router->module_contexts(strtok($module, '?'))))
+		if (count($exp) === 1)
 		{
-			foreach ($contexts as $context => $status)
+			list($module, $method, $controller) = array_pad($exp, 3, null);
+
+			if ( ! empty($contexts = $CI->router->module_contexts(strtok($module, '?'))))
 			{
-				if ('admin' !== $context && true === $status)
+				foreach ($contexts as $context => $status)
 				{
-					$uri = $context.'/'.ltrim(str_replace($context, '', $uri), '/');
-					break;
+					if ('admin' !== $context && true === $status)
+					{
+						$uri = $context.'/'.ltrim(str_replace($context, '', $uri), '/');
+						break;
+					}
 				}
 			}
 		}
@@ -498,6 +504,7 @@ if ( ! function_exists('nonce_admin_url'))
 	 * @link 	https://goo.gl/wGXHO9
 	 * 
 	 * @since 	1.5.0
+	 * @since 	2.0.1 	Added automatic context guess.
 	 *
 	 * @param 	string 	$uri 	The URI used to generate the URL.
 	 * @return 	string 	$action The action to attach to the URL.
@@ -513,16 +520,20 @@ if ( ! function_exists('nonce_admin_url'))
 
 		$exp = explode('/', $uri);
 
-		list($module, $method, $controller) = array_pad($exp, 3, null);
-
-		if ( ! empty($contexts = $CI->router->module_contexts(strtok($module, '?'))))
+		if (count($exp) === 1)
 		{
-			$context = $CI->uri->segment(2);
+			list($module, $method, $controller) = array_pad($exp, 3, null);
 
-			if (false === strpos($context, $uri) 
-				&& (isset($contexts[$context]) && true === $contexts[$context]))
+			if ( ! empty($contexts = $CI->router->module_contexts(strtok($module, '?'))))
 			{
-				$uri = $context.'/'.ltrim(str_replace($context, '', $uri), '/');
+				foreach ($contexts as $context => $status)
+				{
+					if ('admin' !== $context && true === $status)
+					{
+						$uri = $context.'/'.ltrim(str_replace($context, '', $uri), '/');
+						break;
+					}
+				}
 			}
 		}
 
@@ -558,6 +569,7 @@ if ( ! function_exists('nonce_admin_anchor'))
 	 * @link 	https://goo.gl/wGXHO9
 	 * 
 	 * @since 	1.5.0
+	 * @since 	2.0.1 	Added automatic context guess.
 	 *
 	 * @param 	string 	$uri 	The URI used to generate the URL.
 	 * @param 	mixed 	$action The action attached to the URL.
@@ -576,16 +588,20 @@ if ( ! function_exists('nonce_admin_anchor'))
 
 		$exp = explode('/', $uri);
 
-		list($module, $method, $controller) = array_pad($exp, 3, null);
-
-		if ( ! empty($contexts = $CI->router->module_contexts(strtok($module, '?'))))
+		if (count($exp) === 1)
 		{
-			$context = $CI->uri->segment(2);
+			list($module, $method, $controller) = array_pad($exp, 3, null);
 
-			if (false === strpos($context, $uri) 
-				&& (isset($contexts[$context]) && true === $contexts[$context]))
+			if ( ! empty($contexts = $CI->router->module_contexts(strtok($module, '?'))))
 			{
-				$uri = $context.'/'.ltrim(str_replace($context, '', $uri), '/');
+				foreach ($contexts as $context => $status)
+				{
+					if ('admin' !== $context && true === $status)
+					{
+						$uri = $context.'/'.ltrim(str_replace($context, '', $uri), '/');
+						break;
+					}
+				}
 			}
 		}
 
