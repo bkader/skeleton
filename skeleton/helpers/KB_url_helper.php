@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	2.0.0
+ * @version 	2.0.1
  */
 
 if ( ! function_exists('site_url'))
@@ -428,12 +428,13 @@ if ( ! function_exists('admin_url'))
 
 		if ( ! empty($contexts = $CI->router->module_contexts(strtok($module, '?'))))
 		{
-			$context = $CI->uri->segment(2);
-
-			if (false === strpos($context, $uri) 
-				&& (isset($contexts[$context]) && true === $contexts[$context]))
+			foreach ($contexts as $context => $status)
 			{
-				$uri = $context.'/'.ltrim(str_replace($context, '', $uri), '/');
+				if ('admin' !== $context && true === $status)
+				{
+					$uri = $context.'/'.ltrim(str_replace($context, '', $uri), '/');
+					break;
+				}
 			}
 		}
 
@@ -470,12 +471,13 @@ if ( ! function_exists('admin_anchor'))
 
 		if ( ! empty($contexts = $CI->router->module_contexts(strtok($module, '?'))))
 		{
-			$context = $CI->uri->segment(2);
-
-			if (false === strpos($context, $uri) 
-				&& (isset($contexts[$context]) && true === $contexts[$context]))
+			foreach ($contexts as $context => $status)
 			{
-				$uri = $context.'/'.ltrim(str_replace($context, '', $uri), '/');
+				if ('admin' !== $context && true === $status)
+				{
+					$uri = $context.'/'.ltrim(str_replace($context, '', $uri), '/');
+					break;
+				}
 			}
 		}
 
