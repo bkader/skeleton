@@ -62,6 +62,244 @@ if ( ! function_exists('_guess_base_url'))
 }
 
 // ------------------------------------------------------------------------
+// Paths functions.
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('normalize_path')) {
+	/**
+	 * Normalizes a filesystem path.
+	 *
+	 * @since 	2.0.1
+	 *
+	 * @param 	string 	$path 	Path to normalize.
+	 * @return 	string 	Normalized path.
+	 */
+	function normalize_path($path) {
+		$path = str_replace('\\', '/', $path);
+		$path = preg_replace('|(?<=.)/+|', '/', $path);
+
+		// Upper-case driver letters on windows systems.
+		if (':' === substr($path, 1, 1) && ! ctype_upper($path[0])) {
+			$path = ucfirst($path);
+		}
+
+		return $path;
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('path_is_stream')) {
+	/**
+	 * Tests if the given path is a stream URL.
+	 *
+	 * @since 	2.0.1
+	 *
+	 * @param 	string 	$path 	The resource path or URL.
+	 * @return 	bool 	true if the path is a stream URL, else false.
+	 */
+	function path_is_stream($path) {
+		$wrappers = '('.join('|', stream_get_wrappers()).')';
+		return (preg_match("!^{$wrappers}://!", $path) === 1);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('path_mkdir')) {
+	/**
+	 * Recursive directory creation based on full path.
+	 *
+	 * @since 	2.0.1
+	 *
+	 * @param 	string 	$target 	Full path to create.
+	 * @return 	bool 	true if directory was created or exists, else false.
+	 */
+	function path_mkdir($target) {
+		$wrapper = null;
+
+		// Strip the protocol.
+		if (path_is_stream($target)) {
+			list($wrapper, $target) = explode('://', $target, 2);
+		}
+
+		// From php.net/mkdir user contributed notes.
+		$target = str_replace('//', '/', $target);
+
+		// We put the wrapper back on the target.
+		if ($wrapper !== null) {
+			$target = $wrapper.'://'.$target;
+		}
+
+		// Safe mode fails wit a trailing slash under certain PHP versions.
+		$target = rtrim($target.'/');
+		empty($target) && $target = '/';
+
+		if (file_exists($target)) {
+			return @is_dir($target);
+		}
+
+		/**
+		 * We need to find the permissions of the parent folder
+		 * that exists and inherit that.
+		 */
+		$target_parent = dirname($target);
+		while ('.' != $target_parent 
+			&& ! is_dir($target_parent) 
+			&& dirname($target_parent) !== $target_parent) {
+			$target_parent = dirname($target_parent);
+		}
+
+		// Get the permission bits.
+		$dir_perms = ($stat = @stat($target_parent)) ? $stat['mode'] & 0007777 : 0777;
+
+		// Successful directory creation?
+		if (false !== @mkdir($target, $dir_perms, true)) {
+
+			/**
+			 * If a umask is set and modifies $dir_permis, we will have to
+			 * re-set the $dir_perms correctly with chmod.
+			 */
+			if ($dir_perms != ($dir_perms & ~umask())) {
+				$folder_parts = explode('/', substr($target, strlen($target_parent) + 1));
+				$c = count($folder_parts);
+				for ($i = 1; $i <= $c; $i++ ) {
+					@chmod($target_parent.'/'.implode('/', array_slice($folder_parts, 0, $i)), $dir_perms);
+				}
+			}
+
+			return true;
+		}
+
+		// The directory could not be created.
+		return false;
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('path_is_absolute')) {
+	/**
+	 * Tests if the given path is absolute.
+	 *
+	 * @since 	2.0.1
+	 *
+	 * @param 	string 	$path 	File path.
+	 * @return 	bool 	true if the path is absolute, else false.
+	 */
+	function path_is_absolute($path) {
+
+		/**
+		 * This is definitely true bu fails if $path does not exist or
+		 * contains a symbolic link.
+		 */
+		if (realpath($path) == $path) {
+			return true;
+		}
+
+		// Ignore parent directory.
+		if (strlen($path) == 0 OR $path[0] == '.') {
+			return false;
+		}
+
+		// Windows absolute paths.
+		if (preg_match('#^[a-zA-Z]:\\\\#', $path)) {
+			return true;
+		}
+
+		/**
+		 * Path starting with / or \ is absolute.
+		 * Anything else is relative.
+		 */
+		return ($path[0] == '/' || $path[0] == '\\');
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('path_join')) {
+	/**
+	 * Joins two filesystem paths together.
+	 *
+	 * @since 	2.0.1
+	 *
+	 * @param 	string 	$base 	The base path.
+	 * @param 	string 	$path 	The relative path to $base.
+	 * @return 	string 	The path with base or absolute path.
+	 */
+	function path_join($base, $path) {
+		// If the provided $path is not an absolute path, we prepare it.
+		if ( ! path_is_absolute($path)) {
+			$base = rtrim(str_replace('\\', '/', $base), '/').'/';
+			$path = ltrim(str_replace('\\', '/', $path), '/');
+			$path = $base.$path;
+		}
+
+		return $path;
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('backslashit')) {
+	/**
+	 * Adds backslashes before letters and before a number at
+	 * the start of the string.
+	 * 
+	 * @since 	2.0.1
+	 *
+	 * @param 	string 	$string 	Value to which backslashes will be added.
+	 * @return 	string 	String with backslashes inserted.
+	 */
+	function backslashit($string) {
+		if (isset($string[0]) && $string[0] >= '0' && $string[0] <= '9') {
+			$string = '\\\\'.$string;
+		}
+
+		return addcslashes($string, 'A..Za..z');
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('trailingslashit')) {
+	/**
+	 * Removes trailing forward and backslashes if it exists already before
+	 * adding a trailing slash. This prevents double slashing a string or path.
+	 *
+	 * The primary use of this is for paths and this should be used for paths.
+	 * It is not restricted to paths and offers no specific path support.
+	 *
+	 * @since 	2.0.1
+	 *
+	 * @param 	string 	$string 	What to add the trailing slash to.
+	 * @return 	string 	String with trailing slash added.
+	 */
+	function trailingslashit($string) {
+		return rtrim($string, '/\\').'/';
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('untrailingslashit')) {
+	/**
+	 * Removes trailing forward and backslashes if they exists.
+	 * 
+	 * The primary use of this is for paths and thus should be used for paths.
+	 * It is not restricted to paths and offers no specific path support.
+	 *
+	 * @since 	2.0.1
+	 *
+	 * @param 	string 	$string 	What to remove the trailing slash from.
+	 * @return 	string 	String with trailing slash removed.
+	 */
+	function untrailingslashit($string) {
+		return rtrim($string, '/\\');
+	}
+}
+
+// ------------------------------------------------------------------------
 // Files importers.
 // ------------------------------------------------------------------------
 
@@ -76,7 +314,7 @@ if ( ! function_exists('import')) {
 	 * @return 	void
 	 */
 	function import($path, $folder = 'core') {
-		$path = str_replace('\\', '/', $path);
+		$path = normalize_path($path);
 
 		// We start with CodeIgniter "system" folder.
 		if (false !== is_file($basepath = BASEPATH.$folder.'/'.$path.'.php')) {
