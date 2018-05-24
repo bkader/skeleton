@@ -52,7 +52,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	1.5.0
+ * @version 	2.1.0
  */
 class KB_Controller extends CI_Controller {
 
@@ -91,6 +91,16 @@ class KB_Controller extends CI_Controller {
 
 		// Load application main library.
 		$this->load->driver('kbcore');
+
+		/**
+		 * We make sure to always store $_POST data upon submission. This
+		 * is useful if we want to re-fill form inputs.
+		 * @since 	2.1.0
+		 */
+		if ($this->input->is_post_request())
+		{
+			$this->session->set_flashdata('old_post_data', $this->input->post());
+		}
 
 		// Get current module's details.
 		$this->module = $this->router->fetch_module();
