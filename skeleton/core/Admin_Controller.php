@@ -77,6 +77,7 @@ class Admin_Controller extends KB_Controller
 	protected $scripts = array(
 		'modernizr-2.8.3',
 		'jquery-3.2.1',
+		'jquery.sprintf',
 		'handlebars',
 		'popper',
 		'bootstrap',
@@ -228,6 +229,7 @@ class Admin_Controller extends KB_Controller
 	 */
 	public function csk_globals($output)
 	{
+		// Default configuration.
 		$config = array(
 			'siteURL'    => site_url(),
 			'baseURL'    => base_url(),
@@ -237,10 +239,24 @@ class Admin_Controller extends KB_Controller
 			'lang'       => $this->lang->languages($this->session->language),
 		);
 
+		// Generic language lines.
+		$lines = array(
+			'activate'       => line('CSK_ADMIN_CONFIRM_ACTIVATE'),
+			'deactivate'     => line('CSK_ADMIN_CONFIRM_DEACTIVATE'),
+			'delete'         => line('CSK_ADMIN_CONFIRM_DELETE'),
+			'deleteselected' => line('CSK_ADMIN_CONFIRM_DELETE_SELECTED'),
+			'disable'        => line('CSK_ADMIN_CONFIRM_DISABLE'),
+			'enable'         => line('CSK_ADMIN_CONFIRM_ENABLE'),
+			'install'        => line('CSK_ADMIN_CONFIRM_INSTALL'),
+			'remove'         => line('CSK_ADMIN_CONFIRM_DELETE_PERMANENT'),
+			'upload'         => line('CSK_ADMIN_CONFIRM_UPLOAD'),
+		);
+
 		$output .= '<script type="text/javascript">';
 		$output .= 'var csk = window.csk = window.csk || {};';
-		$output .= ' csk.i18n = csk.i18n || {};';
 		$output .= ' csk.config = '.json_encode($config).';';
+		$output .= ' csk.i18n = csk.i18n || {};';
+		$output .= ' csk.i18n.default = '.json_encode($lines).';';
 		$output .= '</script>';
 
 		return $output;
