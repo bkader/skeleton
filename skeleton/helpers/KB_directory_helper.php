@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.3.3
- * @version 	1.3.4
+ * @version 	2.1.0
  */
 
 if ( ! function_exists('directory_delete'))
@@ -69,7 +69,7 @@ if ( ! function_exists('directory_delete'))
 			foreach ($elements as $element)
 			{
 				// We ignore some of elements.
-				if ($element != '.' && $element != '..')
+				if ( ! in_array($element, array('.', '..', '.git', '.github')))
 				{
 					// Directory?
 					if (is_dir($dir.'/'.$element))
