@@ -93,14 +93,40 @@ $lang['CSK_ADMIN_SKELETON_SHOP'] = 'Boutique Skeleton';
 // General confirmation messages.
 // ------------------------------------------------------------------------
 $lang['CSK_ADMIN_CONFIRM_ACTIVATE']         = 'Êtes-vous sûr de vouloir activer %s?';
-$lang['CSK_ADMIN_CONFIRM_DEACTIVATE']       = 'Êtes-vous sûr de vouloir désactive %s?';
+$lang['CSK_ADMIN_CONFIRM_DEACTIVATE']       = 'Êtes-vous sûr de vouloir désactiver %s?';
 $lang['CSK_ADMIN_CONFIRM_DELETE']           = 'Êtes-vous sûr de vouloir supprimer %s?';
 $lang['CSK_ADMIN_CONFIRM_DELETE_PERMANENT'] = 'Êtes-vous sûr de vouloir supprimer %s et toutes ses données?';
 $lang['CSK_ADMIN_CONFIRM_DELETE_SELECTED']  = 'Êtes-vous sûr de vouloir supprimer les %s sélectionnés et toutes leurs données?';
-$lang['CSK_ADMIN_CONFIRM_DISABLE']          = 'Êtes-vous sûr de vouloir désactive %s?';
+$lang['CSK_ADMIN_CONFIRM_DISABLE']          = 'Êtes-vous sûr de vouloir désactiver %s?';
 $lang['CSK_ADMIN_CONFIRM_ENABLE']           = 'Êtes-vous sûr de vouloir activer %s?';
 $lang['CSK_ADMIN_CONFIRM_INSTALL']          = 'Êtes-vous sûr de vouloir installer %s?';
-$lang['CSK_ADMIN_CONFIRM_UPLOAD']           = 'Êtes-vous sûr de vouloir téléversr %s?';
+$lang['CSK_ADMIN_CONFIRM_UPLOAD']           = 'Êtes-vous sûr de vouloir téléverser %s?';
+
+// ------------------------------------------------------------------------
+// General success messages.
+// ------------------------------------------------------------------------
+$lang['CSK_ADMIN_SUCCESS_ACTIVATE']         = '%s activé avec succès.';
+$lang['CSK_ADMIN_SUCCESS_DEACTIVATE']       = '%s désactivé avec succès.';
+$lang['CSK_ADMIN_SUCCESS_DELETE']           = '%s supprimé avec succès.';
+$lang['CSK_ADMIN_SUCCESS_DELETE_PERMANENT'] = '%s et ses données supprimés avec succès.';
+$lang['CSK_ADMIN_SUCCESS_DELETE_SELECTED']  = 'Les %s sélectionnés et toutes leurs données supprimés avec succès.';
+$lang['CSK_ADMIN_SUCCESS_DISABLE']          = '%s déctivé avec succès.';
+$lang['CSK_ADMIN_SUCCESS_ENABLE']           = '%s activé avec succès.';
+$lang['CSK_ADMIN_SUCCESS_INSTALL']          = '%s installé avec succès.';
+$lang['CSK_ADMIN_SUCCESS_UPLOAD']           = '%s téléversé avec succès.';
+
+// ------------------------------------------------------------------------
+// General Error messages.
+// ------------------------------------------------------------------------
+$lang['CSK_ADMIN_ERROR_ACTIVATE']         = 'Impossible d\'activer %s.';
+$lang['CSK_ADMIN_ERROR_DEACTIVATE']       = 'Impossible de désactiver %s.';
+$lang['CSK_ADMIN_ERROR_DELETE']           = 'Impossible de supprimer %s.';
+$lang['CSK_ADMIN_ERROR_DELETE_PERMANENT'] = 'Impossible de supprimer %s et ses données.';
+$lang['CSK_ADMIN_ERROR_DELETE_SELECTED']  = 'Impossible de supprimer les %s sélectionnés et toutes leurs données.';
+$lang['CSK_ADMIN_ERROR_DISABLE']          = 'Impossible de désactiver %s.';
+$lang['CSK_ADMIN_ERROR_ENABLE']           = 'Impossible d\'activer %s.';
+$lang['CSK_ADMIN_ERROR_INSTALL']          = 'Impossible d\'installer %s.';
+$lang['CSK_ADMIN_ERROR_UPLOAD']           = 'Impossible de téléverser %s.';
 
 // ------------------------------------------------------------------------
 // Footer section.

@@ -103,6 +103,32 @@ $lang['CSK_ADMIN_CONFIRM_INSTALL']          = 'Are you sure you want to install 
 $lang['CSK_ADMIN_CONFIRM_UPLOAD']           = 'Are you sure you want to upload %s?';
 
 // ------------------------------------------------------------------------
+// General success messages.
+// ------------------------------------------------------------------------
+$lang['CSK_ADMIN_SUCCESS_ACTIVATE']         = '%s successfully activated.';
+$lang['CSK_ADMIN_SUCCESS_DEACTIVATE']       = '%s successfully deactivated.';
+$lang['CSK_ADMIN_SUCCESS_DELETE']           = '%s successfully deleted.';
+$lang['CSK_ADMIN_SUCCESS_DELETE_PERMANENT'] = '%s and its data successfully deleted.';
+$lang['CSK_ADMIN_SUCCESS_DELETE_SELECTED']  = 'Selected %s and all their data successfully deleted.';
+$lang['CSK_ADMIN_SUCCESS_DISABLE']          = '%s successfully disabled.';
+$lang['CSK_ADMIN_SUCCESS_ENABLE']           = '%s successfully enabled.';
+$lang['CSK_ADMIN_SUCCESS_INSTALL']          = '%s successfully installed.';
+$lang['CSK_ADMIN_SUCCESS_UPLOAD']           = '%s successfully uploaded.';
+
+// ------------------------------------------------------------------------
+// General Error messages.
+// ------------------------------------------------------------------------
+$lang['CSK_ADMIN_ERROR_ACTIVATE']         = 'Unable to activate %s.';
+$lang['CSK_ADMIN_ERROR_DEACTIVATE']       = 'Unable to deactivate %s.';
+$lang['CSK_ADMIN_ERROR_DELETE']           = 'Unable to delete %s.';
+$lang['CSK_ADMIN_ERROR_DELETE_PERMANENT'] = 'Unable to delete %s and its data.';
+$lang['CSK_ADMIN_ERROR_DELETE_SELECTED']  = 'Unable to delete selected %s and all their data.';
+$lang['CSK_ADMIN_ERROR_DISABLE']          = 'Unable to disable %s.';
+$lang['CSK_ADMIN_ERROR_ENABLE']           = 'Unable to enable %s.';
+$lang['CSK_ADMIN_ERROR_INSTALL']          = 'Unable to install %s.';
+$lang['CSK_ADMIN_ERROR_UPLOAD']           = 'Unable to upload %s.';
+
+// ------------------------------------------------------------------------
 // Footer section.
 // ------------------------------------------------------------------------
 

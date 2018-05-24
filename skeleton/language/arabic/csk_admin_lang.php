@@ -96,11 +96,37 @@ $lang['CSK_ADMIN_CONFIRM_ACTIVATE']         = 'هل أنت متأكد من أن�
 $lang['CSK_ADMIN_CONFIRM_DEACTIVATE']       = 'هل أنت متأكد من أنك تريد تعطيل %s؟';
 $lang['CSK_ADMIN_CONFIRM_DELETE']           = 'هل أنت متأكد من أنك تريد حذف %s؟';
 $lang['CSK_ADMIN_CONFIRM_DELETE_PERMANENT'] = 'هل أنت متأكد من أنك تريد حذف %s وكل بياناته؟';
-$lang['CSK_ADMIN_CONFIRM_DELETE_SELECTED']  = 'هل أنت متأكد من أنك تريد حذف %s المحددة وكل بياناتهم؟';
+$lang['CSK_ADMIN_CONFIRM_DELETE_SELECTED']  = 'هل أنت متأكد من أنك تريد حذف %s المحددة وكل بياناتها؟';
 $lang['CSK_ADMIN_CONFIRM_DISABLE']          = 'هل أنت متأكد من أنك تريد تعطيل %s؟';
 $lang['CSK_ADMIN_CONFIRM_ENABLE']           = 'هل أنت متأكد من أنك تريد تفعيل %s؟';
 $lang['CSK_ADMIN_CONFIRM_INSTALL']          = 'هل أنت متأكد من أنك تريد تثبيت %s؟';
 $lang['CSK_ADMIN_CONFIRM_UPLOAD']           = 'هل أنت متأكد من أنك تريد رفع %s؟';
+
+// ------------------------------------------------------------------------
+// General success messages.
+// ------------------------------------------------------------------------
+$lang['CSK_ADMIN_SUCCESS_ACTIVATE']         = 'تم تفعيل %s بنجاح.';
+$lang['CSK_ADMIN_SUCCESS_DEACTIVATE']       = 'تم تعطيل %s بنجاح.';
+$lang['CSK_ADMIN_SUCCESS_DELETE']           = 'تم حذف %s بنجاح.';
+$lang['CSK_ADMIN_SUCCESS_DELETE_PERMANENT'] = 'تم حذف %s وكل بياناته بنجاح.';
+$lang['CSK_ADMIN_SUCCESS_DELETE_SELECTED']  = 'تم حذف %s المحددة وكل بياناتها بنجاح.';
+$lang['CSK_ADMIN_SUCCESS_DISABLE']          = 'تم تعطيل %s بنجاح.';
+$lang['CSK_ADMIN_SUCCESS_ENABLE']           = 'تم تفعيل %s بنجاح.';
+$lang['CSK_ADMIN_SUCCESS_INSTALL']          = 'تم تثبيت %s بنجاح.';
+$lang['CSK_ADMIN_SUCCESS_UPLOAD']           = 'تم رفع %s بنجاح.';
+
+// ------------------------------------------------------------------------
+// General Error messages.
+// ------------------------------------------------------------------------
+$lang['CSK_ADMIN_ERROR_ACTIVATE']         = 'تعذر تفعيل %s.';
+$lang['CSK_ADMIN_ERROR_DEACTIVATE']       = 'تعذر تعطيل %s.';
+$lang['CSK_ADMIN_ERROR_DELETE']           = 'تعذر حذف %s.';
+$lang['CSK_ADMIN_ERROR_DELETE_PERMANENT'] = 'تعذر حذف %s وكل بياناته.';
+$lang['CSK_ADMIN_ERROR_DELETE_SELECTED']  = 'تعذر حذف %s المحددة وكل بياناتها.';
+$lang['CSK_ADMIN_ERROR_DISABLE']          = 'تعذر تعطيل %s.';
+$lang['CSK_ADMIN_ERROR_ENABLE']           = 'تعذر تفعيل %s.';
+$lang['CSK_ADMIN_ERROR_INSTALL']          = 'تعذر تثبيت %s.';
+$lang['CSK_ADMIN_ERROR_UPLOAD']           = 'تعذر رفع %s.';
 
 // ------------------------------------------------------------------------
 // Footer section.
