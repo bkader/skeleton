@@ -63,16 +63,10 @@
 				);
 
 			// Closing tag.
-			echo '</div>';
-
-			/**
-			 * Fires right after system dropdown menu.
-			 * @since 	2.1.0
-			 */
-			do_action('_admin_navbar');
+			echo '</div>',
 
 			// 2. Users menu.
-			echo '<li class="nav-item dropdown">',
+			'<li class="nav-item dropdown">',
 			admin_anchor('users', line('CSK_ADMIN_USERS'), array(
 				'class' => 'nav-link dropdown-toggle',
 				'data-toggle' => 'dropdown',
@@ -104,6 +98,12 @@
 
 			// Closing tag (users menu).
 			echo '</div></li>';
+
+			/**
+			 * Fires right after users dropdown menu.
+			 * @since 	2.1.0
+			 */
+			do_action('_admin_navbar');
 
 			/**
 			 * Display menu for modules with content controller.
