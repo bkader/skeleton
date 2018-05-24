@@ -65,6 +65,68 @@ require_once(KBPATH.'third_party/bkader/class-hooks.php');
 require_once(KBPATH.'third_party/bkader/class-route.php');
 
 /**
+ * Setup Skeleton default constants.
+ * @since 	2.0.0
+ */
+KPlatform::constants();
+
+/**
+ * Add default Skeleton classes.
+ * @since 	2.1.0
+ */
+Autoloader::add_classes(array(
+	// Kader Class.
+	'CS_Hooks' => KBPATH.'third_party/bkader/class-hooks.php',
+	'Route' => KBPATH.'third_party/bkader/class-route.php',
+
+	// Core classes.
+	'Admin_Controller'    => KBPATH.'core/Admin_Controller.php',
+	'Content_Controller'  => KBPATH.'core/Admin_Controller.php',
+	'Help_Controller'     => KBPATH.'core/Admin_Controller.php',
+	'Reports_Controller'  => KBPATH.'core/Admin_Controller.php',
+	'Settings_Controller' => KBPATH.'core/Admin_Controller.php',
+	'AJAX_Controller'     => KBPATH.'core/AJAX_Controller.php',
+	'KB_Controller'       => KBPATH.'core/KB_Controller.php',
+	'KB_Config'           => KBPATH.'core/KB_Config.php',
+	'KB_Hooks'            => KBPATH.'core/KB_Hooks.php',
+	'KB_Input'            => KBPATH.'core/KB_Input.php',
+	'KB_Lang'             => KBPATH.'core/KB_Lang.php',
+	'KB_Loader'           => KBPATH.'core/KB_Loader.php',
+	'KB_Model'            => KBPATH.'core/KB_Model.php',
+	'KB_Security'         => KBPATH.'core/KB_Security.php',
+	'KB_Router'           => KBPATH.'core/KB_Router.php',
+	'Process_Controller'  => KBPATH.'core/Process_Controller.php',
+	'User_Controller'     => KBPATH.'core/User_Controller.php',
+	'API_Controller'      => KBPATH.'core/API_Controller.php',
+
+	// Libraries.
+	'Format'             => KBPATH.'libraries/Format.php',
+	'Hash'               => KBPATH.'libraries/Hash.php',
+	'Jquery_validation'  => KBPATH.'libraries/Jquery_validation.php',
+	'KB_Email'           => KBPATH.'libraries/KB_Email.php',
+	'KB_Form_validation' => KBPATH.'libraries/KB_Form_validation.php',
+	'KB_Image_lib'       => KBPATH.'libraries/KB_Image_lib.php',
+	'KB_Pagination'      => KBPATH.'libraries/KB_Pagination.php',
+	'KB_Table'           => KBPATH.'libraries/KB_Table.php',
+	'KB_Upload'          => KBPATH.'libraries/KB_Upload.php',
+	'Theme'              => KBPATH.'libraries/Theme.php',
+
+	// Main Skeleton Libraries.
+	'Kbcore'            => KBPATH.'libraries/Kbcore/Kbcore.php',
+	'CRUD_interface'    => KBPATH.'libraries/Kbcore/CRUD_interface.php',
+	'Kbcore_activities' => KBPATH.'libraries/Kbcore/drivers/Kbcore_activities.php',
+	'Kbcore_entities'   => KBPATH.'libraries/Kbcore/drivers/Kbcore_entities.php',
+	'Kbcore_groups'     => KBPATH.'libraries/Kbcore/drivers/Kbcore_groups.php',
+	'Kbcore_metadata'   => KBPATH.'libraries/Kbcore/drivers/Kbcore_metadata.php',
+	'Kbcore_objects'    => KBPATH.'libraries/Kbcore/drivers/Kbcore_objects.php',
+	'Kbcore_options'    => KBPATH.'libraries/Kbcore/drivers/Kbcore_options.php',
+	'Kbcore_plugins'    => KBPATH.'libraries/Kbcore/drivers/Kbcore_plugins.php',
+	'Kbcore_relations'  => KBPATH.'libraries/Kbcore/drivers/Kbcore_relations.php',
+	'Kbcore_users'      => KBPATH.'libraries/Kbcore/drivers/Kbcore_users.php',
+	'Kbcore_variables'  => KBPATH.'libraries/Kbcore/drivers/Kbcore_variables.php',
+));
+
+/**
  * KPlatform Class
  *
  * @package 	CodeIgniter
@@ -77,87 +139,6 @@ require_once(KBPATH.'third_party/bkader/class-route.php');
  * @version 	2.0.0
  */
 class KPlatform {
-
-	/**
-	 * CodeIgniter Skeleton class loader.
-	 *
-	 * This method handles loading classes among Skeleton application.
-	 *
-	 * @since 	2.0.0
-	 *
-	 * @param 	string 	$class 	The class to look for.
-	 */
-	public static function autoloader($class)
-	{
-		// So the method remembers classes.
-		static $classes;
-
-		if (empty($classes)) {
-			$classes = array(
-
-				// Kader Class.
-				'CS_Hooks' => KBPATH.'third_party/bkader/class-hooks.php',
-				'Route' => KBPATH.'third_party/bkader/class-route.php',
-
-				// Core classes.
-				'Admin_Controller'    => KBPATH.'core/Admin_Controller.php',
-				'Content_Controller'  => KBPATH.'core/Admin_Controller.php',
-				'Help_Controller'     => KBPATH.'core/Admin_Controller.php',
-				'Reports_Controller'  => KBPATH.'core/Admin_Controller.php',
-				'Settings_Controller' => KBPATH.'core/Admin_Controller.php',
-				'AJAX_Controller'     => KBPATH.'core/AJAX_Controller.php',
-				'KB_Controller'       => KBPATH.'core/KB_Controller.php',
-				'KB_Config'           => KBPATH.'core/KB_Config.php',
-				'KB_Hooks'            => KBPATH.'core/KB_Hooks.php',
-				'KB_Input'            => KBPATH.'core/KB_Input.php',
-				'KB_Lang'             => KBPATH.'core/KB_Lang.php',
-				'KB_Loader'           => KBPATH.'core/KB_Loader.php',
-				'KB_Model'            => KBPATH.'core/KB_Model.php',
-				'KB_Security'         => KBPATH.'core/KB_Security.php',
-				'KB_Router'           => KBPATH.'core/KB_Router.php',
-				'Process_Controller'  => KBPATH.'core/Process_Controller.php',
-				'User_Controller'     => KBPATH.'core/User_Controller.php',
-				'API_Controller'      => KBPATH.'core/API_Controller.php',
-
-				// Libraries.
-				'Format'             => KBPATH.'libraries/Format.php',
-				'Hash'               => KBPATH.'libraries/Hash.php',
-				'Jquery_validation'  => KBPATH.'libraries/Jquery_validation.php',
-				'KB_Email'           => KBPATH.'libraries/KB_Email.php',
-				'KB_Form_validation' => KBPATH.'libraries/KB_Form_validation.php',
-				'KB_Image_lib'       => KBPATH.'libraries/KB_Image_lib.php',
-				'KB_Pagination'      => KBPATH.'libraries/KB_Pagination.php',
-				'KB_Table'           => KBPATH.'libraries/KB_Table.php',
-				'KB_Upload'          => KBPATH.'libraries/KB_Upload.php',
-				'Theme'              => KBPATH.'libraries/Theme.php',
-
-				// Main Skeleton Libraries.
-				'Kbcore'            => KBPATH.'libraries/Kbcore/Kbcore.php',
-				'CRUD_interface'    => KBPATH.'libraries/Kbcore/CRUD_interface.php',
-				'Kbcore_activities' => KBPATH.'libraries/Kbcore/drivers/Kbcore_activities.php',
-				'Kbcore_entities'   => KBPATH.'libraries/Kbcore/drivers/Kbcore_entities.php',
-				'Kbcore_groups'     => KBPATH.'libraries/Kbcore/drivers/Kbcore_groups.php',
-				'Kbcore_metadata'   => KBPATH.'libraries/Kbcore/drivers/Kbcore_metadata.php',
-				'Kbcore_objects'    => KBPATH.'libraries/Kbcore/drivers/Kbcore_objects.php',
-				'Kbcore_options'    => KBPATH.'libraries/Kbcore/drivers/Kbcore_options.php',
-				'Kbcore_plugins'    => KBPATH.'libraries/Kbcore/drivers/Kbcore_plugins.php',
-				'Kbcore_relations'  => KBPATH.'libraries/Kbcore/drivers/Kbcore_relations.php',
-				'Kbcore_users'      => KBPATH.'libraries/Kbcore/drivers/Kbcore_users.php',
-				'Kbcore_variables'  => KBPATH.'libraries/Kbcore/drivers/Kbcore_variables.php',
-			);
-		}
-
-		if (false !== strpos($class, '\\')) {
-			$class = str_replace('\\', '/', $class);
-		}
-
-		if (isset($classes[$class])) {
-			require_once($classes[$class]);
-		}
-	}
-
-	// ------------------------------------------------------------------------
-
 	/**
 	 * Method for defining all initial Skeleton constants.
 	 *
@@ -402,32 +383,25 @@ class KPlatform {
 
 }
 
-// Define Skeleton initial constants.
-KPlatform::constants();
-
-// Register Skeleton classes loader.
-spl_autoload_register(array('KPlatform', 'autoloader'));
-
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('_DB'))
-{
+if ( ! function_exists('_DB')) {
 	/**
 	 * A quick-access to KPlatform::DB() method.
 	 * @since 	2.0.0
+	 * @param 	none
+	 * @return 	DB
 	 */
-	function _DB()
-	{
-		static $DB;
-		empty($DB) && $DB = KPlatform::DB();
+	function _DB() {
+		static $DB = null;
+		is_null($DB) && $DB = KPlatform::DB();
 		return $DB;
 	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('_csk_modules'))
-{
+if ( ! function_exists('_csk_modules')) {
 	/**
 	 * Function that returns reserved modules names.
 	 *
@@ -437,18 +411,16 @@ if ( ! function_exists('_csk_modules'))
 	 * @since 	2.0.0
 	 * @return 	array
 	 */
-	function _csk_modules()
-	{
-		static $modules; // Make sure function remember theme.
-		empty($modules) && $modules = KPlatform::_reserved_modules();
+	function _csk_modules() {
+		static $modules = null;
+		is_null($modules) && $modules = KPlatform::_reserved_modules();
 		return $modules;
 	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('_csk_reserved_module'))
-{
+if ( ! function_exists('_csk_reserved_module')) {
 	/**
 	 * Function for checking whether to selected module is reserved.
 	 *
@@ -481,10 +453,3 @@ if ( ! function_exists('_csk_reserved_module'))
 		return (empty($modules)) ? false : in_array($module, $modules);
 	}
 }
-
-/**
- * We now load CodeIgniter bootstrap file, and as they said:
- *
- * And away we go...
- */
-require_once BASEPATH.'core/CodeIgniter.php';

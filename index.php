@@ -350,13 +350,19 @@ switch (ENVIRONMENT)
 
 	define('VIEWPATH', $view_folder.DIRECTORY_SEPARATOR);
 
+/**
+ * Load our autoloader class first.
+ * @since 	2.1.0
+ */
+require_once(KBPATH.'third_party/bkader/class-autoloader.php');
+
 /*
  * --------------------------------------------------------------------
- * We load Skeleton Bootstrap file.
+ * We load application Bootstrap file.
  * --------------------------------------------------------------------
  *
  * The reason behind this is to register our classes so that they are
  * easily located if called.
  * Calling CodeIgniter.php file is handled by this file as well.
  */
-require_once(KBPATH.'bootstrap.php');
+require_once(APPPATH.'bootstrap.php');
