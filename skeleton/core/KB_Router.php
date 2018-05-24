@@ -620,7 +620,7 @@ class KB_Router extends CI_Router
 	// ------------------------------------------------------------------------
 
 	/**
-	 * module_enable
+	 * module_activate
 	 *
 	 * Method for activating the selected module.
 	 *
@@ -632,7 +632,7 @@ class KB_Router extends CI_Router
 	 * @param 	string 	$name 	The module's folder name.
 	 * @return 	bool 	true if the module is enabled, else false.
 	 */
-	public function module_enable($name)
+	public function module_activate($name)
 	{
 		$modules = $this->list_modules();
 		$active = $this->active_modules();
@@ -648,10 +648,16 @@ class KB_Router extends CI_Router
 		return $this->_set_active_modules($active);
 	}
 
+	// For backward compatibility.
+	public function module_enable($name)
+	{
+		return $this->module_activate($name);
+	}
+
 	// ------------------------------------------------------------------------
 
 	/**
-	 * module_disable
+	 * module_deactivate
 	 *
 	 * Method for disabling the selected module.
 	 *
@@ -663,7 +669,7 @@ class KB_Router extends CI_Router
 	 * @param 	string 	$name 	The module folder name.
 	 * @return 	bool 	true if the module was disable, else false.
 	 */
-	public function module_disable($name)
+	public function module_deactivate($name)
 	{
 		$modules = $this->list_modules();
 		$active = $this->active_modules();
@@ -697,6 +703,12 @@ class KB_Router extends CI_Router
 		}
 
 		return false;
+	}
+
+	// For backward compatibility.
+	public function module_disable($name)
+	{
+		return $this->module_deactivate($name);
 	}
 
 	// ------------------------------------------------------------------------
@@ -1274,7 +1286,7 @@ if ( ! function_exists('module_is_active'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('enable_module'))
+if ( ! function_exists('activate_module'))
 {
 	/**
 	 * Enables the given module.
@@ -1284,15 +1296,21 @@ if ( ! function_exists('enable_module'))
 	 * @param 	string 	$name 	The module's name.
 	 * @return 	bool 	true if the module was enabled, else false.
 	 */
+	function activate_module($name)
+	{
+		return get_instance()->router->module_activate($name);
+	}
+
+	// Alias for backward compatibility.
 	function enable_module($name)
 	{
-		return get_instance()->router->module_enable($name);
+		return get_instance()->router->module_activate($name);
 	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('disable_module'))
+if ( ! function_exists('deactivate_module'))
 {
 	/**
 	 * Disables the given module.
@@ -1302,8 +1320,14 @@ if ( ! function_exists('disable_module'))
 	 * @param 	string 	$name 	The module's name.
 	 * @return 	bool 	true if the module was disabled, else false.
 	 */
+	function deactivate_module($name)
+	{
+		return get_instance()->router->module_deactivate($name);
+	}
+
+	// Alias for backward compatibility.
 	function disable_module($name)
 	{
-		return get_instance()->router->module_disable($name);
+		return get_instance()->router->module_deactivate($name);
 	}
 }
