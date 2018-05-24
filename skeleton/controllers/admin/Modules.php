@@ -72,7 +72,6 @@ class Modules extends Admin_Controller {
 		$this->load->language('csk_modules');
 
 		// Add our head string.
-		$this->_jquery_sprintf();
 		add_filter('admin_head', array($this, '_admin_head'));
 		$this->scripts[] = 'modules';
 
@@ -131,10 +130,10 @@ class Modules extends Admin_Controller {
 			{
 				$m['actions'][] = html_tag('button', array(
 					'type' => 'button',
-					'data-endpoint' => nonce_ajax_url(
-						'modules/deactivate/'.$folder,
+					'data-endpoint' => esc_url(nonce_admin_url(
+						'modules?action=deactivate&module='.$folder,
 						'module-deactivate_'.$folder
-					),
+					)),
 					'class' => 'btn btn-default btn-xs btn-icon module-deactivate ml-2',
 					'aria-label' => sprintf(line('CSK_BTN_DEACTIVATE_COM'), $m['name']),
 				), fa_icon('times text-danger').line('CSK_MODULES_DEACTIVATE'));
@@ -143,10 +142,10 @@ class Modules extends Admin_Controller {
 			{
 				$m['actions'][] = html_tag('button', array(
 					'type' => 'button',
-					'data-endpoint' => nonce_ajax_url(
-						'modules/activate/'.$folder,
+					'data-endpoint' => esc_url(nonce_admin_url(
+						'modules?action=activate&module='.$folder,
 						'module-activate_'.$folder
-					),
+					)),
 					'class' => 'btn btn-default btn-xs btn-icon module-activate ml-2',
 					'aria-label' => sprintf(line('CSK_BTN_ACTIVATE_COM'), $m['name']),
 				), fa_icon('check text-success').line('CSK_MODULES_ACTIVATE'));
@@ -154,10 +153,10 @@ class Modules extends Admin_Controller {
 
 			$m['actions'][] = html_tag('button', array(
 				'type' => 'button',
-				'data-endpoint' => nonce_ajax_url(
-					'modules/delete/'.$folder,
+				'data-endpoint' => esc_url(nonce_admin_url(
+					'modules?action=delete&module='.$folder,
 					'module-delete_'.$folder
-				),
+				)),
 				'class' => 'btn btn-danger btn-xs btn-icon module-delete ml-2',
 				'aria-label' => sprintf(line('CSK_BTN_REMOVE_COM'), $m['name']),
 			), fa_icon('trash-o').line('CSK_MODULES_DELETE'));
@@ -198,6 +197,21 @@ class Modules extends Admin_Controller {
 			}
 
 			$m['details'] = $details;
+		}
+
+		/**
+		 * Catch modules actions.
+		 * @since 	2.1.0
+		 */
+		$action = $this->input->get('action', true);
+		$module = $this->input->get('module', true);
+
+		if (($action && in_array($action, array('activate', 'deactivate', 'delete')))
+			&& ($module && isset($modules[$module]))
+			&& check_nonce_url("module-{$action}_{$module}")
+			&& method_exists($this, '_'.$action))
+		{
+			return call_user_func_array(array($this, '_'.$action), array($module));
 		}
 
 		$this->data['modules'] = $modules;
@@ -312,6 +326,125 @@ class Modules extends Admin_Controller {
 		// Otherwise, the theme could not be installed.
 		set_alert(line('CSK_MODULES_ERROR_UPLOAD'), 'error');
 		redirect(KB_ADMIN.'/modules/install');
+		exit;
+	}
+
+	// ------------------------------------------------------------------------
+	// Modules activation, deactivate and deletion.
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for activating the given module.
+	 *
+	 * @since 	2.1.0
+	 *
+	 * @access 	protected
+	 * @param 	string 	$folder
+	 * @return 	void
+	 */
+	protected function _activate($folder)
+	{
+		$details = module_details($folder);
+		$i18n    = $this->config->item('language');
+
+		// Attempt to translate name and description.
+		if ('english' !== $i18n && isset($details['translations'][$i18n]['name']))
+		{
+			$details['name'] = $details['translations'][$i18n]['name'];
+		}
+		
+		$name = $details['name'];
+		
+		if ( ! module_is_active($folder) && activate_module($folder))
+		{
+			set_alert(sprintf(line('CSK_MODULES_SUCCESS_ACTIVATE'), $name), 'success');
+			redirect(KB_ADMIN.'/modules');
+			exit;
+		}
+
+		set_alert(sprintf(line('CSK_MODULES_ERROR_ACTIVATE'), $name), 'error');
+		redirect(KB_ADMIN.'/modules');
+		exit;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for deactivating the given module.
+	 *
+	 * @since 	2.1.0
+	 *
+	 * @access 	protected
+	 * @param 	string 	$folder
+	 * @return 	void
+	 */
+	protected function _deactivate($folder)
+	{
+		$details = module_details($folder);
+		$i18n    = $this->config->item('language');
+
+		// Attempt to translate name and description.
+		if ('english' !== $i18n && isset($details['translations'][$i18n]['name']))
+		{
+			$details['name'] = $details['translations'][$i18n]['name'];
+		}
+		
+		$name = $details['name'];
+		
+		if (module_is_active($folder) && deactivate_module($folder))
+		{
+			set_alert(sprintf(line('CSK_MODULES_SUCCESS_DEACTIVATE'), $name), 'success');
+			redirect(KB_ADMIN.'/modules');
+			exit;
+		}
+
+		set_alert(sprintf(line('CSK_MODULES_ERROR_DEACTIVATE'), $name), 'error');
+		redirect(KB_ADMIN.'/modules');
+		exit;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for deleting the given module.
+	 *
+	 * @since 	2.1.0
+	 *
+	 * @access 	protected
+	 * @param 	string 	$folder
+	 * @return 	void
+	 */
+	protected function _delete($folder)
+	{
+		$details = module_details($folder);
+		$i18n    = $this->config->item('language');
+
+		// Attempt to translate name and description.
+		if ('english' !== $i18n && isset($details['translations'][$i18n]['name']))
+		{
+			$details['name'] = $details['translations'][$i18n]['name'];
+		}
+		
+		$name = $details['name'];
+
+		if (module_is_active($folder))
+		{
+			set_alert(sprintf(line('CSK_MODULES_ERROR_DELETE_ACTIVE'), $name), 'success');
+			redirect(KB_ADMIN.'/modules');
+			exit;
+		}
+
+		function_exists('directory_delete') OR $this->load->helper('directory');
+		
+		if (false !== directory_delete($details['full_path']))
+		{
+			set_alert(sprintf(line('CSK_MODULES_SUCCESS_DELETE'), $name), 'success');
+			redirect(KB_ADMIN.'/modules');
+			exit;
+		}
+
+		set_alert(sprintf(line('CSK_MODULES_ERROR_DELETE'), $name), 'error');
+		redirect(KB_ADMIN.'/modules');
 		exit;
 	}
 
