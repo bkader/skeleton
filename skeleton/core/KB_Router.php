@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	2.0.0
+ * @version 	2.1.0
  */
 class KB_Router extends CI_Router
 {
@@ -234,83 +234,95 @@ class KB_Router extends CI_Router
 			}
 		}
 
-		$module_path = $path ? $path : $this->module_path($name);
-		$manifest_file = $module_path.'manifest.json';
-		$manifest_dist = $manifest_file.'.dist';
-
-		if ( ! $module_path 
-			OR ( ! is_file($manifest_file) && ! is_file($manifest_dist)))
+		if ( ! isset($this->_modules_details[$name]))
 		{
-			return false;
-		}
+			$module_path = $path ? $path : $this->module_path($name);
+			$manifest_file = $module_path.'manifest.json';
+			$manifest_dist = $manifest_file.'.dist';
 
-		/**
-		 * In case the manifest.json is not found but we have a backup 
-		 * file, we make sure to create the file first.
-		 */
-		if (( ! is_file($manifest_file) && is_file($manifest_dist)) 
-			&& false === copy($manifest_dist, $manifest_file))
-		{
-			return false;
-		}
-
-		$headers = function_exists('json_read_file')
-			? json_read_file($manifest_file)
-			: json_decode(file_get_contents($manifest_file), true, JSON_PRETTY_PRINT);
-
-		if ( ! $headers OR ! is_array($headers))
-		{
-			return false;
-		}
-
-		/**
-		 * Create a back-up for the manifest.json file if it does not exist.
-		 * @since 2.0.0
-		 */
-		if (true !== is_file($manifest_dist) 
-			&& true !== copy($manifest_file, $manifest_dist))
-		{
-			return fales;
-		}
-
-		$headers = array_replace_recursive($this->_headers, $headers);
-
-		// Added things:
-		empty($headers['admin_menu']) && $headers['admin_menu'] = $name;
-
-		// Is module enabled?
-		$headers['enabled'] = $this->is_active($name);
-
-		// Add all internal details.
-		$headers['contexts'] = $this->module_contexts($name, $module_path);
-		if ( ! empty($headers['contexts']))
-		{
-			foreach ($headers['contexts'] as $key => $val)
+			if ( ! $module_path 
+				OR ( ! is_file($manifest_file) && ! is_file($manifest_dist)))
 			{
-				$headers['has_'.$key] = (false !== $val);
+				return false;
 			}
+
+			/**
+			 * In case the manifest.json is not found but we have a backup 
+			 * file, we make sure to create the file first.
+			 */
+			if (( ! is_file($manifest_file) && is_file($manifest_dist)) 
+				&& false === copy($manifest_dist, $manifest_file))
+			{
+				return false;
+			}
+
+			$headers = function_exists('json_read_file')
+				? json_read_file($manifest_file)
+				: json_decode(file_get_contents($manifest_file), true, JSON_PRETTY_PRINT);
+
+			if ( ! $headers OR ! is_array($headers))
+			{
+				return false;
+			}
+
+			/**
+			 * Create a back-up for the manifest.json file if it does not exist.
+			 * @since 2.0.0
+			 */
+			if (true !== is_file($manifest_dist) 
+				&& true !== copy($manifest_file, $manifest_dist))
+			{
+				return fales;
+			}
+
+			$headers = array_replace_recursive($this->_headers, $headers);
+
+			// Remove not listed headers.
+			foreach ($headers as $key => $val)
+			{
+				if ( ! array_key_exists($key, $this->_headers))
+				{
+					unset($headers[$key]);
+				}
+			}
+
+			// Added things:
+			empty($headers['admin_menu']) && $headers['admin_menu'] = $name;
+
+			// Is module enabled?
+			$headers['enabled'] = $this->is_active($name);
+
+			// Add all internal details.
+			$headers['contexts'] = $this->module_contexts($name, $module_path);
+			if ( ! empty($headers['contexts']))
+			{
+				foreach ($headers['contexts'] as $key => $val)
+				{
+					$headers['has_'.$key] = (false !== $val);
+				}
+			}
+
+			$headers['folder'] = $name;
+			$headers['full_path'] = $module_path;
+
+			/**
+			 * If the module comes without a "help" controller, we see if
+			 * the developer provided a module URI so we can use it as
+			 * a URL later.
+			 */
+			if (false === $headers['has_help'] && ! empty($headers['module_uri']))
+			{
+				$headers['contexts']['help'] = $headers['module_uri'];
+				$headers['has_help'] = true;
+			}
+
+			if ($headers['license'] == 'MIT' && empty($headers['license_uri']))
+			{
+				$headers['license_uri'] = 'http://opensource.org/licenses/MIT';
+			}
+			
+			$this->_modules_details[$name] = $headers;
 		}
-
-		$headers['folder'] = $name;
-		$headers['full_path'] = $module_path;
-
-		/**
-		 * If the module comes without a "help" controller, we see if
-		 * the developer provided a module URI so we can use it as
-		 * a URL later.
-		 */
-		if (false === $headers['has_help'] && ! empty($headers['module_uri']))
-		{
-			$headers['contexts']['help'] = $headers['module_uri'];
-			$headers['has_help'] = true;
-		}
-
-		if ($headers['license'] == 'MIT' && empty($headers['license_uri']))
-		{
-			$headers['license_uri'] = 'http://opensource.org/licenses/MIT';
-		}
-
-		$this->_modules_details[$name] = $headers;
 
 		return $this->_modules_details[$name];
 	}
@@ -327,7 +339,7 @@ class KB_Router extends CI_Router
 	 * @since 	2.0.0
 	 *
 	 * @access 	public
-	 * @param 	string 	$module 	The module name.
+	 * @param 	string 	$module 	The module's name.
 	 * @param 	string 	$path 		The module's directory path.
 	 * @return 	array
 	 */
@@ -422,11 +434,7 @@ class KB_Router extends CI_Router
 
 			foreach ($this->_modules as $module => $path)
 			{
-				if (isset($this->_modules_details[$module]))
-				{
-					$_modules_details[$module] = $this->_modules_details[$module];
-				}
-				elseif (false !== ($details = $this->module_details($module, $path)))
+				if (false !== ($details = $this->module_details($module, $path)))
 				{
 					$_modules_details[$module] = $details;
 				}
@@ -516,11 +524,13 @@ class KB_Router extends CI_Router
 	 * @link 	https://goo.gl/wGXHO9
 	 * @since 	2.0.0
 	 *
+	 * @since 	2.1.0 	Added details about modules.
+	 *
 	 * @access 	public
 	 * @param 	none
 	 * @return 	array
 	 */
-	public function active_modules()
+	public function active_modules($details = false)
 	{
 		// Active modules not previously cached?
 		if (empty($this->_active_modules))
@@ -560,7 +570,29 @@ class KB_Router extends CI_Router
 			$this->_active_modules = $modules;
 		}
 
-		return $this->_active_modules;
+		$return = $this->_active_modules;
+
+		if (true !== $details)
+		{
+			return $return;
+		}
+
+		if ( ! empty($return))
+		{
+			$details = array();
+
+			foreach ($return as $name)
+			{
+				if (false !== ($d = $this->module_details($name)))
+				{
+					$details[$name] = $d;
+				}
+			}
+
+			empty($details) OR $return = $details;
+		}
+
+		return $return;
 	}
 
 	// ------------------------------------------------------------------------
@@ -1127,4 +1159,151 @@ class KB_Router extends CI_Router
         }
     }
 
+}
+
+// ------------------------------------------------------------------------
+// Helpers.
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('module_path'))
+{
+	/**
+	 * Returns the full path to the given module.
+	 *
+	 * @since 	2.1.0
+	 *
+	 * @param 	string 	$name 	The module's name.
+	 * @return 	the module's path if found, else false.
+	 */
+	function module_path($name = null)
+	{
+		return get_instance()->router->module_path($name);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('module_details'))
+{
+	/**
+	 * Returns details about the given module.
+	 *
+	 * @since 	2.1.0
+	 *
+	 * @param 	string 	$name 	The module's name.
+	 * @param 	string 	$path 	The module path.
+	 * @return 	array of module details if found, else false.
+	 */
+	function module_details($name = null, $path = null)
+	{
+		return get_instance()->router->module_details($name, $path);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('module_contexts'))
+{
+	/**
+	 * Returns an array of the given module's contexts.
+	 *
+	 * @since 	2.1.0
+	 *
+	 * @param 	string 	$name 	The module's name.
+	 * @return 	array of module contexts if found, empty array if not found.
+	 */
+	function module_contexts($name = null)
+	{
+		return get_instance()->router->module_contexts($name);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('list_modules'))
+{
+	/**
+	 * Lists all modules available on the application.
+	 *
+	 * @since 	2.1.0
+	 *
+	 * @param 	bool 	$details 	Whether to list details or not.
+	 * @return 	array of all available modules.
+	 */
+	function list_modules($details = false)
+	{
+		return get_instance()->router->list_modules($details);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('active_modules'))
+{
+	/**
+	 * Returns an array of enabled modules.
+	 *
+	 * @since 	2.1.0
+	 *
+	 * @param 	bool 	$details Whether to collect details.
+	 * @return 	array of modules.
+	 */
+	function active_modules($details = false)
+	{
+		return get_instance()->router->active_modules($details);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('module_is_active'))
+{
+	/**
+	 * Checks whether the given module is enabled.
+	 *
+	 * @since 	2.1.0
+	 *
+	 * @param 	string 	$name 	The module's name.
+	 * @return 	bool 	true if the module is enabled, else false.
+	 */
+	function module_is_active($name = null)
+	{
+		return get_instance()->router->is_active($name);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('enable_module'))
+{
+	/**
+	 * Enables the given module.
+	 *
+	 * @since 	2.1.0
+	 *
+	 * @param 	string 	$name 	The module's name.
+	 * @return 	bool 	true if the module was enabled, else false.
+	 */
+	function enable_module($name)
+	{
+		return get_instance()->router->module_enable($name);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('disable_module'))
+{
+	/**
+	 * Disables the given module.
+	 *
+	 * @since 	2.1.0
+	 *
+	 * @param 	string 	$name 	The module's name.
+	 * @return 	bool 	true if the module was disabled, else false.
+	 */
+	function disable_module($name)
+	{
+		return get_instance()->router->module_disable($name);
+	}
 }
