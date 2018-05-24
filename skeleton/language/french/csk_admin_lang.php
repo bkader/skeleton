@@ -90,6 +90,19 @@ $lang['CSK_ADMIN_TRANSLATIONS']  = 'Traductions';
 $lang['CSK_ADMIN_SKELETON_SHOP'] = 'Boutique Skeleton';
 
 // ------------------------------------------------------------------------
+// General confirmation messages.
+// ------------------------------------------------------------------------
+$lang['CSK_ADMIN_CONFIRM_ACTIVATE']         = 'Êtes-vous sûr de vouloir activer %s?';
+$lang['CSK_ADMIN_CONFIRM_DEACTIVATE']       = 'Êtes-vous sûr de vouloir désactive %s?';
+$lang['CSK_ADMIN_CONFIRM_DELETE']           = 'Êtes-vous sûr de vouloir supprimer %s?';
+$lang['CSK_ADMIN_CONFIRM_DELETE_PERMANENT'] = 'Êtes-vous sûr de vouloir supprimer %s et toutes ses données?';
+$lang['CSK_ADMIN_CONFIRM_DELETE_SELECTED']  = 'Êtes-vous sûr de vouloir supprimer les %s sélectionnés et toutes leurs données?';
+$lang['CSK_ADMIN_CONFIRM_DISABLE']          = 'Êtes-vous sûr de vouloir désactive %s?';
+$lang['CSK_ADMIN_CONFIRM_ENABLE']           = 'Êtes-vous sûr de vouloir activer %s?';
+$lang['CSK_ADMIN_CONFIRM_INSTALL']          = 'Êtes-vous sûr de vouloir installer %s?';
+$lang['CSK_ADMIN_CONFIRM_UPLOAD']           = 'Êtes-vous sûr de vouloir téléversr %s?';
+
+// ------------------------------------------------------------------------
 // Footer section.
 // ------------------------------------------------------------------------
 

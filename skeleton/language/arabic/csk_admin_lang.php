@@ -90,6 +90,19 @@ $lang['CSK_ADMIN_TRANSLATIONS']  = 'ترجمات سكلتون';
 $lang['CSK_ADMIN_SKELETON_SHOP'] = 'سوق سكلتون';
 
 // ------------------------------------------------------------------------
+// General confirmation messages.
+// ------------------------------------------------------------------------
+$lang['CSK_ADMIN_CONFIRM_ACTIVATE']         = 'هل أنت متأكد من أنك تريد تفعيل %s؟';
+$lang['CSK_ADMIN_CONFIRM_DEACTIVATE']       = 'هل أنت متأكد من أنك تريد تعطيل %s؟';
+$lang['CSK_ADMIN_CONFIRM_DELETE']           = 'هل أنت متأكد من أنك تريد حذف %s؟';
+$lang['CSK_ADMIN_CONFIRM_DELETE_PERMANENT'] = 'هل أنت متأكد من أنك تريد حذف %s وكل بياناته؟';
+$lang['CSK_ADMIN_CONFIRM_DELETE_SELECTED']  = 'هل أنت متأكد من أنك تريد حذف %s المحددة وكل بياناتهم؟';
+$lang['CSK_ADMIN_CONFIRM_DISABLE']          = 'هل أنت متأكد من أنك تريد تعطيل %s؟';
+$lang['CSK_ADMIN_CONFIRM_ENABLE']           = 'هل أنت متأكد من أنك تريد تفعيل %s؟';
+$lang['CSK_ADMIN_CONFIRM_INSTALL']          = 'هل أنت متأكد من أنك تريد تثبيت %s؟';
+$lang['CSK_ADMIN_CONFIRM_UPLOAD']           = 'هل أنت متأكد من أنك تريد رفع %s؟';
+
+// ------------------------------------------------------------------------
 // Footer section.
 // ------------------------------------------------------------------------
 
