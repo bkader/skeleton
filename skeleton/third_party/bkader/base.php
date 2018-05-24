@@ -366,6 +366,39 @@ if ( ! function_exists('import_with_vars')) {
 // Array Helpers.
 // ------------------------------------------------------------------------
 
+if ( ! function_exists('array_get')) {
+	/**
+	 * Access array keys using dot-notation.
+	 *
+	 * @since 	2.1.0
+	 *
+	 * @param 	array 	$array 		The array used for search.
+	 * @param 	string 	$key 		Key to look for.
+	 * @param 	mixed 	$default 	Default value if key is not found.
+	 */
+	function array_get($array, $key, $default = false) {
+		$value = $array;
+		$path  = explode('.', $key);
+		$count = count($path);
+
+		for ($i = 0; $i < $count; ++$i) {
+			$sub_key = $path[$i];
+
+			if (is_array($value) && isset($value[$sub_key])) {
+				$value = $value[$sub_key];
+			} elseif (is_object($value) && isset($value->{$sub_key})) {
+				$value = $value->{$sub_key};
+			} else {
+				return $default;
+			}
+		}
+
+		return $value;
+	}
+}
+
+// ------------------------------------------------------------------------
+
 if ( ! function_exists('iin_array')) {
 	/**
 	 * A case-insensitive version of PHP in_array.
@@ -439,6 +472,72 @@ if ( ! function_exists('_deep_map')) {
 		}
 
 		return $value;
+	}
+}
+
+// ------------------------------------------------------------------------
+// Attributes functions.
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('array_to_attr')) {
+	/**
+	 * Takes an array of attributes and turns it into a string of HTML tag.
+	 *
+	 * @since 	2.1.0
+	 *
+	 * @param 	array 	$attr 	Attributes to turn to string.
+	 * @return 	string
+	 */
+	function array_to_attr($attr) {
+		$attr_str = '';
+		is_array($attr) OR $attr = (array) $attr;
+
+		foreach ($attr as $key => $val)
+		{
+			// We ignore null/false values.
+			if ($val === null OR $val === false)
+			{
+				continue;
+			}
+
+			// Numeric keys must be something like disabled="disabled"
+			if (is_numeric($key))
+			{
+				$key = $val;
+			}
+
+			$attr_str .= $key.'="'.str_replace('"', '&quot;', $val).'" ';
+		}
+
+		// We strip extra spaces before and after.
+		return trim($attr_str);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('attr_to_array')) {
+	/**
+	 * Takes a string of HTML attributes and turns it into an array.
+	 *
+	 * @since 	2.1.0
+	 *
+	 * @param 	string 	$str 	HTML attributes string.
+	 * @return 	array
+	 */
+	function attr_to_array($str) {
+		preg_match_all('#(\w+)=([\'"])(.*)\\2#U', $str, $matches);
+		$params = array();
+
+		foreach($matches[1] as $key => $val)
+		{
+			if ( ! empty($matches[3]))
+			{
+				$params[$val] = $matches[3][$key];
+			}
+		}
+
+		return $params;
 	}
 }
 
