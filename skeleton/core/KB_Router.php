@@ -510,6 +510,21 @@ class KB_Router extends CI_Router
 
 			// We always fire this action.
 			do_action('module_loaded_'.$folder);
+
+			/**
+			 * As of version 2.1.0, it is possible to use PHP Gettext.
+			 * If the required function is available, we bind modules
+			 * domain to global domains.
+			 * @since 	2.1.0
+			 */
+			if  (function_exists('gettext_instance') 
+				&& is_dir($modules[$folder].'language'))
+			{
+				gettext_instance()->bindtextdomain(
+					$folder,
+					$modules[$folder].'language'
+				);
+			}
 		}
 	}
 
