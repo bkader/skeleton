@@ -50,7 +50,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	2.0.1
+ * @version 	2.1.0
  */
 class KB_Lang extends CI_Lang
 {
@@ -59,18 +59,6 @@ class KB_Lang extends CI_Lang
 	 * @var string
 	 */
 	protected $fallback = 'english';
-
-	/**
-	 * Array of cached languages details.
-	 * @var array
-	 */
-	protected $_languages;
-
-	/**
-	 * Details of the current language.
-	 * @var array
-	 */
-	public $lang;
 
 	/**
 	 * Class constructor.
@@ -355,25 +343,24 @@ class KB_Lang extends CI_Lang
 	 */
 	public function lang()
 	{
+		static $lang;
+
+		if (empty($lang))
+		{
+			$lang = $this->languages($this->config->item('language'));
+		}
+
 		// Collect function arguments.
 		$args = func_get_args();
 
 		// Empty? Return the current language.
 		if (empty($args))
 		{
-			if (isset($this->lang))
-			{
-				return $this->lang['folder'];
-			}
-
-			$this->lang = $this->languages($this->config->item('language'));
-			return $this->lang['folder'];
+			return $lang['folder'];
 		}
 
 		// The language is already cached? Use it. Otherwise load it.
-		$return = (isset($this->lang)) 
-			? $this->lang 
-			: $this->languages($this->config->item('language'));
+		$return = $lang;
 
 		// Not found ?
 		if ( ! $return)
@@ -425,54 +412,54 @@ class KB_Lang extends CI_Lang
 	 */
 	public function languages($langs = null)
 	{
+		static $languages;
 		// Not cached? Cache them if found.
-		if ( ! isset($this->_languages))
+		if (empty($languages))
 		{
 			// User's file has the priority.
 			if (is_file(APPPATH.'third_party/languages.php'))
 			{
-				$this->_languages = require_once(APPPATH.'third_party/languages.php');
+				$languages = require_once(APPPATH.'third_party/languages.php');
 			}
 			// If not found, use our.
 			elseif (is_file(KBPATH.'third_party/bkader/inc/languages.php'))
 			{
-				$this->_languages = require_once(KBPATH.'third_party/bkader/inc/languages.php');
+				$languages = require_once(KBPATH.'third_party/bkader/inc/languages.php');
 			}
 			// Otherwise, use an empty array.
 			else
 			{
-				$this->_languages = array();
+				$languages = array();
 			}
 		}
 
 		// No argument? return all languages.
 		if (null === $langs)
 		{
-			return $this->_languages;
+			return $languages;
 		}
 
 		// Format our requested languages.
 		( ! is_array($langs)) && $langs = array_map('trim', explode(',', $langs));
 
-
 		// A single language is requested? Return it.
-		if (count($langs) == 1 && isset($this->_languages[$langs[0]]))
+		if (count($langs) == 1 && isset($languages[$langs[0]]))
 		{
-			return $this->_languages[$langs[0]];
+			return $languages[$langs[0]];
 		}
 
 		// Build requested languages array.
-		$languages = array();
+		$_languages = array();
 		foreach ($langs as $lang)
 		{
-			if (isset($this->_languages[$lang]))
+			if (isset($languages[$lang]))
 			{
-				$languages[$lang] = $this->_languages[$lang];
+				$_languages[$lang] = $languages[$lang];
 			}
 		}
 
 		// If found any, return them. Otherwise, we return the full array.
-		return (empty($languages)) ? $this->_languages : $languages;
+		return empty($_languages) ? $languages : $_languages;
 	}
 
 }
@@ -543,34 +530,35 @@ if ( ! function_exists('line'))
 
 if ( ! function_exists('__'))
 {
-	/**
-	 * Alias of KB_Lang::line with optional arguments.
-	 *
-	 * @since 	1.0.0
-	 * @since 	1.3.4 	Added $before and $after.
-	 *
-	 * @param 	string 	$line 	the line the retrieve.
-	 * @param 	string 	$index 	whether to look under an index.
-	 * @param 	string 	$before 	Whether to put something before the line.
-	 * @param 	string 	$after 		Whether to put something after the line.
-	 * @return 	string
-	 */
-	function __($line, $index = '', $before = '', $after = '')
-	{
-		// Shall we translate the before?
-		if ('' !== $before && 1 === sscanf($before, 'lang:%s', $b_line))
-		{
-			$before = line($b_line, $index);
-		}
+    /**
+     * Alias of KB_Lang::line with optional arguments.
+     *
+     * @since 	1.0.0
+     * @since 	1.3.4 	Added $before and $after.
+     * @since 	2.1.0 	Function ignored if using Gettext.
+     *
+     * @param 	string 	$line 		the line the retrieve.
+     * @param 	string 	$index 		whether to look under an index.
+     * @param 	string 	$before 	Whether to put something before the line.
+     * @param 	string 	$after 		Whether to put something after the line.
+     * @return 	string
+     */
+    function __($line, $index = '', $before = '', $after = '')
+    {
+        // Shall we translate the before?
+        if ('' !== $before && 1 === sscanf($before, 'lang:%s', $b_line))
+        {
+            $before = line($b_line, $index);
+        }
 
-		// Shall we translate the after?
-		if ('' !== $after && 1 === sscanf($after, 'lang:%s', $a_line))
-		{
-			$after = line($a_line, $index);
-		}
+        // Shall we translate the after?
+        if ('' !== $after && 1 === sscanf($after, 'lang:%s', $a_line))
+        {
+            $after = line($a_line, $index);
+        }
 
-		return $before.get_instance()->lang->line($line, $index).$after;
-	}
+        return $before.get_instance()->lang->line($line, $index).$after;
+    }
 }
 
 // ------------------------------------------------------------------------
@@ -582,6 +570,7 @@ if ( ! function_exists('_e'))
 	 *
 	 * @since 	1.0.0
 	 * @since 	1.3.4 	Added $before and $after.
+	 * @since 	2.1.0 	Function ignored if using Gettext.
 	 *
 	 * @param 	string 	$line 		the line the retrieve.
 	 * @param 	string 	$index 		whether to look under an index.
@@ -619,6 +608,9 @@ if ( ! function_exists('_n'))
 {
 	/**
 	 * This function is wrapper of 'KB_Lang::nline()' method.
+	 * 
+	 * @since 	2.1.0 	Function ignored if using Gettext.
+	 * 
 	 * @param	string	$singular 	The singular form of the line.
 	 * @param	string	$plural 	The plural form of the line.
 	 * @param	int 	$number 	The number used for comparison.
@@ -640,6 +632,8 @@ if ( ! function_exists('_en'))
 	 * function echoes the line directly.
 	 *
 	 * @since 	2.0.0
+	 * @since 	2.1.0 	Function ignored if using Gettext.
+	 * 
 	 * @param	string	$singular 	The singular form of the line.
 	 * @param	string	$plural 	The plural form of the line.
 	 * @param	int 	$number 	The number used for comparison.
