@@ -75,8 +75,8 @@ if ( ! function_exists('esc_js')) {
 	 * @return 	string
 	 */
 	function esc_js($string) {
-		$safe = fix_invalid_utf8($string);
-		$safe = _htmlspecialchars($safe, ENT_COMPAT);
+		$safe = convert_invalid_utf8($string);
+		$safe = deep_htmlentities($safe, ENT_COMPAT);
 		$safe = preg_replace('/&#(x)?0*(?(1)27|39);?/i', "'", stripslashes($safe));
 		$safe = str_replace("\r", '', $safe);
 		$safe = str_replace("\n", '\\n', addslashes($safe));
@@ -98,8 +98,8 @@ if ( ! function_exists('esc_html')) {
 	 * @return 	string
 	 */
 	function esc_html($string) {
-		$safe = fix_invalid_utf8($string);
-		$safe = _htmlspecialchars($safe, ENT_QUOTES);
+		$safe = convert_invalid_utf8($string);
+		$safe = deep_htmlentities($safe, ENT_QUOTES);
 		return apply_filters('esc_html', $safe, $string);
 	}
 }
@@ -118,8 +118,8 @@ if ( ! function_exists('esc_attr')) {
 	 * @return 	string
 	 */
 	function esc_attr($string) {
-		$safe = fix_invalid_utf8($string);
-		$safe = _htmlspecialchars($safe, ENT_QUOTES);
+		$safe = convert_invalid_utf8($string);
+		$safe = deep_htmlentities($safe, ENT_QUOTES);
 		return apply_filters('esc_attr', $safe, $string);
 	}
 }
@@ -138,7 +138,7 @@ if ( ! function_exists('esc_textarea')) {
 	 * @return 	string
 	 */
 	function esc_textarea($text) {
-		$safe = _htmlspecialchars($text, ENT_QUOTES);
+		$safe = deep_htmlentities($text, ENT_QUOTES);
 		return apply_filters('esc_textarea', $safe, $text);
 	}
 }
