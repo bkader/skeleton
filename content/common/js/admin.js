@@ -11,6 +11,19 @@
     csk.i18n = csk.i18n || {};
 
     /**
+     * Different Skeleton modules.
+     * @since   2.1.0
+     */
+    csk.languages = csk.languages || {};
+    csk.modules = csk.modules || {};
+    csk.plugins = csk.plugins || {};
+    csk.themes = csk.themes || {};
+    csk.i18n.languages = csk.i18n.languages || {};
+    csk.i18n.modules = csk.i18n.modules || {};
+    csk.i18n.plugins = csk.i18n.plugins || {};
+    csk.i18n.themes = csk.i18n.themes || {};
+
+    /**
      * BootBox default configuration.
      * @since   1.2.0
      */
@@ -528,6 +541,77 @@
             return csk.ui.confirm(message, function () {
                 window.location.href = href;
             });
+        });
+
+        /**
+         * Generic buttons/anchors with action.
+         * @since   2.1.0
+         *
+         * In order to user this feature, make sure all required parameters
+         * are correctly set:
+         * 1. [data-action]     Defines the action to perform.
+         * 2. [data-target]     Determines targeted element (csk.element).
+         * 3. [data-name]       The name of the element.
+         * 4. [data-endpoint] or [href]
+         */
+        $(document).on("click", "[data-action]", function (e) {
+            e.preventDefault();
+
+            /** We collect data about the clicked element. */
+            var that = $(this),
+                action = that.data("action") || -1,
+                target = that.data("target") || undefined,
+                name = that.data("name") || "this",
+                endpoint = that.data("endpoint") || that.attr("href") || undefined;
+
+            /** No action? Nothing to do... */
+            if (action <= 0) {
+                console.log("error action");
+                return false;
+            }
+
+            /** No target? Nothing to do... */
+            if (typeof target === "undefined" 
+                || !target.length 
+                || typeof csk[target] === "undefined") {
+                return false;
+            }
+
+            /** No endpoint? Nothing to do... */
+            if (typeof endpoint === "undefined" || !endpoint.length) {
+                console.log("error endpoint");
+                return false;
+            }
+
+            /** We define the confirmation message. */
+            var message = csk.i18n[target][action] || undefined;
+            if (typeof message === "undefined") {
+                message = csk.i18n[action] || undefined;
+                if (typeof message === "undefined") {
+                    message = "Are you sure you to " + action + " %s?";
+                }
+            }
+
+            /** We see if the element is within a table. */
+            var row = that.closest("tr");
+
+            /** If so, apply the opacity class "op-2". */
+            if (row.length) { row.siblings("tr").addClass("op-2"); }
+
+            /** We display a confirmation message if defined. */
+            if (typeof message !== "undefined" && message.length) {
+                csk.ui.confirm($.sprintf(message, name), function () {
+                    window.location.href = endpoint;
+                }, function () {
+                    /** We put back siblings opacity to initial state. */
+                    if (row.length) { row.siblings("tr").removeClass("op-2"); }
+                });
+                return;
+            }
+
+            /** At this point, there was no confirmation message. */
+            window.location.href = endpoint;
+            return;
         });
 
     });
