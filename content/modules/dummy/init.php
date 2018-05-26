@@ -6,19 +6,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * delete this dummy module, it's not needed.
  */
 add_action('admin_page_header', function() {
-  $message = <<<EOT
-The <strong>Dummy Module</strong> is kept to fill dashboard with dummy content, but also to show you how you can add content to it.
-Action: <code>admin_page_header</code>, so this content is visible at the top of all dashboard pages.
+	if ( ! function_exists('gettext_instance')) {
+	  $message = <<<EOT
+	The <strong>Dummy Module</strong> is kept to fill dashboard with dummy content, but also to show you how you can add content to it.
+	Action: <code>admin_page_header</code>, so this content is visible at the top of all dashboard pages.
 EOT;
+	} else {
+		$message = __('The <strong>Dummy Module</strong> is kept to fill dashboard with dummy content, but also to show you how you can add content to it.', 'dummy')."<br />";
+		$message .= __('Action: <code>admin_page_header</code>, so this content is visible at the top of all dashboard pages.', 'dummy');
+	}
 	print_alert(nl2br($message), 'warning');
 });
-// add_action('admin_page_footer', function() {
-// 	$message = <<<EOT
-// The <strong>Dummy Module</strong> is kept to fill dashboard with dummy content, but also to show you how you can add content to it.
-// Action: <code>admin_page_footer</code>, so this content is visible at the bottom of all dashboard pages.
-// EOT;
-// 	print_alert(nl2br($message), 'warning');
-// });
 
 // ------------------------------------------------------------------------
 
@@ -27,11 +25,16 @@ EOT;
  * @since 	2.1.0
  */
 add_action('admin_index_header', function() {
-	$heading = '<strong>Remove this page\'s dummy content.</strong><br />';
-	$message = <<<EOT
-The <code>dummy module</code> displays dummy content on the dashboard. Make sure to delete it on production mode.<br />
-Action: <code>admin_index_header</code>, so this alert is only visible on dashboard main page.
+	if ( ! function_exists('gettext_instance')) {
+		$heading = '<strong>Remove this page\'s dummy content.</strong><br />';
+		$message = <<<EOT
+	The <code>dummy module</code> displays dummy content on the dashboard. Make sure to delete it on production mode.<br />
+	Action: <code>admin_index_header</code>, so this alert is only visible on dashboard main page.
 EOT;
+	} else {
+		$heading = '<strong>'.__('Remove this page\'s dummy content.', 'dummy').'</strong><br >';
+		$message = __('The <code>dummy module</code> displays dummy content on the dashboard. Make sure to delete it on production mode.<br />Action: <code>admin_index_header</code>, so this alert is only visible on dashboard main page.', 'dummy');
+	}
 	print_alert($heading.$message, 'info');
 });
 
