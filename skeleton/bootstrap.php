@@ -465,3 +465,56 @@ if (defined('USE_GETTEXT') && true === USE_GETTEXT)
 {
 	require_once(KBPATH.'third_party/bkader/gettext/class-gettext.php');
 }
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('_start_cache_object'))
+{
+	/**
+	 * Starts Skeleton cache object. internal access only.
+	 *
+	 * Make sure to call this function at the beginning of application 
+	 * "bootstrap.php" file.
+	 * 
+	 * @since 	2.1.0
+	 * 
+	 * @access 	private
+	 * @param 	array 	$groups 	Groups to initialize (Optional)
+	 * @return 	void
+	 */
+	function _start_cache_object($groups = null)
+	{
+		if ( ! function_exists('cs_cache_init'))
+		{
+			require_once(KBPATH.'third_party/bkader/class-cache-object.php');
+		}
+
+		if (function_exists('cs_cache_init'))
+		{
+			// We start the cache object.
+			cs_cache_init();
+
+			if (function_exists('cs_cache_add_groups'))
+			{
+				// Default groups.
+				$default = array(
+					'languages',
+					'modules',
+					'options',
+					'plugins',
+					'users',
+				);
+
+				if (is_array($groups)) {
+					$groups = array_merge($default, $groups);
+				} elseif (is_string($groups)) {
+					$groups .= ','.implode(',', $default);
+				} else {
+					$groups = $default;
+				}
+
+				cs_cache_add_groups($groups);
+			}
+		}
+	}
+}

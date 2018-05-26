@@ -16,6 +16,13 @@ defined('USE_GETTEXT') OR define('USE_GETTEXT', false);
  */
 require_once(KBPATH.'bootstrap.php');
 
+/**
+ * Inspired by WordPress cache mechanism, the CS_Cache_object was created in 
+ * order to cache objects and anything cross-files.
+ * @since 	2.1.0
+ */
+// _start_cache_object(array('group1', 'group2'));
+
 // ------------------------------------------------------------------------
 // YOU MAY EDIT LINES BELOW.
 // ------------------------------------------------------------------------
