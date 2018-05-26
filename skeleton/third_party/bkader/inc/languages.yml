@@ -3,6 +3,7 @@ arabic: # Arabic
   name_en: Arabic
   folder: arabic
   locale: ar-DZ
+  gettext: ar_DZ
   direction: rtl
   code: ar
   flag: dz
@@ -14,6 +15,7 @@ armenian: # Armenian
   name_en: Armenian
   folder: armenian
   locale: hy-AM
+  gettext: hy_AM
   direction: ltr
   code: hy
   flag: AM
@@ -25,6 +27,7 @@ czech: # Czech
   name_en: Czech
   folder: czech
   locale: cs-CZ
+  gettext: cs_CZ
   direction: ltr
   code: cs
   flag: cz
@@ -36,6 +39,7 @@ english: # English
   name_en: English
   folder: english
   locale: en-US
+  gettext: en_US
   direction: ltr
   code: en
   flag: us
@@ -47,6 +51,7 @@ french: # French
   name_en: French
   folder: french
   locale: fr-FR
+  gettext: fr_FR
   direction: ltr
   code: fr
   flag: fr
@@ -58,6 +63,7 @@ german: # German
   name_en: German
   folder: german
   locale: de-DE
+  gettext: de_DE
   direction: ltr
   code: de
   flag: de
@@ -69,6 +75,7 @@ greek: # Greek
   name_en: Greek
   folder: greek
   locale: el-GR
+  gettext: el_GR
   direction: ltr
   code: el
   flag: gr
@@ -80,6 +87,7 @@ hindi: # Hindi
   name_en: Hindi
   folder: hindi
   locale: hi-IN
+  gettext: hi_IN
   direction: ltr
   code: hi
   flag: in
@@ -91,6 +99,7 @@ italian: # Italian
   name_en: Italian
   folder: italian
   locale: it-IT
+  gettext: it_IT
   direction: ltr
   code: it
   flag: it
@@ -102,6 +111,7 @@ japanese: # Japanese
   name_en: Japanese
   folder: japanese
   locale: ja-JP
+  gettext: ja_JP
   direction: ltr
   code: ja
   flag: jp
@@ -113,6 +123,7 @@ persian: # Persian
   name_en: Persian
   folder: persian
   locale: fa-IR
+  gettext: fa_IR
   direction: rtl
   code: fa
   flag: ir
@@ -124,6 +135,7 @@ portuguese: # Portuguese
   name_en: Portuguese
   folder: portuguese
   locale: pt-PT
+  gettext: pt_PT
   direction: ltr
   code: pt
   flag: pt
@@ -135,6 +147,7 @@ russian: # Russian
   name_en: Russian
   folder: russian
   locale: ru-RU
+  gettext: ru_RU
   direction: ltr
   code: ru
   flag: ru
@@ -146,6 +159,7 @@ spanish: # Spanish
   name_en: Spanish
   folder: spanish
   locale: es-ES
+  gettext: es_ES
   direction: ltr
   code: es
   flag: es
@@ -157,6 +171,7 @@ turkish: # Turkish
   name_en: Turkish
   folder: turkish
   locale: tr-TR
+  gettext: tr_TR
   direction: ltr
   code: tr
   flag: tr
@@ -167,7 +182,8 @@ ukrainian: # Ukrainian
   name: українська мова
   name_en: Ukrainian
   folder: ukrainian
-  locale: uk-ua
+  locale: uk-UA
+  gettext: uk_UA
   direction: ltr
   code: uk
   flag: ua
@@ -179,6 +195,7 @@ vietnamese: # Vietnamese
   name_en: Vietnamese
   folder: vietnamese
   locale: vi-VN
+  gettext: vi_VN
   direction: ltr
   code: vi
   flag: vn

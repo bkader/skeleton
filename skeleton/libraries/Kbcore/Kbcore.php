@@ -121,7 +121,6 @@ class Kbcore extends CI_Driver_Library
 
 		// Store language in session and change config item.
 		$this->_set_language();
-		$this->ci->config->set_item('language', $this->ci->session->language);
 
 		// Initialize library drivers.
 		foreach ($this->valid_drivers as $driver)
@@ -818,6 +817,7 @@ class Kbcore extends CI_Driver_Library
 	 * @since 	1.0.0
 	 * @since 	1.3.3 	Rewritten to fix issue with languages list when only
 	 *         			a single language is available.
+	 * @since 	2.1.0 	Instead of listing all language, we only list available ones.
 	 *
 	 * @access 	private
 	 * @param 	none
@@ -825,39 +825,61 @@ class Kbcore extends CI_Driver_Library
 	 */
 	private function _set_language()
 	{
-		// Site available languages.
-		$site_languages = $this->ci->config->item('languages');
+		// Site available languages and their details.
+		$site_languages = $this->options->item('languages', array('english'));
+		$languages = $this->ci->lang->languages($site_languages);
 
-		/**
-		 * If the language is already stored in session and available, 
-		 * nothing to do. Otherwise, proceed to set the session key.
-		 */
-		if ($this->ci->session->language 
-			&& in_array($this->ci->session->language, $site_languages))
-		{
-			return;
-		}
-		
-		// Hold the default language.
+		// Hold the current and default language.
+		$current = $this->ci->session->language;
 		$default = $this->ci->config->item('language');
 
-		// All languages with details to search in.
-		$languages = $this->ci->lang->languages();
-
-		// Attempt to detect user's language.
-		$code = substr($this->ci->input->server('HTTP_ACCEPT_LANGUAGE', true), 0, 2);
-
-		foreach ($languages as $folder => $details)
+		/**
+		 * In case the language is not stored in session or is not available;
+		 * we attempt to detect clients language. If available, we use it
+		 * instead of the default language.
+		 */
+		if ( ! $this->ci->session->language 
+			OR ! in_array($this->ci->session->language, $site_languages))
 		{
-			if ($details['code'] === $code && in_array($folder, $site_languages))
+			$code = substr($this->ci->input->server('HTTP_ACCEPT_LANGUAGE', true), 0, 2);
+
+			foreach ($languages as $folder => $lang)
 			{
-				$default = $folder;
-				break;
+				/**
+				 * In order for the language to be used, the code must exists and
+				 * the language must be available.
+				 */
+				if ((isset($lang['code']) && $code === $lang['code']) 
+					&& in_array($folder, $site_languages))
+				{
+					$current = $folder;
+					break;
+				}
+
+				// Otherwise, fall-back to default language.
+				$current = $default;
 			}
+
+			// We set/update the session.
+			$this->ci->session->set_userdata('language', $current);
 		}
 
-		// Now we setup the session data.
-		$this->ci->session->set_userdata('language', $default);
+		// We make sure to add "current_language".
+		$details = $languages[$current];
+		$this->ci->config->set_item('current_language', $details);
+		
+		// Format the locale to use with gettext, if we are using it.
+		if (true === $this->ci->lang->gettext)
+		{
+			gettext_instance()->setlocale($details['gettext']);
+
+			// We set our admin domain as default on the dashboard.
+			if ($this->ci->router->is_admin())
+			{
+				gettext_instance()->add_location(KBPATH.'language');
+				gettext_instance()->textdomain('admin');
+			}
+		}
 	}
 
 	// ------------------------------------------------------------------------

@@ -453,3 +453,15 @@ if ( ! function_exists('_csk_reserved_module')) {
 		return (empty($modules)) ? false : in_array($module, $modules);
 	}
 }
+
+// ------------------------------------------------------------------------
+
+/**
+ * See if the user decided to use PHP-Gettext instead of PHP Array
+ * for languages lines.
+ * @since 	2.1.0
+ */
+if (defined('USE_GETTEXT') && true === USE_GETTEXT)
+{
+	require_once(KBPATH.'third_party/bkader/gettext/class-gettext.php');
+}

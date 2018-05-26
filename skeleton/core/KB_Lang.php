@@ -61,6 +61,12 @@ class KB_Lang extends CI_Lang
 	protected $fallback = 'english';
 
 	/**
+	 * Flag to check whether we should use PHP-Gettext.
+	 * @since 	2.1.0
+	 */
+	public $gettext = false;
+
+	/**
 	 * Class constructor.
 	 * @return 	void
 	 */
@@ -70,6 +76,14 @@ class KB_Lang extends CI_Lang
 
 		$this->config =& load_class('Config', 'core');
 		$this->router =& load_class('Router', 'core');
+
+		/**
+		 * In order to use PHP-Gettext, the following must be true:
+		 * 1. USE_GETTEXT constant is defined and set to TRUE.
+		 * 2. "gettext_instance" function exists.
+		 */
+		$this->gettext = (defined('USE_GETTEXT') && true === USE_GETTEXT);
+		$this->gettext = function_exists('gettext_instance');
 	}
 
 	// --------------------------------------------------------------------
@@ -266,6 +280,15 @@ class KB_Lang extends CI_Lang
 	public function line($line, $index = '')
 	{
 		/**
+		 * See if we are are using PHP-Gettext.
+		 * @since 	2.1.0
+		 */
+		if ($this->gettext && false === stripos($line, 'csk_'))
+		{
+			return __($line, $index); // $index is used as the text domain.
+		}
+
+		/**
 		 * Because some lines start with CSK_ (uppercased), we make sure
 		 * to format the $line before we proceed.
 		 */
@@ -293,18 +316,11 @@ class KB_Lang extends CI_Lang
 			log_message('error', 'Could not find the language line "'.$line.'"');
 
 			/**
-			 * We use inflector helper to avoid the FIXME thing on production.
-			 * @since   2.0.0
+			 * Both "inflect" and "FIXME" use were dropped. We use the $line
+			 * as it is, as the line to return.
+			 * @since 	2.1.0
 			 */
-			if ('production' === ENVIRONMENT)
-			{
-				function_exists('humanize') OR get_instance()->load->helper('inflector');
-				$value = humanize($line);
-			}
-			else
-			{
-				$value = "FIXME('{$line}')";
-			}
+			$value = $line;
 		}
 
 		return $value;
@@ -328,6 +344,16 @@ class KB_Lang extends CI_Lang
 	 */
 	public function nline(string $singular, string $plural, int $number, $index = '')
 	{
+		/**
+		 * See if we are are using PHP-Gettext.
+		 * @since 	2.1.0
+		 */
+		if ($this->gettext && false === stripos($line, 'csk_'))
+		{
+			// $index is used as the text domain.
+			return _n($singular, $plural, $number, $index);
+		}
+
 		return ($number == 1) 
 			? $this->line($singular, $index)
 			: $this->line($plural, $index);
@@ -343,59 +369,95 @@ class KB_Lang extends CI_Lang
 	 */
 	public function lang()
 	{
+		// Make the method remember the language.
 		static $lang;
 
+		// Not yet cached?
 		if (empty($lang))
 		{
-			$lang = $this->languages($this->config->item('language'));
+			// "current_language" item should have been set by Kbcore library.
+			$lang = $this->config->item('current_language');
+
+			// In case it wasn't set, we use a backup a plan.
+			if ( ! $lang)
+			{
+				/**
+				 * The language folder should have been stored in SESSION, in 
+				 * case it was not, we use default language.
+				 */
+				$folder = isset($_SESSION['language'])
+					? $_SESSION['language']
+					: $this->config->item('language');
+
+				$lang = $this->languages($folder);
+
+				// If the language was found, we use it.
+				if (isset($lang[$folder]))
+				{
+					$lang = $lang[$folder];
+				}
+				// Otherwise, we use English as a backup plan.
+				else
+				{
+					$lang = array(
+						'name'      => 'English',
+						'name_en'   => 'English',
+						'folder'    => 'english',
+						'locale'    => 'en-US',
+						'gettext'   => 'en_US',
+						'direction' => 'ltr',
+						'code'      => 'en',
+						'flag'      => 'us',
+					);
+				}
+			}
 		}
 
-		// Collect function arguments.
-		$args = func_get_args();
+		// The language was not found?
+		if ( ! $lang)
+		{
+			return false;
+		}
 
-		// Empty? Return the current language.
-		if (empty($args))
+		// Not arguments passed? Return the language folder.
+		if (empty($args = func_get_args()))
 		{
 			return $lang['folder'];
 		}
 
-		// The language is already cached? Use it. Otherwise load it.
+		// Prepare the the final returned result.
 		$return = $lang;
-
-		// Not found ?
-		if ( ! $return)
-		{
-			return FALSE;
-		}
 
 		// Get rid of nasty array.
 		(is_array($args[0])) && $args = $args[0];
+		$args_count = count($args);
 
 		// In case of a boolean, we return all language details.
-		if (is_bool($args[0]) && $args[0] === true)
+		if ($args_count == 1 && $args[0] === true)
 		{
 			return $return;
 		}
 
 		// In case of a single item and found, return it.
-		if (count($args) === 1 && isset($return[$args[0]]))
+		if ($args_count === 1 && isset($return[$args[0]]))
 		{
 			return $return[$args[0]];
 		}
 
-		$_return = array();
-
-		// Loop through language details and get only what's requested.
-		foreach ($args as $arg)
+		// Multiple arguments?
+		if ($args_count >= 2)
 		{
-			if (isset($return[$arg]))
+			$_return = array();
+
+			foreach ($args as $arg)
 			{
-				$_return[$arg] = $return[$arg];
+				isset($return[$arg]) && $_return[$arg] = $return[$arg];
 			}
+
+			empty($_return) OR $return = $_return;
 		}
 
-		// Return the result if any.
-		return ($_return) ? $_return : $return;
+		return $return;
 	}
 
 	// ------------------------------------------------------------------------
@@ -433,35 +495,50 @@ class KB_Lang extends CI_Lang
 			}
 		}
 
+		$return = $languages;
+
 		// No argument? return all languages.
 		if (null === $langs)
 		{
-			return $languages;
+			return $return;
 		}
 
 		// Format our requested languages.
 		( ! is_array($langs)) && $langs = array_map('trim', explode(',', $langs));
 
-		// A single language is requested? Return it.
-		if (count($langs) == 1 && isset($languages[$langs[0]]))
+		if ( ! empty($langs))
 		{
-			return $languages[$langs[0]];
-		}
-
-		// Build requested languages array.
-		$_languages = array();
-		foreach ($langs as $lang)
-		{
-			if (isset($languages[$lang]))
+			// Build requested languages array.
+			$_languages = array();
+			foreach ($langs as $lang)
 			{
-				$_languages[$lang] = $languages[$lang];
+				if (isset($languages[$lang]))
+				{
+					$_languages[$lang] = $languages[$lang];
+				}
 			}
+
+			empty($_languages) OR $return = $_languages;
 		}
 
-		// If found any, return them. Otherwise, we return the full array.
-		return empty($_languages) ? $languages : $_languages;
+		return $return;
 	}
 
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('langinfo'))
+{
+	/**
+	 * Returns the name or details about the language currently in use.
+	 * @param 	mixed 	$key what to retrieve.
+	 * @return 	mixed
+	 */
+	function langinfo($key = null)
+	{
+		return get_instance()->lang->lang($key);
+	}
 }
 
 // ------------------------------------------------------------------------
