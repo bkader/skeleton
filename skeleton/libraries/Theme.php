@@ -50,11 +50,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @since 		1.3.3 	changed "metadata" to "meta_tags" to avoid conflict with
- *          			the "Kbcore_metadata" library and added themes count.
- * @since 		1.4.0 	Added "the_doctype" filter and moved down body class filters.
- * @since 		1.4.1 	All HTML is compressed except for <pre> tags content.
- * @version 	1.4.1
+ * @version 	2.1.0
  */
 class Theme
 {
@@ -564,7 +560,7 @@ EOT;
 			return false;
 		}
 
-		$this->_theme_path = realpath($theme_path).DS;
+		$this->_theme_path = normalize_path($theme_path);
 
 		// Define a constant that can be used everywhere.
 		defined('THEME_PATH') OR define('THEME_PATH', $this->_theme_path);
@@ -579,7 +575,7 @@ EOT;
 		if (false === ($functions = $this->theme_path('functions.php')))
 		{
 			log_message('error', "Unable to locate the theme's 'functions.php' file: {$this->_theme}");
-			show_error("Unable to locate the theme's 'functions.php' file.");
+			show_error(__("Unable to locate the theme's 'functions.php' file."));
 		}
 
 		require_once($functions);
@@ -602,56 +598,63 @@ EOT;
 	 * @param 	none
 	 * @return 	array of objects.
 	 */
-	public function get_themes()
+	public function get_themes($details = false)
 	{
-		// Prepare an empty array of folders.
-		$folders = array();
+		static $themes;
 
-		// Let's go through folders and check if there are any.
-		$themes_path = $this->themes_path();
-		if ($handle = opendir($themes_path))
+		if (empty($themes))
 		{
-			$_to_eliminate = array(
-				'.',
-				'..',
-				'index.html',
-				'.htaccess',
-				'__MACOSX', // Added as of v1.3.4
-			);
+			// Prepare an empty array of folders.
+			$themes = array();
 
-			while (false !== ($file = readdir($handle)))
+			// Let's go through folders and check if there are any.
+			$themes_path = $this->themes_path();
+			if ($handle = opendir($themes_path))
 			{
-				if (true === is_dir($themes_path.DS.$file) 
-					&& ! in_array($file, $_to_eliminate))
+				$_to_eliminate = array(
+					'.',
+					'..',
+					'index.html',
+					'.htaccess',
+					'__MACOSX', // Added as of v1.3.4
+				);
+
+				while (false !== ($file = readdir($handle)))
 				{
-					$folders[] = $file;
+					if (true === is_dir($themes_path.'/'.$file) 
+						&& ! in_array($file, $_to_eliminate))
+					{
+						$themes[] = $file;
+					}
 				}
 			}
 		}
 
+		$return = $themes;
+
 		// If there are any folders present, we get themes details.
-		if ( ! empty($folders))
+		if ($details && $themes)
 		{
-			foreach ($folders as $index => $folder)
+			foreach ($return as $index => $folder)
 			{
 				// Change to use style.css file instead of manifest.json.
-				if (false !== is_file($themes_path.DS.$folder.DS.'style.css'))
+				if (false !== is_file($themes_path.'/'.$folder.'/'.'style.css'))
 				{
-					$folders[$folder] = $this->_get_theme_details($folder);
+					$return[$folder] = $this->_get_theme_details($folder);
 					$this->_themes++;
 				}
-				unset($folders[$index]);
+				unset($return[$index]);
 			}
 
 			/**
 			 * Fires onces all themes details were retrieved.
 			 * @since 	1.4.0
 			 */
-			$folders = apply_filters('get_themes', $folders);
+			$return = apply_filters('get_themes', $return);
 		}
 
 		// Now we return the final result.
-		return $folders;
+		return $return;
 	}
 
 	// --------------------------------------------------------------------
@@ -669,10 +672,10 @@ EOT;
 	private function _get_theme_details($folder)
 	{
 		// Prepare the path to the "style.css" file and make sure it exists.
-		$theme_css = realpath(FCPATH."{$this->_themes_dir}/{$folder}/style.css");
+		$theme_css = $this->themes_path($this->_theme.'/style.css');
 		if (false === $theme_css)
 		{
-			show_error("Theme missing CSS file: {$folder}.");
+			show_error(sprintf(__('Theme missing CSS file: %s.'), $folder));
 		}
 
 		// Load our custom files helper to get file info.
@@ -684,7 +687,7 @@ EOT;
 		if (empty($css_headers))
 		{
 			log_message('error', 'Theme CSS file is missing details: {$folder}.');
-			show_error("Theme CSS file is missing details: {$folder}.");
+			show_error(sprintf(__('Theme CSS file is missing details: %s.'), $folder));
 		}
 
 		// Prepare theme file headers and fill them.
@@ -715,7 +718,7 @@ EOT;
 
 		// We make sure to finally add the folder name and path to headers.
 		$headers['folder'] = $folder;
-		$headers['full_pah'] = $this->themes_path($folder).DS;		
+		$headers['full_pah'] = $this->themes_path($folder);
 
 		// Let's see if we shall translate the name and description.
 		(empty($headers['language'])) && $headers['language'] = 'language';
@@ -783,23 +786,14 @@ EOT;
 	 */
 	public function theme_details($key = null)
 	{
-		// Already cached? Use it.
-		if (isset($this->_theme_details))
-		{
-			$return = $this->_theme_details;
-		}
-		else
+		if ( ! isset($this->_theme_details))
 		{
 			$this->_theme_details = $this->_get_theme_details($this->_theme);
-			$return = $this->_theme_details;
 		}
 
-		if (false !== $return)
-		{
-			return (isset($return[$key])) ? $return[$key] : $return;
-		}
+		$return = $this->_theme_details;
 
-		return false;
+		return ($key && isset($return[$key])) ? $return[$key] : $return;
 	}
 
 	// --------------------------------------------------------------------
@@ -854,9 +848,32 @@ EOT;
 	 */
 	public function themes_path($uri = '')
 	{
-		$path = FCPATH.$this->_themes_dir;
-		(empty($uri)) OR $path .= '/'.$uri;
-		return realpath($path);
+		// Make sure to remember the path and requested paths.
+		static $path, $cached_paths = array();
+
+		empty($path) && $path = FCPATH.$this->_themes_dir;
+
+		// The path to return.
+		$return = $path;
+
+		// Format the URI.
+		if ( ! empty($uri))
+		{
+			// If not cached, cache it first.
+			if ( ! isset($cached_paths[$uri]))
+			{
+				$return = file_exists($path.'/'.$uri) ? normalize_path($path.'/'.$uri) : false;
+				$cached_paths[$uri] = $return;
+			}
+
+			$return = $cached_paths[$uri];
+		}
+		else
+		{
+			$return = file_exists($path) ? normalize_path($path) : false;
+		}
+
+		return $return;
 	}
 
 	// --------------------------------------------------------------------
@@ -908,9 +925,35 @@ EOT;
 	 */
 	public function theme_url($uri = '')
 	{
-		$base_url = ($this->cdn_enabled()) ? $this->_cdn_server : base_url();
-		$base_url .= $this->_themes_dir.'/'.$this->_theme.'/'.$uri;
-		return $base_url;
+		// We make sure to cache base URL and all possible URIs.
+		static $base_url, $cached_uris;
+
+		if (empty($base_url))
+		{
+			// Use site base URL or provided CDN server.
+			$base_url = path_join(
+				$this->cdn_enabled() ? $this->_cdn_server : base_url(),
+				$this->_themes_dir.'/'.$this->_theme
+			);
+		}
+
+		// The URL to return.
+		$return = $base_url;
+
+		// Append $uri?
+		if ( ! empty($uri))
+		{
+			// We make sure to cache it first.
+			if ( ! isset($cached_uris[$uri]))
+			{
+				$cached_uris[$uri] = $return.'/'.$uri;
+			}
+
+			// Update $return before returning it.
+			$return = $cached_uris[$uri];
+		}
+
+		return $return;
 	}
 
 	// --------------------------------------------------------------------
@@ -926,7 +969,34 @@ EOT;
 	 */
 	public function theme_path($uri = '')
 	{
-		return realpath($this->_theme_path.$uri);
+		// Make sure to remember the path and requested paths.
+		static $path, $cached_paths = array();
+
+		if (empty($path))
+		{
+			$path = path_join(FCPATH.$this->_themes_dir, $this->_theme);
+		}
+
+		$return = $path;
+
+		// Format the URI.
+		if ( ! empty($uri))
+		{
+			// If not cached, cache it first.
+			if ( ! isset($cached_paths[$uri]))
+			{
+				$return = file_exists($path.'/'.$uri) ? normalize_path($path.'/'.$uri) : false;
+				$cached_paths[$uri] = $return;
+			}
+
+			$return = $cached_paths[$uri];
+		}
+		else
+		{
+			$return = file_exists($path) ? normalize_path($path) : false;
+		}
+
+		return $return;
 	}
 
 	// --------------------------------------------------------------------
@@ -941,9 +1011,35 @@ EOT;
 	 */
 	public function upload_url($uri = '')
 	{
-		$base_url = ($this->cdn_enabled()) ? $this->_cdn_server : base_url();
-		$base_url .= $this->_uploads_dir.'/'.$uri;
-		return $base_url;
+		// We make sure to cache base URL and all possible URIs.
+		static $base_url, $cached_uris;
+
+		if (empty($base_url))
+		{
+			// Use site base URL or provided CDN server.
+			$base_url = path_join(
+				$this->cdn_enabled() ? $this->_cdn_server : base_url(),
+				$this->_uploads_dir
+			);
+		}
+
+		// The URL to return.
+		$return = $base_url;
+
+		// Append $uri?
+		if ( ! empty($uri))
+		{
+			// We make sure to cache it first.
+			if ( ! isset($cached_uris[$uri]))
+			{
+				$cached_uris[$uri] = $base_url.'/'.$uri;
+			}
+
+			// Update $return before returning it.
+			$return = $cached_uris[$uri];
+		}
+
+		return $return;
 	}
 
 	// --------------------------------------------------------------------
@@ -960,16 +1056,32 @@ EOT;
 	 */
 	public function upload_path($uri = '')
 	{
-		$upload_path = FCPATH.$this->_uploads_dir;
+		// Make sure to remember the path and requested paths.
+		static $path, $cached_paths = array();
 
-		// Attempt to create the directory.
-		if (true !== is_dir($upload_path) 
-			&& false === mkdir($upload_path, 0755, true))
+		empty($path) && $path = FCPATH.$this->_uploads_dir;
+
+		// The path to return.
+		$return = $path;
+
+		// Format the URI.
+		if ( ! empty($uri))
 		{
-			return false;
+			// If not cached, cache it first.
+			if ( ! isset($cached_paths[$uri]))
+			{
+				$return = file_exists($path.'/'.$uri) ? normalize_path($path.'/'.$uri) : false;
+				$cached_paths[$uri] = $return;
+			}
+
+			$return = $cached_paths[$uri];
+		}
+		else
+		{
+			$return = file_exists($path) ? normalize_path($path) : false;
 		}
 
-		return realpath($upload_path.'/'.$uri);
+		return $return;
 	}
 
 	// --------------------------------------------------------------------
@@ -982,9 +1094,35 @@ EOT;
 	 */
 	public function common_url($uri = '')
 	{
-		$base_url = ($this->cdn_enabled()) ? $this->_cdn_server : base_url();
-		$base_url .= $this->_common_dir.'/'.$uri;
-		return $base_url;
+		// We make sure to cache base URL and all possible URIs.
+		static $base_url, $cached_uris;
+
+		if (empty($base_url))
+		{
+			// Use site base URL or provided CDN server.
+			$base_url = path_join(
+				$this->cdn_enabled() ? $this->_cdn_server : base_url(),
+				$this->_common_dir
+			);
+		}
+
+		// The URL to return.
+		$return = $base_url;
+
+		// Append $uri?
+		if ( ! empty($uri))
+		{
+			// We make sure to cache it first.
+			if ( ! isset($cached_uris[$uri]))
+			{
+				$cached_uris[$uri] = $base_url.'/'.$uri;
+			}
+
+			// Update $return before returning it.
+			$return = $cached_uris[$uri];
+		}
+
+		return $return;
 	}
 
 	// --------------------------------------------------------------------
@@ -997,7 +1135,32 @@ EOT;
 	 */
 	public function common_path($uri = '')
 	{
-		return realpath(FCPATH.$this->_common_dir.'/'.$uri);
+		// Make sure to remember the path and requested paths.
+		static $path, $cached_paths = array();
+
+		empty($path) && $path = FCPATH.$this->_common_dir;
+
+		// The path to return.
+		$return = $path;
+
+		// Format the URI.
+		if ( ! empty($uri))
+		{
+			// If not cached, cache it first.
+			if ( ! isset($cached_paths[$uri]))
+			{
+				$return = file_exists($path.'/'.$uri) ? normalize_path($path.'/'.$uri) : false;
+				$cached_paths[$uri] = $return;
+			}
+
+			$return = $cached_paths[$uri];
+		}
+		else
+		{
+			$return = file_exists($path) ? normalize_path($path) : false;
+		}
+
+		return $return;
 	}
 
 	// --------------------------------------------------------------------
@@ -1493,7 +1656,7 @@ EOT;
 		$handle = strtolower($handle);
 
 		/**
-		 * If the file is a full url (cdn or using get_theme_url(..))
+		 * If the file is a full URL (cdn or using get_theme_url(..))
 		 * we use as it is, otherwise, we force get_theme_url()
 		 */
 		if (false === filter_var($file, FILTER_VALIDATE_URL))
@@ -1658,7 +1821,7 @@ EOT;
 		$handle = strtolower($handle);
 
 		/**
-		 * If the file is a full url (cdn or using get_theme_url(..))
+		 * If the file is a full URL (cdn or using get_theme_url(..))
 		 * we use as it is, otherwise, we force get_theme_url()
 		 */
 		if (false === filter_var($file, FILTER_VALIDATE_URL))
@@ -2640,6 +2803,7 @@ EOT;
 	 *
 	 * @since 	1.0.0
 	 * @since 	1.3.3 	Fixed issue with language details.
+	 * @since 	2.10 	Use config item and make sure to cache the language first.
 	 * 
 	 * @access 	public
 	 * @param 	string 	$key 	The key to return.
@@ -2647,13 +2811,9 @@ EOT;
 	 */
 	public function language($key = null)
 	{
-		// Get the folder of the language first.
-		$folder = ($this->ci->session->language)
-			? $this->ci->session->language
-			: $this->ci->config->item('language');
-
-		$return = $this->ci->lang->languages($folder);
-		return (isset($return[$key])) ? $return[$key] : $return;
+		static $language;
+		empty($language) && $language = $this->ci->config->item('current_language');
+		return (isset($language[$key])) ? $language[$key] : $language;
 	}
 
 	// --------------------------------------------------------------------
@@ -2923,7 +3083,7 @@ EOT;
 
 	/**
 	 * Returns true if CDN use is enable and
-	 * a CDN url is set.
+	 * a CDN URL is set.
 	 * @access 	public
 	 * @param 	bool 	$check_server 	whether to check your provided CDN or not.
 	 * @return 	bool
@@ -3163,7 +3323,7 @@ EOT;
 		}
 		else
 		{
-			show_error("The following view file could not be found anywhere in your theme folder: <br />{$file_path}\\{$file}");
+			show_error(sprintf(__('The following view file could not be found anywhere in your theme folder: %s'), normalize_path($file_path.DS.$file)));
 		}
 
 		return $output;
@@ -3601,194 +3761,6 @@ if ( ! function_exists('is_cdn_enabled'))
 	function is_cdn_enabled($check_server = true)
 	{
 		return get_instance()->theme->cdn_enabled($check_server);
-	}
-}
-
-/*=================================================================
-=            MODULES, CONTROLLERS AND METHODS CHECKERS            =
-=================================================================*/
-
-if ( ! function_exists('is_module'))
-{
-	/**
-	 * Checks if the page belongs to a given module.
-	 * If no argument is passed, it checks if we are
-	 * using a module.
-	 * You may pass a single string, mutliple comma-
-	 * separated string or an array.
-	 * @param   string|array.
-	 */
-	function is_module($modules = null)
-	{
-		// Make sure the fetch_module exists.
-		if ( ! method_exists(get_instance()->router, 'fetch_module'))
-		{
-			return false;
-		}
-
-		// If no modules provided, we make sure we are on a module.
-		if ($modules === null)
-		{
-			return (get_instance()->theme->module !== null);
-		}
-
-		/**
-		 * Doing the following makes it possible to
-		 * check for multiple modules.
-		 */
-		if ( ! is_array($modules))
-		{
-			$modules = array_map('trim', explode(',', $modules));
-		}
-
-		// Compare between modules names.
-		return (in_array(get_instance()->router->fetch_module(), $modules));
-	}
-}
-
-// --------------------------------------------------------------------
-
-if ( ! function_exists('is_controller'))
-{
-	/**
-	 * Checks if the page belongs to a given controller.
-	 * @return 	bool
-	 */
-	function is_controller($controllers = null)
-	{
-		if ( ! is_array($controllers))
-		{
-			$controllers = array_map('trim', explode(',', $controllers));
-		}
-
-		// Compare between controllers names.
-		return (in_array(get_instance()->router->fetch_class(), $controllers));
-	}
-}
-
-// --------------------------------------------------------------------
-
-if ( ! function_exists('is_method'))
-{
-	/**
-	 * Checks if the page belongs to a given method.
-	 * @return 	bool
-	 */
-	function is_method($methods = null)
-	{
-		if ( ! is_array($methods))
-		{
-			$methods = array_map('trim', explode(',', $methods));
-		}
-
-		// Compare between methods names.
-		return (in_array(get_instance()->router->fetch_method(), $methods));
-	}
-}
-
-// --------------------------------------------------------------------
-
-if ( ! function_exists('is_admin'))
-{
-	/**
-	 * This function returns TRUE if we are on the admin controller.
-	 * @since 	1.0.0
-	 * @since 	2.0.0 	The method was moved from Theme class to KB_Router.
-	 * @return boolean
-	 */
-	function is_admin()
-	{
-		return get_instance()->router->is_admin();
-	}
-}
-
-/*================================================================
-=            MODULES, CONTROLLERS AND METHODS GETTERS            =
-================================================================*/
-
-if ( ! function_exists('get_the_module'))
-{
-	/**
-	 * Returns the current module's name.
-	 * @return 	string
-	 */
-	function get_the_module()
-	{
-		$CI =& get_instance();
-
-		return (method_exists($CI->router, 'fetch_module'))
-			? $CI->router->fetch_module()
-			: null;
-	}
-}
-
-// --------------------------------------------------------------------
-
-if ( ! function_exists('the_module'))
-{
-	/**
-	 * Returns the current module's name.
-	 * @return 	void
-	 */
-	function the_module()
-	{
-		echo get_the_module();
-	}
-}
-
-// --------------------------------------------------------------------
-
-if ( ! function_exists('get_the_controller'))
-{
-	/**
-	 * Returns the current controller's name.
-	 * @return 	string
-	 */
-	function get_the_controller()
-	{
-		return get_instance()->router->fetch_class();
-	}
-}
-
-// --------------------------------------------------------------------
-
-if ( ! function_exists('the_controller'))
-{
-	/**
-	 * Returns the current controller's name.
-	 * @return 	void
-	 */
-	function the_controller()
-	{
-		echo get_the_controller();
-	}
-}
-
-// --------------------------------------------------------------------
-
-if ( ! function_exists('get_the_method'))
-{
-	/**
-	 * Returns the current method's name.
-	 * @return 	string
-	 */
-	function get_the_method()
-	{
-		return get_instance()->router->fetch_method();
-	}
-}
-
-// --------------------------------------------------------------------
-
-if ( ! function_exists('the_method'))
-{
-	/**
-	 * Returns the current method's name.
-	 * @return 	void
-	 */
-	function the_method()
-	{
-		echo get_the_method();
 	}
 }
 
@@ -4744,23 +4716,6 @@ if ( ! function_exists('theme_get_var'))
 	function theme_get_var($name, $index = null)
 	{
 		return get_instance()->theme->get($name, $index);
-	}
-}
-
-/*==========================================
-=            LANGUAGE FUNCTIONS            =
-==========================================*/
-
-if ( ! function_exists('langinfo'))
-{
-	/**
-	 * Return details about the current language.
-	 * @param 	string
-	 * @return 	mixed 	Array of language details or selected key.
-	 */
-	function langinfo($key = null)
-	{
-		return get_instance()->theme->language($key);
 	}
 }
 

@@ -100,6 +100,7 @@ class KB_Router extends CI_Router
 		'routes'       => array(),
 		'admin_menu'   => null,
 		'admin_order'  => 0,
+		'textdomain'   => null,
 		'translations' => array(),
 	);
 
@@ -470,7 +471,7 @@ class KB_Router extends CI_Router
 	public function _load_modules()
 	{
 		// Make sure we have some enabled modules first.
-		$active = $this->active_modules();
+		$active = $this->active_modules(true);
 		if (empty($active))
 		{
 			return;
@@ -479,22 +480,22 @@ class KB_Router extends CI_Router
 		// Prepare our list of modules.
 		$modules = $this->list_modules();
 
-		foreach ($active as $folder)
+		foreach ($active as $folder => $m)
 		{
 			// Module enabled but folder missing? Nothing to do.
-			if ( ! isset($modules[$folder]))
+			if ( ! is_dir($m['full_path']))
 			{
 				continue;
 			}
 
 			// "init.php" not found? Nothing to do.
-			if ( ! is_file($modules[$folder].'init.php'))
+			if ( ! is_file($m['full_path'].'init.php'))
 			{
 				continue;
 			}
 
 			// Import "init.php" file.
-			require_once($modules[$folder].'init.php');
+			require_once($m['full_path'].'init.php');
 
 			/**
 			 * If a "module_activate_" action was registered, we fire
@@ -502,10 +503,10 @@ class KB_Router extends CI_Router
 			 * avoid firing it again.
 			 */
 			if (has_action('module_activate_'.$folder) 
-				&& ! is_file($modules[$folder].'enabled'))
+				&& ! is_file($m['full_path'].'enabled'))
 			{
 				do_action('module_activate_'.$folder);
-				@touch($modules[$folder].'enabled');
+				@touch($m['full_path'].'enabled');
 			}
 
 			// We always fire this action.
@@ -518,11 +519,11 @@ class KB_Router extends CI_Router
 			 * @since 	2.1.0
 			 */
 			if  (function_exists('gettext_instance') 
-				&& is_dir($modules[$folder].'language'))
+				&& is_dir($m['full_path'].'language'))
 			{
 				gettext_instance()->bindtextdomain(
-					$folder,
-					$modules[$folder].'language'
+					is_string($m['textdomain']) ? $m['textdomain'] : $folder,
+					$m['full_path'].'language'
 				);
 			}
 		}
@@ -1344,5 +1345,198 @@ if ( ! function_exists('deactivate_module'))
 	function disable_module($name)
 	{
 		return get_instance()->router->module_deactivate($name);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('is_admin'))
+{
+	function is_admin()
+	{
+		return get_instance()->router->is_admin();
+	}
+}
+
+// ------------------------------------------------------------------------
+// Module's helpers.
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_the_module'))
+{
+	/**
+	 * Returns the current module folder's name.
+	 * @param 	none
+	 * @return 	string 	Folder name if found, else null.
+	 */
+	function get_the_module()
+	{
+		return get_instance()->router->fetch_module();
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('the_module'))
+{
+	/**
+	 * Displays the current module folder's name.
+	 * @param 	none
+	 * @return 	void
+	 */
+	function the_module()
+	{
+		echo get_instance()->router->fetch_module();
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('is_module'))
+{
+	/**
+	 * Checks if the page belongs to a given module. If no argument is passed,
+	 * it checks if we areusing a module.
+	 * You may pass a single string, multiple comma- separated modules or an array.
+	 * @param   string|array.
+	 * @return 	bool 	true if passed check, else false.
+	 */
+	function is_module($modules = null)
+	{
+		$module = get_instance()->router->fetch_module();
+
+		if (null === $modules)
+		{
+			return ($module !== null);
+		}
+
+		if ( ! is_array($modules))
+		{
+			$modules = explode(',', $modules);
+		}
+
+		$modules = array_clean($modules);
+
+		return in_array($module, $modules);
+	}
+}
+
+// ------------------------------------------------------------------------
+// Controller's helpers.
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_the_controller'))
+{
+	/**
+	 * Returns the current controller folder's name.
+	 * @param 	none
+	 * @return 	string 	Class name if found, else null.
+	 */
+	function get_the_controller()
+	{
+		return get_instance()->router->fetch_class();
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('the_controller'))
+{
+	/**
+	 * Displays the current controller folder's name.
+	 * @param 	none
+	 * @return 	void
+	 */
+	function the_controller()
+	{
+		echo get_instance()->router->fetch_class();
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('is_controller'))
+{
+	/**
+	 * Checks if the page belongs to a given controller.
+	 * @param 	mixed 	$controllers
+	 * @return 	bool
+	 */
+	function is_controller($controllers = null)
+	{
+		$controller = get_instance()->router->fetch_class();
+
+		if (null === $controllers)
+		{
+			return ($controller !== null);
+		}
+
+		if ( ! is_array($controllers))
+		{
+			$controllers = explode(',', $controllers);
+		}
+
+		$controllers = array_clean($controllers);
+
+		return in_array($controller, $controllers);
+	}
+}
+
+// ------------------------------------------------------------------------
+// Method's helpers.
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_the_method'))
+{
+	/**
+	 * Returns the current method's name.
+	 * @return 	string
+	 */
+	function get_the_method()
+	{
+		return get_instance()->router->fetch_method();
+	}
+}
+
+// --------------------------------------------------------------------
+
+if ( ! function_exists('the_method'))
+{
+	/**
+	 * Returns the current method's name.
+	 * @return 	void
+	 */
+	function the_method()
+	{
+		echo get_instance()->router->fetch_method();
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('is_method'))
+{
+	/**
+	 * Checks if the page belongs to a given method.
+	 * @return 	bool
+	 */
+	function is_method($methods = null)
+	{
+		$method = get_instance()->router->fetch_method();
+
+		// This is silly but, let's just put it.
+		if (null === $methods)
+		{
+			return ($method !== null);
+		}
+
+		if ( ! is_array($methods))
+		{
+			$methods = explode(',', $methods);
+		}
+
+		$methods = array_clean($methods);
+
+		return (in_array($method, $methods));
 	}
 }
