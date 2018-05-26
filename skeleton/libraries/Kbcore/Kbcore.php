@@ -923,3 +923,127 @@ class Kbcore extends CI_Driver_Library
 	}
 
 }
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_siteinfo'))
+{
+	/**
+	 * Retrieves information about the site.
+	 *
+	 * @since 	2.1.0
+	 *
+	 * @param 	string 	$key 		Site info to retrieve. Default: site name.
+	 * @param 	string 	$filter 	How to filter what's retrieved.
+	 * @return 	string 	String value, might be empty.
+	 */
+	function get_siteinfo($key = '', $filter = 'raw')
+	{
+		static $cached;
+
+		// Always use "name" if nothing is provided.
+		empty($key) && $key = 'name';
+
+		if ( ! isset($cached[$key]))
+		{
+			switch ($key)
+			{
+				case 'home':
+				case 'siteurl':
+				case 'site_url':
+					$output = site_url();
+					break;
+
+				case 'url':
+				case 'base':
+				case 'baseurl':
+				case 'base_url':
+					$output = base_url();
+					break;
+
+				case 'stylesheet_url':
+					$output = get_theme_url('style.css');
+					break;
+
+				case 'stylesheet_directory':
+					$output = get_theme_url();
+					break;
+
+				case 'admin_email':
+					$output = config_item('admin_email');
+					break;
+
+				case 'server_email':
+					$output = config_item('server_email');
+					break;
+
+				case 'charset':
+					$output = config_item('charset', 'UTF-8');
+					break;
+
+				case 'version':
+					$output = KB_VERSION;
+					break;
+
+				case 'language':
+					$output = langinfo('locale');
+					break;
+
+				case 'text_direction':
+					$output = langinfo('direction');
+					break;
+
+				case 'description':
+				case 'site_description':
+					$output = config_item('site_description');
+					break;
+				
+				case 'name':
+				case 'site_name':
+				default:
+					$output = config_item('site_name');
+					break;
+			}
+
+			$cached[$key] = $output;
+		}
+
+		$return = $cached[$key];
+
+		$url = true;
+		if (strpos($key, 'url') === false 
+			&& strpos($key, 'directory') === false 
+			&& strpos($key, 'home') === false)
+		{
+			$url = false;
+		}
+
+		if ('display' == $filter)
+		{
+			$return = (false !== $url)
+				? apply_filters('siteinfo_url', $return, $key)
+				: apply_filters('siteinfo', $return, $key);
+		}
+
+		return $return;
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('siteinfo'))
+{
+	/**
+	 * Displays information about the site.
+	 *
+	 * @since 	2.1.0
+	 *
+	 * @param 	string 	$key 		Site info to retrieve. Default: site name.
+	 * @param 	string 	$filter 	How to filter what's retrieved.
+	 * @return 	void
+	 */
+	function siteinfo($key = '')
+	{
+		echo get_siteinfo($key, 'display');
+	}
+}
