@@ -107,7 +107,7 @@ class Themes extends Admin_Controller {
 	{
 		// Get themes stored in database and in folder.
 		$db_themes = $this->kbcore->options->get('themes');
-		$folder_themes = $this->theme->get_themes();
+		$folder_themes = $this->theme->get_themes(true);
 
 		// The options does not exist in database? Create it.
 		if (false === $db_themes)
