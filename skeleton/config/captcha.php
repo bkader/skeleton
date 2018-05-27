@@ -58,7 +58,7 @@ $config['img_path']    = './content/captcha/';
 $config['img_url']     = base_url('content/captcha/');
 
 // Catpcha font path, font size, word length and characters used.
-$config['font_path']   = apply_filters('captcha_font_path', './content/common/fonts/MomsTypewriter.ttf');
+$config['font_path']   = apply_filters('captcha_font_path', './content/common/fonts/edmunds.ttf');
 $config['font_size']   = apply_filters('captcha_font_size', 16);
 $config['word_length'] = apply_filters('captcha_word_length', 6);
 $config['pool']        = apply_filters('captcha_pool', '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
