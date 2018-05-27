@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		2.0.0
- * @version 	2.0.0
+ * @version 	2.1.1
  */
 class Login extends KB_Controller {
 
@@ -73,7 +73,7 @@ class Login extends KB_Controller {
 		if (true === $this->kbcore->auth->is_admin())
 		{
 			set_alert(line('CSK_ERROR_LOGGED_IN'), 'warning');
-			redirect('admin');
+			redirect(KB_ADMIN);
 			exit;
 		}
 
@@ -246,7 +246,7 @@ class Login extends KB_Controller {
 			 * Login redirection filter.
 			 * @since 	2.0.0
 			 */
-			$redirect_to = apply_filters('admin_login_redirect', 'admin');
+			$redirect_to = apply_filters('admin_login_redirect', KB_ADMIN);
 			redirect($redirect_to);
 			exit;
 		}
