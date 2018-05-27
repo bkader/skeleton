@@ -8,88 +8,50 @@
     // Prepare globals.
     var csk = window.csk = window.csk || {};
     csk.i18n = csk.i18n || {};
+    csk.plugins = csk.plugins || {};
     csk.i18n.plugins = csk.i18n.plugins || {};
 
     /**
-     * Plugins Object
-     * Handles all operations done on plugins module.
-     * @since   1.3.x
+     * Skeleton Plugins.
+     * @since   2.1.0
      */
-    csk.plugins = {
-        
-        // Activate plugin.
-        activate: function (el) {
-            return this._do(el, "activate");
-        },
+    csk.plugins.proceed = function(el, action) {
+        var $this = $(el),
+            href = $this.data("endpoint"),
+            row = $this.closest("tr"),
+            name = row.data("name") || 'this',
+            action = action || -1;
 
-        // Deactivate plugin.
-        deactivate: function (el) {
-            return this._do(el, "deactivate");
-        },
-
-        // Delete plugin.
-        delete: function (el) {
-            return this._do(el, "delete")
-        },
-
-        // Actions handler.
-        _do: function (el, action) {
-            var $this = $(el),
-                href = $this.data("endpoint"),
-                row = $this.closest("tr"),
-                plugin = row.data("plugin"),
-                name = row.data("name"),
-                id = row.attr("id"),
-                action = action || -1;
-
-            // No URL provided? Nothing to do...
-            if (typeof href === "undefined" || !href.length) {
-                return false;
-            }
-
-            csk.ui.confirm($.sprintf(csk.i18n.plugins[action], name), function () {
-                csk.ajax.request(href, {
-                    type: "POST",
-                    data: {action: action + "-plugin_" + plugin},
-                    complete: function (jqXHR, textStatus) {
-                        if (textStatus !== "success") {
-                            return;
-                        }
-
-                        // we reload UI if not in delete action.
-                        if (action !== "delete") {
-                            csk.ui.reload("#" + id);
-                            return;
-                        }
-
-                        // Remove the row then reload UI.
-                        row.fadeOut(function () {
-                            $(this).remove();
-                            csk.ui.reload();
-                        });
-                    }
-                });
-            });
+        if (typeof href === "undefined" || !href.length) {
+            return false;
         }
+
+        row.siblings("tr").addClass("op-2");
+
+        csk.ui.confirm($.sprintf(csk.i18n.plugins[action], name), function () {
+            window.location.href = href;
+        }, function () {
+            row.siblings("tr").removeClass("op-2");
+        });
     };
 
-    $(document).ready(function () {
+    $(document).ready(function() {
         // Activate plugin.
-        $(document).on("click", ".plugin-activate", function (e) {
+        $(document).on("click", ".plugin-activate", function(e) {
             e.preventDefault();
-            return csk.plugins.activate(this)
+            return csk.plugins.proceed(this, "activate");
         });
-        
+
         // Deactivate plugin.
-        $(document).on("click", ".plugin-deactivate", function (e) {
+        $(document).on("click", ".plugin-deactivate", function(e) {
             e.preventDefault();
-            return csk.plugins.deactivate(this)
+            return csk.plugins.proceed(this, "deactivate");
         });
-        
+
         // Delete plugin.
-        $(document).on("click", ".plugin-delete", function (e) {
+        $(document).on("click", ".plugin-delete", function(e) {
             e.preventDefault();
-            return csk.plugins.delete(this)
+            return csk.plugins.proceed(this, "delete");
         });
     });
 

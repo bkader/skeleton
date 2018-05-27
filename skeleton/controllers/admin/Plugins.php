@@ -50,7 +50,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		2.0.0
- * @version 	2.0.0
+ * @version 	2.1.0
  */
 class Plugins extends Admin_Controller
 {
@@ -76,7 +76,7 @@ class Plugins extends Admin_Controller
 
 		// Page icon, title and help URL.
 		$this->data['page_icon']  = 'plug';
-		$this->data['page_title'] = line('CSK_PLUGINS_PLUGINS');
+		$this->data['page_title'] = __('CSK_PLUGINS_PLUGINS');
 		$this->data['page_help']  = 'https://goo.gl/cvLaCz';
 	}
 
@@ -116,7 +116,7 @@ class Plugins extends Admin_Controller
 			// Add action buttons.
 			if ($plugins)
 			{
-				$i18n = $this->config->item('language');
+				$i18n = $this->lang->lang('folder');
 
 				foreach ($plugins as $folder => &$p)
 				{
@@ -151,23 +151,25 @@ class Plugins extends Admin_Controller
 					{
 						$p['actions'][] = html_tag('button', array(
 							'type' => 'button',
-							'data-endpoint' => nonce_ajax_url(
-								'plugins/deactivate/'.$folder,
-								'deactivate-plugin_'.$folder
-							),
+							'data-endpoint' => esc_url(nonce_admin_url(
+								'plugins?action=deactivate&plugin='.$folder,
+								'plugin-deactivate_'.$folder
+							)),
 							'class' => 'btn btn-default btn-xs btn-icon plugin-deactivate ml-2',
-						), fa_icon('times text-danger').line('CSK_PLUGINS_DEACTIVATE'));
+							'aria-label' => sprintf(__('CSK_BTN_DEACTIVATE_COM'), $p['name']),
+						), fa_icon('times text-danger').__('CSK_PLUGINS_DEACTIVATE'));
 					}
 					else
 					{
 						$p['actions'][] = html_tag('button', array(
 							'type' => 'button',
-							'data-endpoint' => nonce_ajax_url(
-								'plugins/activate/'.$folder,
-								'activate-plugin_'.$folder
-							),
+							'data-endpoint' => esc_url(nonce_admin_url(
+								'plugins?action=activate&plugin='.$folder,
+								'plugin-activate_'.$folder
+							)),
 							'class' => 'btn btn-default btn-xs btn-icon plugin-activate ml-2',
-						), fa_icon('check text-success').line('CSK_PLUGINS_ACTIVATE'));
+							'aria-label' => sprintf(__('CSK_BTN_ACTIVATE_COM'), $p['name']),
+						), fa_icon('check text-success').__('CSK_PLUGINS_ACTIVATE'));
 					}
 
 					if (true === $p['enabled'] && true === $p['has_settings'])
@@ -175,38 +177,40 @@ class Plugins extends Admin_Controller
 						$p['actions'][] = html_tag('a', array(
 							'href'  => admin_url('plugins/settings/'.$folder),
 							'class' => 'btn btn-default btn-xs btn-icon ml-2',
-						), fa_icon('cogs').line('CSK_PLUGINS_SETTINGS'));
+							'aria-label' => sprintf(__('CSK_BTN_SETTINGS_COM'), $p['name']),
+						), fa_icon('cogs').__('CSK_PLUGINS_SETTINGS'));
 					}
 
 					if (true !== $p['enabled'])
 					{
 						$p['actions'][] = html_tag('button', array(
 							'type' => 'button',
-							'data-endpoint' => nonce_ajax_url(
-								'plugins/delete/'.$folder,
-								'delete-plugin_'.$folder
-							),
+							'data-endpoint' => esc_url(nonce_admin_url(
+								'plugins?action=delete&plugin='.$folder,
+								'plugin-delete_'.$folder
+							)),
 							'class' => 'btn btn-danger btn-xs btn-icon plugin-delete ml-2',
-						), fa_icon('trash-o').line('CSK_PLUGINS_DELETE'));
+							'aria-label' => sprintf(__('CSK_BTN_DELETE_COM'), $p['name']),
+						), fa_icon('trash-o').__('CSK_PLUGINS_DELETE'));
 					}
 
 					// Module details.
 					$details = array();
 
 					if ( ! empty($p['version'])) {
-						$details[] = sprintf(line('CSK_PLUGINS_VERSION_NUM'), $p['version']);
+						$details[] = sprintf(__('CSK_PLUGINS_VERSION_NUM'), $p['version']);
 					}
 					if ( ! empty($p['author'])) {
 						$author = (empty($p['author_uri'])) 
 							? $p['author'] 
-							: sprintf(line('CSK_PLUGINS_AUTHOR_URI'), $p['author'], $p['author_uri']);
-						$details[] = sprintf(line('CSK_PLUGINS_AUTHOR_NAME'), $author);
+							: sprintf(__('CSK_PLUGINS_AUTHOR_URI'), $p['author'], $p['author_uri']);
+						$details[] = sprintf(__('CSK_PLUGINS_AUTHOR_NAME'), $author);
 					}
 					if ( ! empty($p['license'])) {
 						$license = empty($p['license_uri'])
 							? $p['license']
-							: sprintf(line('CSK_PLUGINS_LICENSE_URI'), $p['license'], $p['license_uri']);
-						$details[] = sprintf(line('CSK_PLUGINS_LICENSE_NAME'), $license);
+							: sprintf(__('CSK_PLUGINS_LICENSE_URI'), $p['license'], $p['license_uri']);
+						$details[] = sprintf(__('CSK_PLUGINS_LICENSE_NAME'), $license);
 						// Reset license.
 						$license = null;
 					}
@@ -215,11 +219,11 @@ class Plugins extends Admin_Controller
 							'href'   => $p['plugin_uri'],
 							'target' => '_blank',
 							'rel'    => 'nofollow',
-						), line('CSK_BTN_WEBSITE'));
+						), __('CSK_BTN_WEBSITE'));
 					}
 					if ( ! empty($p['author_email'])) {
 						$details[] = sprintf(
-							line('CSK_PLUGINS_AUTHOR_EMAIL_URI'),
+							__('CSK_PLUGINS_AUTHOR_EMAIL_URI'),
 							$p['author_email'],
 							rawurlencode('Support: '.$p['name'])
 						);
@@ -230,19 +234,34 @@ class Plugins extends Admin_Controller
 			}
 
 			// Data to pass to view.
-			$this->data['plugins']        = $plugins;
-			$this->data['filter']         = $filter;
+			$this->data['plugins'] = $plugins;
+			$this->data['filter']  = $filter;
+
+			/**
+			 * Catches plugins actions.
+			 * @since 	2.1.0
+			 */
+			$get_action = $this->input->get('action', true);
+			$get_plugin = $this->input->get('plugin', true);
+
+			if (($get_action && in_array($get_action, array('activate', 'deactivate', 'delete')))
+				&& ($get_plugin && isset($plugins[$get_plugin]))
+				&& check_nonce_url("plugin-{$get_action}_{$get_plugin}")
+				&& method_exists($this, '_'.$get_action))
+			{
+				return call_user_func_array(array($this, '_'.$get_action), array($get_plugin));
+			}
 
 			// Set page title and load view.
 			$this->theme
-				->set_title(line('CSK_PLUGINS'))
+				->set_title(__('CSK_PLUGINS'))
 				->render($this->data);
 		}
 		else
 		{
 			if (true !== $this->check_nonce('bulk-update-plugins'))
 			{
-				set_alert(line('CSK_ERROR_NONCE_URL'), 'error');
+				set_alert(__('CSK_ERROR_NONCE_URL'), 'error');
 				redirect('admin/plugins');
 				exit;
 			}
@@ -252,19 +271,19 @@ class Plugins extends Admin_Controller
 			$selected = $this->input->post('selected', true);
 			if (empty($selected))
 			{
-				set_alert(line('CSK_PLUGINS_ERROR_BULK_'.$action), 'error');
+				set_alert(__('CSK_PLUGINS_ERROR_BULK_'.$action), 'error');
 				redirect('admin/plugins');
 				exit;
 			}
 
 			if (false !== $this->kbcore->plugins->{$action}($selected))
 			{
-				set_alert(line('CSK_PLUGINS_SUCCESS_BULK_'.$action), 'success');
+				set_alert(__('CSK_PLUGINS_SUCCESS_BULK_'.$action), 'success');
 				redirect('admin/plugins');
 				exit;
 			}
 
-			set_alert(line('CSK_PLUGINS_ERROR_BULK_'.$action), 'error');
+			set_alert(__('CSK_PLUGINS_ERROR_BULK_'.$action), 'error');
 			redirect('admin/plugins');
 			exit;
 		}
@@ -287,7 +306,7 @@ class Plugins extends Admin_Controller
 		// The plugin does not exists?
 		if ( ! $plugin)
 		{
-			set_alert(line('CSK_PLUGINS_ERROR_PLUGIN_MISSING'), 'error');
+			set_alert(__('CSK_PLUGINS_ERROR_PLUGIN_MISSING'), 'error');
 			redirect('admin/plugins');
 			exit;
 		}
@@ -295,7 +314,7 @@ class Plugins extends Admin_Controller
 		// Disabled? It needs to be enabled first.
 		if ( ! $plugin['enabled'])
 		{
-			set_alert(line('CSK_PLUGINS_ERROR_SETTINGS_DISABLED'), 'error');
+			set_alert(__('CSK_PLUGINS_ERROR_SETTINGS_DISABLED'), 'error');
 			redirect('admin/plugins');
 			exit;
 		}
@@ -303,12 +322,12 @@ class Plugins extends Admin_Controller
 		// It does not have a settings page?
 		if ( ! $plugin['has_settings'])
 		{
-			set_alert(line('CSK_PLUGINS_ERROR_SETTINGS_MISSING'), 'error');
+			set_alert(__('CSK_PLUGINS_ERROR_SETTINGS_MISSING'), 'error');
 			redirect('admin/plugins');
 			exit;
 		}
 
-		if ('english' !== ($lang = $this->config->item('language')))
+		if ('english' !== ($lang = $this->lang->lang('folder')))
 		{
 			if (isset($plugin['translations'][$lang]['name']))
 			{
@@ -330,7 +349,7 @@ class Plugins extends Admin_Controller
 			$this->data['page_donate'] = $plugin['donation_uri'];
 		}
 
-		$this->data['page_title'] = sprintf(line('CSK_PLUGINS_SETTINGS_NAME'), $plugin['name']);
+		$this->data['page_title'] = sprintf(__('CSK_PLUGINS_SETTINGS_NAME'), $plugin['name']);
 		$this->data['plugin']     = $plugin;
 
 		// Set page title and render view.
@@ -362,7 +381,7 @@ class Plugins extends Admin_Controller
 
 		// Set page title and load view.
 		$this->theme
-			->set_title(line('CSK_PLUGINS_ADD'))
+			->set_title(__('CSK_PLUGINS_ADD'))
 			->render($this->data);
 	}
 
@@ -386,7 +405,7 @@ class Plugins extends Admin_Controller
 		// We check CSRF token validity.
 		if ( ! $this->check_nonce('upload-plugin'))
 		{
-			set_alert(line('CSK_ERROR_NONCE_URL'), 'error');
+			set_alert(__('CSK_ERROR_NONCE_URL'), 'error');
 			redirect('admin/plugins/install');
 			exit;
 		}
@@ -394,7 +413,7 @@ class Plugins extends Admin_Controller
 		// Did the user provide a valid file?
 		if (empty($_FILES['pluginzip']['name']))
 		{
-			set_alert(line('CSK_PLUGINS_ERROR_UPLOAD'), 'error');
+			set_alert(__('CSK_PLUGINS_ERROR_UPLOAD'), 'error');
 			redirect('admin/plugins/install');
 			exit;
 		}
@@ -403,7 +422,7 @@ class Plugins extends Admin_Controller
 		$this->load->helper('file');
 		if ( ! function_exists('unzip_file'))
 		{
-			set_alert(line('CSK_PLUGINS_ERROR_UPLOAD'), 'error');
+			set_alert(__('CSK_PLUGINS_ERROR_UPLOAD'), 'error');
 			redirect('admin/plugins/install');
 			exit;
 		}
@@ -418,7 +437,7 @@ class Plugins extends Admin_Controller
 		if (false === $this->upload->do_upload('pluginzip') 
 			OR ! class_exists('ZipArchive', false))
 		{
-			set_alert(line('CSK_PLUGINS_ERROR_UPLOAD'), 'error');
+			set_alert(__('CSK_PLUGINS_ERROR_UPLOAD'), 'error');
 			redirect('admin/plugins/install');
 			exit;
 		}
@@ -433,14 +452,121 @@ class Plugins extends Admin_Controller
 		// Successfully installed?
 		if (true === $status)
 		{
-			set_alert(line('CSK_PLUGINS_SUCCESS_UPLOAD'), 'success');
+			set_alert(__('CSK_PLUGINS_SUCCESS_UPLOAD'), 'success');
 			redirect('admin/plugins');
 			exit;
 		}
 
 		// Otherwise, the theme could not be installed.
-		set_alert(line('CSK_PLUGINS_ERROR_UPLOAD'), 'error');
+		set_alert(__('CSK_PLUGINS_ERROR_UPLOAD'), 'error');
 		redirect('admin/plugins/install');
+		exit;
+	}
+
+	// ------------------------------------------------------------------------
+	// Plugins activation, deactivate and deletion.
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for activating the given plugin.
+	 *
+	 * @since 	2.1.0
+	 *
+	 * @access 	protected
+	 * @param 	string 	$folder
+	 * @return 	void
+	 */
+	protected function _activate($folder)
+	{
+		$details = $this->kbcore->plugins->plugin_details($folder);
+		$plugin = $details['name'];
+		if ('english' !== ($lang = $this->lang->lang('folder')))
+		{
+			if (isset($details['translations'][$lang]['name']))
+			{
+				$plugin = $details['translations'][$lang]['name'];
+			}
+		}
+
+		if (false !== $this->kbcore->plugins->activate($folder))
+		{
+			set_alert(sprintf(__('CSK_PLUGINS_SUCCESS_ACTIVATE'), $plugin), 'success');
+			redirect(KB_ADMIN.'/plugins');
+			exit;
+		}
+
+		set_alert(sprintf(__('CSK_PLUGINS_ERROR_ACTIVATE'), $plugin), 'error');
+		redirect(KB_ADMIN.'/plugins');
+		exit;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for deactivating the given plugin.
+	 *
+	 * @since 	2.1.0
+	 *
+	 * @access 	protected
+	 * @param 	string 	$folder
+	 * @return 	void
+	 */
+	protected function _deactivate($folder)
+	{
+		$details = $this->kbcore->plugins->plugin_details($folder);
+		$plugin = $details['name'];
+		if ('english' !== ($lang = $this->lang->lang('folder')))
+		{
+			if (isset($details['translations'][$lang]['name']))
+			{
+				$plugin = $details['translations'][$lang]['name'];
+			}
+		}
+
+		if (false !== $this->kbcore->plugins->deactivate($folder))
+		{
+			set_alert(sprintf(__('CSK_PLUGINS_SUCCESS_DEACTIVATE'), $plugin), 'success');
+			redirect(KB_ADMIN.'/plugins');
+			exit;
+		}
+
+		set_alert(sprintf(__('CSK_PLUGINS_ERROR_DEACTIVATE'), $plugin), 'error');
+		redirect(KB_ADMIN.'/plugins');
+		exit;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for deleting the given plugin.
+	 *
+	 * @since 	2.1.0
+	 *
+	 * @access 	protected
+	 * @param 	string 	$folder
+	 * @return 	void
+	 */
+	protected function _delete($folder)
+	{
+		$details = $this->kbcore->plugins->plugin_details($folder);
+		$plugin = $details['name'];
+		if ('english' !== ($lang = $this->lang->lang('folder')))
+		{
+			if (isset($details['translations'][$lang]['name']))
+			{
+				$plugin = $details['translations'][$lang]['name'];
+			}
+		}
+
+		if (false !== $this->kbcore->plugins->delete($folder))
+		{
+			set_alert(sprintf(__('CSK_PLUGINS_SUCCESS_DELETE'), $plugin), 'success');
+			redirect(KB_ADMIN.'/plugins');
+			exit;
+		}
+
+		set_alert(sprintf(__('CSK_PLUGINS_ERROR_DELETE'), $plugin), 'error');
+		redirect(KB_ADMIN.'/plugins');
 		exit;
 	}
 
@@ -460,9 +586,9 @@ class Plugins extends Admin_Controller
 	public function _admin_head($output)
 	{
 		$lines = array(
-			'activate'   => line('CSK_PLUGINS_CONFIRM_ACTIVATE'),
-			'deactivate' => line('CSK_PLUGINS_CONFIRM_DEACTIVATE'),
-			'delete'     => line('CSK_PLUGINS_CONFIRM_DELETE'),
+			'activate'   => __('CSK_PLUGINS_CONFIRM_ACTIVATE'),
+			'deactivate' => __('CSK_PLUGINS_CONFIRM_DEACTIVATE'),
+			'delete'     => __('CSK_PLUGINS_CONFIRM_DELETE'),
 		);
 		$output .= '<script type="text/javascript">';
 		$output .= 'csk.i18n = csk.i18n || {};';
@@ -495,7 +621,7 @@ class Plugins extends Admin_Controller
 		{
 			// Case of plugins install page.
 			case 'install':
-				$this->data['page_title'] = line('CSK_PLUGINS_ADD');
+				$this->data['page_title'] = __('CSK_PLUGINS_ADD');
 
 				// Subhead.
 				add_action('admin_subhead', function() {
@@ -506,7 +632,7 @@ class Plugins extends Admin_Controller
 						'class' => 'btn btn-success btn-sm btn-icon mr-2',
 						'data-toggle' => 'collapse',
 						'data-target' => '#plugin-install'
-					), fa_icon('upload').line('CSK_PLUGINS_UPLOAD'));
+					), fa_icon('upload').__('CSK_PLUGINS_UPLOAD'));
 
 					// Back button.
 					$this->_btn_back('plugins');
@@ -536,7 +662,7 @@ class Plugins extends Admin_Controller
 					echo html_tag('a', array(
 						'href' => admin_url('plugins/install'),
 						'class' => 'btn btn-success btn-sm btn-icon'
-					), fa_icon('plus-circle').line('CSK_PLUGINS_ADD')),
+					), fa_icon('plus-circle').__('CSK_PLUGINS_ADD')),
 
 					// Filters toolbar.
 					'<div class="btn-group ml-3" role="group">',
@@ -545,19 +671,19 @@ class Plugins extends Admin_Controller
 						html_tag('a', array(
 							'href'  => admin_url('plugins'),
 							'class' => 'btn btn-sm btn-'.($filter ? 'default' : 'secondary'),
-						), sprintf(line('CSK_PLUGINS_FILTER_ALL'), $all)),
+						), sprintf(__('CSK_PLUGINS_FILTER_ALL'), $all)),
 
 						// Active plugins.
 						html_tag('a', array(
 							'href'  => admin_url('plugins?status=active'),
 							'class' => 'btn btn-sm btn-'.('active' === $filter ? 'secondary' : 'default'),
-						), sprintf(line('CSK_PLUGINS_FILTER_ACTIVE'), $active)),
+						), sprintf(__('CSK_PLUGINS_FILTER_ACTIVE'), $active)),
 
 						// Inactive plugins.
 						html_tag('a', array(
 							'href'  => admin_url('plugins?status=inactive'),
 							'class' => 'btn btn-sm btn-'.('inactive' === $filter ? 'secondary' : 'default'),
-						), sprintf(line('CSK_PLUGINS_FILTER_INACTIVE'), $inactive)),
+						), sprintf(__('CSK_PLUGINS_FILTER_INACTIVE'), $inactive)),
 
 					'</div>';
 				});

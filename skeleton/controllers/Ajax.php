@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		2.0.0
- * @version 	2.0.0
+ * @version 	2.1.0
  */
 class Ajax extends AJAX_Controller {
 
@@ -151,7 +151,7 @@ class Ajax extends AJAX_Controller {
 			OR true !== $this->check_nonce())
 		{
 			$this->response->header = self::HTTP_NOT_ACCEPTABLE;
-			$this->response->message = line('CSK_ERROR_NONCE_URL');
+			$this->response->message = __('CSK_ERROR_NONCE_URL');
 			return;
 		}
 
@@ -162,7 +162,7 @@ class Ajax extends AJAX_Controller {
 		if ('english' === $name && 'make_default' !== $action)
 		{
 			$this->response->header = self::HTTP_NOT_ACCEPTABLE;
-			$this->response->message = line('CSK_LANGUAGES_ERROR_ENGLISH_REQUIRED');
+			$this->response->message = __('CSK_LANGUAGES_ERROR_ENGLISH_REQUIRED');
 			return;
 		}
 
@@ -179,7 +179,7 @@ class Ajax extends AJAX_Controller {
 				if (in_array($name, $languages))
 				{
 					$this->response->header = self::HTTP_NOT_MODIFIED;
-					$this->response->message = line('CSK_LANGUAGES_ALREADY_ENABLE');
+					$this->response->message = __('CSK_LANGUAGES_ALREADY_ENABLE');
 					return;
 				}
 
@@ -195,11 +195,11 @@ class Ajax extends AJAX_Controller {
 					log_activity($this->c_user->id, 'Enabled language: '.$name);
 
 					$this->response->header = self::HTTP_OK;
-					$this->response->message = line('CSK_LANGUAGES_SUCCESS_ENABLE');
+					$this->response->message = __('CSK_LANGUAGES_SUCCESS_ENABLE');
 					return;
 				}
 				
-				$this->response->message = line('CSK_LANGUAGES_ERROR_ENABLE');
+				$this->response->message = __('CSK_LANGUAGES_ERROR_ENABLE');
 
 				break;
 
@@ -210,7 +210,7 @@ class Ajax extends AJAX_Controller {
 				if ( ! in_array($name, $languages))
 				{
 					$this->response->header = self::HTTP_NOT_MODIFIED;
-					$this->response->message = line('CSK_LANGUAGES_ALREADY_DISABLE');
+					$this->response->message = __('CSK_LANGUAGES_ALREADY_DISABLE');
 					return;
 				}
 
@@ -242,11 +242,11 @@ class Ajax extends AJAX_Controller {
 					log_activity($this->c_user->id, 'Disabled language: '.$name);
 
 					$this->response->header = self::HTTP_OK;
-					$this->response->message = line('CSK_LANGUAGES_SUCCESS_DISABLE');
+					$this->response->message = __('CSK_LANGUAGES_SUCCESS_DISABLE');
 					return;
 				}
 				
-				$this->response->message = line('CSK_LANGUAGES_ERROR_DISABLE');
+				$this->response->message = __('CSK_LANGUAGES_ERROR_DISABLE');
 
 				break;
 			
@@ -261,7 +261,7 @@ class Ajax extends AJAX_Controller {
 					if (false === $this->kbcore->options->set_item('languages', $languages))
 					{
 						$this->response->header = self::HTTP_CONFLICT;
-						$this->response->message = line('CSK_LANGUAGES_ERROR_DEFAULT');
+						$this->response->message = __('CSK_LANGUAGES_ERROR_DEFAULT');
 						return;
 					}
 				}
@@ -273,120 +273,11 @@ class Ajax extends AJAX_Controller {
 					log_activity($this->c_user->id, 'Set default language: '.$name);
 
 					$this->response->header = self::HTTP_OK;
-					$this->response->message = line('CSK_LANGUAGES_SUCCESS_DEFAULT');
+					$this->response->message = __('CSK_LANGUAGES_SUCCESS_DEFAULT');
 					return;
 				}
 
-				$this->response->message = line('CSK_LANGUAGES_ERROR_DEFAULT');
-
-				break;
-		}
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * _plugins
-	 *
-	 * Method for interacting with plugins.
-	 *
-	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
-	 * @since 	2.0.0
-	 *
-	 * @access 	public
-	 * @param 	string 	$action 	The action to perform.
-	 * @param 	string 	$name 		The plugin's folder name;
-	 * @return 	AJAX_Controller::response()
-	 */
-	public function _plugins($action = null, $name = null)
-	{
-		// Load plugins language file.
-		$this->load->language('csk_plugins');
-
-		// Array of available actions.
-		$actions = array('activate', 'deactivate', 'delete');
-
-		if ((null === $action OR ! in_array($action, $actions))
-			OR (null === $name OR ! is_string($name))
-			OR true !== $this->check_nonce())
-		{
-			$this->response->header  = self::HTTP_NOT_ACCEPTABLE;
-			$this->response->message = line('CSK_ERROR_NONCE_URL');
-			return;
-		}
-
-		$details = $this->kbcore->plugins->plugin_details($name);
-		$plugin = $details['name'];
-		if ('english' !== ($lang = $this->config->item('language')))
-		{
-			if (isset($details['translations'][$lang]['name']))
-			{
-				$plugin = $details['translations'][$lang]['name'];
-			}
-		}
-
-
-		switch ($action) {
-			
-			// In case of activating a plugin.
-			case 'activate':
-
-				// Successfully activated?
-				if (false !== $this->kbcore->plugins->activate($name))
-				{
-					// TODO: Log the activity.
-					log_activity($this->c_user->id, 'Activated plugin: '.$plugin);
-
-					$this->response->header = self::HTTP_OK;
-					$this->response->message = sprintf(line('CSK_PLUGINS_SUCCESS_ACTIVATE'), $plugin);
-					return;
-				}
-
-				// An error occurred somewhere?
-				$this->response->header = self::HTTP_CONFLICT;
-				$this->response->message = sprintf(line('CSK_PLUGINS_ERROR_ACTIVATE'), $plugin);
-				return;
-
-				break;
-			
-			// In case of deactivating a plugin.
-			case 'deactivate':
-				// Successfully deactivated?
-				if (false !== $this->kbcore->plugins->deactivate($name))
-				{
-					// TODO: Log the activity.
-					log_activity($this->c_user->id, 'Deactivated plugin: '.$plugin);
-
-					$this->response->header = self::HTTP_OK;
-					$this->response->message = sprintf(line('CSK_PLUGINS_SUCCESS_DEACTIVATE'), $plugin);
-					return;
-				}
-
-				// An error occurred somewhere?
-				$this->response->header = self::HTTP_CONFLICT;
-				$this->response->message = sprintf(line('CSK_PLUGINS_ERROR_DEACTIVATE'), $plugin);
-				return;
-				break;
-
-			// In case of deleting a plugin.
-			case 'delete':
-
-				// Successfully deleted?
-				if (false !== $this->kbcore->plugins->delete($name))
-				{
-					// TODO: Log the activity.
-					log_activity($this->c_user->id, 'Deleted plugin: '.$plugin);
-
-					$this->response->header = self::HTTP_OK;
-					$this->response->message = sprintf(line('CSK_PLUGINS_SUCCESS_DELETE'), $plugin);
-					return;
-				}
-
-				// An error occurred somewhere?
-				$this->response->header = self::HTTP_CONFLICT;
-				$this->response->message = sprintf(line('CSK_PLUGINS_ERROR_DELETE'), $plugin);
-				return;
+				$this->response->message = __('CSK_LANGUAGES_ERROR_DEFAULT');
 
 				break;
 		}
@@ -427,7 +318,7 @@ class Ajax extends AJAX_Controller {
 			OR true !== $this->check_nonce())
 		{
 			$this->response->header  = self::HTTP_NOT_ACCEPTABLE;
-			$this->response->message = line('CSK_ERROR_NONCE_URL');
+			$this->response->message = __('CSK_ERROR_NONCE_URL');
 			return;
 		}
 
@@ -440,12 +331,12 @@ class Ajax extends AJAX_Controller {
 				if (false !== $this->kbcore->activities->delete($id))
 				{
 					$this->response->header  = self::HTTP_OK;
-					$this->response->message = line('CSK_REPORTS_SUCCESS_DELETE');
+					$this->response->message = __('CSK_REPORTS_SUCCESS_DELETE');
 					return;
 				}
 
 				// Otherwise, the activity could not be deleted.
-				$this->response->message = line('CSK_REPORTS_ERROR_DELETE');
+				$this->response->message = __('CSK_REPORTS_ERROR_DELETE');
 				return;
 
 				break;
@@ -491,7 +382,7 @@ class Ajax extends AJAX_Controller {
 			OR true !== $this->check_nonce())
 		{
 			$this->response->header = self::HTTP_NOT_ACCEPTABLE;
-			$this->response->message = line('CSK_ERROR_NONCE_URL');
+			$this->response->message = __('CSK_ERROR_NONCE_URL');
 			return;
 		}
 
@@ -517,13 +408,13 @@ class Ajax extends AJAX_Controller {
 				log_activity($this->c_user->id, 'Activated theme: '.$name);
 
 				$this->response->header = self::HTTP_OK;
-				$this->response->message = line('CSK_THEMES_SUCCESS_ACTIVATE');
+				$this->response->message = __('CSK_THEMES_SUCCESS_ACTIVATE');
 				return;
 			}
 
 			// Otherwise, the theme could not be activated.
 			$this->response->header = self::HTTP_NOT_MODIFIED;
-			$this->response->message = line('CSK_THEMES_ERROR_ACTIVATE');
+			$this->response->message = __('CSK_THEMES_ERROR_ACTIVATE');
 			return;
 		}
 
@@ -534,7 +425,7 @@ class Ajax extends AJAX_Controller {
 			if ($name === $db_theme->value)
 			{
 				$this->response->header  = self::HTTP_NOT_ACCEPTABLE;
-				$this->response->message = line('CSK_THEMES_ERROR_DELETE_ACTIVE');
+				$this->response->message = __('CSK_THEMES_ERROR_DELETE_ACTIVE');
 				return;
 			}
 
@@ -554,13 +445,13 @@ class Ajax extends AJAX_Controller {
 				log_activity($this->c_user->id, 'Deleted theme: '.$name);
 
 				$this->response->header = self::HTTP_OK;
-				$this->response->message = line('CSK_THEMES_SUCCESS_DELETE');
+				$this->response->message = __('CSK_THEMES_SUCCESS_DELETE');
 				return;
 			}
 
 			// Otherwise, the theme could not be delete.
 			$this->response->header = self::HTTP_NOT_MODIFIED;
-			$this->response->message = line('CSK_THEMES_ERROR_DELETE');
+			$this->response->message = __('CSK_THEMES_ERROR_DELETE');
 			return;
 		}
 
@@ -576,7 +467,7 @@ class Ajax extends AJAX_Controller {
 			if (true === $theme['enabled']) {
 				$theme['status'] = html_tag('span', array(
 					'class' => 'badge badge-success',
-				), line('CSK_ADMIN_ACTIVE'));
+				), __('CSK_ADMIN_ACTIVE'));
 			}
 
 			// The theme has a URI?
@@ -629,7 +520,7 @@ class Ajax extends AJAX_Controller {
 					),
 					'data-theme' => $name,
 					'class' => 'btn btn-primary btn-sm theme-activate',
-				), line('CSK_THEMES_ACTIVATE'));
+				), __('CSK_THEMES_ACTIVATE'));
 
 				$theme['action_delete'] = html_tag('button', array(
 					'type' => 'button',
@@ -639,7 +530,7 @@ class Ajax extends AJAX_Controller {
 					),
 					'data-theme' => $name,
 					'class' => 'btn btn-danger btn-sm theme-delete pull-right',
-				), line('CSK_THEMES_DELETE'));
+				), __('CSK_THEMES_DELETE'));
 			}
 
 			$this->response->header  = self::HTTP_OK;
@@ -674,21 +565,21 @@ class Ajax extends AJAX_Controller {
 			OR true !== $this->check_nonce())
 		{
 			$this->response->header  = self::HTTP_NOT_ACCEPTABLE;
-			$this->response->message = line('CSK_ERROR_NONCE_URL');
+			$this->response->message = __('CSK_ERROR_NONCE_URL');
 			return;
 		}
 
 		if ($id == $this->c_user->id)
 		{
 			$this->response->header  = self::HTTP_UNAUTHORIZED;
-			$this->response->message = line('CSK_USERS_ADMIN_ERROR_'.strtoupper($action).'_OWN');
+			$this->response->message = __('CSK_USERS_ADMIN_ERROR_'.strtoupper($action).'_OWN');
 			return;
 		}
 
 		if (false === ($user = $this->kbcore->users->get($id)))
 		{
 			$this->response->header  = self::HTTP_NOT_FOUND;
-			$this->response->message = line('CSK_USERS_ERROR_ACCOUNT_MISSING');
+			$this->response->message = __('CSK_USERS_ERROR_ACCOUNT_MISSING');
 			return;
 		}
 
@@ -702,12 +593,12 @@ class Ajax extends AJAX_Controller {
 					log_activity($this->c_user->id, 'Activated account: #'.$id);
 
 					$this->response->header = self::HTTP_OK;
-					$this->response->message = line('CSK_USERS_ADMIN_SUCCESS_ACTIVATE');
+					$this->response->message = __('CSK_USERS_ADMIN_SUCCESS_ACTIVATE');
 					return;
 				}
 
 				$this->response->header = self::HTTP_CONFLICT;
-				$this->response->message = line('CSK_USERS_ADMIN_ERROR_ACTIVATE');
+				$this->response->message = __('CSK_USERS_ADMIN_ERROR_ACTIVATE');
 				break;
 
 			// Deactivate a user.
@@ -718,12 +609,12 @@ class Ajax extends AJAX_Controller {
 					log_activity($this->c_user->id, 'Deactivated account: #'.$id);
 
 					$this->response->header = self::HTTP_OK;
-					$this->response->message = line('CSK_USERS_ADMIN_SUCCESS_DEACTIVATE');
+					$this->response->message = __('CSK_USERS_ADMIN_SUCCESS_DEACTIVATE');
 					return;
 				}
 
 				$this->response->header = self::HTTP_CONFLICT;
-				$this->response->message = line('CSK_USERS_ADMIN_ERROR_DEACTIVATE');
+				$this->response->message = __('CSK_USERS_ADMIN_ERROR_DEACTIVATE');
 				break;
 
 			// Delete a user.
@@ -734,12 +625,12 @@ class Ajax extends AJAX_Controller {
 					log_activity($this->c_user->id, 'Deleted account: #'.$id);
 
 					$this->response->header = self::HTTP_OK;
-					$this->response->message = line('CSK_USERS_ADMIN_SUCCESS_DELETE');
+					$this->response->message = __('CSK_USERS_ADMIN_SUCCESS_DELETE');
 					return;
 				}
 
 				$this->response->header = self::HTTP_CONFLICT;
-				$this->response->message = line('CSK_USERS_ADMIN_ERROR_DELETE');
+				$this->response->message = __('CSK_USERS_ADMIN_ERROR_DELETE');
 				break;
 
 			// Restore a user.
@@ -750,12 +641,12 @@ class Ajax extends AJAX_Controller {
 					log_activity($this->c_user->id, 'Restored account: #'.$id);
 
 					$this->response->header = self::HTTP_OK;
-					$this->response->message = line('CSK_USERS_ADMIN_SUCCESS_RESTORE');
+					$this->response->message = __('CSK_USERS_ADMIN_SUCCESS_RESTORE');
 					return;
 				}
 
 				$this->response->header = self::HTTP_CONFLICT;
-				$this->response->message = line('CSK_USERS_ADMIN_ERROR_RESTORE');
+				$this->response->message = __('CSK_USERS_ADMIN_ERROR_RESTORE');
 				break;
 			
 			// Remove a user.
@@ -766,12 +657,12 @@ class Ajax extends AJAX_Controller {
 					log_activity($this->c_user->id, 'Removed account: '.$user->username);
 
 					$this->response->header = self::HTTP_OK;
-					$this->response->message = line('CSK_USERS_ADMIN_SUCCESS_REMOVE');
+					$this->response->message = __('CSK_USERS_ADMIN_SUCCESS_REMOVE');
 					return;
 				}
 
 				$this->response->header = self::HTTP_CONFLICT;
-				$this->response->message = line('CSK_USERS_ADMIN_ERROR_REMOVE');
+				$this->response->message = __('CSK_USERS_ADMIN_ERROR_REMOVE');
 				break;
 		}
 	}
