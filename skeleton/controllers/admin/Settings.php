@@ -149,7 +149,7 @@ class Settings extends Settings_Controller {
 	{
 		// Page icon and title.
 		$this->data['page_icon'] = 'sliders';
-		$this->data['page_title'] = line('CSK_ADMIN_GLOBAL_SETTINGS');
+		$this->data['page_title'] = __('CSK_ADMIN_GLOBAL_SETTINGS');
 
 		// Let's see what tab we are on.
 		$tab = $this->input->get('tab', true);
@@ -161,8 +161,8 @@ class Settings extends Settings_Controller {
 		if ('general' !== $tab)
 		{
 			$this->data['page_title'] = sprintf(
-				line('CSK_SETTINGS_NAME'),
-				line('CSK_SETTINGS_TAB_'.strtoupper($tab))
+				__('CSK_SETTINGS_NAME'),
+				__('CSK_SETTINGS_TAB_'.strtoupper($tab))
 			);
 		}
 
@@ -246,10 +246,10 @@ class Settings extends Settings_Controller {
 
 		// Page icon and heading.
 		$this->data['page_icon'] = 'info-circle';
-		$this->data['page_title'] = line('CSK_SETTINGS_SYSTEM_INFORMATION');
+		$this->data['page_title'] = __('CSK_SETTINGS_SYSTEM_INFORMATION');
 
 		$this->theme
-			->set_title(line('CSK_SETTINGS_SYSTEM_INFORMATION'))
+			->set_title(__('CSK_SETTINGS_SYSTEM_INFORMATION'))
 			->render($this->data);
 	}
 
@@ -311,27 +311,27 @@ class Settings extends Settings_Controller {
 			html_tag('a', array(
 				'href' => admin_url('settings'),
 				'class' => 'btn btn-'.('general' === $tab ? 'primary' : 'default'),
-			), line('CSK_SETTINGS_TAB_GENERAL')),
+			), __('CSK_SETTINGS_TAB_GENERAL')),
 
 			html_tag('a', array(
 				'href' => admin_url('settings?tab=users'),
 				'class' => 'btn btn-'.('users' === $tab ? 'primary' : 'default'),
-			), line('CSK_SETTINGS_TAB_USERS')),
+			), __('CSK_SETTINGS_TAB_USERS')),
 
 			html_tag('a', array(
 				'href' => admin_url('settings?tab=email'),
 				'class' => 'btn btn-'.('email' === $tab ? 'primary' : 'default'),
-			), line('CSK_SETTINGS_TAB_EMAIL')),
+			), __('CSK_SETTINGS_TAB_EMAIL')),
 
 			html_tag('a', array(
 				'href' => admin_url('settings?tab=captcha'),
 				'class' => 'btn btn-'.('captcha' === $tab ? 'primary' : 'default'),
-			), line('CSK_SETTINGS_TAB_CAPTCHA')),
+			), __('CSK_SETTINGS_TAB_CAPTCHA')),
 
 			html_tag('a', array(
 				'href' => admin_url('settings?tab=upload'),
 				'class' => 'btn btn-'.('upload' === $tab ? 'primary' : 'default'),
-			), line('CSK_SETTINGS_TAB_UPLOAD')),
+			), __('CSK_SETTINGS_TAB_UPLOAD')),
 
 			'</div>';
 		});
