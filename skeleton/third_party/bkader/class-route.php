@@ -535,6 +535,19 @@ class Route {
 	 */
 	public static function named($name)
 	{
+		// In case of forward slashes.
+		if (false !== strpos($name, '/'))
+		{
+			// 1. Explode and clean elements.
+			$exp = array_clean(explode('/', $name));
+
+			// 2. Pass them to this method.
+			$exp = array_map(array('Route', 'named'), $exp);
+
+			// 3. Put back element together and return them.
+			return implode('/', $exp);
+		}
+
 		// Make the method remember cached routes.
 		static $cached = array();
 
