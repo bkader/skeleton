@@ -21,7 +21,7 @@ require_once(KBPATH.'bootstrap.php');
  * order to cache objects and anything cross-files.
  * @since 	2.1.0
  */
-// _start_cache_object(array('group1', 'group2'));
+// start_data_cache(array('group1', 'group2'));
 
 // ------------------------------------------------------------------------
 // YOU MAY EDIT LINES BELOW.

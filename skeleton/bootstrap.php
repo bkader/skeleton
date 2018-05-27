@@ -468,10 +468,10 @@ if (defined('USE_GETTEXT') && true === USE_GETTEXT)
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('_start_cache_object'))
+if ( ! function_exists('start_data_cache'))
 {
 	/**
-	 * Starts Skeleton cache object. internal access only.
+	 * Starts Skeleton Data_Cache object. internal access only.
 	 *
 	 * Make sure to call this function at the beginning of application 
 	 * "bootstrap.php" file.
@@ -482,19 +482,19 @@ if ( ! function_exists('_start_cache_object'))
 	 * @param 	array 	$groups 	Groups to initialize (Optional)
 	 * @return 	void
 	 */
-	function _start_cache_object($groups = null)
+	function start_data_cache($groups = null)
 	{
-		if ( ! function_exists('cs_cache_init'))
+		if ( ! function_exists('data_cache_init'))
 		{
-			require_once(KBPATH.'third_party/bkader/class-cache-object.php');
+			require_once(KBPATH.'third_party/bkader/class-data-cache.php');
 		}
 
-		if (function_exists('cs_cache_init'))
+		if (function_exists('data_cache_init'))
 		{
 			// We start the cache object.
-			cs_cache_init();
+			data_cache_init();
 
-			if (function_exists('cs_cache_add_groups'))
+			if (function_exists('data_cache_add_groups'))
 			{
 				// Default groups.
 				$default = array(
@@ -513,7 +513,7 @@ if ( ! function_exists('_start_cache_object'))
 					$groups = $default;
 				}
 
-				cs_cache_add_groups($groups);
+				data_cache_add_groups($groups);
 			}
 		}
 	}

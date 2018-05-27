@@ -38,7 +38,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * CS_Cache_object
+ * Data_Cache
  *
  * This class and its helpers can used to store anything in the global scope
  * in order to reduce DB access for example. The cache object stores all of
@@ -54,7 +54,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		2.1.0
  * @version 	2.1.0
  */
-class CS_Cache_object {
+class Data_Cache {
 
 	/**
 	 * Holds an array of the cached objects.
@@ -197,7 +197,7 @@ class CS_Cache_object {
 	public function add($key, $data, $group = 'default')
 	{
 		// We don't proceed if cache is suspended.
-		if (cs_suspend_cache())
+		if (data_cache_suspend())
 		{
 			return false;
 		}
@@ -511,7 +511,7 @@ class CS_Cache_object {
 // Helpers.
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('cs_suspend_cache'))
+if ( ! function_exists('data_cache_suspend'))
 {
 	/**
 	 * This method is used to temporary suspend cache. No more data can be
@@ -525,7 +525,7 @@ if ( ! function_exists('cs_suspend_cache'))
 	 * @param 	bool 	$suspend 	Suspends the cache if true, enables it if false.
 	 * @return 	bool 	The current suspension status.
 	 */
-	function cs_suspend_cache($suspend = null)
+	function data_cache_suspend($suspend = null)
 	{
 		static $suspended = false;
 		
@@ -537,37 +537,37 @@ if ( ! function_exists('cs_suspend_cache'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('cache_instance'))
+if ( ! function_exists('data_cache_instance'))
 {
 	/**
-	 * Returns an instance of CS_Cache_object object.
+	 * Returns an instance of Data_Cache object.
 	 * @param 	void
 	 * @return 	object
 	 */
-	function cache_instance()
+	function data_cache_instance()
 	{
-		return CS_Cache_object::instance();
+		return Data_Cache::instance();
 	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('cs_cache_init'))
+if ( ! function_exists('data_cache_init'))
 {
 	/**
 	 * Sets up Object Cache Global and assigns it.
 	 * @param 	none
 	 * @return 	void
 	 */
-	function cs_cache_init()
+	function data_cache_init()
 	{
-		$GLOBALS['cs_cache'] = new CS_Cache_object();
+		$GLOBALS['cs_cache'] = new Data_Cache();
 	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('cs_cache_add'))
+if ( ! function_exists('data_cache_add'))
 {
 	/**
 	 * Adds data to the cache if it does not already exist.
@@ -577,15 +577,15 @@ if ( ! function_exists('cs_cache_add'))
 	 * @param 	string 	$group 	Where to group the cache content. Default "defautl".
 	 * @return 	bool 	true if data added, false on error or key existence.
 	 */
-	function cs_cache_add($key, $data, $group = '')
+	function data_cache_add($key, $data, $group = '')
 	{
-		return cache_instance()->add($key, $data, $group);
+		return data_cache_instance()->add($key, $data, $group);
 	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('cs_cache_add_groups'))
+if ( ! function_exists('data_cache_add_groups'))
 {
 	/**
 	 * Sets the list of global cache groups.
@@ -593,15 +593,15 @@ if ( ! function_exists('cs_cache_add_groups'))
 	 * @param 	mixed 	$groups 	Array, string or comma-separated string.
 	 * @return 	void
 	 */
-	function cs_cache_add_groups($groups)
+	function data_cache_add_groups($groups)
 	{
-		return cache_instance()->add_groups($groups);
+		return data_cache_instance()->add_groups($groups);
 	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('cs_cache_set'))
+if ( ! function_exists('data_cache_set'))
 {
 	/**
 	 * Sets the data contents into the cache.
@@ -617,15 +617,15 @@ if ( ! function_exists('cs_cache_set'))
 	 * @param 	string  $group 		Where to group the cache contents. Default 'default'.
 	 * @return 	bool 	Always returns true.
 	 */
-	function cs_cache_set($key, $data, $group = '')
+	function data_cache_set($key, $data, $group = '')
 	{
-		return cache_instance()->set($key, $data, $group);
+		return data_cache_instance()->set($key, $data, $group);
 	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('cs_cache_get'))
+if ( ! function_exists('data_cache_get'))
 {
 	/**
 	 * Retrieves the cache contents, if it exists.
@@ -642,15 +642,15 @@ if ( ! function_exists('cs_cache_get'))
 	 * @param 	bool 	$found 	Whether the key was found in the cache (passed by reference).
 	 * @return 	mixed 	false on failure to retrieve contents or the cache contents on success.
 	 */
-	function cs_cache_get($key, $group = '', &$found = null)
+	function data_cache_get($key, $group = '', &$found = null)
 	{
-		return cache_instance()->get($key, $group, $found);
+		return data_cache_instance()->get($key, $group, $found);
 	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('cs_cache_replace'))
+if ( ! function_exists('data_cache_replace'))
 {
 	/**
 	 * Replaces the contents in the cache, if contents already exist.
@@ -660,15 +660,15 @@ if ( ! function_exists('cs_cache_replace'))
 	 * @param 	string 	$group 		Where to group the cache contents. Default 'default'.
 	 * @return bool False if not exists, true if contents were replaced.
 	 */
-	function cs_cache_replace($key, $data, $group = '')
+	function data_cache_replace($key, $data, $group = '')
 	{
-		return cache_instance()->replace($key, $data, $group);
+		return data_cache_instance()->replace($key, $data, $group);
 	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('cs_cache_delete'))
+if ( ! function_exists('data_cache_delete'))
 {
 	/**
 	 * Removes the contents of the cache key in the group if it exists.
@@ -677,15 +677,15 @@ if ( ! function_exists('cs_cache_delete'))
 	 * @param 	string 	$group 	Optional. Where the cache contents are grouped. Default 'default'.
 	 * @return 	bool 	true if the contents were deleted, else false.
 	 */
-	function cs_cache_delete($key, $group = '')
+	function data_cache_delete($key, $group = '')
 	{
-		return cache_instance()->delete($key, $group);
+		return data_cache_instance()->delete($key, $group);
 	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('cs_cache_reset'))
+if ( ! function_exists('data_cache_reset'))
 {
 	/**
 	 * Resets all cache keys.
@@ -693,15 +693,15 @@ if ( ! function_exists('cs_cache_reset'))
 	 * @param 	none
 	 * @return 	void
 	 */
-	function cs_cache_reset()
+	function data_cache_reset()
 	{
-		return cache_instance()->reset();
+		return data_cache_instance()->reset();
 	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('cs_cache_flush'))
+if ( ! function_exists('data_cache_flush'))
 {
 	/**
 	 * Clears the object cache of all data.
@@ -709,15 +709,15 @@ if ( ! function_exists('cs_cache_flush'))
 	 * @param 	none
 	 * @return 	bool 	Always returns true.
 	 */
-	function cs_cache_flush()
+	function data_cache_flush()
 	{
-		return cache_instance()->flush();
+		return data_cache_instance()->flush();
 	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('cs_cache_increment'))
+if ( ! function_exists('data_cache_increment'))
 {
 	/**
 	 * Increments numeric cache item's value.
@@ -727,15 +727,15 @@ if ( ! function_exists('cs_cache_increment'))
 	 * @param 	string 	$group 	The group the key is in. Default 'default'.
 	 * @return 	mixed 	the item's new value if incremented, else false.
 	 */
-	function cs_cache_increment($key, $offset = 1, $group = '')
+	function data_cache_increment($key, $offset = 1, $group = '')
 	{
-		return cache_instance()->increment($key, $offset, $group);
+		return data_cache_instance()->increment($key, $offset, $group);
 	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('cs_cache_decrement'))
+if ( ! function_exists('data_cache_decrement'))
 {
 	/**
 	 * Dcrements numeric cache item's value.
@@ -745,15 +745,15 @@ if ( ! function_exists('cs_cache_decrement'))
 	 * @param 	string 	$group 	The group the key is in. Default 'default'.
 	 * @return 	mixed 	the item's new value if decremented, else false.
 	 */
-	function cs_cache_decrement($key, $offset = 1, $group = '')
+	function data_cache_decrement($key, $offset = 1, $group = '')
 	{
-		return cache_instance()->decrement($key, $offset, $group);
+		return data_cache_instance()->decrement($key, $offset, $group);
 	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('cs_cache_stats'))
+if ( ! function_exists('data_cache_stats'))
 {
 	/**
 	 * Echoes the stats of the caching.
@@ -765,8 +765,8 @@ if ( ! function_exists('cs_cache_stats'))
 	 * @param 	none
 	 * @return 	string
 	 */
-	function cs_cache_stats()
+	function data_cache_stats()
 	{
-		return cache_instance()->stats();
+		return data_cache_instance()->stats();
 	}
 }
