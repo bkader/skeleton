@@ -57,6 +57,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 	2.0.0
  */
 require_once(KBPATH.'third_party/print_d/print_d.php');
+require_once(KBPATH.'third_party/bkader/compat.php');
 require_once(KBPATH.'third_party/bkader/base.php');
 require_once(KBPATH.'third_party/bkader/format.php');
 require_once(KBPATH.'third_party/bkader/sanitize.php');
