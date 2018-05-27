@@ -62,7 +62,7 @@ form_nonce('add-user'),
 	html_tag('label', array(
 		'for'   => 'first_name',
 		'class' => 'sr-only',
-	), line('CSK_INPUT_FIRST_NAME')),
+	), __('CSK_INPUT_FIRST_NAME')),
 
 	print_input($first_name, array(
 		'autofocus' => 'autofocus', 
@@ -79,7 +79,7 @@ form_nonce('add-user'),
 	html_tag('label', array(
 		'for'   => 'last_name',
 		'class' => 'sr-only',
-	), line('CSK_INPUT_LAST_NAME')),
+	), __('CSK_INPUT_LAST_NAME')),
 
 	print_input($last_name, array(
 		'class' => 'form-control'.(has_error('last_name') ? ' is-invalid' : ''),
@@ -95,7 +95,7 @@ form_nonce('add-user'),
 	html_tag('label', array(
 		'for'   => 'email',
 		'class' => 'sr-only',
-	), line('CSK_INPUT_EMAIL_ADDRESS')),
+	), __('CSK_INPUT_EMAIL_ADDRESS')),
 
 	print_input($email, array(
 		'class' => 'form-control'.(has_error('email') ? ' is-invalid' : ''),
@@ -111,7 +111,7 @@ form_nonce('add-user'),
 	html_tag('label', array(
 		'for'   => 'username',
 		'class' => 'sr-only',
-	), line('CSK_INPUT_USERNAME')),
+	), __('CSK_INPUT_USERNAME')),
 
 	print_input($username, array(
 		'class' => 'form-control'.(has_error('username') ? ' is-invalid' : ''),
@@ -127,7 +127,7 @@ form_nonce('add-user'),
 	html_tag('label', array(
 		'for'   => 'password',
 		'class' => 'sr-only',
-	), line('CSK_INPUT_PASSWORD')),
+	), __('CSK_INPUT_PASSWORD')),
 
 	print_input($password, array(
 		'class' => 'form-control'.(has_error('password') ? ' is-invalid' : ''),
@@ -143,7 +143,7 @@ form_nonce('add-user'),
 	html_tag('label', array(
 		'for'   => 'cpassword',
 		'class' => 'sr-only',
-	), line('CSK_INPUT_CONFIRM_PASSWORD')),
+	), __('CSK_INPUT_CONFIRM_PASSWORD')),
 
 	print_input($cpassword, array(
 		'class' => 'form-control'.(has_error('cpassword') ? ' is-invalid' : ''),
@@ -159,14 +159,14 @@ form_nonce('add-user'),
 form_checkbox('enabled', 1, set_checkbox('enabled', '1', false), 'id="enabled"'),
 html_tag('label', array(
 	'for' => 'enabled',
-), line('CSK_USERS_ACTIVE')),
+), __('CSK_USERS_ACTIVE')),
 
 // Account type.
 '<span class="float-right">',
 form_checkbox('admin', 1, set_checkbox('admin', '1', false), 'id="admin"'),
 html_tag('label', array(
 	'for' => 'admin',
-), line('CSK_USERS_ROLE_ADMIN')),
+), __('CSK_USERS_ROLE_ADMIN')),
 '</span>',
 '</div>',
 
@@ -175,11 +175,11 @@ html_tag('label', array(
 html_tag('button', array(
 	'type' => 'submit',
 	'class' => 'btn btn-primary float-right'
-), line('CSK_USERS_ADD_USER')),
+), __('CSK_USERS_ADD_USER')),
 html_tag('a', array(
 	'href'  => admin_url('users'),
 	'class' => 'btn btn-white',
-), line('CSK_BTN_CANCEL')),
+), __('CSK_BTN_CANCEL')),
 '</div>',
 
 // Form closing tag.

@@ -117,7 +117,7 @@ if (null !== $theme): ?>
 	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header clearfix">
-				<h2 class="modal-title"><?php printf(line('CSK_THEMES_THEME_DETAILS_NAME'), "{{name}}"); ?></h2>
+				<h2 class="modal-title"><?php printf(__('CSK_THEMES_THEME_DETAILS_NAME'), "{{name}}"); ?></h2>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 			</div>
 			<div class="modal-body">

@@ -108,7 +108,7 @@ class Admin_Controller extends KB_Controller
 
 		if ( ! $this->kbcore->auth->is_admin())
 		{
-			set_alert(line('CSK_ERROR_PERMISSION'), 'error');
+			set_alert(__('CSK_ERROR_PERMISSION'), 'error');
 			redirect('');
 			exit;
 		}
@@ -241,15 +241,15 @@ class Admin_Controller extends KB_Controller
 
 		// Generic language lines.
 		$lines = array(
-			'activate'       => line('CSK_ADMIN_CONFIRM_ACTIVATE'),
-			'deactivate'     => line('CSK_ADMIN_CONFIRM_DEACTIVATE'),
-			'delete'         => line('CSK_ADMIN_CONFIRM_DELETE'),
-			'deleteselected' => line('CSK_ADMIN_CONFIRM_DELETE_SELECTED'),
-			'disable'        => line('CSK_ADMIN_CONFIRM_DISABLE'),
-			'enable'         => line('CSK_ADMIN_CONFIRM_ENABLE'),
-			'install'        => line('CSK_ADMIN_CONFIRM_INSTALL'),
-			'remove'         => line('CSK_ADMIN_CONFIRM_DELETE_PERMANENT'),
-			'upload'         => line('CSK_ADMIN_CONFIRM_UPLOAD'),
+			'activate'       => __('CSK_ADMIN_CONFIRM_ACTIVATE'),
+			'deactivate'     => __('CSK_ADMIN_CONFIRM_DEACTIVATE'),
+			'delete'         => __('CSK_ADMIN_CONFIRM_DELETE'),
+			'deleteselected' => __('CSK_ADMIN_CONFIRM_DELETE_SELECTED'),
+			'disable'        => __('CSK_ADMIN_CONFIRM_DISABLE'),
+			'enable'         => __('CSK_ADMIN_CONFIRM_ENABLE'),
+			'install'        => __('CSK_ADMIN_CONFIRM_INSTALL'),
+			'remove'         => __('CSK_ADMIN_CONFIRM_DELETE_PERMANENT'),
+			'upload'         => __('CSK_ADMIN_CONFIRM_UPLOAD'),
 		);
 
 		$output .= '<script type="text/javascript">';
@@ -374,7 +374,7 @@ class Admin_Controller extends KB_Controller
 						}
 						// May be we use 
 						elseif (isset($module[$title_line]) && 1 === sscanf($module[$title_line], 'lang:%s', $line)) {
-							$title = line($line);
+							$title = __($line);
 						} else {
 							$title = ucwords($module[$title_line]);
 						}
@@ -401,7 +401,7 @@ class Admin_Controller extends KB_Controller
 					}
 					// May be we use 
 					elseif (isset($module[$title_line]) && 1 === sscanf($module[$title_line], 'lang:%s', $line)) {
-						$title = line($line);
+						$title = __($line);
 					} else {
 						$title = ucwords($module[$title_line]);
 					}
@@ -746,7 +746,7 @@ class Admin_Controller extends KB_Controller
 		$anchor = html_tag('a', array(
 			'href' => admin_url($module),
 			'class' => 'btn btn-default btn-sm btn-icon',
-		), fa_icon($icon).line('CSK_BTN_BACK'));
+		), fa_icon($icon).__('CSK_BTN_BACK'));
 
 		if (false === $echo)
 		{
@@ -834,7 +834,7 @@ class Help_Controller extends Admin_Controller {
 		$this->load->language('csk_help');
 		
 		$this->data['page_icon']  = 'question-circle';
-		$this->data['page_title'] = line('CSK_ADMIN_HELP');
+		$this->data['page_title'] = __('CSK_ADMIN_HELP');
 		$this->data['page_help']  = 'https://goo.gl/dAChV1';
 	}
 
@@ -881,7 +881,7 @@ class Reports_Controller extends Admin_Controller {
 		add_action('admin_head', array($this, '_reports_admin_head'), 0);
 		
 		$this->data['page_icon']  = 'bar-chart';
-		$this->data['page_title'] = line('CSK_ADMIN_REPORTS');
+		$this->data['page_title'] = __('CSK_ADMIN_REPORTS');
 		$this->data['page_help']  = 'https://goo.gl/L3cXUb';
 	}
 
@@ -905,7 +905,7 @@ class Reports_Controller extends Admin_Controller {
 		$output .= '<script type="text/javascript">';
 		$output .= 'csk.i18n = csk.i18n || {};';
 		$output .= ' csk.i18n.reports = csk.i18n.reports || {};';
-		$output .= ' csk.i18n.reports.delete = "'.line('CSK_REPORTS_CONFIRM_DELETE').'";';
+		$output .= ' csk.i18n.reports.delete = "'.__('CSK_REPORTS_CONFIRM_DELETE').'";';
 		$output .= '</script>';
 
 		return $output;
@@ -958,7 +958,7 @@ class Settings_Controller extends Admin_Controller {
 		$this->scripts[] = 'settings';
 
 		$this->data['page_icon']  = 'sliders';
-		$this->data['page_title'] = line('CSK_BTN_SETTINGS');
+		$this->data['page_title'] = __('CSK_BTN_SETTINGS');
 		$this->data['page_help']  = 'https://goo.gl/H9giKR';
 	}
 
@@ -1120,7 +1120,7 @@ class Settings_Controller extends Admin_Controller {
 						return $val;
 					}
 
-					return (sscanf($val, 'lang:%s', $lang_val) === 1) ? line($lang_val) : $val;
+					return (sscanf($val, 'lang:%s', $lang_val) === 1) ? __($lang_val) : $val;
 				}, $option->options);
 
 				if ( ! empty($option->value))
@@ -1135,7 +1135,7 @@ class Settings_Controller extends Admin_Controller {
 			}
 			else
 			{
-				$data[$option->name]['placeholder'] = line('CSK_SETTINGS_'.$option->name);
+				$data[$option->name]['placeholder'] = __('CSK_SETTINGS_'.$option->name);
 			}
 		}
 
@@ -1163,14 +1163,14 @@ class Settings_Controller extends Admin_Controller {
 		// Nothing provided? Nothing to do.
 		if (empty($inputs) OR (empty($tab) OR ! array_key_exists($tab, $this->_tabs)))
 		{
-			set_alert(line('CSK_ERROR_CSRF'), 'error');
+			set_alert(__('CSK_ERROR_CSRF'), 'error');
 			return false;
 		}
 
 		// Check nonce.
 		if (true !== $this->check_nonce('settings-'.$tab, false))
 		{
-			set_alert(line('CSK_ERROR_CSRF'), 'error');
+			set_alert(__('CSK_ERROR_CSRF'), 'error');
 			return false;
 		}
 
@@ -1195,7 +1195,7 @@ class Settings_Controller extends Admin_Controller {
 		 */
 		if (empty($settings))
 		{
-			set_alert(line('CSK_SETTINGS_SUCCESS_UPDATE'), 'success');
+			set_alert(__('CSK_SETTINGS_SUCCESS_UPDATE'), 'success');
 			return true;
 		}
 
@@ -1208,12 +1208,12 @@ class Settings_Controller extends Admin_Controller {
 			if (false === $this->kbcore->options->set_item($key, $val))
 			{
 				log_message('error', "Unable to update setting {$tab}: {$key}");
-				set_alert(line('CSK_SETTINGS_ERROR_UPDATE'), 'error');
+				set_alert(__('CSK_SETTINGS_ERROR_UPDATE'), 'error');
 				return false;
 			}
 		}
 
-		set_alert(line('CSK_SETTINGS_SUCCESS_UPDATE'), 'success');
+		set_alert(__('CSK_SETTINGS_SUCCESS_UPDATE'), 'success');
 		return true;
 	}
 

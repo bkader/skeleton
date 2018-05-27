@@ -76,24 +76,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				html_tag('td', null, fa_icon($user->gender.' mr-1').$user->full_name),
 				html_tag('td', null, $user->username),
 				html_tag('td', null, $user->email),
-				html_tag('td', null, line('CSK_USERS_ROLE_'.$user->subtype)),
+				html_tag('td', null, __('CSK_USERS_ROLE_'.$user->subtype)),
 
 				// Status.
 				'<td>';
 				if ($user->enabled > 0) {
 					echo html_tag('span', array(
 						'class' => 'badge badge-success'
-					), line('CSK_USERS_ACTIVE'));
+					), __('CSK_USERS_ACTIVE'));
 				} else {
 					echo html_tag('span', array(
 						'class' => 'badge badge-warning'
-					), line('CSK_USERS_INACTIVE'));
+					), __('CSK_USERS_INACTIVE'));
 				}
 
 				if (0 <> $user->deleted) {
 					echo html_tag('span', array(
 						'class' => 'badge badge-danger ml-1'
-					), line('CSK_USERS_DELETED'));
+					), __('CSK_USERS_DELETED'));
 				}
 
 				// User actions.
@@ -109,7 +109,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 							'href'   => site_url($user->username),
 							'class'  => 'btn btn-default btn-xs',
 							'rel'    => 'tooltip',
-							'title'  => line('CSK_BTN_VIEW_PROFILE'),
+							'title'  => __('CSK_BTN_VIEW_PROFILE'),
 							'target' => '_blank',
 						), fa_icon('eye')),
 
@@ -118,7 +118,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 							'href'   => admin_url('users/edit/'.$user->id),
 							'class'  => 'btn btn-default btn-xs ml-2',
 							'rel'    => 'tooltip',
-							'title'  => line('CSK_USERS_EDIT_USER'),
+							'title'  => __('CSK_USERS_EDIT_USER'),
 						), fa_icon('edit text-primary'));
 
 						// Activate/deactivate user.
@@ -128,7 +128,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 								'data-endpoint' => nonce_ajax_url("users/deactivate/{$user->id}", "deactivate-user_{$user->id}"),
 								'class'         => 'btn btn-default btn-xs user-deactivate ml-2',
 								'rel'           => 'tooltip',
-								'title'         => line('CSK_USERS_DEACTIVATE_USER'),
+								'title'         => __('CSK_USERS_DEACTIVATE_USER'),
 							), fa_icon('lock'));
 						} else {
 							echo html_tag('button', array(
@@ -136,7 +136,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 								'data-endpoint' => nonce_ajax_url("users/activate/{$user->id}", "activate-user_{$user->id}"),
 								'class'         => 'btn btn-default btn-xs user-activate ml-2',
 								'rel'           => 'tooltip',
-								'title'         => line('CSK_USERS_ACTIVATE_USER'),
+								'title'         => __('CSK_USERS_ACTIVATE_USER'),
 							), fa_icon('unlock-alt text-success'));
 						}
 
@@ -148,7 +148,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 								'data-endpoint' => nonce_ajax_url("users/restore/{$user->id}", "restore-user_{$user->id}"),
 								'class'         => 'btn btn-default btn-xs user-restore ml-2',
 								'rel'           => 'tooltip',
-								'title'         => line('CSK_USERS_RESTORE_USER'),
+								'title'         => __('CSK_USERS_RESTORE_USER'),
 							), fa_icon('history'));
 						}
 						else
@@ -158,7 +158,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 								'data-endpoint' => nonce_ajax_url("users/delete/{$user->id}", "delete-user_{$user->id}"),
 								'class'         => 'btn btn-default btn-xs user-delete ml-2',
 								'rel'           => 'tooltip',
-								'title'         => line('CSK_USERS_DELETE_USER'),
+								'title'         => __('CSK_USERS_DELETE_USER'),
 							), fa_icon('times text-danger'));
 						}
 
@@ -167,7 +167,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 							'data-endpoint' => nonce_ajax_url("users/remove/{$user->id}", "remove-user_{$user->id}"),
 							'class'         => 'btn btn-danger btn-xs user-remove ml-2',
 							'rel'           => 'tooltip',
-							'title'         => line('CSK_USERS_REMOVE_USER'),
+							'title'         => __('CSK_USERS_REMOVE_USER'),
 						), fa_icon('trash-o'));
 
 				echo '</td>';

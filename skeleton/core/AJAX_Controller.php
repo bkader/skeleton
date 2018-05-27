@@ -183,7 +183,7 @@ class AJAX_Controller extends KB_Controller
 			&& (true !== $nonce_status OR true !== $this->auth->online()))
 		{
 			$this->response->header  = self::HTTP_UNAUTHORIZED;
-			$this->response->message = line('CSK_ERROR_NONCE_URL');
+			$this->response->message = __('CSK_ERROR_NONCE_URL');
 		}
 
 		// Does the method require an admin user?
@@ -191,7 +191,7 @@ class AJAX_Controller extends KB_Controller
 			&& true !== $this->auth->is_admin())
 		{
 			$this->response->header  = self::HTTP_UNAUTHORIZED;
-			$this->response->message = line('CSK_ERROR_NONCE_URL');
+			$this->response->message = __('CSK_ERROR_NONCE_URL');
 		}
 
 		// Does the method require an admin user AND a safety check?
@@ -199,7 +199,7 @@ class AJAX_Controller extends KB_Controller
 			&& (true !== $nonce_status OR true !== $this->auth->is_admin()))
 		{
 			$this->response->header  = self::HTTP_UNAUTHORIZED;
-			$this->response->message = line('CSK_ERROR_NONCE_URL');
+			$this->response->message = __('CSK_ERROR_NONCE_URL');
 		}
 		// Otherwise, call the method.
 		else

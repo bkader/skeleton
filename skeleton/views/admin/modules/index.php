@@ -55,9 +55,9 @@ echo '<div class="box">',
 	'<table class="table table-sm table-hover table-striped mb-0">',
 		'<thead>',
 			'<tr>',
-				'<th class="w-15">', line('CSK_MODULES_MODULE'), '</th>',
-				'<th class="w-50">', line('CSK_MODULES_DESCRIPTION'), '</th>',
-				'<th class="w-35 text-right">', line('CSK_ADMIN_ACTIONS'), '</th>',
+				'<th class="w-15">', __('CSK_MODULES_MODULE'), '</th>',
+				'<th class="w-50">', __('CSK_MODULES_DESCRIPTION'), '</th>',
+				'<th class="w-35 text-right">', __('CSK_ADMIN_ACTIONS'), '</th>',
 			'</tr>',
 		'</thead>';
 if ($modules) {

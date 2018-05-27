@@ -59,11 +59,11 @@ if ( ! function_exists('label_condition'))
 		// Should strings be translated?
 		if (sscanf($true, 'lang:%s', $true_line) === 1)
 		{
-			$true = lang($true_line);
+			$true = __($true_line);
 		}
 		if (sscanf($false, 'lang:%s', $false_line) === 1)
 		{
-			$false = lang($false_line);
+			$false = __($false_line);
 		}
 
 		return ($cond === true)
@@ -177,14 +177,14 @@ if ( ! function_exists('submit_button'))
 		 * 3. If it starts with "config:" we try to get config item.
 		 */
 		if (empty($text)) { // Use default "Save Changes"
-			$text = line('CSK_BTN_SAVE_CHANGES');
+			$text = __('CSK_BTN_SAVE_CHANGES');
 		} elseif (1 === sscanf($text, 'lang:%s', $line)) {
-			$text = line($line);
+			$text = __($line);
 		} elseif (1 === sscanf($text, 'config:%s', $item)) {
 			$text = config_item($item);
 
 			// In case the item was not found, we use default text.
-			$text OR $text = line('CSK_BTN_SAVE_CHANGES');
+			$text OR $text = __('CSK_BTN_SAVE_CHANGES');
 		}
 
 		empty($icon) OR $text = $icon.$text;
@@ -305,7 +305,7 @@ if ( ! function_exists('info_box'))
 			$output .= html_tag('a', array(
 				'href'  => $url,
 				'class' => 'info-box-footer',
-			), line('CSK_BTN_MANAGE').fa_icon('arrow-circle-right ml-1'));
+			), __('CSK_BTN_MANAGE').fa_icon('arrow-circle-right ml-1'));
 		}
 
 		// Closing tag.

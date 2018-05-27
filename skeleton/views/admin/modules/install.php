@@ -58,7 +58,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				<?php
 				// Form opening tag.
 				echo form_open_multipart(
-					'admin/modules/upload',
+					KB_ADMIN.'/modules/upload',
 					'class="form-inline'.(form_error('modulezip') ? ' has-error' : '').'" id="module-upload"'
 				),
 				// Form security nonce.
@@ -72,13 +72,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 				// Location selection.
 				form_dropdown('location', array(
-					'-1' => line('CSK_MODULES_LOCATION_SELECT'),
-					'0'  => line('CSK_MODULES_LOCATION_APPLICATION'),
-					'1'  => line('CSK_MODULES_LOCATION_PUBLIC'),
+					'-1' => __('CSK_MODULES_LOCATION_SELECT'),
+					'0'  => __('CSK_MODULES_LOCATION_APPLICATION'),
+					'1'  => __('CSK_MODULES_LOCATION_PUBLIC'),
 				), '-1', 'class="form-control form-control-sm ml-2"'),
 
 				// Form submit button.
-				form_submit('module-install', line('CSK_MODULES_INSTALL'), array(
+				form_submit('module-install', __('CSK_MODULES_INSTALL'), array(
 					'class' => 'btn btn-primary btn-sm ml-2'
 				));
 
@@ -103,7 +103,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		), html_tag('a', array(
 			'href' => 'javascript:void(0)',
 			'class' => 'nav-link',
-		), line('CSK_MODULES_FILTER_FEATURED'))),
+		), __('CSK_MODULES_FILTER_FEATURED'))),
 
 		// Recommended
 		html_tag('li', array(
@@ -111,7 +111,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		), html_tag('a', array(
 			'href' => 'javascript:void(0)',
 			'class' => 'nav-link',
-		), line('CSK_MODULES_FILTER_RECOMMENDED'))),
+		), __('CSK_MODULES_FILTER_RECOMMENDED'))),
 
 		// Popular.
 		html_tag('li', array(
@@ -119,7 +119,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		), html_tag('a', array(
 			'href' => 'javascript:void(0)',
 			'class' => 'nav-link',
-		), line('CSK_MODULES_FILTER_POPULAR'))),
+		), __('CSK_MODULES_FILTER_POPULAR'))),
 
 		// New.
 		html_tag('li', array(
@@ -127,7 +127,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		), html_tag('a', array(
 			'href' => 'javascript:void(0)',
 			'class' => 'nav-link',
-		), line('CSK_MODULES_FILTER_NEW')));
+		), __('CSK_MODULES_FILTER_NEW')));
 		?>
 		</ul>
 		<form class="form-inline my-2 my-lg-0" role="search" method="get" action="javascript:void(0)">

@@ -734,7 +734,7 @@ EOT;
 		unset($lang);
 
 		// If the current language different?
-		$language = $this->ci->config->item('language');
+		$language = $this->ci->lang->lang('folder');
 		if ('english' !== $language 
 			&& false !== $current = $this->theme_path($headers['language']."/{$language}.php"))
 		{
@@ -1416,7 +1416,7 @@ EOT;
 		// We add "Skeleton" to the end only on the dashboard.
 		if (true === $this->_is_admin)
 		{
-			$skeleton = line('CSK_SKELETON');
+			$skeleton = __('CSK_SKELETON');
 			$this->_title .= apply_filters('skeleton_title', " &lsaquo; {$skeleton}");
 
 			// We add site name to the end.
@@ -2757,7 +2757,7 @@ EOT;
 		unset($lang);
 
 		// Catch the currently used language.
-		$language = $this->ci->config->item('language');
+		$language = $this->ci->lang->lang('folder');
 
 		// Now we load the current language file.
 		if ('english' !== $language 

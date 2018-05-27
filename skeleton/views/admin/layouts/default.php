@@ -28,13 +28,13 @@
 				'href'        => '#',
 				'class'       => 'nav-link dropdown-toggle',
 				'data-toggle' => 'dropdown',
-			), line('CSK_ADMIN_SYSTEM')),
+			), __('CSK_ADMIN_SYSTEM')),
 			'<div class="dropdown-menu">',
 
 				// Dashboard anchor.
 				admin_anchor(
 					'',
-					line('CSK_ADMIN_ADMIN_PANEL'),
+					__('CSK_ADMIN_ADMIN_PANEL'),
 					'class="dropdown-item"'
 				),
 				'<div class="dropdown-divider"></div>',
@@ -42,7 +42,7 @@
 				// Global settings.
 				admin_anchor(
 					'settings',
-					line('CSK_ADMIN_GLOBAL_SETTINGS'),
+					__('CSK_ADMIN_GLOBAL_SETTINGS'),
 					'class="dropdown-item"'
 				);
 
@@ -58,7 +58,7 @@
 				echo '<div class="dropdown-divider"></div>',
 				admin_anchor(
 					'settings/sysinfo',
-					line('CSK_ADMIN_SYSTEM_INFORMATION'),
+					__('CSK_ADMIN_SYSTEM_INFORMATION'),
 					'class="dropdown-item"'
 				);
 
@@ -67,7 +67,7 @@
 
 			// 2. Users menu.
 			'<li class="nav-item dropdown">',
-			admin_anchor('users', line('CSK_ADMIN_USERS'), array(
+			admin_anchor('users', __('CSK_ADMIN_USERS'), array(
 				'class' => 'nav-link dropdown-toggle',
 				'data-toggle' => 'dropdown',
 			)),
@@ -76,16 +76,16 @@
 			html_tag('a', array(
 				'href'  => admin_url('users'),
 				'class' => 'dropdown-item',
-			), line('CSK_ADMIN_USERS_MANAGE')),
+			), __('CSK_ADMIN_USERS_MANAGE')),
 			// Users groups.
 			html_tag('a', array(
 				'href' => 'javascript:void(0)',
 				'class' => 'dropdown-item disabled',
-			), line('CSK_ADMIN_USERS_GROUPS')),
+			), __('CSK_ADMIN_USERS_GROUPS')),
 			html_tag('a', array(
 				'href' => 'javascript:void(0)',
 				'class' => 'dropdown-item disabled',
-			), line('CSK_ADMIN_USERS_LEVELS'));
+			), __('CSK_ADMIN_USERS_LEVELS'));
 
 			/**
 			 * Fires inside users menu.
@@ -116,7 +116,7 @@
 					'href' => '#',
 					'class'       => 'nav-link dropdown-toggle',
 					'data-toggle' => 'dropdown',
-				), line('CSK_ADMIN_CONTENT')),
+				), __('CSK_ADMIN_CONTENT')),
 				'<div class="dropdown-menu">';
 
 				// Do the actual action.
@@ -137,7 +137,7 @@
 					'href' => '#',
 					'class'       => 'nav-link dropdown-toggle',
 					'data-toggle' => 'dropdown',
-				), line('CSK_ADMIN_COMPONENTS')),
+				), __('CSK_ADMIN_COMPONENTS')),
 				'<div class="dropdown-menu">';
 
 				// Do the actual action.
@@ -156,12 +156,12 @@
 				'href' => '#',
 				'class'       => 'nav-link dropdown-toggle',
 				'data-toggle' => 'dropdown',
-			), line('CSK_ADMIN_EXTENSIONS')),
+			), __('CSK_ADMIN_EXTENSIONS')),
 			'<div class="dropdown-menu">',
-			admin_anchor('modules', line('CSK_ADMIN_MODULES'), 'class="dropdown-item"'),
-			admin_anchor('plugins', line('CSK_ADMIN_PLUGINS'), 'class="dropdown-item"'),
-			admin_anchor('themes', line('CSK_ADMIN_THEMES'), 'class="dropdown-item"'),
-			admin_anchor('languages', line('CSK_ADMIN_LANGUAGES'), 'class="dropdown-item"');
+			admin_anchor('modules', __('CSK_ADMIN_MODULES'), 'class="dropdown-item"'),
+			admin_anchor('plugins', __('CSK_ADMIN_PLUGINS'), 'class="dropdown-item"'),
+			admin_anchor('themes', __('CSK_ADMIN_THEMES'), 'class="dropdown-item"'),
+			admin_anchor('languages', __('CSK_ADMIN_LANGUAGES'), 'class="dropdown-item"');
 
 			/**
 			 * Display menus for modules with "Extensions.php" controllers.
@@ -184,18 +184,18 @@
 					'href' => '#',
 					'class'       => 'nav-link dropdown-toggle',
 					'data-toggle' => 'dropdown',
-				), line('CSK_ADMIN_REPORTS')),
+				), __('CSK_ADMIN_REPORTS')),
 				'<div class="dropdown-menu">';
 
 				// Do the actual action.
 				do_action('reports_menu');
 
 				echo '<div class="dropdown-divider"></div>',
-				admin_anchor('reports', line('CSK_ADMIN_REPORTS'), 'class="dropdown-item"'),
+				admin_anchor('reports', __('CSK_ADMIN_REPORTS'), 'class="dropdown-item"'),
 				'</div></li>';
 			} else {
 				echo '<li class="nav-item dropdown">',
-				admin_anchor('reports', line('CSK_ADMIN_REPORTS'), 'class="nav-link"'),
+				admin_anchor('reports', __('CSK_ADMIN_REPORTS'), 'class="nav-link"'),
 				'</li>';
 			}
 
@@ -209,7 +209,7 @@
 				'href'        => '#',
 				'class'       => 'nav-link dropdown-toggle',
 				'data-toggle' => 'dropdown',
-			), line('CSK_BTN_HELP')),
+			), __('CSK_BTN_HELP')),
 			'<div class="dropdown-menu">';
 
 			// Skeleton documentation.
@@ -219,7 +219,7 @@
 					'href'   => $csk_wiki_url,
 					'class'  => 'dropdown-item',
 					'target' => '_blank',
-				), line('CSK_ADMIN_DOCUMENTATION'));
+				), __('CSK_ADMIN_DOCUMENTATION'));
 			}
 
 			/**
@@ -241,19 +241,19 @@
 			html_tag('a', array(
 				'href' => 'javascript:void(0)',
 				'class' => 'dropdown-item disabled',
-			), line('CSK_ADMIN_EXTENSIONS')),
+			), __('CSK_ADMIN_EXTENSIONS')),
 
 			// Link to translations page.
 			html_tag('a', array(
 				'href' => 'javascript:void(0)',
 				'class' => 'dropdown-item disabled',
-			), line('CSK_ADMIN_TRANSLATIONS')),
+			), __('CSK_ADMIN_TRANSLATIONS')),
 
 			// Link to shop page.
 			html_tag('a', array(
 				'href' => 'javascript:void(0)',
 				'class' => 'dropdown-item disabled',
-			), line('CSK_ADMIN_SKELETON_SHOP'));
+			), __('CSK_ADMIN_SKELETON_SHOP'));
 			
 			// Menu closing tag.
 			echo '</div></li>',
@@ -306,7 +306,7 @@
 				'href'   => site_url(),
 				'target' => '_blank',
 				'class'  => 'nav-link',
-			), line('CSK_BTN_VIEW_SITE').fa_icon('external-link ml-1'))),
+			), __('CSK_BTN_VIEW_SITE').fa_icon('external-link ml-1'))),
 
 			// 3. User dropdown.
 			'<li class="nav-item dropdown user-menu">',
@@ -322,21 +322,21 @@
 				// View profile anchor.
 				anchor(
 					$c_user->username,
-					line('CSK_BTN_VIEW_PROFILE'),
+					__('CSK_BTN_VIEW_PROFILE'),
 					'class="dropdown-item"'
 				),
 
 				// Edit account anchor.
 				admin_anchor(
 					'users/edit/'.$c_user->id,
-					line('CSK_BTN_EDIT_PROFILE'),
+					__('CSK_BTN_EDIT_PROFILE'),
 					'class="dropdown-item"'
 				),
 
 				'<div class="dropdown-divider"></div>',
 
 				// Logout anchor.
-				anchor('logout', line('CSK_BTN_LOGOUT'), 'class="dropdown-item"'),
+				anchor('logout', __('CSK_BTN_LOGOUT'), 'class="dropdown-item"'),
 			'</div></li>',
 
 			// Closing tag (right menu).
@@ -354,7 +354,7 @@
 		 */
 		// Default Icon and Title.
 		$default_icon  = 'home';
-		$default_title = line('CSK_ADMIN_DASHBOARD');
+		$default_title = __('CSK_ADMIN_DASHBOARD');
 
 		// Provided Icon and title.
 		$page_icon  = isset($page_icon) ? $page_icon : $default_icon;
@@ -426,20 +426,20 @@ if (has_action('admin_subhead')
 				'href'   => (true === $module['contexts']['help'] ? admin_url('help/'.$module['folder']) : $module['contexts']['help']),
 				'target' => '_blank',
 				'class'  => 'btn btn-white btn-sm btn-icon',
-			), fa_icon('question-circle').line('CSK_BTN_HELP'));
+			), fa_icon('question-circle').__('CSK_BTN_HELP'));
 		} elseif (isset($page_help)) {
 			echo html_tag('a', array(
 				'href'   => $page_help,
 				'target' => '_blank',
 				'class'  => 'btn btn-white btn-sm btn-icon',
-			), fa_icon('question-circle').line('CSK_BTN_HELP'));
+			), fa_icon('question-circle').__('CSK_BTN_HELP'));
 		}
 
 		if (true === $module['has_settings']) {
 			echo html_tag('a', array(
 				'href'  => admin_url('settings/'.$module['folder']),
 				'class' => 'btn btn-white btn-sm btn-icon ml-2',
-			), fa_icon('cog').line('CSK_BTN_SETTINGS'));
+			), fa_icon('cog').__('CSK_BTN_SETTINGS'));
 		}
 
 		if (isset($page_donate)) {
@@ -447,7 +447,7 @@ if (has_action('admin_subhead')
 				'href'   => $page_donate,
 				'target' => '_blank',
 				'class'  => 'btn btn-olive btn-sm btn-icon ml-2',
-			), fa_icon('money').line('CSK_BTN_DONATE'));
+			), fa_icon('money').__('CSK_BTN_DONATE'));
 		}
 
 		echo '</div>';
@@ -499,7 +499,7 @@ if (has_action('admin_subhead')
 		 * @since 	1.3.3
 		 * This line can be removed/overridden using the "admin_footer_text".
 		 */
-		$thankyou = sprintf(line('CSK_ADMIN_FOOTER_TEXT'), 'https://goo.gl/jb4nQC');
+		$thankyou = sprintf(__('CSK_ADMIN_FOOTER_TEXT'), 'https://goo.gl/jb4nQC');
 		$thankyou = apply_filters('admin_footer_text', $thankyou);
 		if ( ! empty($thankyou))
 		{
@@ -514,7 +514,7 @@ if (has_action('admin_subhead')
 		 * @since 	1.4.0
 		 * Can be removed or overridden using the "admin_version_text" fitler.
 		 */
-		$version = sprintf(line('CSK_ADMIN_VERSION_TEXT'), KB_VERSION);
+		$version = sprintf(__('CSK_ADMIN_VERSION_TEXT'), KB_VERSION);
 		$version = apply_filters('admin_version_text', $version);
 		if ( ! empty($version))
 		{
@@ -535,7 +535,7 @@ echo html_tag('div', array(
 	'type'         => 'button',
 	'class'        => 'close',
 	'data-dismiss' => 'alert',
-	'aria-label'   => line('CSK_BTN_CLOSE'),
+	'aria-label'   => __('CSK_BTN_CLOSE'),
 ), html_tag('span', array(
 	'aria-hidden' => 'true',
 ), '&times;')));

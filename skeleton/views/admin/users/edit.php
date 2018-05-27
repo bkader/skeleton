@@ -73,14 +73,14 @@ echo '<div class="form-group">',
 form_checkbox('enabled', 1, (1 == $user->enabled), 'id="enabled"'),
 html_tag('label', array(
 	'for' => 'enabled',
-), line('CSK_USERS_ACTIVE')),
+), __('CSK_USERS_ACTIVE')),
 
 // Account type.
 '<span class="float-right">',
 form_checkbox('admin', 1, ('administrator' === $user->subtype), 'id="admin"'),
 html_tag('label', array(
 	'for' => 'admin',
-), line('CSK_USERS_ROLE_ADMIN')),
+), __('CSK_USERS_ROLE_ADMIN')),
 '</span>',
 '</div>',
 
@@ -89,11 +89,11 @@ html_tag('label', array(
 html_tag('button', array(
 	'type' => 'submit',
 	'class' => 'btn btn-primary float-right'
-), line('CSK_BTN_SAVE_CHANGES')),
+), __('CSK_BTN_SAVE_CHANGES')),
 html_tag('a', array(
 	'href'  => admin_url('users'),
 	'class' => 'btn btn-white',
-), line('CSK_BTN_CANCEL')),
+), __('CSK_BTN_CANCEL')),
 '</div>',
 
 // Form closing tag.

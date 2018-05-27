@@ -55,13 +55,13 @@ echo '<div class="box">',
 	'<table class="table table-sm table-hover table-striped">',
 		'<thead>',
 			'<tr>',
-				'<th class="w-20">', line('CSK_REPORTS_USER'), '</th>',
-				'<th class="w-15">', line('CSK_REPORTS_MODULE'), '</th>',
-				'<th class="w-15">', line('CSK_REPORTS_CONTROLLER'), '</th>',
-				'<th class="w-15">', line('CSK_REPORTS_METHOD'), '</th>',
-				'<th class="w-15">', line('CSK_REPORTS_IP_ADDRESS'), '</th>',
-				'<th class="w-15">', line('CSK_REPORTS_DATE'), '</th>',
-				'<th class="w-5 text-right">', line('CSK_ADMIN_ACTION'), '</th>',
+				'<th class="w-20">', __('CSK_REPORTS_USER'), '</th>',
+				'<th class="w-15">', __('CSK_REPORTS_MODULE'), '</th>',
+				'<th class="w-15">', __('CSK_REPORTS_CONTROLLER'), '</th>',
+				'<th class="w-15">', __('CSK_REPORTS_METHOD'), '</th>',
+				'<th class="w-15">', __('CSK_REPORTS_IP_ADDRESS'), '</th>',
+				'<th class="w-15">', __('CSK_REPORTS_DATE'), '</th>',
+				'<th class="w-5 text-right">', __('CSK_ADMIN_ACTION'), '</th>',
 			'</tr>',
 		'</thead>';
 
@@ -84,7 +84,7 @@ if ($reports) {
 						'delete-report_'.$report->id
 					),
 					'class' => 'btn btn-default btn-xs btn-icon report-delete',
-				), fa_icon('trash-o text-danger').line('CSK_BTN_DELETE')),
+				), fa_icon('trash-o text-danger').__('CSK_BTN_DELETE')),
 			'</td>',
 			
 		'</tr>';

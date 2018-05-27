@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 
 // Form open tag.
-echo form_open('admin/login', 'id="login"'),
+echo form_open('admin-login', 'id="login"'),
 form_nonce('admin-login');
 
 // Username form.
@@ -82,11 +82,11 @@ echo '<div class="form-group clearfix mb-0">',
 html_tag('button', array(
 	'type' => 'submit',
 	'class' => 'btn btn-primary btn-sm btn-icon pull-right',
-), '<i class="fa fa-fw fa-sign-in"></i>'.line('CSK_BTN_LOGIN'));
+), '<i class="fa fa-fw fa-sign-in"></i>'.__('CSK_BTN_LOGIN'));
 
 // Lost password button.
-$recover_text = apply_filters('login_recover_text', line('CSK_BTN_LOST_PASSWORD'));
-$recover_link = apply_filters('login_recover_link', site_url('login/recover'));
+$recover_text = apply_filters('login_recover_text', __('CSK_BTN_LOST_PASSWORD'));
+$recover_link = apply_filters('login_recover_link', site_url('lost-password'));
 
 if ( ! empty($recover_link)) {
 	echo html_tag('a', array(

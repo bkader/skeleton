@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 
 // Form opening tag and nonce.
-echo form_open('login/reset?code='.$code, 'role="form" id="reset"'),
+echo form_open('reset-password?code='.$code, 'role="form" id="reset"'),
 form_nonce('user-reset-password_'.$code),
 
 // New password field.

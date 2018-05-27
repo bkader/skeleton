@@ -54,7 +54,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 echo '<p class="mb-3">', line('CSK_USERS_RESTORE_TIP'), '</p>',
 
 // Form opening tag and nonce.
-form_open('login/restore', 'role="form" id="restore"'),
+form_open('restore-account', 'role="form" id="restore"'),
 form_nonce('user-restore'),
 
 // Identity field.

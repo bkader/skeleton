@@ -49,43 +49,38 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since 		2.0.0
  * @version 	2.0.0
  */
-?>
-<div class="row justify-content-center">
-	<div class="col-sm-4">
-		<div class="box">
-			<div class="box-body">
-			<?php
-			echo form_open($action, array(
-				'role'  => 'form',
-				'id'    => 'settings-'.$tab,
-			)),
-			form_nonce('settings-'.$tab);
 
-			foreach ($inputs as $name => $input) {
+echo '<div class="row justify-content-center">',
+'<div class="col-sm-4">',
+'<div class="box">',
+'<div class="box-body">',
+form_open($action, array(
+	'role'  => 'form',
+	'id'    => 'settings-'.$tab,
+)),
+form_nonce('settings-'.$tab);
 
-				echo '<div class="form-group">',
-					form_label(line('CSK_SETTINGS_'.$name), $name),
-					print_input($input, array('class' => 'form-control'));
+	foreach ($inputs as $name => $input) {
 
-					if (has_error($name)) {
-						echo form_error($name, '<div class="form-text invalid-feedback">', '</div>');
-					} else {
-						echo html_tag('div', array(
-							'class' => 'form-text text-muted'
-						), line('CSK_SETTINGS_'.$name.'_TIP'));
-					}
+		echo '<div class="form-group">',
+			form_label(__('CSK_SETTINGS_'.$name), $name),
+			print_input($input, array('class' => 'form-control'));
 
-				echo '</div>';
+			if (has_error($name)) {
+				echo form_error($name, '<div class="form-text invalid-feedback">', '</div>');
+			} else {
+				echo html_tag('div', array(
+					'class' => 'form-text text-muted'
+				), __('CSK_SETTINGS_'.$name.'_TIP'));
 			}
 
-			echo html_tag('button', array(
-					'type' => 'submit',
-					'class' => 'btn btn-primary btn-block'
-				), line('CSK_BTN_SAVE_CHANGES')),
+		echo '</div>';
+	}
 
-			form_close();
-			?>
-			</div>
-		</div>
-	</div>
-</div>
+echo html_tag('button', array(
+	'type' => 'submit',
+	'class' => 'btn btn-primary btn-block'
+), __('CSK_BTN_SAVE_CHANGES')),
+
+form_close(),
+'</div></div></div></div>';

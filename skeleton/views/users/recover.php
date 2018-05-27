@@ -54,7 +54,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 echo '<p class="mb-3">', line('CSK_USERS_RECOVER_TIP'), '</p>';
 
 // Form opening tag and nonce.
-echo form_open('login/recover', 'role="form" id="recover"'),
+echo form_open('lost-password', 'role="form" id="recover"'),
 form_nonce('user-lost-password');
 
 // Identity field.

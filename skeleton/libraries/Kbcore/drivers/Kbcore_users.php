@@ -143,7 +143,7 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 		{
 			$data['language'] = ($this->ci->session->language)
 				? $this->ci->session->language
-				: $this->ci->config->item('language');
+				: $this->ci->lang->lang('folder');
 		}
 
 		// Let's insert the entity first and make sure it's created.
@@ -1219,7 +1219,7 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 		// Check whether it's set and check its length.
 		if (empty($code) OR strlen($code) !== 40)
 		{
-			set_alert(lang('CSK_USERS_ERROR_ACTIVATE_CODE'), 'error');
+			set_alert(__('CSK_USERS_ERROR_ACTIVATE_CODE'), 'error');
 			return false;
 		}
 
@@ -1231,7 +1231,7 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 		));
 		if (false === $var)
 		{
-			set_alert(lang('CSK_USERS_ERROR_ACTIVATE_CODE'), 'error');
+			set_alert(__('CSK_USERS_ERROR_ACTIVATE_CODE'), 'error');
 			return false;
 		}
 
@@ -1244,7 +1244,7 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 			// First purge activation codes.
 			$this->_parent->auth->delete_activation_codes($var->guid);
 
-			set_alert(lang('CSK_USERS_ERROR_ACTIVATE_CODE'), 'error');
+			set_alert(__('CSK_USERS_ERROR_ACTIVATE_CODE'), 'error');
 			return false;
 		}
 

@@ -57,13 +57,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			<div class="card-body text-center">
 				<?php
 				echo form_open_multipart(
-					'admin/themes/upload',
+					KB_ADMIN.'/themes/upload',
 					'class="form-inline'.(form_error('themezip') ? ' has-error' : '').'" id="theme-upload"'
 				),
 				form_nonce('upload-theme'),
 				form_upload('themezip', null, 'id="themezip"'),
 				form_error('themezip', '<div class="help-block">', '</div>'),
-				form_submit('theme-install', line('CSK_THEMES_INSTALL'), array(
+				form_submit('theme-install', __('CSK_THEMES_INSTALL'), array(
 					'class' => 'btn btn-primary btn-sm'
 				));
 				?>
@@ -86,7 +86,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		), html_tag('a', array(
 			'href' => 'javascript:void(0)',
 			'class' => 'nav-link',
-		), line('CSK_THEMES_FILTER_FEATURED'))),
+		), __('CSK_THEMES_FILTER_FEATURED'))),
 
 		// Popular.
 		html_tag('li', array(
@@ -94,7 +94,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		), html_tag('a', array(
 			'href' => 'javascript:void(0)',
 			'class' => 'nav-link',
-		), line('CSK_THEMES_FILTER_POPULAR'))),
+		), __('CSK_THEMES_FILTER_POPULAR'))),
 
 		// New.
 		html_tag('li', array(
@@ -102,7 +102,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		), html_tag('a', array(
 			'href' => 'javascript:void(0)',
 			'class' => 'nav-link',
-		), line('CSK_THEMES_FILTER_NEW')));
+		), __('CSK_THEMES_FILTER_NEW')));
 		?>
 		</ul>
 		<form class="form-inline my-2 my-lg-0" role="search" method="get" action="javascript:void(0)">

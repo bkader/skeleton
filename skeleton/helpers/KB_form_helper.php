@@ -247,7 +247,7 @@ if ( ! function_exists('_translate'))
 	 */
 	function _translate($string)
 	{
-		return (is_string($string) && sscanf($string, 'lang:%s', $line) === 1) ? line($line) : $string;
+		return (is_string($string) && sscanf($string, 'lang:%s', $line) === 1) ? __($line) : $string;
 	}
 }
 
@@ -303,7 +303,7 @@ if ( ! function_exists('_transfigure'))
 		}
 		elseif (is_string($string) && sscanf($string, 'lang:%s', $lang) === 1)
 		{
-			$string = line($lang);
+			$string = __($lang);
 		}
 
 		return $string;

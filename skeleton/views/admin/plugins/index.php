@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 
 // Form opening tag.
-echo form_open('admin/plugins', 'class="form-inline box"'),
+echo form_open(KB_ADMIN.'/plugins', 'class="form-inline box"'),
 
 // Form nonce field.
 form_nonce('bulk-update-plugins'),
@@ -60,12 +60,12 @@ form_nonce('bulk-update-plugins'),
 '<div class="table-bulk-actions box-header">',
 
 	form_dropdown('action', array(
-		'activate-selected'   => line('CSK_PLUGINS_ACTIVATE'),
-		'deactivate-selected' => line('CSK_PLUGINS_DEACTIVATE'),
-		'delete-selected'     => line('CSK_PLUGINS_DELETE'),
+		'activate-selected'   => __('CSK_PLUGINS_ACTIVATE'),
+		'deactivate-selected' => __('CSK_PLUGINS_DEACTIVATE'),
+		'delete-selected'     => __('CSK_PLUGINS_DELETE'),
 	), 'activate-selected', 'class="form-control form-control-sm"'),
 
-	form_submit('doaction', line('CSK_BTN_APPLY'), 'class="btn btn-primary btn-sm ml-1"'),
+	form_submit('doaction', __('CSK_BTN_APPLY'), 'class="btn btn-primary btn-sm ml-1"'),
 
 '</div>',
 
@@ -77,13 +77,13 @@ form_nonce('bulk-update-plugins'),
 '<tr>',
 	// Bulk Selection?
 	'<th class="w-2">',
-		form_label(line('CSK_PLUGINS_SELECT_ALL'), null, 'class="sr-only"'),
+		form_label(__('CSK_PLUGINS_SELECT_ALL'), null, 'class="sr-only"'),
 		form_checkbox('check-all', null, false),
 	'</th>',
 	
-	'<th class="w-20">', line('CSK_PLUGINS_PLUGIN'), '</th>',
-	'<th class="w-50">', line('CSK_PLUGINS_DESCRIPTION'), '</th>',
-	'<th class="w-30 text-right">', line('CSK_ADMIN_ACTIONS'), '</th>',
+	'<th class="w-20">', __('CSK_PLUGINS_PLUGIN'), '</th>',
+	'<th class="w-50">', __('CSK_PLUGINS_DESCRIPTION'), '</th>',
+	'<th class="w-30 text-right">', __('CSK_ADMIN_ACTIONS'), '</th>',
 '</tr>',
 '</thead>';
 

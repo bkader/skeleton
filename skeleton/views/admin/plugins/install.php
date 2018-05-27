@@ -57,13 +57,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			<div class="card-body text-center">
 				<?php
 				echo form_open_multipart(
-					'admin/plugins/upload',
+					KB_ADMIN.'/plugins/upload',
 					'class="form-inline'.(form_error('pluginzip') ? ' has-error' : '').'" id="plugin-upload"'
 				),
 				form_nonce('upload-plugin'),
 				form_upload('pluginzip', null, 'id="pluginzip"'),
 				form_error('pluginzip', '<div class="help-block">', '</div>'),
-				form_submit('plugin-install', line('CSK_PLUGINS_INSTALL'), array(
+				form_submit('plugin-install', __('CSK_PLUGINS_INSTALL'), array(
 					'class' => 'btn btn-primary btn-sm'
 				));
 				?>
@@ -86,7 +86,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		), html_tag('a', array(
 			'href' => 'javascript:void(0)',
 			'class' => 'nav-link',
-		), line('CSK_PLUGINS_FILTER_FEATURED'))),
+		), __('CSK_PLUGINS_FILTER_FEATURED'))),
 
 		// Recommended
 		html_tag('li', array(
@@ -94,7 +94,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		), html_tag('a', array(
 			'href' => 'javascript:void(0)',
 			'class' => 'nav-link',
-		), line('CSK_PLUGINS_FILTER_RECOMMENDED'))),
+		), __('CSK_PLUGINS_FILTER_RECOMMENDED'))),
 
 		// Popular.
 		html_tag('li', array(
@@ -102,7 +102,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		), html_tag('a', array(
 			'href' => 'javascript:void(0)',
 			'class' => 'nav-link',
-		), line('CSK_PLUGINS_FILTER_POPULAR'))),
+		), __('CSK_PLUGINS_FILTER_POPULAR'))),
 
 		// New.
 		html_tag('li', array(
@@ -110,7 +110,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		), html_tag('a', array(
 			'href' => 'javascript:void(0)',
 			'class' => 'nav-link',
-		), line('CSK_PLUGINS_FILTER_NEW')));
+		), __('CSK_PLUGINS_FILTER_NEW')));
 		?>
 		</ul>
 		<form class="form-inline my-2 my-lg-0" role="search" method="get" action="javascript:void(0)">

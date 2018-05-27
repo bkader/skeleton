@@ -114,7 +114,7 @@ if ( ! function_exists('anchor'))
 		}
 		elseif (1 === sscanf($title, 'lang:%s', $line))
 		{
-			$title = (function_exists('lang')) ? lang($line) : get_instance()->lang->line($line);
+			$title = __($line);
 		}
 
 		if ($attributes !== '')
@@ -152,7 +152,7 @@ if ( ! function_exists('anchor_popup'))
 		}
 		elseif (1 === sscanf($title, 'lang:%s', $line))
 		{
-			$title = (function_exists('lang')) ? lang($line) : get_instance()->lang->line($line);
+			$title = __($line);
 		}
 
 		if ($attributes === FALSE)
@@ -307,7 +307,7 @@ if ( ! function_exists('trace_anchor'))
 		}
 		elseif (1 === sscanf($title, 'lang:%s', $line))
 		{
-			$title = (function_exists('lang')) ? lang($line) : get_instance()->lang->line($line);
+			$title = __($line);
 		}
 
 		if ($attributes !== '')
@@ -413,9 +413,7 @@ if ( ! function_exists('nonce_anchor'))
 		}
 		elseif (1 === sscanf($title, 'lang:%s', $line))
 		{
-			$title = (function_exists('line')) 
-				? line($line)
-				: get_instance()->lang->line($line);
+			$title = __($line);
 		}
 
 		$attrs = (is_array($attrs)) ? _stringify_attributes($attrs) : ' '.$attrs;

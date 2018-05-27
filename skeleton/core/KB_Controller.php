@@ -117,12 +117,12 @@ class KB_Controller extends CI_Controller {
 		{
 			if (false === stripos($this->uri->uri_string(), $this->router->default_controller))
 			{
-				set_alert(line('CSK_ERROR_MANIFEST_MISSING'), 'error');
+				set_alert(__('CSK_ERROR_MANIFEST_MISSING'), 'error');
 				redirect('');
 				exit;
 			}
 
-			show_error(line('CSK_ERROR_MANIFEST_MISSING'));
+			show_error(__('CSK_ERROR_MANIFEST_MISSING'));
 		}
 		// In case the module is disabled.
 		elseif (null !== $this->module 
@@ -130,12 +130,12 @@ class KB_Controller extends CI_Controller {
 		{
 			if (false === stripos($this->uri->uri_string(), $this->router->default_controller))
 			{
-				set_alert(line('CSK_ERROR_COMPONENT_DISABLED'), 'error');
+				set_alert(__('CSK_ERROR_COMPONENT_DISABLED'), 'error');
 				redirect('');
 				exit;
 			}
 
-			show_error(line('CSK_ERROR_COMPONENT_DISABLED'));
+			show_error(__('CSK_ERROR_COMPONENT_DISABLED'));
 		}
 		$this->theme->set('module', $this->module, true);
 

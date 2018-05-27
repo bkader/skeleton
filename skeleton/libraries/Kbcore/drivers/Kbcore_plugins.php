@@ -530,7 +530,7 @@ class Kbcore_plugins extends CI_Driver
 		unset($lang);
 
 		// Using a different language? Make sure it's found.
-		$language = $this->ci->config->item('language');
+		$language = $this->ci->lang->lang('folder');
 		if ('english' !== $language 
 			&& false !== is_file($lang_path.$language.'.php'))
 		{

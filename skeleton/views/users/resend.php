@@ -54,7 +54,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 echo '<p class="mb-3">', line('CSK_USERS_RESEND_TIP'), '</p>',
 
 // Form opening tag and nonce.
-form_open('register/resend', 'role="form" id="resend"'),
+form_open('resend-link', 'role="form" id="resend"'),
 form_nonce('user-resend-link'),
 
 // Identity field.

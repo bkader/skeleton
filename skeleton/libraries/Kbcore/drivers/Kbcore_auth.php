@@ -391,7 +391,7 @@ class Kbcore_auth extends CI_Driver
 	{
 		if (empty($identity) OR empty($password))
 		{
-			set_alert(line('CSK_ERROR_FIELDS_REQUIRED'), 'error');
+			set_alert(__('CSK_ERROR_FIELDS_REQUIRED'), 'error');
 			return false;
 		}
 
@@ -408,7 +408,7 @@ class Kbcore_auth extends CI_Driver
 					->get_by('entities.username', $identity);
 				if ( ! $user)
 				{
-					set_alert(line('CSK_USERS_ERROR_LOGIN_CREDENTIALS'), 'error');
+					set_alert(__('CSK_USERS_ERROR_LOGIN_CREDENTIALS'), 'error');
 					return false;
 				}
 				break;
@@ -419,7 +419,7 @@ class Kbcore_auth extends CI_Driver
 					->get_by('users.email', $identity);
 				if ( ! $user)
 				{
-					set_alert(line('CSK_USERS_ERROR_LOGIN_CREDENTIALS'), 'error');
+					set_alert(__('CSK_USERS_ERROR_LOGIN_CREDENTIALS'), 'error');
 					return false;
 				}
 				break;
@@ -432,7 +432,7 @@ class Kbcore_auth extends CI_Driver
 
 				if ( ! $user)
 				{
-					set_alert(line('CSK_USERS_ERROR_LOGIN_CREDENTIALS'), 'error');
+					set_alert(__('CSK_USERS_ERROR_LOGIN_CREDENTIALS'), 'error');
 					return false;
 				}
 
@@ -442,7 +442,7 @@ class Kbcore_auth extends CI_Driver
 		// Check the password.
 		if ( ! phpass_check($password, $user->password))
 		{
-			set_alert(line('CSK_USERS_ERROR_LOGIN_CREDENTIALS'), 'error');
+			set_alert(__('CSK_USERS_ERROR_LOGIN_CREDENTIALS'), 'error');
 			return false;
 		}
 
@@ -450,8 +450,8 @@ class Kbcore_auth extends CI_Driver
 		if ($user->enabled == 0)
 		{
 			set_alert(sprintf(
-				line('CSK_USERS_ERROR_ACCOUNT_INACTIVE'),
-				anchor('register/resend', line('CSK_BTN_CLICK_HERE'))
+				__('CSK_USERS_ERROR_ACCOUNT_INACTIVE'),
+				anchor('register/resend', __('CSK_BTN_CLICK_HERE'))
 			), 'error');
 			return false;
 		}
@@ -459,7 +459,7 @@ class Kbcore_auth extends CI_Driver
 		// Make sure the account is not banned.
 		if ($user->enabled < 0)
 		{
-			set_alert(line('CSK_USERS_ERROR_ACCOUNT_BANNED'), 'error');
+			set_alert(__('CSK_USERS_ERROR_ACCOUNT_BANNED'), 'error');
 			return false;
 		}
 
@@ -478,14 +478,14 @@ class Kbcore_auth extends CI_Driver
 			// // An admin did it? No way to restore it.
 			// if (false !== $log)
 			// {
-			// 	set_alert(line('CSK_USERS_ERROR_ACCOUNT_DELETED_ADMIN'), 'error');
+			// 	set_alert(__('CSK_USERS_ERROR_ACCOUNT_DELETED_ADMIN'), 'error');
 			// }
 			// Otherwise, the user can restore his/her account.
 			// else
 			// {
 				set_alert(sprintf(
-					line('CSK_USERS_ERROR_ACCOUNT_DELETED'),
-					anchor('login/restore', line('CSK_BTN_CLICK_HERE'))
+					__('CSK_USERS_ERROR_ACCOUNT_DELETED'),
+					anchor('login/restore', __('CSK_BTN_CLICK_HERE'))
 				), 'error');
 			// }
 			

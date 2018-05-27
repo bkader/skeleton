@@ -55,12 +55,12 @@ echo '<div class="box">',
 	'<table class="table table-sm table-striped table-hover mb-0">',
 		'<thead>',
 			'<tr>',
-				'<th class="w-25">', line('CSK_LANGUAGES_LANGUAGE'), '</th>',
-				'<th class="w-15">', line('CSK_LANGUAGES_ABBREVIATION'), '</th>',
-				'<th class="w-15">', line('CSK_LANGUAGES_FOLDER'), '</th>',
-				'<th class="w-10">', line('CSK_LANGUAGES_IS_DEFAULT'), '</th>',
-				'<th class="w-10">', line('CSK_LANGUAGES_ENABLED'), '</th>',
-				'<th class="w-25 text-right">', line('CSK_ADMIN_ACTIONS'), '</th>',
+				'<th class="w-25">', __('CSK_LANGUAGES_LANGUAGE'), '</th>',
+				'<th class="w-15">', __('CSK_LANGUAGES_ABBREVIATION'), '</th>',
+				'<th class="w-15">', __('CSK_LANGUAGES_FOLDER'), '</th>',
+				'<th class="w-10">', __('CSK_LANGUAGES_IS_DEFAULT'), '</th>',
+				'<th class="w-10">', __('CSK_LANGUAGES_ENABLED'), '</th>',
+				'<th class="w-25 text-right">', __('CSK_ADMIN_ACTIONS'), '</th>',
 			'</tr>',
 		'</thead>';
 
@@ -77,7 +77,7 @@ if ($languages) {
 			} else {
 				echo html_tag('del', array(
 					'class' => 'text-danger',
-					'title' => line('CSK_LANGUAGES_MISSING_FOLDER'),
+					'title' => __('CSK_LANGUAGES_MISSING_FOLDER'),
 				), $lang['name_en']);
 			}
 			echo html_tag('span', array(
