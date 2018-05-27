@@ -49,44 +49,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	2.0.1
+ * @version 	2.1.1
  */
-
-if ( ! function_exists('site_url'))
-{
-	/**
-	 * site_url
-	 *
-	 * We override CodeIgniter default function behavior in order to use
-	 * the named routes feature.
-	 *
-	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
-	 * @since 	2.0.0
-	 *
-	 * @param 	string 	$name
-	 * @param 	string 	$protocol
-	 * @return 	string
-	 */
-	function site_url($name = '', $protocol = NULL)
-	{
-		// Keep $_GET parameters if we have any.
-		$get = null;
-		// If the route is not found, we use $name.
-		if (false !== ($position = strpos($name, '?')))
-		{
-			$get  = substr($name, $position);
-			$name = strtok($name, '?');
-		}
-
-		// Attempt to get the named route first.
-		$uri = Route::named($name);
-		(null === $uri) && $uri = $name;
-		return get_instance()->config->site_url($uri.$get, $protocol);
-	}
-}
-
-// ------------------------------------------------------------------------
 
 if ( ! function_exists('anchor'))
 {

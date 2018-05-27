@@ -33,7 +33,7 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://goo.gl/wGXHO9
- * @since 		Version 1.0.0
+ * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -49,8 +49,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author 		Kader Bouyakoub <bkader@mail.com>
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
- * @since 		Version 1.0.0
- * @version 	1.0.0
+ * @since 		1.0.0
+ * @version 	2.1.1
  */
 class KB_Config extends CI_Config
 {
@@ -86,6 +86,30 @@ class KB_Config extends CI_Config
 		{
 			$this->config[$index][$item] = $value;
 		}
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Builds a URI string.
+	 *
+	 * This method is called before parent's in order to use our named routes
+	 * system.
+	 *
+	 * @access 	protected
+	 * @param 	mixed 	$uri 	URI string or an array of segments.
+	 * @return 	string
+	 */
+	protected function _uri_string($uri)
+	{
+		if (class_exists('Route', false))
+		{
+			$uri = is_array($uri)
+				? array_map(array('Route', 'named'), $uri)
+				: Route::named($uri);
+		}
+
+		return parent::_uri_string($uri);
 	}
 
 	// ------------------------------------------------------------------------

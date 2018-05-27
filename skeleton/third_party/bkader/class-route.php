@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	1.0.0
+ * @version 	2.1.0
  *
  * Original author:
  * @author 		Patroklo
@@ -535,7 +535,33 @@ class Route {
 	 */
 	public static function named($name)
 	{
-		return (isset(self::$named_routes[$name])) ? self::$named_routes[$name] : null;
+		// Make the method remember cached routes.
+		static $cached = array();
+
+		if ( ! isset($cached[$name]))
+		{
+			// Store the raw name and attempt to keep $_GET parameters.
+			$raw_name = $name;
+			$get = null;
+
+			// In case there are GET parameters, update both $raw_name and $get.
+			if (false !== ($pos = strpos($raw_name, '?')))
+			{
+				$get = substr($raw_name, $pos);
+				$raw_name = strtok($raw_name, '?');
+			}
+
+			// Use the named route if found.
+			if (isset(self::$named_routes[$raw_name]))
+			{
+				$raw_name = self::$named_routes[$raw_name];
+			}
+
+			// Cache the route before returning it.
+			$cached[$name] = $raw_name.$get;
+		}
+
+		return $cached[$name];
 	}
 
 	// ------------------------------------------------------------------------
@@ -635,4 +661,20 @@ class Route {
 			: self::$nested_depth - 1;
 	}
 
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('route'))
+{
+	/**
+	 * Return a route from routes array using the name is was defined with.
+	 * @see 	Route::named
+	 * @param 	string 	$name 		The route's name.
+	 * @return 	string
+	 */
+	function route($name)
+	{
+		return Route::named($name);
+	}
 }
