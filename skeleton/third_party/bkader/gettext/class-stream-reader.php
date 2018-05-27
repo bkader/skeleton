@@ -37,25 +37,66 @@
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**
+ * Stream_reader
+ *
+ * Simple class to wrap file streams, string streams, etc.
+ * seek is essential, and it should be byte stream
+ * 
+ * @package 	CodeIgniter
+ * @subpackage 	Skeleton
+ * @category 	Third Party
+ * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @link 		https://goo.gl/wGXHO9
+ * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @since 		2.1.0
+ * @version 	2.1.0
+ */
 class Stream_reader
 {
+	/**
+	 * Should return a string.
+	 * @param 	string
+	 * @return 	mixed
+	 */
 	function read($bytes)
 	{
 		return false;
 	}
-	
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Should return a new position.
+	 * @return 	int 	The new position.
+	 */
 	function seekto($position)
 	{
 		return false;
 	}
-	
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the current position.
+	 * @param 	none
+	 * @return 	int 	The current position.
+	 */
 	function currentpos()
 	{
 		return false;
 	}
-	
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the length of the entire Stream (limit for seekto()).
+	 * @param 	none
+	 * @return 	int
+	 */
 	function length()
 	{
 		return false;
 	}
+
 }
