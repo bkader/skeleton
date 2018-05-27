@@ -99,7 +99,7 @@ class Modules extends Admin_Controller {
 	public function index()
 	{
 		$modules = $this->router->list_modules(true);
-		$i18n = $this->config->item('language');
+		$i18n = $this->lang->lang('folder');
 
 		foreach ($modules as $folder => &$m)
 		{
@@ -112,6 +112,12 @@ class Modules extends Admin_Controller {
 				if (isset($m['translations'][$i18n]['description'])) {
 					$m['description'] = $m['translations'][$i18n]['description'];
 				}
+				if (isset($m['translations'][$i18n]['license'])) {
+					$m['license'] = $m['translations'][$i18n]['license'];
+				}
+				if (isset($m['translations'][$i18n]['author'])) {
+					$m['author'] = $m['translations'][$i18n]['author'];
+				}
 			}
 
 			// Add module actions.
@@ -122,7 +128,7 @@ class Modules extends Admin_Controller {
 				$m['actions'][] = html_tag('a', array(
 					'href'  => admin_url('settings/'.$folder),
 					'class' => 'btn btn-default btn-xs btn-icon ml-2',
-					'aria-label' => sprintf(line('CSK_BTN_ACTIVATE_COM'), $m['name']),
+					'aria-label' => sprintf(line('CSK_BTN_SETTINGS_COM'), $m['name']),
 				), fa_icon('cogs').line('CSK_MODULES_SETTINGS'));
 			}
 
