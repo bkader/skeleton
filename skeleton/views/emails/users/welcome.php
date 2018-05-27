@@ -109,7 +109,7 @@ EOT;
  * We make sure to use the correct translation if found.
  * Otherwise, we fall-back to English.
  */
-$lang    = config_item('language');
+$lang    = langinfo('folder');
 $message = isset($messages[$lang]) ? $messages[$lang] : $messages['english'];
 
 /**
