@@ -225,11 +225,12 @@ if ( ! function_exists('trace_url'))
      *
      * @param   string  $uri    uri to build
      * @param   string  $trk    click track position
+     * @param   string  $$protocol
      * @return  string
      */
-    function trace_url($uri = '', $trk = '')
+    function trace_url($uri = '', $trk = '', $protocol = null)
     {
-    	$url = site_url($uri);
+    	$url = site_url($uri, $protocol);
 
     	$key = get_instance()->config->item('trace_url_key');
 
@@ -413,13 +414,14 @@ if ( ! function_exists('admin_url'))
 	 * Returns the full URL to admin sections of the site.
 	 *
 	 * @param 	string 	$uri
+	 * @param 	string 	$protocol
 	 * @return 	string
 	 */
-	function admin_url($uri = '')
+	function admin_url($uri = '', $protocol = null)
 	{
 		if ('' === $uri)
 		{
-			return site_url(KB_ADMIN);
+			return site_url(KB_ADMIN, $protocol);
 		}
 
 		$CI =& get_instance();
@@ -443,7 +445,7 @@ if ( ! function_exists('admin_url'))
 			}
 		}
 
-		return site_url(KB_ADMIN.'/'.$uri);
+		return site_url(KB_ADMIN.'/'.$uri, $protocol);
 	}
 }
 
@@ -636,12 +638,13 @@ if ( ! function_exists('process_url'))
 	 * Returns the full URL to process sections of the site.
 	 *
 	 * @param 	string 	$uri
+	 * @param 	string 	$protocol
 	 * @return 	string
 	 */
-	function process_url($uri = '')
+	function process_url($uri = '', $protocol = null)
 	{
 		$uri = ($uri == '') ? 'process' : 'process/'.$uri;
-		return site_url($uri);
+		return site_url($uri, $protocol);
 	}
 }
 
@@ -758,12 +761,13 @@ if ( ! function_exists('ajax_url'))
 	 * Returns the full URL to ajax sections of the site.
 	 *
 	 * @param 	string 	$uri
+	 * @param 	string 	$protocol
 	 * @return 	string
 	 */
-	function ajax_url($uri = '')
+	function ajax_url($uri = '', $protocol = null)
 	{
 		$uri = ($uri == '') ? 'ajax' : 'ajax/'.$uri;
-		return site_url($uri);
+		return site_url($uri, $protocol);
 	}
 }
 
