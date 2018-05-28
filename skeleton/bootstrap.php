@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		2.0.0
- * @version 	2.0.0
+ * @version 	2.1.0
  */
 
 /**
@@ -137,7 +137,7 @@ Autoloader::add_classes(array(
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		2.0.0
- * @version 	2.0.0
+ * @version 	2.1.0
  */
 class KPlatform {
 	/**
@@ -148,7 +148,7 @@ class KPlatform {
 	public static function constants()
 	{
 		// We define useful Skeleton constants first.
-		define('KB_VERSION', '2.1.0');
+		define('KB_VERSION', '2.1.1');
 		define('DS', DIRECTORY_SEPARATOR);
 		define('EXT', '.php');
 
