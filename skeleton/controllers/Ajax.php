@@ -55,14 +55,7 @@ class Ajax extends AJAX_Controller {
 	 * Array of available contexts.
 	 * @var array
 	 */
-	private $_targets = array(
-		'languages',
-		'modules',
-		'plugins',
-		'reports',
-		'themes',
-		'users',
-	);
+	private $_targets = array('reports');
 
 	/**
 	 * __constructr
@@ -82,11 +75,7 @@ class Ajax extends AJAX_Controller {
 		parent::__construct();
 
 		// Add safe reports.
-		$this->safe_admin_methods[] = '_languages';
-		$this->safe_admin_methods[] = '_plugins';
 		$this->safe_admin_methods[] = '_reports';
-		$this->safe_admin_methods[] = '_themes';
-		$this->safe_admin_methods[] = '_users';
 	}
 
 	// ------------------------------------------------------------------------
@@ -117,170 +106,6 @@ class Ajax extends AJAX_Controller {
 		}
 
 		return call_user_func_array(array($this, '_'.$target), array($action, $id));
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * _languages
-	 *
-	 * Method for interacting with languages.
-	 *
-	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
-	 * @since 	2.0.0
-	 *
-	 * @access 	public
-	 * @param 	string 	$action 	The action to perform.
-	 * @param 	string 	$name 		The plugin's folder name;
-	 * @return 	AJAX_Controller::response()
-	 */
-	public function _languages($action = null, $name = null)
-	{
-		$this->load->language('csk_languages');
-		$actions = array('enable', 'disable', 'make_default');
-
-		/**
-		 * Here are conditions in order to proceed:
-		 * 1. The action is provided and available.
-		 * 2. The language name is provided and available.
-		 * 3. The action passes nonce check.
-		 */
-		if ((null === $action OR ! in_array($action, $actions))
-			OR (null === $name OR ! array_key_exists($name, $this->lang->languages()))
-			OR true !== $this->check_nonce())
-		{
-			$this->response->header = self::HTTP_NOT_ACCEPTABLE;
-			$this->response->message = __('CSK_ERROR_NONCE_URL');
-			return;
-		}
-
-		// Make sure to lower the name.
-		ctype_lower($name) OR $name = strtolower($name);
-
-		// We cannot touch "English" language.
-		if ('english' === $name && 'make_default' !== $action)
-		{
-			$this->response->header = self::HTTP_NOT_ACCEPTABLE;
-			$this->response->message = __('CSK_LANGUAGES_ERROR_ENGLISH_REQUIRED');
-			return;
-		}
-
-		// Get database languages for later use.
-		$languages = $this->config->item('languages');
-		$languages OR $languages = array();
-
-		switch ($action)
-		{
-			// Enabling a language.
-			case 'enable':
-
-				// Already enabled? Nothing to do..
-				if (in_array($name, $languages))
-				{
-					$this->response->header = self::HTTP_NOT_MODIFIED;
-					$this->response->message = __('CSK_LANGUAGES_ALREADY_ENABLE');
-					return;
-				}
-
-				// Add language to languages array.
-				$languages[] = $name;
-				asort($languages);
-				$languages = array_values($languages);
-
-				// Successfully updated?
-				if (false !== $this->kbcore->options->set_item('languages', $languages))
-				{
-					// TODO: Log the activity.
-					log_activity($this->c_user->id, 'Enabled language: '.$name);
-
-					$this->response->header = self::HTTP_OK;
-					$this->response->message = __('CSK_LANGUAGES_SUCCESS_ENABLE');
-					return;
-				}
-				
-				$this->response->message = __('CSK_LANGUAGES_ERROR_ENABLE');
-
-				break;
-
-			// Disabling a language.
-			case 'disable':
-
-				// Already disabled? Nothing to do..
-				if ( ! in_array($name, $languages))
-				{
-					$this->response->header = self::HTTP_NOT_MODIFIED;
-					$this->response->message = __('CSK_LANGUAGES_ALREADY_DISABLE');
-					return;
-				}
-
-				// Remove language from languages array.
-				$languages[] = $name;
-				foreach ($languages as $i => $lang)
-				{
-					if ($lang === $name)
-					{
-						unset($languages[$i]);
-					}
-				}
-				asort($languages);
-				$languages = array_values($languages);
-
-				// Successfully updated?
-				if (false !== $this->kbcore->options->set_item('languages', $languages))
-				{
-					/**
-					 * If the language is the site's default language, we make
-					 * sure to set English as the default one.
-					 */
-					if ($name === $this->kbcore->options->item('language'))
-					{
-						$this->kbcore->options->set_item('language', 'english');
-					}
-
-					// TODO: Log the activity.
-					log_activity($this->c_user->id, 'Disabled language: '.$name);
-
-					$this->response->header = self::HTTP_OK;
-					$this->response->message = __('CSK_LANGUAGES_SUCCESS_DISABLE');
-					return;
-				}
-				
-				$this->response->message = __('CSK_LANGUAGES_ERROR_DISABLE');
-
-				break;
-			
-			// Making language default.
-			case 'make_default':
-
-				// If the language is not enabled, we make sure to enable it first.
-				if ( ! in_array($name, $languages))
-				{
-					$languages[] = $name;
-					asort($languages);
-					if (false === $this->kbcore->options->set_item('languages', $languages))
-					{
-						$this->response->header = self::HTTP_CONFLICT;
-						$this->response->message = __('CSK_LANGUAGES_ERROR_DEFAULT');
-						return;
-					}
-				}
-
-				// Successfully changed?
-				if (false !== $this->kbcore->options->set_item('language', $name))
-				{
-					// TODO: Log the activity.
-					log_activity($this->c_user->id, 'Set default language: '.$name);
-
-					$this->response->header = self::HTTP_OK;
-					$this->response->message = __('CSK_LANGUAGES_SUCCESS_DEFAULT');
-					return;
-				}
-
-				$this->response->message = __('CSK_LANGUAGES_ERROR_DEFAULT');
-
-				break;
-		}
 	}
 
 	// ------------------------------------------------------------------------

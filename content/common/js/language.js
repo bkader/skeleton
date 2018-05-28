@@ -7,86 +7,71 @@
     "use strict";
 
     // Prepare globals.
-    var csk           = window.csk = window.csk || {};
+    var csk = window.csk = window.csk || {};
     csk.i18n = csk.i18n || {};
-    csk.i18n.language = csk.i18n.language || {};
+    csk.languages = csk.languages || {};
+    csk.i18n.languages = csk.i18n.languages || {};
 
     /**
-     * Language Object.
-     * Handles all operations done on language module.
-     * @since   1.3.0
+     * Skeleton Languages.
+     * @since   2.1.1
      */
-    csk.language = {
+    csk.languages.proceed = function(el, action) {
+        var $this = $(el),
+            href = $this.data("endpoint"),
+            row = $this.closest("tr"),
+            id = row.attr("id") || undefined,
+            name = row.data("name") || 'this',
+            action = action || -1;
 
-        // Enable a language.
-        enable: function (el) {
-            return csk.language._do(el, "enable");
-        },
-
-        // Disable a language.
-        disable: function (el) {
-            return csk.language._do(el, "disable");
-        },
-
-        // Make default.
-        make_default: function (el) {
-            return csk.language._do(el, "default");
-        },
-
-        // Actions handler.
-        _do: function (el, action) {
-            var $this = $(el),
-                href = $this.data("endpoint"),
-                row = $this.closest("tr"),
-                lang = row.data("lang"),
-                id = row.attr("id"),
-                action = action || -1;
-
-            // No URL provided? Nothing to do...
-            if (typeof href === "undefined" || !href.length || action <= 0) {
-                return false;
-            }
-
-            csk.ui.confirm(csk.i18n.language[action], function () {
-                csk.ajax.request(href, {
-                    type: "POST",
-                    data: {action: action + "-language_" + lang},
-                    complete: function (jqXHR, textStatus) {
-                        if (textStatus !== "success") {
-                            return;
-                        }
-
-                        // Refresh the page is we disable the current language.
-                        if (action === "disable" && lang === csk.config.lang.folder) {
-                            location.reload();
-                            return;
-                        }
-
-                        // Simply reload the UI.
-                        csk.ui.reload();
-                    }
-                });
-            });
+        /** If no URL is provided, nothing to do... */
+        if (typeof href === "undefined" || !href.length) {
+            return false;
         }
+
+        /** Add opacity to siblings */
+        row.siblings("tr").addClass("op-2");
+
+        /** We define the confirmation message. */
+        var message = csk.i18n.languages[action] || undefined;
+        if (typeof message === "undefined") {
+            message = csk.i18n.default[action] || undefined;
+            if (typeof message === "undefined") {
+                message = "Are you sure you to " + action + " %s?";
+            }
+        }
+
+        /** We add the id to the URL if defined. */
+        if (typeof id !== "undefined" && id.length) {
+            href = href + "#" + id;
+        }
+
+        /** Display confirmation message. */
+        csk.ui.confirm($.sprintf(message, name), function () {
+            window.location.href = href;
+        }, function () {
+            /** Make sure to remove opacity class from siblings. */
+            row.siblings("tr").removeClass("op-2");
+        });
     };
 
     $(document).ready(function () {
-        // Enable language.
+        /** Enable language. */
         $(document).on("click", ".language-enable", function (e) {
             e.preventDefault();
-            return csk.language.enable(this);
+            return csk.languages.proceed(this, "enable");
         });
 
-        // Disable language.
+        /** Disable language. */
         $(document).on("click", ".language-disable", function (e) {
             e.preventDefault();
-            return csk.language.disable(this);
+            return csk.languages.proceed(this, "disable");
         });
 
-        // Make default.
+        /** Make default. */
         $(document).on("click", ".language-default", function (e) {
             e.preventDefault();
-            return csk.language.make_default(this);
+            return csk.languages.proceed(this, "make_default");
         });
     });
 

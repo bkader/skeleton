@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	2.0.0
+ * @version 	2.1.1
  */
 class Languages extends Admin_Controller
 {
@@ -80,7 +80,7 @@ class Languages extends Admin_Controller
 		$this->scripts[] = 'language';
 
 		$this->data['page_icon']  = 'globe';
-		$this->data['page_title'] = line('CSK_LANGUAGES');
+		$this->data['page_title'] = __('CSK_LANGUAGES');
 		$this->data['page_help']  = 'https://goo.gl/cAmWt1';
 	}
 
@@ -112,24 +112,38 @@ class Languages extends Admin_Controller
 		ksort($this->data['languages']);
 
 		/**
+		 * Languages actions.
+		 * @since 	2.1.1
+		 */
+		$action = $this->input->get('action', true);
+		$lang   = $this->input->get('lang', true);
+
+		if (($action && in_array($action, array('enable', 'disable', 'make_default')))
+			&& check_nonce_url("language-{$action}_{$lang}")
+			&& method_exists($this, '_'.$action))
+		{
+			return call_user_func_array(array($this, '_'.$action), array($lang));
+		}
+
+		/**
 		 * We check if the language folder is available or not and set 
 		 * it to available if found. This way we avoid installing languages
 		 * that are not really available.
 		 */
-		foreach ($this->data['languages'] as $folder => &$lang)
+		foreach ($this->data['languages'] as $folder => &$l)
 		{
 			// Language availability.
-			$lang['available'] =  (is_dir(APPPATH.'language/'.$folder) && is_dir(KBPATH.'language/'.$folder));
+			$l['available'] =  (is_dir(APPPATH.'language/'.$folder) && is_dir(KBPATH.'language/'.$folder));
 
 			// Language action.
-			$lang['action'] = null; // Ignore english.
+			$l['action'] = null; // Ignore english.
 			if ('english' !== $folder)
 			{
-				$lang['action'] = (in_array($folder, $this->data['available_languages'])) ? 'disable' : 'enable';
+				$l['action'] = (in_array($folder, $this->data['available_languages'])) ? 'disable' : 'enable';
 			}
 
 			// Action buttons.
-			$lang['actions'] = array();
+			$l['actions'] = array();
 
 			/**
 			 * No actions is available on "English" language except making
@@ -141,14 +155,14 @@ class Languages extends Admin_Controller
 				// Not by default? Display the "Make Default" button.
 				if ('english' !== $this->data['language'])
 				{
-					$lang['actions'][] = html_tag('button', array(
+					$l['actions'][] = html_tag('button', array(
 						'type' => 'button',
-						'data-endpoint' => nonce_ajax_url(
-							'languages/make_default/english',
-							'default-language_english'
-						),
+						'data-endpoint' => esc_url(nonce_admin_url(
+							'languages?action=make_default&amp;lang=english',
+							'language-make_default_english'
+						)),
 						'class' => 'btn btn-default btn-xs btn-icon language-default ml-2',
-					), fa_icon('lock').line('CSK_LANGUAGES_MAKE_DEFAULT'));
+					), fa_icon('lock').__('CSK_LANGUAGES_MAKE_DEFAULT'));
 				}
 
 				// Ignore the rest.
@@ -158,72 +172,72 @@ class Languages extends Admin_Controller
 			// Make default action.
 			if ($folder !== $this->data['language'])
 			{
-				if (true === $lang['available'])
+				if (true === $l['available'])
 				{
-					$lang['actions'][] = html_tag('button', array(
+					$l['actions'][] = html_tag('button', array(
 						'type' => 'button',
-						'data-endpoint' => nonce_ajax_url(
-							"languages/make_default/{$folder}",
-							"default-language_{$folder}"
-						),
+						'data-endpoint' => esc_url(nonce_admin_url(
+							"languages?action=make_default&amp;lang={$folder}",
+							"language-make_default_{$folder}"
+						)),
 						'class' => 'btn btn-default btn-xs btn-icon language-default ml-2',
-					), fa_icon('lock').line('CSK_LANGUAGES_MAKE_DEFAULT'));
+					), fa_icon('lock').__('CSK_LANGUAGES_MAKE_DEFAULT'));
 				}
 				else
 				{
-					$lang['actions'][] = html_tag('button', array(
+					$l['actions'][] = html_tag('button', array(
 						'type'     => 'button',
 						'class'    => 'btn btn-default btn-xs btn-icon ml-2 op-2',
 						'disabled' => 'disabled',
-					), fa_icon('lock').line('CSK_LANGUAGES_MAKE_DEFAULT'));
+					), fa_icon('lock').__('CSK_LANGUAGES_MAKE_DEFAULT'));
 				}
 			}
 
 			// Disable language action.
 			if (in_array($folder, $this->data['available_languages']))
 			{
-				if (true === $lang['available'])
+				if (true === $l['available'])
 				{
-					$lang['actions'][] = html_tag('button', array(
+					$l['actions'][] = html_tag('button', array(
 						'type' => 'button',
-						'data-endpoint' => nonce_ajax_url(
-							"languages/disable/{$folder}",
-							"disable-language_{$folder}"
-						),
+						'data-endpoint' => esc_url(nonce_admin_url(
+							"languages?action=disable&amp;lang={$folder}",
+							"language-disable_{$folder}"
+						)),
 						'class' => 'btn btn-default btn-xs btn-icon language-disable ml-2',
-					), fa_icon('times text-danger').line('CSK_LANGUAGES_DISABLE'));
+					), fa_icon('times text-danger').__('CSK_LANGUAGES_DISABLE'));
 				}
 				else
 				{
-					$lang['actions'][] = html_tag('button', array(
+					$l['actions'][] = html_tag('button', array(
 						'type'     => 'button',
 						'class'    => 'btn btn-default btn-xs btn-icon ml-2 op-2',
 						'disabled' => 'disabled',
-					), fa_icon('times text-danger').line('CSK_LANGUAGES_DISABLE'));
+					), fa_icon('times text-danger').__('CSK_LANGUAGES_DISABLE'));
 				}
 			}
 
 			// Enable language action.
 			else
 			{
-				if (true === $lang['available'])
+				if (true === $l['available'])
 				{
-					$lang['actions'][] = html_tag('button', array(
+					$l['actions'][] = html_tag('button', array(
 						'type' => 'button',
-						'data-endpoint' => nonce_ajax_url(
-							"languages/enable/{$folder}",
-							"enable-language_{$folder}"
-						),
+						'data-endpoint' => esc_url(nonce_admin_url(
+							"languages?action=enable&amp;lang={$folder}",
+							"language-enable_{$folder}"
+						)),
 						'class' => 'btn btn-default btn-xs btn-icon language-enable ml-2',
-					), fa_icon('check text-success').line('CSK_LANGUAGES_ENABLE'));
+					), fa_icon('check text-success').__('CSK_LANGUAGES_ENABLE'));
 				}
 				else
 				{
-					$lang['actions'][] = html_tag('button', array(
+					$l['actions'][] = html_tag('button', array(
 						'type'     => 'button',
 						'class'    => 'btn btn-default btn-xs btn-icon ml-2 op-2',
 						'disabled' => 'disabled',
-					), fa_icon('check text-success').line('CSK_LANGUAGES_ENABLE'));
+					), fa_icon('check text-success').__('CSK_LANGUAGES_ENABLE'));
 				}
 			}
 		}
@@ -232,6 +246,179 @@ class Languages extends Admin_Controller
 		$this->theme
 			->set_title(lang('CSK_LANGUAGES'))
 			->render($this->data);
+	}
+
+	// ------------------------------------------------------------------------
+	// Quick-access methods.
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for enabling the given language.
+	 *
+	 * @since 	2.1.0
+	 *
+	 * @access 	protected
+	 * @param 	string 	$folder
+	 * @return 	void
+	 */
+	protected function _enable($folder)
+	{
+		// Make sure to lower the name.
+		ctype_lower($folder) OR $folder = strtolower($folder);
+		
+		// We cannot touch "English" language.
+		if ('english' === $folder)
+		{
+			set_alert(__('CSK_LANGUAGES_ERROR_ENGLISH_REQUIRED'), 'error');
+			redirect(KB_ADMIN.'/languages');
+			exit;
+		}
+
+		// Get database languages for later use.
+		$languages = $this->config->item('languages');
+		$languages OR $languages = array();
+
+		// Already enabled? Nothing to do..
+		if (in_array($folder, $languages))
+		{
+			set_alert(__('CSK_LANGUAGES_ALREADY_ENABLE'), 'error');
+			redirect(KB_ADMIN.'/languages');
+			exit;
+		}
+
+		// Add language to languages array.
+		$languages[] = $folder;
+		asort($languages);
+		$languages = array_values($languages);
+
+		// Successfully updated?
+		if (false !== $this->kbcore->options->set_item('languages', $languages))
+		{
+			set_alert(__('CSK_LANGUAGES_SUCCESS_ENABLE'), 'success');
+			redirect(KB_ADMIN.'/languages');
+			exit;
+		}
+
+		set_alert(__('CSK_LANGUAGES_ERROR_ENABLE'), 'error');
+		redirect(KB_ADMIN.'/languages');
+		exit;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for disabling the given language.
+	 *
+	 * @since 	2.1.0
+	 *
+	 * @access 	protected
+	 * @param 	string 	$folder
+	 * @return 	void
+	 */
+	protected function _disable($folder)
+	{
+		// Make sure to lower the name.
+		ctype_lower($folder) OR $folder = strtolower($folder);
+		
+		// We cannot touch "English" language.
+		if ('english' === $folder)
+		{
+			set_alert(__('CSK_LANGUAGES_ERROR_ENGLISH_REQUIRED'), 'error');
+			redirect(KB_ADMIN.'/languages');
+			exit;
+		}
+
+		// Get database languages for later use.
+		$languages = $this->config->item('languages');
+		$languages OR $languages = array();
+
+		// Already disabled? Nothing to do..
+		if ( ! in_array($folder, $languages))
+		{
+			set_alert(__('CSK_LANGUAGES_ALREADY_DISABLE'), 'error');
+			redirect(KB_ADMIN.'/languages');
+			exit;
+		}
+
+		// Remove language from languages array.
+		$languages[] = $folder;
+		foreach ($languages as $i => $lang)
+		{
+			if ($lang === $folder)
+			{
+				unset($languages[$i]);
+			}
+		}
+		asort($languages);
+		$languages = array_values($languages);
+
+		// Successfully updated?
+		if (false !== $this->kbcore->options->set_item('languages', $languages))
+		{
+			/**
+			 * If the language is the site's default language, we make
+			 * sure to set English as the default one.
+			 */
+			if ($folder === $this->kbcore->options->item('language'))
+			{
+				$this->kbcore->options->set_item('language', 'english');
+			}
+			
+			set_alert(__('CSK_LANGUAGES_SUCCESS_DISABLE'), 'success');
+			redirect(KB_ADMIN.'/languages');
+			exit;
+		}
+
+		set_alert(__('CSK_LANGUAGES_ERROR_DISABLE'), 'error');
+		redirect(KB_ADMIN.'/languages');
+		exit;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for making a language site's default.
+	 *
+	 * @since 	2.1.0
+	 *
+	 * @access 	protected
+	 * @param 	string 	$folder
+	 * @return 	void
+	 */
+	protected function _make_default($folder)
+	{
+		// Make sure to lower the name.
+		ctype_lower($folder) OR $folder = strtolower($folder);
+
+		// Get database languages for later use.
+		$languages = $this->config->item('languages');
+		$languages OR $languages = array();
+
+		// If the language is not enabled, we make sure to enable it first.
+		if ( ! in_array($folder, $languages))
+		{
+			$languages[] = $folder;
+			asort($languages);
+
+			if (false === $this->kbcore->options->set_item('languages', $languages))
+			{
+				set_alert(__('CSK_LANGUAGES_ERROR_DEFAULT'), 'error');
+				redirect(KB_ADMIN.'/languages');
+				exit;
+			}
+		}
+
+		// Successfully changed?
+		if (false !== $this->kbcore->options->set_item('language', $folder))
+		{
+			set_alert(__('CSK_LANGUAGES_SUCCESS_DEFAULT'), 'success');
+			redirect(KB_ADMIN.'/languages');
+			exit;
+		}
+
+		set_alert(__('CSK_LANGUAGES_ERROR_DEFAULT'), 'error');
+		redirect(KB_ADMIN.'/languages');
+		exit;
 	}
 
 	// ------------------------------------------------------------------------
@@ -254,14 +441,14 @@ class Languages extends Admin_Controller
 	public function _admin_head($output)
 	{
 		$lines = array(
-			'enable'  => line('CSK_LANGUAGES_CONFIRM_ENABLE'),
-			'disable' => line('CSK_LANGUAGES_CONFIRM_DISABLE'),
-			'default' => line('CSK_LANGUAGES_CONFIRM_DEFAULT'),
+			'enable'       => __('CSK_LANGUAGES_CONFIRM_ENABLE'),
+			'disable'      => __('CSK_LANGUAGES_CONFIRM_DISABLE'),
+			'make_default' => __('CSK_LANGUAGES_CONFIRM_DEFAULT'),
 		);
 
 		$output .= '<script type="text/javascript">';
 		$output .= 'csk.i18n = csk.i18n || {};';
-		$output .= ' csk.i18n.language = '.json_encode($lines).';';
+		$output .= ' csk.i18n.languages = '.json_encode($lines).';';
 		$output .= '</script>';
 
 		return $output;
@@ -285,7 +472,7 @@ class Languages extends Admin_Controller
 		add_action('admin_subhead', function () {
 			echo html_tag('span', array(
 				'class' => 'navbar-text'
-			), fa_icon('info-circle text-primary mr-1').line('CSK_LANGUAGES_TIP'));
+			), fa_icon('info-circle text-primary mr-1').__('CSK_LANGUAGES_TIP'));
 		});
 	}
 

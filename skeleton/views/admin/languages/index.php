@@ -68,7 +68,7 @@ if ($languages) {
 	echo '<tbody id="languages-list">';
 
 	foreach ($languages as $folder => $lang) {
-		echo '<tr id="lang-'.$folder.'" data-lang="'.$folder.'">',
+		echo '<tr id="lang-'.$folder.'" data-name="'.$lang['name'].'">',
 
 			'<td>';
 
