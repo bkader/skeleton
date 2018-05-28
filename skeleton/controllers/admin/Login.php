@@ -72,7 +72,7 @@ class Login extends KB_Controller {
 		// Make sure the user is logged in.
 		if (true === $this->kbcore->auth->is_admin())
 		{
-			set_alert(line('CSK_ERROR_LOGGED_IN'), 'warning');
+			set_alert(__('CSK_ERROR_LOGGED_IN'), 'warning');
 			redirect(KB_ADMIN);
 			exit;
 		}
@@ -112,9 +112,10 @@ class Login extends KB_Controller {
 		 * @since 	2.0.0
 		 */
 		$default_scripts = array(
-			'popper'    => $this->theme->common_url('js/popper.min.js'),
-			'bootstrap' => $this->theme->common_url('js/bootstrap.min.js'),
-			'admin'     => $this->theme->common_url('js/admin.min.js'),
+			'jquery.validate' => $this->theme->common_url('js/jquery.validate.js'),
+			'popper'          => $this->theme->common_url('js/popper.min.js'),
+			'bootstrap'       => $this->theme->common_url('js/bootstrap.min.js'),
+			'admin'           => $this->theme->common_url('js/admin.min.js'),
 		);
 		$login_scripts = apply_filters('login_scripts', array());
 		if (empty($login_scripts) OR ! is_array($login_scripts)) {
@@ -164,7 +165,7 @@ class Login extends KB_Controller {
 		), '#login');
 
 		// Array of available languages.
-		$langs['-1'] = line('CSK_ADMIN_LANGUAGES_DEFAULT');
+		$langs['-1'] = __('CSK_ADMIN_LANGUAGES_DEFAULT');
 		$site_languages = $this->config->item('languages');
 		if (count($site_languages) >= 2)
 		{
@@ -204,7 +205,7 @@ class Login extends KB_Controller {
 			 * Filter the login page title.
 			 * @since 	2.0.0
 			 */
-			$login_title = apply_filters('login_title', line('CSK_BTN_LOGIN'));
+			$login_title = apply_filters('login_title', __('CSK_BTN_LOGIN'));
 			$this->theme->set_title($login_title)->render($this->data);
 		}
 		// After the form is submitted.
@@ -213,7 +214,7 @@ class Login extends KB_Controller {
 			// Did not pass nonce check?
 			if (true !== $this->check_nonce('admin-login', false))
 			{
-				set_alert(line('CSK_ERROR_CSRF'), 'error');
+				set_alert(__('CSK_ERROR_CSRF'), 'error');
 				redirect('admin-login', 'refresh');
 				exit;
 			}
@@ -223,9 +224,7 @@ class Login extends KB_Controller {
 
 			// Format the language.
 			$language = $this->input->post('language', true);
-			if (empty($language) OR $language <= 0) {
-				$language OR $language = null;
-			}
+			(empty($language) OR $language <= 0) && $language = null;
 
 			// In case the user was not found or could not login.
 			if (false === $user 
@@ -235,8 +234,8 @@ class Login extends KB_Controller {
 				 * Login error filter.
 				 * @since 	2.0.0
 				 */
-				$login_error = apply_filters('admin_login_failed', line('CSK_ERROR_CSRF'));
-				empty($login_error) && $login_error = line('CSK_ERROR_CSRF');
+				$login_error = apply_filters('admin_login_failed', __('CSK_ERROR_CSRF'));
+				empty($login_error) && $login_error = __('CSK_ERROR_CSRF');
 				set_alert($login_error, 'error');
 				redirect('admin-login', 'refresh');
 				exit;
