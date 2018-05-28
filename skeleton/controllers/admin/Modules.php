@@ -435,7 +435,7 @@ class Modules extends Admin_Controller {
 
 		if (module_is_active($folder))
 		{
-			set_alert(sprintf(__('CSK_MODULES_ERROR_DELETE_ACTIVE'), $name), 'success');
+			set_alert(sprintf(__('CSK_MODULES_ERROR_DELETE_ACTIVE'), $name), 'error');
 			redirect(KB_ADMIN.'/modules');
 			exit;
 		}
