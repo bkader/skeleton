@@ -125,7 +125,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 						if (1 == $user->enabled) {
 							echo html_tag('button', array(
 								'type'          => 'button',
-								'data-endpoint' => nonce_ajax_url("users/deactivate/{$user->id}", "deactivate-user_{$user->id}"),
+								'data-endpoint' => esc_url(nonce_admin_url("users?action=deactivate&amp;user={$user->id}&amp;next=".rawurlencode($uri_string), "user-deactivate_{$user->id}")),
 								'class'         => 'btn btn-default btn-xs user-deactivate ml-2',
 								'rel'           => 'tooltip',
 								'title'         => __('CSK_USERS_DEACTIVATE_USER'),
@@ -133,7 +133,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 						} else {
 							echo html_tag('button', array(
 								'type'          => 'button',
-								'data-endpoint' => nonce_ajax_url("users/activate/{$user->id}", "activate-user_{$user->id}"),
+								'data-endpoint' => esc_url(nonce_admin_url("users?action=activate&amp;user={$user->id}&amp;next=".rawurlencode($uri_string), "user-activate_{$user->id}")),
 								'class'         => 'btn btn-default btn-xs user-activate ml-2',
 								'rel'           => 'tooltip',
 								'title'         => __('CSK_USERS_ACTIVATE_USER'),
@@ -145,7 +145,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 						{
 							echo html_tag('button', array(
 								'type'          => 'button',
-								'data-endpoint' => nonce_ajax_url("users/restore/{$user->id}", "restore-user_{$user->id}"),
+								'data-endpoint' => esc_url(nonce_admin_url("users?action=restore&amp;user={$user->id}&amp;next=".rawurlencode($uri_string), "user-restore_{$user->id}")),
 								'class'         => 'btn btn-default btn-xs user-restore ml-2',
 								'rel'           => 'tooltip',
 								'title'         => __('CSK_USERS_RESTORE_USER'),
@@ -155,7 +155,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 						{
 							echo html_tag('button', array(
 								'type'          => 'button',
-								'data-endpoint' => nonce_ajax_url("users/delete/{$user->id}", "delete-user_{$user->id}"),
+								'data-endpoint' => esc_url(nonce_admin_url("users?action=delete&amp;user={$user->id}&amp;next=".rawurlencode($uri_string), "user-delete_{$user->id}")),
 								'class'         => 'btn btn-default btn-xs user-delete ml-2',
 								'rel'           => 'tooltip',
 								'title'         => __('CSK_USERS_DELETE_USER'),
@@ -164,7 +164,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 						echo html_tag('button', array(
 							'type'          => 'button',
-							'data-endpoint' => nonce_ajax_url("users/remove/{$user->id}", "remove-user_{$user->id}"),
+							'data-endpoint' => esc_url(nonce_admin_url("users?action=remove&amp;user={$user->id}&amp;next=".rawurlencode($uri_string), "user-remove_{$user->id}")),
 							'class'         => 'btn btn-danger btn-xs user-remove ml-2',
 							'rel'           => 'tooltip',
 							'title'         => __('CSK_USERS_REMOVE_USER'),

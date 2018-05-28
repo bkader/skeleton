@@ -83,7 +83,7 @@ class Users extends Admin_Controller {
 
 		// Default page icon, title and help.
 		$this->data['page_icon']  = 'users';
-		$this->data['page_title'] = line('CSK_USERS_MANAGE_USERS');
+		$this->data['page_title'] = __('CSK_USERS_MANAGE_USERS');
 		$this->data['page_help'] = 'https://github.com/bkader/skeleton/wiki/Users';
 	}
 
@@ -131,9 +131,25 @@ class Users extends Admin_Controller {
 		// Get all users.
 		$this->data['users'] = $this->kbcore->users->get_all($limit, $offset);
 
+		/**
+		 * Cache users actions.
+		 * @since 	2.1.1
+		 */
+		$actions = array('activate', 'deactivate', 'delete', 'restore', 'remove');
+		$action  = $this->input->get('action');
+		$user    = (int) $this->input->get('user', true);
+
+		if (($action && in_array($action, $actions))
+			&& ($user && $user > 0)
+			&& check_nonce_url('user-'.$action.'_'.$user)
+			&& method_exists($this, '_'.$action))
+		{
+			return call_user_func_array(array($this, '_'.$action), array($user));
+		}
+
 		// Set page title and render view.
 		$this->theme
-			->set_title(line('CSK_USERS_MANAGE_USERS'))
+			->set_title(__('CSK_USERS_MANAGE_USERS'))
 			->render($this->data);
 	}
 
@@ -207,7 +223,7 @@ class Users extends Admin_Controller {
 
 			// Page icon and title.
 			$this->data['page_icon'] = 'user-plus';
-			$this->data['page_title'] = line('CSK_USERS_ADD_USER');
+			$this->data['page_title'] = __('CSK_USERS_ADD_USER');
 
 			$this->theme
 				->set_title($this->data['page_title'])
@@ -218,7 +234,7 @@ class Users extends Admin_Controller {
 		{
 			if (true !== $this->check_nonce('add-user'))
 			{
-				set_alert(line('CSK_ERROR_CSRF'), 'error');
+				set_alert(__('CSK_ERROR_CSRF'), 'error');
 				redirect(KB_ADMIN.'/users/add', 'refresh');
 				exit;
 			}
@@ -236,12 +252,12 @@ class Users extends Admin_Controller {
 
 			if (false !== ($guid = $this->kbcore->users->create($data)))
 			{
-				set_alert(line('CSK_USERS_ADMIN_SUCCESS_ADD'), 'success');
+				set_alert(__('CSK_USERS_ADMIN_SUCCESS_ADD'), 'success');
 				redirect(KB_ADMIN.'/users', 'refresh');
 				exit;
 			}
 
-			set_alert(line('CSK_USERS_ADMIN_ERROR_ADD'), 'error');
+			set_alert(__('CSK_USERS_ADMIN_ERROR_ADD'), 'error');
 			redirect(KB_ADMIN.'/users/add', 'refresh');
 			exit;
 		}
@@ -268,7 +284,7 @@ class Users extends Admin_Controller {
 		$this->data['user'] = $this->kbcore->users->get($id);
 		if ( ! $this->data['user'])
 		{
-			set_alert(line('CSK_USERS_ERROR_ACCOUNT_MISSING'), 'error');
+			set_alert(__('CSK_USERS_ERROR_ACCOUNT_MISSING'), 'error');
 			redirect($this->agent->referrer());
 			exit;
 		}
@@ -404,7 +420,7 @@ class Users extends Admin_Controller {
 		if ($this->form_validation->run() == false)
 		{
 			$this->data['page_icon'] = 'user';
-			$this->data['page_title'] = sprintf(line('CSK_USERS_EDIT_USER_NAME'), $this->data['user']->username);
+			$this->data['page_title'] = sprintf(__('CSK_USERS_EDIT_USER_NAME'), $this->data['user']->username);
 
 			// Set page title and render view.
 			$this->theme
@@ -416,7 +432,7 @@ class Users extends Admin_Controller {
 		{
 			if (true !== $this->check_nonce('edit-user_'.$id))
 			{
-				set_alert(line('CSK_ERROR_CSRF'), 'error');
+				set_alert(__('CSK_ERROR_CSRF'), 'error');
 				redirect(KB_ADMIN.'/users/edit/'.$id, 'refresh');
 				exit;
 			}
@@ -470,7 +486,7 @@ class Users extends Admin_Controller {
 			// Successful or nothing to update?
 			if (empty($user_data) OR true === $this->kbcore->users->update($id, $user_data))
 			{
-				set_alert(line('CSK_USERS_ADMIN_SUCCESS_EDIT'), 'success');
+				set_alert(__('CSK_USERS_ADMIN_SUCCESS_EDIT'), 'success');
 
 				// Log the activity.
 
@@ -479,11 +495,218 @@ class Users extends Admin_Controller {
 			// Something went wrong?
 			else
 			{
-				set_alert(line('CSK_USERS_ADMIN_ERROR_EDIT'), 'error');
+				set_alert(__('CSK_USERS_ADMIN_ERROR_EDIT'), 'error');
 				redirect(KB_ADMIN.'/users/edit/'.$this->data['user']->id, 'refresh');
 			}
 			exit;
 		}
+	}
+
+	// ------------------------------------------------------------------------
+	// Quick-access methods.
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for activating the given user.
+	 *
+	 * @since 	2.1.1
+	 *
+	 * @access 	protected
+	 * @param 	int 	$id 	The user's ID.
+	 * @return 	void
+	 */
+	protected function _activate($id)
+	{
+		// No action done on own account.
+		if ($id == $this->c_user->id)
+		{
+			set_alert(__('CSK_USERS_ADMIN_ERROR_ACTIVATE_OWN'), 'error');
+		}
+
+		// Make sure the user exists.
+		elseif (false === ($user = $this->kbcore->users->get($id)))
+		{
+			set_alert(__('CSK_USERS_ERROR_ACCOUNT_MISSING'), 'error');
+		}
+
+		// Successfully activated?
+		elseif (0 == $user->enabled && false !== $user->update('enabled', 1))
+		{
+			set_alert(sprintf(__('CSK_USERS_ADMIN_SUCCESS_ACTIVATE'), $user->username), 'success');
+		}
+
+		// An error occurred somewhere?
+		else
+		{
+			set_alert(sprintf(__('CSK_USERS_ADMIN_ERROR_ACTIVATE'), $user->username), 'error');
+		}
+
+		redirect($this->redirect);
+		exit;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for deactivating the given user.
+	 *
+	 * @since 	2.1.1
+	 *
+	 * @access 	protected
+	 * @param 	int 	$id 	The user's ID.
+	 * @return 	void
+	 */
+	protected function _deactivate($id)
+	{
+		// No action done on own account.
+		if ($id == $this->c_user->id)
+		{
+			set_alert(__('CSK_USERS_ADMIN_ERROR_DEACTIVATE_OWN'), 'error');
+		}
+
+		// Make sure the user exists.
+		elseif (false === ($user = $this->kbcore->users->get($id)))
+		{
+			set_alert(__('CSK_USERS_ERROR_ACCOUNT_MISSING'), 'error');
+		}
+
+		// Successfully activated?
+		elseif (1 == $user->enabled && false !== $user->update('enabled', 0))
+		{
+			set_alert(sprintf(__('CSK_USERS_ADMIN_SUCCESS_DEACTIVATE'), $user->username), 'success');
+		}
+
+		// An error occurred somewhere?
+		else
+		{
+			set_alert(sprintf(__('CSK_USERS_ADMIN_ERROR_DEACTIVATE'), $user->username), 'error');
+		}
+
+		redirect($this->redirect);
+		exit;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for deleting the given user.
+	 *
+	 * @since 	2.1.1
+	 *
+	 * @access 	protected
+	 * @param 	int 	$id 	The user's ID.
+	 * @return 	void
+	 */
+	protected function _delete($id)
+	{
+		// No action done on own account.
+		if ($id == $this->c_user->id)
+		{
+			set_alert(__('CSK_USERS_ADMIN_ERROR_DELETE_OWN'), 'error');
+		}
+
+		// Make sure the user exists.
+		elseif (false === ($user = $this->kbcore->users->get($id)))
+		{
+			set_alert(__('CSK_USERS_ERROR_ACCOUNT_MISSING'), 'error');
+		}
+
+		// Successfully activated?
+		elseif (0 == $user->deleted && false !== $this->kbcore->users->delete($id))
+		{
+			set_alert(sprintf(__('CSK_USERS_ADMIN_SUCCESS_DELETE'), $user->username), 'success');
+		}
+
+		// An error occurred somewhere?
+		else
+		{
+			set_alert(sprintf(__('CSK_USERS_ADMIN_ERROR_DELETE'), $user->username), 'error');
+		}
+
+		redirect($this->redirect);
+		exit;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for restoring the given user.
+	 *
+	 * @since 	2.1.1
+	 *
+	 * @access 	protected
+	 * @param 	int 	$id 	The user's ID.
+	 * @return 	void
+	 */
+	protected function _restore($id)
+	{
+		// No action done on own account.
+		if ($id == $this->c_user->id)
+		{
+			set_alert(__('CSK_USERS_ADMIN_ERROR_RESTORE_OWN'), 'error');
+		}
+
+		// Make sure the user exists.
+		elseif (false === ($user = $this->kbcore->users->get($id)))
+		{
+			set_alert(__('CSK_USERS_ERROR_ACCOUNT_MISSING'), 'error');
+		}
+
+		// Successfully activated?
+		elseif (1 == $user->deleted && false !== $this->kbcore->users->restore($id))
+		{
+			set_alert(sprintf(__('CSK_USERS_ADMIN_SUCCESS_RESTORE'), $user->username), 'success');
+		}
+
+		// An error occurred somewhere?
+		else
+		{
+			set_alert(sprintf(__('CSK_USERS_ADMIN_ERROR_RESTORE'), $user->username), 'error');
+		}
+
+		redirect($this->redirect);
+		exit;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Method for permanently delete the given user.
+	 *
+	 * @since 	2.1.1
+	 *
+	 * @access 	protected
+	 * @param 	int 	$id 	The user's ID.
+	 * @return 	void
+	 */
+	protected function _remove($id)
+	{
+		// No action done on own account.
+		if ($id == $this->c_user->id)
+		{
+			set_alert(__('CSK_USERS_ADMIN_ERROR_REMOVE_OWN'), 'error');
+		}
+
+		// Make sure the user exists.
+		elseif (false === ($user = $this->kbcore->users->get($id)))
+		{
+			set_alert(__('CSK_USERS_ERROR_ACCOUNT_MISSING'), 'error');
+		}
+
+		// Successfully activated?
+		elseif (false !== $this->kbcore->users->remove($id))
+		{
+			set_alert(sprintf(__('CSK_USERS_ADMIN_SUCCESS_REMOVE'), $user->username), 'success');
+		}
+
+		// An error occurred somewhere?
+		else
+		{
+			set_alert(sprintf(__('CSK_USERS_ADMIN_ERROR_REMOVE'), $user->username), 'error');
+		}
+
+		redirect($this->redirect);
+		exit;
 	}
 
 	// ------------------------------------------------------------------------
@@ -506,13 +729,13 @@ class Users extends Admin_Controller {
 	public function _admin_head($output)
 	{
 		// Confirmation messages.
-		$lines = array(
-			'activate'   => htmlentities(line('CSK_USERS_ADMIN_CONFIRM_ACTIVATE'), ENT_QUOTES, 'UTF-8'),
-			'deactivate' => htmlentities(line('CSK_USERS_ADMIN_CONFIRM_DEACTIVATE'), ENT_QUOTES, 'UTF-8'),
-			'delete'     => htmlentities(line('CSK_USERS_ADMIN_CONFIRM_DELETE'), ENT_QUOTES, 'UTF-8'),
-			'restore'    => htmlentities(line('CSK_USERS_ADMIN_CONFIRM_RESTORE'), ENT_QUOTES, 'UTF-8'),
-			'remove'     => htmlentities(line('CSK_USERS_ADMIN_CONFIRM_REMOVE'), ENT_QUOTES, 'UTF-8'),
-		);
+		$lines = deep_htmlentities(array(
+			'activate'   => __('CSK_USERS_ADMIN_CONFIRM_ACTIVATE'),
+			'deactivate' => __('CSK_USERS_ADMIN_CONFIRM_DEACTIVATE'),
+			'delete'     => __('CSK_USERS_ADMIN_CONFIRM_DELETE'),
+			'restore'    => __('CSK_USERS_ADMIN_CONFIRM_RESTORE'),
+			'remove'     => __('CSK_USERS_ADMIN_CONFIRM_REMOVE'),
+		), ENT_QUOTES, 'UTF-8');
 
 		$output .= '<script type="text/javascript">';
 		$output .= 'csk.i18n = csk.i18n || {};';
@@ -553,7 +776,7 @@ class Users extends Admin_Controller {
 			echo html_tag('a', array(
 				'href' => admin_url('users/add'),
 				'class' => 'btn btn-success btn-sm btn-icon'
-			), fa_icon('plus-circle').line('CSK_USERS_ADD_USER')),
+			), fa_icon('plus-circle').__('CSK_USERS_ADD_USER')),
 
 			// Temporary disable buttons.
 			html_tag('a', array(
@@ -561,13 +784,13 @@ class Users extends Admin_Controller {
 				'role'     => 'button',
 				'class'    => 'btn btn-default btn-sm btn-icon disabled ml-2',
 				'disabled' => 'disabled',
-			), fa_icon('group').line('CSK_ADMIN_USERS_GROUPS')),
+			), fa_icon('group').__('CSK_ADMIN_USERS_GROUPS')),
 			html_tag('a', array(
 				'href'     => 'javascript:void(0)',
 				'role'     => 'button',
 				'class'    => 'btn btn-default btn-sm btn-icon disabled ml-2',
 				'disabled' => 'disabled',
-			), fa_icon('key').line('CSK_ADMIN_USERS_LEVELS'));
+			), fa_icon('key').__('CSK_ADMIN_USERS_LEVELS'));
 		});
 	}
 
