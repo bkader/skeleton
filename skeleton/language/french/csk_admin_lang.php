@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		2.0.0
- * @version 	2.0.0
+ * @version 	2.1.1
  */
 // ------------------------------------------------------------------------
 // Navbar items.
@@ -100,6 +100,7 @@ $lang['CSK_ADMIN_CONFIRM_DELETE_SELECTED']  = 'Êtes-vous sûr de vouloir suppri
 $lang['CSK_ADMIN_CONFIRM_DISABLE']          = 'Êtes-vous sûr de vouloir désactiver %s?';
 $lang['CSK_ADMIN_CONFIRM_ENABLE']           = 'Êtes-vous sûr de vouloir activer %s?';
 $lang['CSK_ADMIN_CONFIRM_INSTALL']          = 'Êtes-vous sûr de vouloir installer %s?';
+$lang['CSK_ADMIN_CONFIRM_RESTORE']          = 'Êtes-vous sûr de vouloir récupérer %s?';
 $lang['CSK_ADMIN_CONFIRM_UPLOAD']           = 'Êtes-vous sûr de vouloir téléverser %s?';
 
 // ------------------------------------------------------------------------
@@ -113,6 +114,7 @@ $lang['CSK_ADMIN_SUCCESS_DELETE_SELECTED']  = 'Les %s sélectionnés et toutes l
 $lang['CSK_ADMIN_SUCCESS_DISABLE']          = '%s déctivé avec succès.';
 $lang['CSK_ADMIN_SUCCESS_ENABLE']           = '%s activé avec succès.';
 $lang['CSK_ADMIN_SUCCESS_INSTALL']          = '%s installé avec succès.';
+$lang['CSK_ADMIN_SUCCESS_RESTORE']          = '%s récupéré avec succès.';
 $lang['CSK_ADMIN_SUCCESS_UPLOAD']           = '%s téléversé avec succès.';
 
 // ------------------------------------------------------------------------
@@ -126,6 +128,7 @@ $lang['CSK_ADMIN_ERROR_DELETE_SELECTED']  = 'Impossible de supprimer les %s sél
 $lang['CSK_ADMIN_ERROR_DISABLE']          = 'Impossible de désactiver %s.';
 $lang['CSK_ADMIN_ERROR_ENABLE']           = 'Impossible d\'activer %s.';
 $lang['CSK_ADMIN_ERROR_INSTALL']          = 'Impossible d\'installer %s.';
+$lang['CSK_ADMIN_ERROR_RESTORE']          = 'Impossible de récupérer %s.';
 $lang['CSK_ADMIN_ERROR_UPLOAD']           = 'Impossible de téléverser %s.';
 
 // ------------------------------------------------------------------------

@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		2.0.0
- * @version 	2.0.0
+ * @version 	2.1.1
  */
 // ------------------------------------------------------------------------
 // Navbar items.
@@ -100,6 +100,7 @@ $lang['CSK_ADMIN_CONFIRM_DELETE_SELECTED']  = 'هل أنت متأكد من أن�
 $lang['CSK_ADMIN_CONFIRM_DISABLE']          = 'هل أنت متأكد من أنك تريد تعطيل %s؟';
 $lang['CSK_ADMIN_CONFIRM_ENABLE']           = 'هل أنت متأكد من أنك تريد تفعيل %s؟';
 $lang['CSK_ADMIN_CONFIRM_INSTALL']          = 'هل أنت متأكد من أنك تريد تثبيت %s؟';
+$lang['CSK_ADMIN_CONFIRM_RESTORE']          = 'هل أنت متأكد من أنك تريد استعادة %s؟';
 $lang['CSK_ADMIN_CONFIRM_UPLOAD']           = 'هل أنت متأكد من أنك تريد رفع %s؟';
 
 // ------------------------------------------------------------------------
@@ -113,6 +114,7 @@ $lang['CSK_ADMIN_SUCCESS_DELETE_SELECTED']  = 'تم حذف %s المحددة و�
 $lang['CSK_ADMIN_SUCCESS_DISABLE']          = 'تم تعطيل %s بنجاح.';
 $lang['CSK_ADMIN_SUCCESS_ENABLE']           = 'تم تفعيل %s بنجاح.';
 $lang['CSK_ADMIN_SUCCESS_INSTALL']          = 'تم تثبيت %s بنجاح.';
+$lang['CSK_ADMIN_SUCCESS_RESTORE']          = 'تم استعادة %s بنجاح.';
 $lang['CSK_ADMIN_SUCCESS_UPLOAD']           = 'تم رفع %s بنجاح.';
 
 // ------------------------------------------------------------------------
@@ -126,6 +128,7 @@ $lang['CSK_ADMIN_ERROR_DELETE_SELECTED']  = 'تعذر حذف %s المحددة �
 $lang['CSK_ADMIN_ERROR_DISABLE']          = 'تعذر تعطيل %s.';
 $lang['CSK_ADMIN_ERROR_ENABLE']           = 'تعذر تفعيل %s.';
 $lang['CSK_ADMIN_ERROR_INSTALL']          = 'تعذر تثبيت %s.';
+$lang['CSK_ADMIN_ERROR_RESTORE']          = 'تعذر استعادة %s.';
 $lang['CSK_ADMIN_ERROR_UPLOAD']           = 'تعذر رفع %s.';
 
 // ------------------------------------------------------------------------

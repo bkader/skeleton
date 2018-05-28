@@ -249,6 +249,7 @@ class Admin_Controller extends KB_Controller
 			'enable'         => __('CSK_ADMIN_CONFIRM_ENABLE'),
 			'install'        => __('CSK_ADMIN_CONFIRM_INSTALL'),
 			'remove'         => __('CSK_ADMIN_CONFIRM_DELETE_PERMANENT'),
+			'restore'        => __('CSK_ADMIN_CONFIRM_RESTORE'),
 			'upload'         => __('CSK_ADMIN_CONFIRM_UPLOAD'),
 		);
 

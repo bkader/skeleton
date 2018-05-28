@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		2.0.0
- * @version 	2.0.0
+ * @version 	2.1.1
  */
 // ------------------------------------------------------------------------
 // Navbar items.
@@ -100,6 +100,7 @@ $lang['CSK_ADMIN_CONFIRM_DELETE_SELECTED']  = 'Are you sure you want to delete t
 $lang['CSK_ADMIN_CONFIRM_DISABLE']          = 'Are you sure you want to disable %s?';
 $lang['CSK_ADMIN_CONFIRM_ENABLE']           = 'Are you sure you want to enable %s?';
 $lang['CSK_ADMIN_CONFIRM_INSTALL']          = 'Are you sure you want to install %s?';
+$lang['CSK_ADMIN_CONFIRM_RESTORE']          = 'Are you sure you want to restore %s?';
 $lang['CSK_ADMIN_CONFIRM_UPLOAD']           = 'Are you sure you want to upload %s?';
 
 // ------------------------------------------------------------------------
@@ -113,6 +114,7 @@ $lang['CSK_ADMIN_SUCCESS_DELETE_SELECTED']  = 'Selected %s and all their data su
 $lang['CSK_ADMIN_SUCCESS_DISABLE']          = '%s successfully disabled.';
 $lang['CSK_ADMIN_SUCCESS_ENABLE']           = '%s successfully enabled.';
 $lang['CSK_ADMIN_SUCCESS_INSTALL']          = '%s successfully installed.';
+$lang['CSK_ADMIN_SUCCESS_RESTORE']          = '%s successfully restored.';
 $lang['CSK_ADMIN_SUCCESS_UPLOAD']           = '%s successfully uploaded.';
 
 // ------------------------------------------------------------------------
@@ -126,6 +128,7 @@ $lang['CSK_ADMIN_ERROR_DELETE_SELECTED']  = 'Unable to delete selected %s and al
 $lang['CSK_ADMIN_ERROR_DISABLE']          = 'Unable to disable %s.';
 $lang['CSK_ADMIN_ERROR_ENABLE']           = 'Unable to enable %s.';
 $lang['CSK_ADMIN_ERROR_INSTALL']          = 'Unable to install %s.';
+$lang['CSK_ADMIN_ERROR_RESTORE']          = 'Unable to restore %s.';
 $lang['CSK_ADMIN_ERROR_UPLOAD']           = 'Unable to upload %s.';
 
 // ------------------------------------------------------------------------
