@@ -173,7 +173,7 @@ class Admin_Controller extends KB_Controller
 
 				$this->theme
 					->no_extension()
-					->add('css', admin_url("load/styles?load=".implode(',', $this->styles)), null, null, true);
+					->add('css', admin_url('load/styles?load='.implode(',', $this->styles), 'http'), null, null, true);
 			}
 
 			// Do we have any JS files to laod?
@@ -185,7 +185,7 @@ class Admin_Controller extends KB_Controller
 				
 				$this->theme
 					->no_extension()
-					->add('js', admin_url("load/scripts?load=".implode(',', $this->scripts)), null, null, true);
+					->add('js', admin_url('load/scripts?load='.implode(',', $this->scripts), 'http'), null, null, true);
 			}
 
 			/**
