@@ -8,7 +8,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
+ * Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,8 +29,8 @@
  * THE SOFTWARE.
  *
  * @package 	CodeIgniter
- * @author 		Kader Bouyakoub <bkader@mail.com>
- * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
+ * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
+ * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://goo.gl/wGXHO9
  * @since 		2.0.0
@@ -43,7 +43,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
  * @category 	Views
- * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		2.0.0
@@ -62,22 +62,22 @@ $powered_by = apply_filters('email_powered_by', $powered_by);
 
 $email_footer = <<<EOT
 						</td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
 
-            <div class="footer" style="clear: both; Margin-top: 10px; text-align: center; width: 100%;">
-              <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;">{$powered_by}</table>
-            </div>
+						<div class="footer" style="clear: both; Margin-top: 10px; text-align: center; width: 100%;">
+							<table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;">{$powered_by}</table>
+						</div>
 
-          </div>
-        </td>
-        <td style="vertical-align: top;">&nbsp;</td>
-      </tr>
-    </table>
-  </body>
+					</div>
+				</td>
+				<td style="vertical-align: top;">&nbsp;</td>
+			</tr>
+		</table>
+	</body>
 </html>
 EOT;
 

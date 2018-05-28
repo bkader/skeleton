@@ -8,7 +8,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
+ * Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,8 +29,8 @@
  * THE SOFTWARE.
  *
  * @package 	CodeIgniter
- * @author 		Kader Bouyakoub <bkader@mail.com>
- * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
+ * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
+ * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://goo.gl/wGXHO9
  * @since 		2.0.0
@@ -43,7 +43,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
  * @category 	Views
- * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		2.0.0
@@ -73,76 +73,76 @@ $email_header = <<<EOT
 		-webkit-text-size-adjust: 100%;
 	}
 
-    @media only screen and (max-width: 620px) {
-      table[class=body] h1 {
-        font-size: 28px !important;
-        margin-bottom: 10px !important;
-      }
-      table[class=body] p,
-            table[class=body] ul,
-            table[class=body] ol,
-            table[class=body] td,
-            table[class=body] span,
-            table[class=body] a {
-        font-size: 16px !important;
-      }
-      table[class=body] .wrapper,
-            table[class=body] .article {
-        padding: 10px !important;
-      }
-      table[class=body] .content {
-        padding: 0 !important;
-      }
-      table[class=body] .container {
-        padding: 0 !important;
-        width: 100% !important;
-      }
-      table[class=body] .main {
-        border-left-width: 0 !important;
-        border-radius: 0 !important;
-        border-right-width: 0 !important;
-      }
-      table[class=body] .btn table {
-        width: 100% !important;
-      }
-      table[class=body] .btn a {
-        width: 100% !important;
-      }
-      table[class=body] .img-responsive {
-        height: auto !important;
-        max-width: 100% !important;
-        width: auto !important;
-      }
-    }
+		@media only screen and (max-width: 620px) {
+			table[class=body] h1 {
+				font-size: 28px !important;
+				margin-bottom: 10px !important;
+			}
+			table[class=body] p,
+						table[class=body] ul,
+						table[class=body] ol,
+						table[class=body] td,
+						table[class=body] span,
+						table[class=body] a {
+				font-size: 16px !important;
+			}
+			table[class=body] .wrapper,
+						table[class=body] .article {
+				padding: 10px !important;
+			}
+			table[class=body] .content {
+				padding: 0 !important;
+			}
+			table[class=body] .container {
+				padding: 0 !important;
+				width: 100% !important;
+			}
+			table[class=body] .main {
+				border-left-width: 0 !important;
+				border-radius: 0 !important;
+				border-right-width: 0 !important;
+			}
+			table[class=body] .btn table {
+				width: 100% !important;
+			}
+			table[class=body] .btn a {
+				width: 100% !important;
+			}
+			table[class=body] .img-responsive {
+				height: auto !important;
+				max-width: 100% !important;
+				width: auto !important;
+			}
+		}
 
-    @media all {
-      .ExternalClass {
-        width: 100%;
-      }
-      .ExternalClass,
-            .ExternalClass p,
-            .ExternalClass span,
-            .ExternalClass font,
-            .ExternalClass td,
-            .ExternalClass div {
-        line-height: 100%;
-      }
-      .apple-link a {
-        color: inherit !important;
-        font-family: inherit !important;
-        font-size: inherit !important;
-        font-weight: inherit !important;
-        line-height: inherit !important;
-        text-decoration: none !important;
-      }
-      .btn-primary table td:hover {
-        background-color: #34495e !important;
-      }
-      .btn-primary a:hover {
-        background-color: #34495e !important;
-        border-color: #34495e !important;
-      }
-    }
+		@media all {
+			.ExternalClass {
+				width: 100%;
+			}
+			.ExternalClass,
+						.ExternalClass p,
+						.ExternalClass span,
+						.ExternalClass font,
+						.ExternalClass td,
+						.ExternalClass div {
+				line-height: 100%;
+			}
+			.apple-link a {
+				color: inherit !important;
+				font-family: inherit !important;
+				font-size: inherit !important;
+				font-weight: inherit !important;
+				line-height: inherit !important;
+				text-decoration: none !important;
+			}
+			.btn-primary table td:hover {
+				background-color: #34495e !important;
+			}
+			.btn-primary a:hover {
+				background-color: #34495e !important;
+				border-color: #34495e !important;
+			}
+		}
 	</style>
 </head>
 <body{$tag}>

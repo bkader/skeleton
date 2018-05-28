@@ -8,7 +8,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
+ * Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,8 +29,8 @@
  * THE SOFTWARE.
  *
  * @package 	CodeIgniter
- * @author 		Kader Bouyakoub <bkader@mail.com>
- * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
+ * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
+ * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://goo.gl/wGXHO9
  * @since 		2.0.0
@@ -123,7 +123,7 @@ if ( ! function_exists('maybe_json_encode'))
 	/**
 	 * Turns arrays and objects into json encoded strings
 	 * @param   mixed   $value
-	 * @author  Kader Bouyakoub <bkader@mail.com>
+	 * @author  Kader Bouyakoub <bkader[at]mail[dot]com>
 	 * @link    https://goo.gl/wGXHO9
 	 * @return  string
 	 */
@@ -143,7 +143,7 @@ if ( ! function_exists('maybe_json_decode'))
 	/**
 	 * Turns a json encoded string into its true nature
 	 * @param   string  $json
-	 * @author  Kader Bouyakoub <bkader@mail.com>
+	 * @author  Kader Bouyakoub <bkader[at]mail[dot]com>
 	 * @link    https://goo.gl/wGXHO9
 	 * @return  array
 	 */
@@ -228,7 +228,7 @@ if ( ! function_exists('str2bool')) {
 	 * @access  public
 	 * @param   string
 	 * @param   boolean
-	 * @author  Kader Bouyakoub <bkader@mail.com>
+	 * @author  Kader Bouyakoub <bkader[at]mail[dot]com>
 	 * @link    https://goo.gl/wGXHO9
 	 * @return  boolean
 	 */

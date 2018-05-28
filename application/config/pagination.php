@@ -12,7 +12,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  *
  * @package 	CodeIgniter
  * @category 	Configuration
- * @author 	Kader Bouyakoub <bkader@mail.com>
+ * @author 	Kader Bouyakoub <bkader[at]mail[dot]com>
  * @link 	https://goo.gl/wGXHO9
  */
 

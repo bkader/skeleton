@@ -8,7 +8,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
+ * Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,8 +29,8 @@
  * THE SOFTWARE.
  *
  * @package 	CodeIgniter
- * @author 		Kader Bouyakoub <bkader@mail.com>
- * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader@mail.com>
+ * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
+ * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
  * @since 		1.0.0
@@ -45,7 +45,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @package 	CodeIgniter
  * @subpackage 	SKeleton
  * @category 	Modules\Controllers
- * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0

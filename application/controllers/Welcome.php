@@ -11,7 +11,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
  * @category 	Controllers
- * @author 		Kader Bouyakoub <bkader@mail.com>
+ * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		Version 1.0.0
