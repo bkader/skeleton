@@ -37,7 +37,7 @@
         /** We define the confirmation message. */
         var message = csk.i18n.themes[action] || undefined;
         if (typeof message === "undefined") {
-            message = csk.i18n[action] || undefined;
+            message = csk.i18n.default[action] || undefined;
             if (typeof message === "undefined") {
                 message = "Are you sure you to " + action + " %s?";
             }
