@@ -711,7 +711,7 @@ EOT;
 			}
 		}
 		// If the screenshot was provided, we make sure it points to the URL.
-		elseif (false === filter_var($headers['screenshot'], FILTER_VALIDATE_URL))
+		elseif (path_is_url($headers['screenshot']))
 		{
 			$headers['screenshot'] = $this->themes_url($folder.'/'.$headers['screenshot']);
 		}
@@ -881,12 +881,13 @@ EOT;
 	/**
 	 * Returns URI to the folder containing themes.
 	 * @access 	protected
-	 * @param 	none
+	 * @param 	string 	$uri
+	 * @param   string  $protocol
 	 * @return 	string
 	 */
-	public function themes_url($uri = '')
+	public function themes_url($uri = '', $protocol = null)
 	{
-		return base_url("{$this->_themes_dir}/{$uri}");
+		return base_url($this->_themes_dir.'/'.$uri, $protocol);
 	}
 
 	// --------------------------------------------------------------------
@@ -921,18 +922,20 @@ EOT;
 	 * Returns theme url.
 	 * @access 	protected
 	 * @param 	string 	$uri 	uri to append to url.
+	 * @param   string  $protocol
 	 * @return 	string.
 	 */
-	public function theme_url($uri = '')
+	public function theme_url($uri = '', $protocol = null)
 	{
 		// We make sure to cache base URL and all possible URIs.
-		static $base_url, $cached_uris;
+		static $base_url, $_protocol, $cached_uris;
 
-		if (empty($base_url))
+		if (empty($base_url) OR $_protocol !== $protocol)
 		{
+			$_protocol = $protocol;
 			// Use site base URL or provided CDN server.
 			$base_url = path_join(
-				$this->cdn_enabled() ? $this->_cdn_server : base_url(),
+				$this->cdn_enabled() ? $this->_cdn_server : base_url(null, $_protocol),
 				$this->_themes_dir.'/'.$this->_theme
 			);
 		}
@@ -1007,18 +1010,21 @@ EOT;
 	 * Return a URL to the uploads folder.
 	 * @access 	protected
 	 * @param 	string 	$uri
+	 * @param 	string 	$protocol
 	 * @return 	string
 	 */
-	public function upload_url($uri = '')
+	public function upload_url($uri = '', $protocol = null)
 	{
 		// We make sure to cache base URL and all possible URIs.
-		static $base_url, $cached_uris;
+		static $base_url, $_protocol, $cached_uris;
 
-		if (empty($base_url))
+		if (empty($base_url) OR $_protocol !== $protocol)
 		{
+			$_protocol = $protocol;
+
 			// Use site base URL or provided CDN server.
 			$base_url = path_join(
-				$this->cdn_enabled() ? $this->_cdn_server : base_url(),
+				$this->cdn_enabled() ? $this->_cdn_server : base_url(null, $_protocol),
 				$this->_uploads_dir
 			);
 		}
@@ -1090,18 +1096,20 @@ EOT;
 	 * Return a URL to the common folder.
 	 * @access 	protected
 	 * @param 	string 	$uri
+	 * @param 	string 	$protocol
 	 * @return 	string
 	 */
-	public function common_url($uri = '')
+	public function common_url($uri = '', $protocol = null)
 	{
 		// We make sure to cache base URL and all possible URIs.
-		static $base_url, $cached_uris;
+		static $base_url, $_protocol, $cached_uris;
 
-		if (empty($base_url))
+		if (empty($base_url) OR $_protocol !== $protocol)
 		{
+			$_protocol = $protocol;
 			// Use site base URL or provided CDN server.
 			$base_url = path_join(
-				$this->cdn_enabled() ? $this->_cdn_server : base_url(),
+				$this->cdn_enabled() ? $this->_cdn_server : base_url(null, $_protocol),
 				$this->_common_dir
 			);
 		}
@@ -1636,9 +1644,6 @@ EOT;
 			return $this;
 		}
 
-		// We start by removing the extension.
-		$file = $this->_remove_extension($file, $type);
-
 		// If the $handle is not provided, we generate it.
 		if (empty($handle))
 		{
@@ -1654,21 +1659,6 @@ EOT;
 
 		// We make sure $handle is always lowercased.
 		$handle = strtolower($handle);
-
-		/**
-		 * If the file is a full URL (cdn or using get_theme_url(..))
-		 * we use as it is, otherwise, we force get_theme_url()
-		 */
-		if (false === filter_var($file, FILTER_VALIDATE_URL))
-		{
-			$func = 'theme';
-			if (false !== strpos($file, ':'))
-			{
-				list($func, $file) = explode(':', $file);
-			}
-
-			$file = $this->{$func.'_url'}($file);
-		}
 
 		// If the version is provided, use it.
 		if ( ! empty($ver))
@@ -1711,7 +1701,6 @@ EOT;
 		}
 
 		$this->{$files}[$handle] = $attributes;
-		$this->_remove_extension = true;
 		return $this;
 	}
 
@@ -1801,9 +1790,6 @@ EOT;
 			return $this;
 		}
 
-		// We start by removing the extension.
-		$file = $this->_remove_extension($file, $type);
-
 		// If the $handle is not provided, we generate it.
 		if (empty($handle))
 		{
@@ -1819,15 +1805,6 @@ EOT;
 
 		// We make sure $handle is always lowercased.
 		$handle = strtolower($handle);
-
-		/**
-		 * If the file is a full URL (cdn or using get_theme_url(..))
-		 * we use as it is, otherwise, we force get_theme_url()
-		 */
-		if (false === filter_var($file, FILTER_VALIDATE_URL))
-		{
-			$file = $this->theme_url($file);
-		}
 
 		// If the version is provided, use it.
 		if ( ! empty($ver))
@@ -1861,7 +1838,6 @@ EOT;
 			$this->_scripts[$handle] = $attributes;
 		}
 
-		$this->_remove_extension = true;
 		return $this;
 	}
 
@@ -2379,10 +2355,10 @@ EOT;
 			if ( ! in_array('modernizr-js', $this->_removed_scripts))
 			{
 				// Default is from CDN.
-				$modernizr_url = 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js';
+				$modernizr_url = '//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js';
 				if (false === $this->cdn_enabled(false) OR 'development' === ENVIRONMENT)
 				{
-					$modernizr_url = $this->common_url('js/modernizr-2.8.3.min.js');
+					$modernizr_url = $this->common_url('js/modernizr-2.8.3.min.js', '');
 				}
 				$this->add('js', $modernizr_url, 'modernizr', null, true);
 			}
@@ -2390,10 +2366,10 @@ EOT;
 			// We now add jQuery.
 			if ( ! in_array('jquery-js', $this->_removed_scripts))
 			{
-				$jquery_url = 'https://code.jquery.com/jquery-3.2.1.min.js';
+				$jquery_url = '//code.jquery.com/jquery-3.2.1.min.js';
 				if (false === $this->cdn_enabled(false) OR 'development' === ENVIRONMENT)
 				{
-					$jquery_url = $this->common_url('js/jquery-3.2.1.min.js');
+					$jquery_url = $this->common_url('js/jquery-3.2.1.min.js', '');
 				}
 				$this->add('js', $jquery_url, 'jquery', null, true);
 			}
@@ -3441,115 +3417,6 @@ EOT;
 	// --------------------------------------------------------------------
 
 	/**
-	 * Whether to use _remove_extension or not.
-	 * @var bool
-	 */
-	private $_remove_extension = true;
-
-	/**
-	 * Disable the use of _remove_extension method.
-	 * @access 	public
-	 * @return 	object
-	 */
-	public function no_extension()
-	{
-		$this->_remove_extension = false;
-		return $this;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * do_extension
-	 *
-	 * Method for making sure this library puts back files extensions in case
-	 * the "no_extension" was called. Make sure to call it right after you
-	 * call the late one.
-	 *
-	 * @author 	Kader Bouyakoub
-	 * @link 	https://github.com/bkader
-	 * @since 	1.5.0
-	 *
-	 * @access 	public
-	 * @param 	none
-	 * @return 	void
-	 */
-	public function do_extension()
-	{
-		$this->_remove_extension = true;
-		return $this;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Removes files extension
-	 * @access 	protected
-	 * @param 	mixed 	string or array
-	 * @return 	mixed 	string or array
-	 */
-	public function _remove_extension($file, $ext = 'css')
-	{
-		// In case of multiple items
-		if (is_array($file))
-		{
-			$temp_files = array();
-			foreach ($file as $index => $single_file)
-			{
-				$temp_files[$index] = $this->_remove_extension($single_file, $ext);
-			}
-			return $temp_files;
-		}
-
-		// Removing extension is disabled? Return the file as-is.
-		if ($this->_remove_extension === false)
-		{
-			return $file;
-		}
-
-		/**
-		 * Ignore files with full URLs. THe user must provided extension.
-		 * @since 	2.0.0
-		 */
-		if (false !== filter_var($file, FILTER_VALIDATE_URL)
-			&& false === stripos($file, base_url()))
-		{
-			return $file;
-		}
-
-		/**
-		 * If the file comes with extension, return in as it is.
-		 * @since 	2.0.0
-		 */
-		if ($ext === substr($file, - strlen($ext)))
-		{
-			return $file;
-		}
-
-		/**
-		 * Added the minified version of the file if not already set.
-		 * @since 	2.0.0
-		 */
-		if ('production' === ENVIRONMENT && '.min' !== substr($file, -4))
-		{
-			$file .= '.min';
-		}
-
-		/**
-		 * Let's first check if the file extension is
-		 * present or not. If not, add it.
-		 */
-		if ($ext !== pathinfo($file, PATHINFO_EXTENSION))
-		{
-			$file .= '.'.$ext;
-		}
-
-		return $file;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
 	 * Make sure the .htaccess file that denies direct
 	 * access to folder is present.
 	 *
@@ -3868,11 +3735,12 @@ if ( ! function_exists('get_theme_url'))
 	/**
 	 * Returns the URL to the theme folder.
 	 * @param   string  $uri    string to be appended.
+	 * @param   string  $protocol
 	 * @return  string.
 	 */
-	function get_theme_url($uri = '')
+	function get_theme_url($uri = '', $protocol = null)
 	{
-		return get_instance()->theme->theme_url($uri);
+		return get_instance()->theme->theme_url($uri, $protocol);
 	}
 }
 
@@ -3883,10 +3751,11 @@ if ( ! function_exists('theme_url'))
 	/**
 	 * Unlike the function above, this one echoes the URL.
 	 * @param   string  $uri    string to be appended.
+	 * @param   string  $protocol
 	 */
-	function theme_url($uri = '')
+	function theme_url($uri = '', $protocol = null)
 	{
-		echo get_instance()->theme->theme_url($uri);
+		echo get_instance()->theme->theme_url($uri, $protocol);
 	}
 }
 
@@ -3928,11 +3797,12 @@ if ( ! function_exists('get_upload_url'))
 	/**
 	 * Returns the URL to the uploads folder.
 	 * @param   string  $uri    string to be appended.
+	 * @param   string  $protocol
 	 * @return  string.
 	 */
-	function get_upload_url($uri = '')
+	function get_upload_url($uri = '', $protocol = null)
 	{
-		return get_instance()->theme->upload_url($uri);
+		return get_instance()->theme->upload_url($uri, $protocol);
 	}
 }
 
@@ -3943,10 +3813,11 @@ if ( ! function_exists('upload_url'))
 	/**
 	 * Unlike the function above, this one echoes the URL.
 	 * @param   string  $uri    string to be appended.
+	 * @param   string  $protocol
 	 */
-	function upload_url($uri = '')
+	function upload_url($uri = '', $protocol = null)
 	{
-		echo get_instance()->theme->upload_url($uri);
+		echo get_instance()->theme->upload_url($uri, $protocol);
 	}
 }
 
@@ -3988,11 +3859,12 @@ if ( ! function_exists('get_common_url'))
 	/**
 	 * Returns the URL to the commons folder.
 	 * @param   string  $uri    string to be appended.
+	 * @param   string  $protocol
 	 * @return  string.
 	 */
-	function get_common_url($uri = '')
+	function get_common_url($uri = '', $protocol = null)
 	{
-		return get_instance()->theme->common_url($uri);
+		return get_instance()->theme->common_url($uri, $protocol);
 	}
 }
 
@@ -4003,10 +3875,11 @@ if ( ! function_exists('common_url'))
 	/**
 	 * Unlike the function above, this one echoes the URL.
 	 * @param   string  $uri    string to be appended.
+	 * @param   string  $protocol
 	 */
-	function common_url($uri = '')
+	function common_url($uri = '', $protocol = null)
 	{
-		echo get_instance()->theme->common_url($uri);
+		echo get_instance()->theme->common_url($uri, $protocol);
 	}
 }
 
@@ -4051,19 +3924,20 @@ if ( ! function_exists('assets_url'))
 	 * if you want to use a different approach.
 	 * @param 	string 	$file 		The file your want to generate URL to.
 	 * @param 	bool 	$common 	Load it from common or theme folder.
+	 * @param   string  $protocol
 	 * @return 	string 	The full URL to the file.
 	 */
-	function assets_url($file = null, $common = false)
+	function assets_url($file = null, $common = false, $protocol = null)
 	{
 		// If a full link is passed, return it as it is.
-		if (filter_var($file, FILTER_VALIDATE_URL) !== false)
+		if (path_is_url($file))
 		{
 			return $file;
 		}
 
 		return ($common === true)
-			? get_common_url($file)
-			: get_theme_url($file);
+			? get_common_url($file, $protocol)
+			: get_theme_url($file, $protocol);
 	}
 }
 
@@ -4160,13 +4034,13 @@ if ( ! function_exists('add_ie9_support'))
 	 */
 	function add_ie9_support(&$output, $remote = true)
 	{
-		$html5shiv = 'https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js';
-		$respond   = 'https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js';
+		$html5shiv = '//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js';
+		$respond   = '//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js';
 
 		if ($remote === false)
 		{
-			$html5shiv = get_common_url('js/html5shiv-3.7.3.min.js');
-			$respond   = get_common_url('js/respond-1.4.2.min.js');
+			$html5shiv = get_common_url('js/html5shiv-3.7.3.min.js', '');
+			$respond   = get_common_url('js/respond-1.4.2.min.js', '');
 		}
 		$output .= <<<EOT
 	<!--[if lt IE 9]>

@@ -208,25 +208,25 @@ class Default_theme {
 
 		// Load Font Awesome.
 		if ( ENVIRONMENT === 'development') {
-			add_style( 'opensans', 'assets/css/open-sans.min', null, true);
-			add_style( 'fontawesome', get_common_url( 'css/font-awesome.min' ), null, true);
-			add_style( 'bootstrap', 'assets/css/bootstrap.min', null, true);
-			add_script( 'bootstrap', 'assets/js/bootstrap.min');
+			add_style( 'opensans',    get_theme_url('assets/css/open-sans.min.css', ''), null, true);
+			add_style( 'fontawesome', get_common_url( 'css/font-awesome.min.css', ''),   null, true);
+			add_style( 'bootstrap',   get_theme_url('assets/css/bootstrap.min.css', ''), null, true);
+			add_script( 'bootstrap',  get_theme_url('assets/js/bootstrap.min.js', ''));
 		} else {
-			add_style( 'opensans', 'https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i', null, true);
+			add_style( 'opensans',    'https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i',            null, true);
 			add_style( 'fontawesome', 'https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', null, true);
-			add_style( 'bootstrap', 'https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css', null, true);
-			add_script( 'bootstrap', 'https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js');
+			add_style( 'bootstrap',   'https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css',       null, true);
+			add_script( 'bootstrap',  'https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js');
 		}
 
 		// Load main theme style.
-		add_style( 'style', 'style', null, true);
+		add_style( 'style', get_theme_url('style.min.css', ''), null, true);
 
 		// Right to left language?
 		if (langinfo('direction' ) === 'rtl' )
 		{
-			add_style( 'bootstrap-rtl', 'assets/css/bootstrap-rtl.min', null, true);
-			add_style( 'style-rtl', 'style-rtl', null, true);
+			add_style( 'bootstrap-rtl', get_theme_url('assets/css/bootstrap-rtl.min.css', ''), null, true);
+			add_style( 'style-rtl',     get_theme_url('style-rtl.min.css', ''),                null, true);
 		}
 	}
 

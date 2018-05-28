@@ -106,6 +106,27 @@ if ( ! function_exists('path_is_stream')) {
 
 // ------------------------------------------------------------------------
 
+if ( ! function_exists('path_is_url')) {
+	/**
+	 * Tests if the given path is a URL with or without protocol.
+	 *
+	 * @since 	2.1.1
+	 *
+	 * @param 	string 	$path 	The resource path or URL.
+	 * @return 	bool 	true if the path is a valid URL, else false.
+	 */
+	function path_is_url($path) {
+		static $regex;
+		if (is_null($regex)) {
+			$regex = '/(?:https?:\/\/)?(?:[a-zA-Z0-9.-]+?\.(?:[a-zA-Z])|\d+\.\d+\.\d+\.\d+)/';
+		}
+
+		return preg_match($regex, $path);
+	}
+}
+
+// ------------------------------------------------------------------------
+
 if ( ! function_exists('path_mkdir')) {
 	/**
 	 * Recursive directory creation based on full path.

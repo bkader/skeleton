@@ -171,9 +171,13 @@ class Admin_Controller extends KB_Controller
 					? array_clean($this->styles)
 					: array_unique(array_filter(array_map('trim', $this->styles)));
 
-				$this->theme
-					->no_extension()
-					->add('css', admin_url('load/styles?load='.implode(',', $this->styles), 'http'), null, null, true);
+				$this->theme->add(
+					'css',
+					admin_url('load/styles?load='.implode(',', $this->styles), ''),
+					null, // No handle.
+					null, // No version.
+					true // At the top
+				);
 			}
 
 			// Do we have any JS files to laod?
@@ -183,16 +187,14 @@ class Admin_Controller extends KB_Controller
 					? array_clean($this->scripts)
 					: array_unique(array_filter(array_map('trim', $this->scripts)));
 				
-				$this->theme
-					->no_extension()
-					->add('js', admin_url('load/scripts?load='.implode(',', $this->scripts), 'http'), null, null, true);
+				$this->theme->add(
+					'js',
+					admin_url('load/scripts?load='.implode(',', $this->scripts), ''),
+					null, // No handle.
+					null, // No version.
+					true // At the top
+				);
 			}
-
-			/**
-			 * We make sure to make theme library put back extensions.
-			 * @since 	1.5.0
-			 */
-			$this->theme->do_extension();
 
 			/**
 			 * Admin menu is called only of method that load views.
