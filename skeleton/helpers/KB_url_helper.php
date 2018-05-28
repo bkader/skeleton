@@ -218,6 +218,27 @@ if ( ! function_exists('previous_url'))
 
 // ------------------------------------------------------------------------
 
+if ( ! function_exists('uri_string'))
+{
+	/**
+	 * URL String
+	 *
+	 * Overrides CodeIgniter default function in order to optionally
+	 * include GET parameters.
+	 *
+	 * @since 	2.1.1
+	 *
+	 * @param 	bool 	$include_get 	Whether to include GET parameters.
+	 * @return 	string
+	 */
+	function uri_string($include_get = false)
+	{
+		return get_instance()->uri->uri_string($include_get);
+	}
+}
+
+// ------------------------------------------------------------------------
+
 if ( ! function_exists('trace_url'))
 {
     /**
