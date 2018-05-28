@@ -167,9 +167,9 @@
 			 * Display menus for modules with "Extensions.php" controllers.
 			 * @since 	2.0.0
 			 */
-			if (has_action('extensions_menu')) {
+			if (has_action('_extensions_menu')) {
 				echo '<div class="dropdown-divider"></div>';
-				do_action('extensions_menu');
+				do_action('_extensions_menu');
 			}
 			echo '</div></li>';
 
@@ -177,7 +177,7 @@
 			 * Display menu for modules with reports controller.
 			 * @since 	2.0.0
 			 */
-			if (has_action('reports_menu')) {
+			if (has_action('_reports_menu')) {
 				// Menu opening tag.
 				echo '<li class="nav-item dropdown">',
 				html_tag('a', array(
@@ -188,7 +188,7 @@
 				'<div class="dropdown-menu">';
 
 				// Do the actual action.
-				do_action('reports_menu');
+				do_action('_reports_menu');
 
 				echo '<div class="dropdown-divider"></div>',
 				admin_anchor('reports', __('CSK_ADMIN_REPORTS'), 'class="dropdown-item"'),
