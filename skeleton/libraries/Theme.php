@@ -584,7 +584,7 @@ EOT;
 		$this->_common_dir  = apply_filters('common_dir', $this->_common_dir);
 
 		// A default variables that you can use on your views.
-		$this->set('uri_string', uri_string(), true);
+		$this->set('uri_string', uri_string(true), true);
 
 		// Benchmark for eventual use.
 		$this->ci->benchmark->mark('theme_initialize_end');
