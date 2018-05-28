@@ -20,36 +20,55 @@
         var $this = $(el),
             href = $this.data("endpoint"),
             row = $this.closest("tr"),
+            id = row.attr("id") || undefined,
             name = row.data("name") || 'this',
             action = action || -1;
 
+        /** If no URL is provided, nothing to do... */
         if (typeof href === "undefined" || !href.length) {
             return false;
         }
 
+        /** Add opacity to siblings */
         row.siblings("tr").addClass("op-2");
 
-        csk.ui.confirm($.sprintf(csk.i18n.modules[action], name), function () {
+        /** We define the confirmation message. */
+        var message = csk.i18n.modules[action] || undefined;
+        if (typeof message === "undefined") {
+            message = csk.i18n.default[action] || undefined;
+            if (typeof message === "undefined") {
+                message = "Are you sure you to " + action + " %s?";
+            }
+        }
+
+        /** We add the id to the URL if defined. */
+        if (typeof id !== "undefined" && id.length) {
+            href = href + "#" + id;
+        }
+
+        /** Display confirmation message. */
+        csk.ui.confirm($.sprintf(message, name), function () {
             window.location.href = href;
         }, function () {
+            /** Make sure to remove opacity class from siblings. */
             row.siblings("tr").removeClass("op-2");
         });
     };
 
     $(document).ready(function() {
-        // Activate module.
+        /** Activate module. */
         $(document).on("click", ".module-activate", function(e) {
             e.preventDefault();
             return csk.modules.proceed(this, "activate");
         });
 
-        // Deactivate module.
+        /** Deactivate module. */
         $(document).on("click", ".module-deactivate", function(e) {
             e.preventDefault();
             return csk.modules.proceed(this, "deactivate");
         });
 
-        // Delete module.
+        /** Delete module. */
         $(document).on("click", ".module-delete", function(e) {
             e.preventDefault();
             return csk.modules.proceed(this, "delete");
