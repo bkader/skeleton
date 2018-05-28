@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 
 $theme_item_temp =<<<EOT
-<div class="col-sm-6 col-md-4 theme-item" id="theme-{folder}" data-theme="{folder}">
+<div class="col-sm-6 col-md-4 theme-item" id="theme-{folder}" data-name="{name}">
 	<div class="card theme-inner">
 		<img src="{screenshot}" alt="{name}" class="theme-screenshot img-fluid" />
 		<div class="theme-caption clearfix p-2">
@@ -75,6 +75,7 @@ if ($themes)
 	echo '</div>';
 }
 
+echo '<div id="theme-details">';
 if (null !== $theme): ?>
 <div class="modal fade" tabindex="-1" role="dialog" id="theme-modal" tabindex="-1">
 	<div class="modal-dialog modal-lg" role="document">
@@ -110,39 +111,5 @@ if (null !== $theme): ?>
 		</div>
 	</div>
 </div>
-<?php endif; ?>
-
-<script type="text/x-handlebars-template" id="theme-details-modal">
-<div class="modal fade" tabindex="-1" role="dialog" id="theme-modal" tabindex="-1">
-	<div class="modal-dialog modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header clearfix">
-				<h2 class="modal-title"><?php printf(__('CSK_THEMES_THEME_DETAILS_NAME'), "{{name}}"); ?></h2>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			</div>
-			<div class="modal-body">
-				<div class="row">
-					<div class="col-sm-12 col-md-7">
-						<img src="{{screenshot}}" alt="{{name}}" class="img-fluid" data-action="zoom">
-					</div>
-					<div class="col-sm-12 col-md-5">
-						<h2 class="page-header clearfix">{{{name_uri}}} <small class="text-muted">{{version}}</small><small class="pull-right">{{{status}}}</small></h2>
-						<p>{{description}}</p><br />
-						<div class="table-responsive-sm">
-							<table class="table table-sm table-condensed table-striped">
-								<tr><th class="w-35"><?php _e('CSK_THEMES_AUTHOR'); ?></th><td>{{{author}}}</td></tr>
-								{{#if author_email}}
-								<tr><th><?php _e('CSK_THEMES_AUTHOR_EMAIL'); ?></th><td>{{{author_email}}}</td></tr>
-								{{/if}}
-								<tr><th><?php _e('CSK_THEMES_LICENSE'); ?></th><td>{{{license}}}</td></tr>
-								<tr><th><?php _e('CSK_THEMES_TAGS'); ?></th><td>{{tags}}</td></tr>
-							</table>
-						</div>
-						<p class="clearfix">{{{action_activate}}} {{{action_delete}}}</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-</script>
+<?php endif;
+echo '</div>';

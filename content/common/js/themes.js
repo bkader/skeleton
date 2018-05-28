@@ -7,136 +7,97 @@
     "use strict";
 
     // Prepare globals.
-    var csk = window.csk = window.csk || {},
-        themesURL = csk.config.currentURL;
+    var csk = window.csk = window.csk || {};
     csk.i18n = csk.i18n || {};
+    csk.themes = csk.themes || {};
     csk.i18n.themes = csk.i18n.themes || {};
+    var themesURL = csk.config.currentURL,
+        themeModalContainer = "#theme-details",
+        themeModal = "#theme-modal";
 
     /**
-     * Themes object.
-     * Handle all operations done on themes module.
-     * @since   1.4.0
+     * Skeleton Themes - Activation/Deletion handler.
+     * @since   2.1.1
      */
-    csk.themes = {
+    csk.themes.proceed = function(el, action) {
+        var $this = $(el),
+            href = $this.attr("href"),
+            parent = $this.closest(".theme-item"),
+            name = parent.data("name") || "this",
+            action = action || -1;
 
-        // Retrieve theme's details.
-        details: function (el) {
-            var $this = $(el),
-                href = $this.attr("href"),
-                endpoint = $this.data("endpoint"),
-                row = $this.parents(".theme-item"),
-                theme = row.data("theme"),
-                id = row.attr("id"),
-                action = action || -1;
-
-            if (!endpoint.length || !theme.length) {
-                return false;
-            }
-
-            // Compile Handlebars modal template
-            csk.ajax.request(endpoint, {
-                type: "POST",
-                data: {action: "details-theme_" + theme},
-                complete: function (jqXHR, textStatus) {
-                    if (textStatus !== "success") {
-                        return false;
-                    }
-                    var modalSource = document.getElementById("theme-details-modal").innerHTML,
-                        modalTemplate = Handlebars.compile(modalSource),
-                        response = jqXHR.responseJSON;
-
-                    var _modal = modalTemplate(response.results);
-                    $("#wrapper").append(_modal);
-                    $("#theme-modal").modal("show");
-                    window.history.pushState({href: href}, "", href);
-                }
-            });
-        },
-
-        // Main function: activate or delete.
-        activate: function (el) {
-            return csk.themes._do(el, "activate")
-        },
-
-        delete: function (el) {
-            return csk.themes._do(el, "delete")
-        },
-
-        // To avoid repeating, we gather all action in one.
-        _do: function (el, action) {
-            var $this = $(el),
-                href = $this.attr("href"),
-                endpoint = $this.data("endpoint"),
-                row = $this.parents(".theme-item"),
-                theme = row.data("theme") || $this.data("theme"),
-                id = row.attr("id") || "theme-" + theme,
-                action = action || -1,
-                themeModal = $("#theme-modal");
-
-            if (!endpoint.length || !theme.length) {
-                return false;
-            }
-
-            csk.ui.confirm(csk.i18n.themes[action], function () {
-                
-                // Hide modal first;
-                if (themeModal.length) {
-                    themeModal.modal("hide");
-                }
-
-                // Proceed to AJAX.
-                csk.ajax.request(endpoint, {
-                    type: "POST",
-                    data: {action: action + '-theme_' + theme},
-                    complete: function (jqXHR, textStatus) {
-                        if (textStatus !== "success") {
-                            return false;
-                        }
-
-                        if (action === "delete") {
-                            $("#" + id).fadeOut(function() {
-                                $(this).remove();
-                                csk.ui.reload("#wrapper", false);
-                            });
-                            return;
-                        }
-
-                        csk.ui.reload("#wrapper", false);
-                    }
-                });
-            });
+        /** If no URL is provided, nothing to do... */
+        if (typeof href === "undefined" || !href.length) {
+            return false;
         }
+
+        /** Add opacity to siblings */
+        parent.siblings().addClass("op-2");
+
+        /** We define the confirmation message. */
+        var message = csk.i18n.themes[action] || undefined;
+        if (typeof message === "undefined") {
+            message = csk.i18n[action] || undefined;
+            if (typeof message === "undefined") {
+                message = "Are you sure you to " + action + " %s?";
+            }
+        }
+
+        /** Display confirmation message. */
+        csk.ui.confirm($.sprintf(message, name), function () {
+            window.location.href = href;
+        }, function () {
+            /** Make sure to remove opacity class from siblings. */
+            parent.siblings().removeClass("op-2");
+        });
+    };
+
+    /**
+     * Skeleton Themes - Theme details handler.
+     * @since   2.1.1
+     */
+    csk.themes.details = function (el) {
+        var $this = $(el), href = $this.attr("href");
+
+        /** If no URL is provided, nothing to do. */
+        if (typeof href === "undefined" || !href.length) {
+            return false;
+        }
+
+        $(themeModalContainer).load(href + " " + themeModalContainer + " > *", function () {
+            window.history.pushState({href: href}, "", href);
+            $(themeModal).modal("show");
+        });
     };
 
     $(document).ready(function () {
-
-        // Remove get parameters from URL.
+        /** Remove get parameters from URL. */
         if (themesURL.indexOf("?") > 0) {
             themesURL = themesURL.substring(0, themesURL.indexOf("?"));
         }
 
-        // Display theme's details.
+        /** Put back URL when modal is closed. */
+        $(document).on("hidden.bs.modal", themeModal, function (e) {
+            window.history.pushState({href: themesURL}, "", themesURL);
+            $(this).remove();
+        });
+
+        /** Display theme's details. */
         $(document).on("click", ".theme-details", function (e) {
             e.preventDefault();
             return csk.themes.details(this);
         });
 
-        // Activate theme.
+        /** Activate theme. */
         $(document).on("click", ".theme-activate", function (e) {
             e.preventDefault();
-            return csk.themes.activate(this);
+            return csk.themes.proceed(this, "activate");
         });
 
-        // Delete theme.
+        /** Delete theme. */
         $(document).on("click", ".theme-delete", function (e) {
             e.preventDefault();
-            return csk.themes.delete(this);
-        });
-
-        // Put back URL when modal is closed.
-        $(document).on("hidden.bs.modal", "#theme-modal", function (e) {
-            window.history.pushState({href: themesURL}, "", themesURL);
-            $(this).remove();
+            return csk.themes.proceed(this, "delete");
         });
     });
 
