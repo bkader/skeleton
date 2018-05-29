@@ -106,32 +106,7 @@ class Themes extends Admin_Controller {
 	public function index()
 	{
 		// Get themes stored in database and in folder.
-		$db_themes = $this->kbcore->options->get('themes');
-		$folder_themes = $this->theme->get_themes(true);
-
-		// The options does not exist in database? Create it.
-		if (false === $db_themes)
-		{
-			// We create the option.
-			$this->kbcore->options->create(array(
-				'name'  => 'themes',
-				'value' => $folder_themes,
-				'tab'   => 'theme',
-			));
-
-			// Then we get it.
-			$db_themes = $this->kbcore->options->get('themes');
-		}
-		// Was themes folder update for some reason?
-		elseif ($folder_themes <> $db_themes->value)
-		{
-			// we retrieve all themes and update the option.
-			$db_themes->set('value', $folder_themes);
-			$db_themes->save();
-		}
-
-		// Prepare our themes array.
-		$themes = $db_themes->value;
+		$themes = $this->theme->get_themes(true);
 
 		// Format some elements before final output.
 		foreach ($themes as $folder => &$t)
