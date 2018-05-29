@@ -602,13 +602,14 @@ EOT;
 	{
 		static $themes;
 
+		// Let's go through folders and check if there are any.
+		$themes_path = $this->themes_path();
+
 		if (empty($themes))
 		{
 			// Prepare an empty array of folders.
 			$themes = array();
 
-			// Let's go through folders and check if there are any.
-			$themes_path = $this->themes_path();
 			if ($handle = opendir($themes_path))
 			{
 				$_to_eliminate = array(

@@ -357,14 +357,14 @@ class Themes extends Admin_Controller {
 	 */
 	protected function _activate($folder)
 	{
-		$db_themes = $this->kbcore->options->get('themes');
+		$themes = $this->theme->get_themes(true);
 		$db_theme  = $this->kbcore->options->get('theme');
 
 		// Successfully updated?
 		if (false !== $db_theme->update('value', $folder))
 		{
 			// Delete other themes stored options.
-			foreach (array_keys($db_themes->value) as $_name)
+			foreach (array_keys($themes) as $_name)
 			{
 				if ($folder !== $_name)
 				{
@@ -396,7 +396,7 @@ class Themes extends Admin_Controller {
 	 */
 	protected function _delete($folder)
 	{
-		$db_themes = $this->kbcore->options->get('themes');
+		$themes = $this->theme->get_themes(true);
 		$db_theme  = $this->kbcore->options->get('theme');
 
 		// We cannot delete the current theme.
@@ -407,14 +407,13 @@ class Themes extends Admin_Controller {
 			return;
 		}
 
-		$themes = $db_themes->value;
 		$theme = $themes[$folder];
 		unset($themes[$folder]);
 
 		function_exists('directory_delete') OR $this->load->helper('directory');
 
 		if (false !== directory_delete($this->theme->themes_path($folder)) 
-			&& false !== $db_themes->update('value', $themes))
+			&& false !== $themes->update('value', $themes))
 		{
 			delete_option('theme_images_'.$folder);
 			delete_option('theme_menus_'.$folder);
