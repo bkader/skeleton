@@ -669,10 +669,12 @@ EOT;
 	 * @param 	string 	$theme 	the theme's folder name.
 	 * @return 	object if found or false.
 	 */
-	private function _get_theme_details($folder)
+	private function _get_theme_details($folder = null)
 	{
+		$folder OR $folder = $this->_theme;
 		// Prepare the path to the "style.css" file and make sure it exists.
-		$theme_css = $this->themes_path($this->_theme.'/style.css');
+		$theme_css = $this->themes_path($folder.'/style.css');
+
 		if (false === $theme_css)
 		{
 			show_error(sprintf(__('Theme missing CSS file: %s.'), $folder));
