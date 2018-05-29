@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	2.1.0
+ * @version 	2.2.0
  */
 class KB_Router extends CI_Router
 {
@@ -101,6 +101,8 @@ class KB_Router extends CI_Router
 		'admin_menu'   => null,
 		'admin_order'  => 0,
 		'textdomain'   => null,
+		'permissions'  => array(),
+		'roles'        => array(),
 		'translations' => array(),
 	);
 
