@@ -101,8 +101,6 @@ class KB_Router extends CI_Router
 		'admin_menu'   => null,
 		'admin_order'  => 0,
 		'textdomain'   => null,
-		'permissions'  => array(),
-		'roles'        => array(),
 		'translations' => array(),
 	);
 
@@ -278,12 +276,20 @@ class KB_Router extends CI_Router
 				return fales;
 			}
 
-			$headers = array_replace_recursive($this->_headers, $headers);
+			/**
+			 * Allow users to filter default modules headers.
+			 * @since 	2.1.2
+			 */
+			$default_headers = apply_filters('modules_headers', $this->_headers);
+			empty($default_headers) && $default_headers = $this->_headers;
+
+			// Grab module's headers.
+			$headers = array_replace_recursive($default_headers, $headers);
 
 			// Remove not listed headers.
 			foreach ($headers as $key => $val)
 			{
-				if ( ! array_key_exists($key, $this->_headers))
+				if ( ! array_key_exists($key, $default_headers))
 				{
 					unset($headers[$key]);
 				}

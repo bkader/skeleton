@@ -693,8 +693,15 @@ EOT;
 			show_error(sprintf(__('Theme CSS file is missing details: %s.'), $folder));
 		}
 
+		/**
+		 * Allow users to filter default modules headers.
+		 * @since 	2.1.2
+		 */
+		$default_headers = apply_filters('themes_headers', $this->_default_headers);
+		empty($default_headers) && $default_headers = $this->_default_headers;
+
 		// Prepare theme file headers and fill them.
-		$headers = array_fill_keys($this->_default_headers, false);
+		$headers = array_fill_keys($default_headers, false);
 		foreach ($css_headers as $index => $value)
 		{
 			$headers[$this->_default_headers[$index]] = $value;

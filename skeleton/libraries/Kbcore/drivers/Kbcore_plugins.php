@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	2.0.0
+ * @version 	2.1.2
  */
 
 class Kbcore_plugins extends CI_Driver
@@ -298,7 +298,23 @@ class Kbcore_plugins extends CI_Driver
 			return false;
 		}
 
-		$headers = array_replace_recursive($this->_headers, $headers);
+		/**
+		 * Allow users to filter default plugins headers.
+		 * @since 	2.1.2
+		 */
+		$default_headers = apply_filters('plugins_headers', $this->_headers);
+		empty($default_headers) && $default_headers = $this->_headers;
+
+		$headers = array_replace_recursive($default_headers, $headers);
+
+		// Remove not listed headers.
+		foreach ($headers as $key => $val)
+		{
+			if ( ! array_key_exists($key, $default_headers))
+			{
+				unset($headers[$key]);
+			}
+		}
 
 		// Format license.
 		if (false !== stripos($headers['license'], 'mit') && empty($heades['license_uri']))

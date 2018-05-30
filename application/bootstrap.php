@@ -16,13 +16,6 @@ defined('USE_GETTEXT') OR define('USE_GETTEXT', false);
  */
 require_once(KBPATH.'bootstrap.php');
 
-/**
- * Inspired by WordPress cache mechanism, the CS_Cache_object was created in 
- * order to cache objects and anything cross-files.
- * @since 	2.1.0
- */
-// start_data_cache(array('group1', 'group2'));
-
 // ------------------------------------------------------------------------
 // YOU MAY EDIT LINES BELOW.
 // ------------------------------------------------------------------------
@@ -34,6 +27,47 @@ Autoloader::add_classes(array(
 	 * @example: 'Classname' => APPPATH.'libraries/Classname.php'
 	 */
 ));
+
+/**
+ * Inspired by WordPress cache mechanism, the Data_Cache was created in 
+ * order to cache objects and anything cross-files.
+ * @since 	2.1.0
+ */
+// start_data_cache(array('group1', 'group2'));
+
+// ------------------------------------------------------------------------
+// Additional modules, plugins and themes details.
+// ------------------------------------------------------------------------
+
+/**
+ * In case you want to add more details to modules headers, please
+ * use the action below.
+ * @since 	2.1.2
+ */
+// add_action('modules_headers', function($headers) {
+// 	return $headers;
+// });
+
+/**
+ * In case you want to add more details to plugins headers, please
+ * use the action below.
+ * @since 	2.1.2
+ */
+// add_action('plugins_headers', function($headers) {
+// 	// Added key:
+// 	// $headers['new_key'] = 'Key Value';
+// 	return $headers;
+// });
+
+/**
+ * In case you want to add more details to themes headers, please
+ * use the action below.
+ * @since 	2.1.2
+ */
+// add_action('themes_headers', function($headers) {
+// 	$headers[] = 'added_key';
+// 	return $headers;
+// });
 
 // ------------------------------------------------------------------------
 // DO NOT EDIT BELOW.
