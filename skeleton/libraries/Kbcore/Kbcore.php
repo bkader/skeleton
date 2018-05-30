@@ -110,6 +110,12 @@ class Kbcore extends CI_Driver_Library
 		global $KB, $DB;
 		$KB = new stdClass();
 
+		/**
+		 * Fires early, before drivers are loaded.
+		 * @since 	2.1.3
+		 */
+		do_action('init');
+
 		// We initialize options.
 		$this->options->initialize();
 		$KB->options = $this->options;
