@@ -2029,8 +2029,16 @@ class KB_User
 		// Now we cache the user.
 		$this->data = $user;
 
+		/**
+		 * Allow modules, plugins or themes define the role used as
+		 * the admin role.
+		 * @since 	2.1.3
+		 */
+		$admin_role = apply_filters('users_admin_role', 'administrator');
+		empty($admin_role) && $admin_role = 'administrator';
+
 		// Whether the user is an admin or not.
-		$this->data->admin = ('administrator' === $user->subtype);
+		$this->data->admin = ($admin_role === $user->subtype);
 	}
 
 	// ------------------------------------------------------------------------
