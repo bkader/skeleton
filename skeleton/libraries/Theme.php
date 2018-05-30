@@ -50,7 +50,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	2.1.0
+ * @version 	2.1.3
  */
 class Theme
 {
@@ -58,11 +58,11 @@ class Theme
 	 * CodeIgniter Skeleton copyright.
 	 * @var string
 	 */
-	private $_skeleton_copyright = <<<EOT
-\n<!--
-Website proudly powered by CodeIgniter Skeleton (https://github.com/bkader/skeleton)
-A project developed and maintained by Kader Bouyakoub (https://github.com/bkader)
--->
+	private $_skeleton_copyright =<<<EOT
+\n<!--nocompress--><!--
+Website proudly powered by CodeIgniter Skeleton (https://goo.gl/jb4nQC).
+Project developed and maintained by Kader Bouyakoub (https://goo.gl/wGXHO9).
+--><!--/nocompress-->
 EOT;
 	/**
 	 * Header template
@@ -3569,6 +3569,43 @@ EOT;
 			$output .= $last_part;
 		}
 
+		// Conserve <!--nocompress--> tags.
+		$nocompress = array();
+
+		if (false !== strpos($output, '<!--nocompress'))
+		{
+			// We explode the output and always keep the last part.
+			$parts     = explode('<!--/nocompress-->', $output);
+			$last_part = array_pop($parts);
+
+			// Reset output.
+			$output = '';
+
+			// Marker used to identify <!--nocompress-->> tags.
+			$i = 0;
+
+			foreach ($parts as $part)
+			{
+				$start = strpos($part, '<!--nocompress');
+
+				// Malformed? Add it as it is.
+				if (false === $start)
+				{
+					$output .= $part;
+					continue;
+				}
+
+				// Identify the nocompress tag and keep it.
+				$name = "<nocompress csk-nocompress-tag-{$i}></nocompress>";
+				$nocompress[$name] = substr($part, $start).'<!--/nocompress-->';
+				$output .= substr($part, 0, $start).$name;
+				$i++;
+			}
+
+			// Always add the last part.
+			$output .= $last_part;
+		}
+
 		// Compress the final output.
 		$output = $this->_compress_output($output);
 
@@ -3576,6 +3613,12 @@ EOT;
 		if ( ! empty($pre_tags))
 		{
 			$output = str_replace(array_keys($pre_tags), array_values($pre_tags), $output);
+		}
+
+		// If we have <!--nocompress--> tags, add them.
+		if ( ! empty($nocompress))
+		{
+			$output = str_replace(array_keys($nocompress), array_values($nocompress), $output);
 		}
 
 		// Return the final output.
