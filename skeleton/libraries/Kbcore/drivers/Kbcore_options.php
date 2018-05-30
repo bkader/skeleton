@@ -99,11 +99,11 @@ class Kbcore_options extends CI_Driver implements CRUD_interface
 		 * Here we make sure to prepare "value" and "options" if they
 		 * are set and not empty.
 		 */
-		if (isset($data['value']) && ! empty($data['value']))
+		if (isset($data['value']))
 		{
 			$data['value'] = to_bool_or_serialize($data['value']);
 		}
-		if (isset($data['options']) && ! empty($data['options']))
+		if (isset($data['options']))
 		{
 			$data['options'] = to_bool_or_serialize($data['options']);
 		}
