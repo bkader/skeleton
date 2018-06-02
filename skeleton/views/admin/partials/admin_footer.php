@@ -1,3 +1,15 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+/**
+ * Fires at the end of page content.
+ * @since 	1.4.0
+ */
+do_action('admin_page_footer');
+?>
+		</div>
+	</div>
+</main>
 <footer class="footer" id="footer" role="contactinfo">
 	<div class="container">
 		<?php

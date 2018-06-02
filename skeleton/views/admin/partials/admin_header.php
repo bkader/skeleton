@@ -1,3 +1,4 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 <nav class="navbar navbar-expand-lg navbar-admin">
 	<div class="container">
 		<?php
@@ -446,3 +447,17 @@ if (has_action('admin_subhead')
 	// Closing tags.
 	echo '</div></div>';
 }
+
+echo '<main class="wrapper" role="main">',
+'<div class="container">';
+
+// Display the alert.
+the_alert();
+
+echo '<div id="wrapper">';
+
+/**
+ * Fires at the top of page content.
+ * @since 	1.4.0
+ */
+do_action('admin_page_header');

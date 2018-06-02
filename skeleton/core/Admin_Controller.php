@@ -197,14 +197,6 @@ class Admin_Controller extends KB_Controller
 			}
 
 			/**
-			 * Separated dashboard header and footer to allow different layouts.
-			 * @since 	2.1.2
-			 */
-			$this->theme
-				->add_partial('admin_header')
-				->add_partial('admin_footer');
-
-			/**
 			 * Admin menu is called only of method that load views.
 			 * @since 	2.1.0
 			 */
@@ -213,6 +205,36 @@ class Admin_Controller extends KB_Controller
 			// If we have a heading method, use it.
 			method_exists($this, '_subhead') && $this->_subhead();
 
+			/**
+			 * Use Data_Cache object to cache few things.
+			 *
+			 * This was added because some stored variables were moved from default
+			 * dashboard layout to separated partials, and because they cannot be 
+			 * retrieve unless they are set as globals, we use the Data_Cache
+			 * object to handle them.
+			 * 
+			 * @since 	2.1.2
+			 */
+			if ( ! empty($this->data))
+			{
+				// We first make sure to start Data_Cache object first.
+				start_data_cache('globals');
+
+				// Then we make all variables global.
+				foreach ($this->data as $key => $val)
+				{
+					data_cache_add($key, $val, 'globals');
+				}
+			}
+
+			/**
+			 * Separated dashboard header and footer to allow different layouts.
+			 * @since 	2.1.2
+			 */
+			$this->theme
+				->add_partial('admin_header')
+				->add_partial('admin_footer');
+	
 			// We call the method.
 			return call_user_func_array(array($this, $method), $params);
 		}

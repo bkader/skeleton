@@ -499,6 +499,7 @@ if ( ! function_exists('start_data_cache'))
 			{
 				// Default groups.
 				$default = array(
+					'globals',
 					'languages',
 					'modules',
 					'options',
@@ -506,11 +507,16 @@ if ( ! function_exists('start_data_cache'))
 					'users',
 				);
 
-				if (is_array($groups)) {
+				if (is_array($groups))
+				{
 					$groups = array_merge($default, $groups);
-				} elseif (is_string($groups)) {
+				}
+				elseif (is_string($groups))
+				{
 					$groups .= ','.implode(',', $default);
-				} else {
+				}
+				else
+				{
 					$groups = $default;
 				}
 
