@@ -197,6 +197,14 @@ class Admin_Controller extends KB_Controller
 			}
 
 			/**
+			 * Separated dashboard header and footer to allow different layouts.
+			 * @since 	2.1.2
+			 */
+			$this->theme
+				->add_partial('admin_header')
+				->add_partial('admin_footer');
+
+			/**
 			 * Admin menu is called only of method that load views.
 			 * @since 	2.1.0
 			 */
