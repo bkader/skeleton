@@ -232,6 +232,7 @@ class Admin_Controller extends KB_Controller
 			 * @since 	2.1.2
 			 */
 			$this->theme
+				->set_layout('default')
 				->add_partial('admin_header')
 				->add_partial('admin_footer');
 	

@@ -110,18 +110,9 @@ EOT;
 	 * a fallback if no layout is found
 	 */
 	private $_template_layout = <<<EOT
-{navbar}
 <div class="container">
-	<div class="row">
-		<div class="col-xs-12 col-sm-8">
-			{content}
-		</div><!--/.col-sm-8-->
-		<div class="col-xs-12 col-sm-4">
-			{sidebar}
-		</div><!--/.col-sm-4-->
-	</div><!--/.row-->
+	{content}
 </div><!-- /.container -->
-{footer}
 EOT;
 
 	/**
@@ -3169,7 +3160,14 @@ EOT;
 				 * By default, it should be an index.php inside
 				 * the theme's folder.
 				 */
-				$alt_file = apply_filters('theme_layout_fallback', $this->theme_path('index.php'));
+				if (true === $this->_is_admin)
+				{
+					$alt_file = normalize_path(KBPATH.'views/admin/layouts/'.$file);
+				}
+				else
+				{
+					$alt_file = apply_filters('theme_layout_fallback', $this->theme_path('index.php'));
+				}
 
 				// The fallback is $_template_layout property.
 				$fallback = 'layout';
@@ -3304,18 +3302,6 @@ EOT;
 			{
 				return "{{$val}}";
 			}, array_keys($data));
-
-			/**
-			 * Because the layout fallback container {navbar}, {sidebar} && {footer}
-			 * placeholders, we make sure to either load them OR remplace them with
-			 * empty elements.
-			 */
-			if ('layout' === $fallback)
-			{
-				array_unshift($search, '{navbar}');
-				$search[] = '{sidebar}';
-				$search[] = '{footer}';
-			}
 
 			// Things we use to replace.
 			$replace = array_values($data);
