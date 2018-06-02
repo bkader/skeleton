@@ -3125,12 +3125,9 @@ EOT;
 				/**
 				 * Alterative file just in case.
 				 */
-				if (null !== $this->module 
-					&& false !== ($path = $this->ci->router->module_path($this->module)))
-				{
-					$alt_file = $path.'views/partials/'.$file;
-				}
-				$alt_file = apply_filters('theme_partial_fallback', $alt_file);
+				$alt_file = (true === $this->_is_admin)
+					? normalize_path(KBPATH.'views/admin/partials/'.$file)
+					: apply_filters('theme_partial_fallback', $alt_file);
 
 				/**
 				 * We are settings the fallback partial to $_template_partial
@@ -3142,9 +3139,19 @@ EOT;
 				 * By adding this hook, we let the user handle
 				 * the path to partial views.
 				 */
-				$full_path = (true === $this->_is_admin)
-					? realpath(KBPATH.'views/admin/partials/')
-					: apply_filters('theme_partials_path', $full_path);
+				if (true === $this->_is_admin && null === $this->module)
+				{
+					$full_path = normalize_path(KBPATH.'views/admin/partials/');
+				}
+				elseif (null !== $this->module 
+					&& false !== ($modpath = $this->ci->router->module_path($this->module)))
+				{
+					$full_path = normalize_path($modpath.'views/partials/');
+				}
+				else
+				{
+					$full_path = apply_filters('theme_partials_path', $full_path);
+				}
 
 				// Alternative path to partials file.
 				$alt_path .= 'partials/';
@@ -3171,9 +3178,18 @@ EOT;
 				 * By adding this hook, we let the user handle
 				 * the path to layouts files.
 				 */
-				$full_path = (true == $this->_is_admin)
-					? realpath(KBPATH.'views/admin/layouts/')
-					: apply_filters('theme_layouts_path', $full_path);
+				if (true === $this->_is_admin && null === $this->module)
+				{
+					$full_path = normalize_path(KBPATH.'views/admin/layouts/');
+				}
+				elseif (null !== $this->module && false !== ($modpath = $this->ci->router->module_path($this->module)))
+				{
+					$full_path = normalize_path($modpath.'views/layouts/');
+				}
+				else
+				{
+					$full_path = apply_filters('theme_layouts_path', $full_path);
+				}
 
 				// Alternative path to layouts files.
 				$alt_path .= 'layouts/';
