@@ -215,11 +215,11 @@ class Admin_Controller extends KB_Controller
 			 * 
 			 * @since 	2.1.2
 			 */
+			// We first make sure to start Data_Cache object first.
+			start_data_cache('globals');
+			
 			if ( ! empty($this->data))
 			{
-				// We first make sure to start Data_Cache object first.
-				start_data_cache('globals');
-
 				// Then we make all variables global.
 				foreach ($this->data as $key => $val)
 				{
