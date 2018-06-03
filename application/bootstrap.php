@@ -29,6 +29,14 @@ Autoloader::add_classes(array(
 ));
 
 /**
+ * This action is fired before Skeleton libraries are loaded.
+ * @since 	2.1.3
+ */
+// add_action('init', function() {
+// 	// Do your magic.
+// });
+
+/**
  * Inspired by WordPress cache mechanism, the Data_Cache was created in 
  * order to cache objects and anything cross-files.
  * @since 	2.1.0

@@ -211,10 +211,11 @@ $lang['CSK_ADMIN_COMPONENT_DISABLED'] = 'هذا المكون ليس مفعّل. 
 $lang['form_validation_alpha_extra']       = 'يحتوي الحقل {field} على أحرف أبجدية رقمية ومسافات ونقاط وشرطات سفلية وشرطات فقط.';
 $lang['form_validation_check_credentials'] = 'اسم المستخدم/عنوان البريد الإلكتروني و/أو كلمة المرور غير صالحة.';
 $lang['form_validation_current_password']  = 'كلمة المرور الحالية الخاصة بك غير صحيحة.';
+$lang['form_validation_not_in_list']       = 'يجب أن لا يكون الحقل {field} واحدًا من: {param}.';
 $lang['form_validation_unique_email']      = 'هذا البريد الإلكتروني قيد الاستخدام.';
 $lang['form_validation_unique_username']   = 'اسم المستخدم هذا غير متوفر.';
-$lang['form_validation_user_exists']       = 'لم يتم العثور على مستخدم بهذا الاسم أو عنوان البريد الإلكتروني.';
 $lang['form_validation_user_admin']        = 'ليس لديك الصلاحية اللازمة للوصول إلى لوحة تحكم هذا الموقع.';
+$lang['form_validation_user_exists']       = 'لم يتم العثور على مستخدم بهذا الاسم أو عنوان البريد الإلكتروني.';
 
 // ------------------------------------------------------------------------
 // Skeleton Related Lines.

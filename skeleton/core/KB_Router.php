@@ -199,7 +199,7 @@ class KB_Router extends CI_Router
 			{
 				if (is_dir($location.$name))
 				{
-					$path = rtrim(str_replace('\\', '/', $location.$name), '/').'/';
+					$path = $location.$name;
 					break;
 				}
 			}
@@ -209,7 +209,7 @@ class KB_Router extends CI_Router
 				return false;
 			}
 
-			$this->_modules[$name] = $path;
+			$this->_modules[$name] = normalize_path($path.'/');
 		}
 
 		return $this->_modules[$name];

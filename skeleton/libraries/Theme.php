@@ -50,7 +50,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @link 		https://github.com/bkader
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
- * @version 	2.1.0
+ * @version 	2.1.3
  */
 class Theme
 {
@@ -58,11 +58,11 @@ class Theme
 	 * CodeIgniter Skeleton copyright.
 	 * @var string
 	 */
-	private $_skeleton_copyright = <<<EOT
-\n<!--
-Website proudly powered by CodeIgniter Skeleton (https://github.com/bkader/skeleton)
-A project developed and maintained by Kader Bouyakoub (https://github.com/bkader)
--->
+	private $_skeleton_copyright =<<<EOT
+\n<!--nocompress--><!--
+Website proudly powered by CodeIgniter Skeleton (https://goo.gl/jb4nQC).
+Project developed and maintained by Kader Bouyakoub (https://goo.gl/wGXHO9).
+--><!--/nocompress-->
 EOT;
 	/**
 	 * Header template
@@ -110,18 +110,9 @@ EOT;
 	 * a fallback if no layout is found
 	 */
 	private $_template_layout = <<<EOT
-{navbar}
 <div class="container">
-	<div class="row">
-		<div class="col-xs-12 col-sm-8">
-			{content}
-		</div><!--/.col-sm-8-->
-		<div class="col-xs-12 col-sm-4">
-			{sidebar}
-		</div><!--/.col-sm-4-->
-	</div><!--/.row-->
+	{content}
 </div><!-- /.container -->
-{footer}
 EOT;
 
 	/**
@@ -3125,12 +3116,9 @@ EOT;
 				/**
 				 * Alterative file just in case.
 				 */
-				if (null !== $this->module 
-					&& false !== ($path = $this->ci->router->module_path($this->module)))
-				{
-					$alt_file = $path.'views/partials/'.$file;
-				}
-				$alt_file = apply_filters('theme_partial_fallback', $alt_file);
+				$alt_file = (true === $this->_is_admin)
+					? normalize_path(KBPATH.'views/admin/partials/'.$file)
+					: apply_filters('theme_partial_fallback', $alt_file);
 
 				/**
 				 * We are settings the fallback partial to $_template_partial
@@ -3142,9 +3130,19 @@ EOT;
 				 * By adding this hook, we let the user handle
 				 * the path to partial views.
 				 */
-				$full_path = (true === $this->_is_admin)
-					? realpath(KBPATH.'views/admin/partials/')
-					: apply_filters('theme_partials_path', $full_path);
+				if (true === $this->_is_admin && null === $this->module)
+				{
+					$full_path = normalize_path(KBPATH.'views/admin/partials/');
+				}
+				elseif (null !== $this->module 
+					&& false !== ($modpath = $this->ci->router->module_path($this->module)))
+				{
+					$full_path = normalize_path($modpath.'views/partials/');
+				}
+				else
+				{
+					$full_path = apply_filters('theme_partials_path', $full_path);
+				}
 
 				// Alternative path to partials file.
 				$alt_path .= 'partials/';
@@ -3162,7 +3160,14 @@ EOT;
 				 * By default, it should be an index.php inside
 				 * the theme's folder.
 				 */
-				$alt_file = apply_filters('theme_layout_fallback', $this->theme_path('index.php'));
+				if (true === $this->_is_admin)
+				{
+					$alt_file = normalize_path(KBPATH.'views/admin/layouts/'.$file);
+				}
+				else
+				{
+					$alt_file = apply_filters('theme_layout_fallback', $this->theme_path('index.php'));
+				}
 
 				// The fallback is $_template_layout property.
 				$fallback = 'layout';
@@ -3171,9 +3176,18 @@ EOT;
 				 * By adding this hook, we let the user handle
 				 * the path to layouts files.
 				 */
-				$full_path = (true == $this->_is_admin)
-					? realpath(KBPATH.'views/admin/layouts/')
-					: apply_filters('theme_layouts_path', $full_path);
+				if (true === $this->_is_admin && null === $this->module)
+				{
+					$full_path = normalize_path(KBPATH.'views/admin/layouts/');
+				}
+				elseif (null !== $this->module && false !== ($modpath = $this->ci->router->module_path($this->module)))
+				{
+					$full_path = normalize_path($modpath.'views/layouts/');
+				}
+				else
+				{
+					$full_path = apply_filters('theme_layouts_path', $full_path);
+				}
 
 				// Alternative path to layouts files.
 				$alt_path .= 'layouts/';
@@ -3288,18 +3302,6 @@ EOT;
 			{
 				return "{{$val}}";
 			}, array_keys($data));
-
-			/**
-			 * Because the layout fallback container {navbar}, {sidebar} && {footer}
-			 * placeholders, we make sure to either load them OR remplace them with
-			 * empty elements.
-			 */
-			if ('layout' === $fallback)
-			{
-				array_unshift($search, '{navbar}');
-				$search[] = '{sidebar}';
-				$search[] = '{footer}';
-			}
 
 			// Things we use to replace.
 			$replace = array_values($data);
@@ -3569,6 +3571,43 @@ EOT;
 			$output .= $last_part;
 		}
 
+		// Conserve <!--nocompress--> tags.
+		$nocompress = array();
+
+		if (false !== strpos($output, '<!--nocompress'))
+		{
+			// We explode the output and always keep the last part.
+			$parts     = explode('<!--/nocompress-->', $output);
+			$last_part = array_pop($parts);
+
+			// Reset output.
+			$output = '';
+
+			// Marker used to identify <!--nocompress-->> tags.
+			$i = 0;
+
+			foreach ($parts as $part)
+			{
+				$start = strpos($part, '<!--nocompress');
+
+				// Malformed? Add it as it is.
+				if (false === $start)
+				{
+					$output .= $part;
+					continue;
+				}
+
+				// Identify the nocompress tag and keep it.
+				$name = "<nocompress csk-nocompress-tag-{$i}></nocompress>";
+				$nocompress[$name] = substr($part, $start).'<!--/nocompress-->';
+				$output .= substr($part, 0, $start).$name;
+				$i++;
+			}
+
+			// Always add the last part.
+			$output .= $last_part;
+		}
+
 		// Compress the final output.
 		$output = $this->_compress_output($output);
 
@@ -3576,6 +3615,12 @@ EOT;
 		if ( ! empty($pre_tags))
 		{
 			$output = str_replace(array_keys($pre_tags), array_values($pre_tags), $output);
+		}
+
+		// If we have <!--nocompress--> tags, add them.
+		if ( ! empty($nocompress))
+		{
+			$output = str_replace(array_keys($nocompress), array_values($nocompress), $output);
 		}
 
 		// Return the final output.

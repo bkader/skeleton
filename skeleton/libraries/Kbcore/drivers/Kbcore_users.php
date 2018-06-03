@@ -132,7 +132,18 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 		// Make sure to alwayas add the entity's type.
 		$entity['type'] = 'user';
 
+		/**
+		 * Allow plugins define default users roles.
+		 * @since 	2.1.2
+		 */
+		if ( ! isset($entity['subtype']))
+		{
+			$role = apply_filters('default_users_role', 'regular');
+			empty($role) && $role = 'regular';
+			$entity['subtype'] = $role;
+		}
 		// Make sure user's type is always set.
+
 		(isset($entity['subtype'])) OR $entity['subtype'] = 'regular';
 
 		// The user should be enabled or not?
@@ -2029,8 +2040,16 @@ class KB_User
 		// Now we cache the user.
 		$this->data = $user;
 
+		/**
+		 * Allow modules, plugins or themes define the role used as
+		 * the admin role.
+		 * @since 	2.1.3
+		 */
+		$admin_role = apply_filters('users_admin_role', 'administrator');
+		empty($admin_role) && $admin_role = 'administrator';
+
 		// Whether the user is an admin or not.
-		$this->data->admin = ('administrator' === $user->subtype);
+		$this->data->admin = ($admin_role === $user->subtype);
 	}
 
 	// ------------------------------------------------------------------------

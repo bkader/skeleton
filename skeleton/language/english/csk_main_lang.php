@@ -211,10 +211,11 @@ $lang['CSK_ERROR_COMPONENT_DISABLED'] = 'This component is disabled. Enable it o
 $lang['form_validation_alpha_extra']       = 'The {field} may contain only alpha-numeric characters, spaces, periods, underscores and dashes.';
 $lang['form_validation_check_credentials'] = 'Invalid username/email address and/or password.';
 $lang['form_validation_current_password']  = 'Your current password in incorrect.';
+$lang['form_validation_not_in_list']       = 'The {field} field must not be one of: {param}.';
 $lang['form_validation_unique_email']      = 'This email address is already in use.';
 $lang['form_validation_unique_username']   = 'This username is not available.';
-$lang['form_validation_user_exists']       = 'No user was found with that username or email address.';
 $lang['form_validation_user_admin']        = 'You do not have access to the dashboard section of this site.';
+$lang['form_validation_user_exists']       = 'No user was found with that username or email address.';
 
 // ------------------------------------------------------------------------
 // Skeleton Related Lines.

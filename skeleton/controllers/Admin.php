@@ -102,7 +102,7 @@ class Admin extends Admin_Controller
 
 		// Plugins count.
 		$boxes[] = info_box(
-			count($this->theme->get_themes()),
+			count($this->kbcore->plugins->list_plugins()),
 			line('CSK_ADMIN_PLUGINS'),
 			'plug',
 			admin_url('plugins'),

@@ -328,6 +328,21 @@ class KB_Form_validation extends CI_Form_validation
 
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Makes sure the input is not in the given array.
+	 * @since 	2.1.2
+	 * @access 	public
+	 * @param 	string 	$value 	The value to check.
+	 * @param 	string 	$list 	The list used to check.
+	 * @return 	bool 	true if not found in the list, else false.
+	 */
+	public function not_in_list($value, $list)
+	{
+		return (true !== in_array($value, explode(',', $list), TRUE));
+	}
+
+	// ------------------------------------------------------------------------
+
 
 	/**
 	 * Build an error message using the field and param with the possibility

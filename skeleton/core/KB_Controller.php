@@ -131,7 +131,7 @@ class KB_Controller extends CI_Controller {
 			if (false === stripos($this->uri->uri_string(), $this->router->default_controller))
 			{
 				set_alert(__('CSK_ERROR_COMPONENT_DISABLED'), 'error');
-				redirect('');
+				redirect((is_admin() ? KB_ADMIN : ''));
 				exit;
 			}
 

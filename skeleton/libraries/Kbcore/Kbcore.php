@@ -110,6 +110,12 @@ class Kbcore extends CI_Driver_Library
 		global $KB, $DB;
 		$KB = new stdClass();
 
+		/**
+		 * Fires early, before drivers are loaded.
+		 * @since 	2.1.3
+		 */
+		do_action('init');
+
 		// We initialize options.
 		$this->options->initialize();
 		$KB->options = $this->options;
@@ -894,7 +900,7 @@ class Kbcore extends CI_Driver_Library
 	private function _languages_list()
 	{
 		// Get the list of all languages details first.
-		$languages = $this->ci->lang->languages();
+		$languages = $this->ci->lang->languages($this->ci->config->item('languages'));
 
 		// Make sure current language available to views.
 		$this->ci->theme->set(
