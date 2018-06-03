@@ -132,7 +132,18 @@ class Kbcore_users extends CI_Driver implements CRUD_interface
 		// Make sure to alwayas add the entity's type.
 		$entity['type'] = 'user';
 
+		/**
+		 * Allow plugins define default users roles.
+		 * @since 	2.1.2
+		 */
+		if ( ! isset($entity['subtype']))
+		{
+			$role = apply_filters('default_users_role', 'regular');
+			empty($role) && $role = 'regular';
+			$entity['subtype'] = $role;
+		}
 		// Make sure user's type is always set.
+
 		(isset($entity['subtype'])) OR $entity['subtype'] = 'regular';
 
 		// The user should be enabled or not?
