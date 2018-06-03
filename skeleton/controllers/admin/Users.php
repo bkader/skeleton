@@ -107,9 +107,37 @@ class Users extends Admin_Controller {
 		// Create pagination.
 		$this->load->library('pagination');
 
+		// Users filter.
+		$where = array();
+
+		// Filter by role (subtype).
+		if (null !== ($role = $this->input->get('role', true)))
+		{
+			$where['subtype'] = $role;
+		}
+
+		// Account status.
+		if (null !== ($status = $this->input->get('status', true)))
+		{
+			switch ($status) {
+				case 'deleted':
+					$where['deleted'] = 1;
+					break;
+				case 'active':
+					$where['enabled'] = 1;
+					break;
+				case 'inactive':
+					$where['enabled'] = 0;
+					break;
+				case 'banned':
+					$where['enabled'] = -1;
+					break;
+			}
+		}
+
 		// Pagination configuration.
 		$config['base_url']   = $config['first_link'] = admin_url('users');
-		$config['total_rows'] = $this->kbcore->users->count();
+		$config['total_rows'] = $this->kbcore->users->count($where);
 		$config['per_page']   = $this->config->item('per_page');
 
 		// Initialize pagination.
@@ -129,7 +157,7 @@ class Users extends Admin_Controller {
 		}
 
 		// Get all users.
-		$this->data['users'] = $this->kbcore->users->get_all($limit, $offset);
+		$this->data['users'] = $this->kbcore->users->get_many($where, null, $limit, $offset);
 
 		/**
 		 * Cache users actions.
@@ -248,7 +276,7 @@ class Users extends Admin_Controller {
 			), true);
 
 			$data['enabled'] = ($this->input->post('enabled') == '1') ? 1 : 0;
-			$data['subtype'] = ($this->input->post('admin') == '1') ? 'administrator' : 'regular';
+			($this->input->post('admin') == '1') && $data['subtype'] = 'administrator';
 
 			if (false !== ($guid = $this->kbcore->users->create($data)))
 			{
@@ -775,22 +803,11 @@ class Users extends Admin_Controller {
 			// Add user button.
 			echo html_tag('a', array(
 				'href' => admin_url('users/add'),
-				'class' => 'btn btn-success btn-sm btn-icon'
-			), fa_icon('plus-circle').__('CSK_USERS_ADD_USER')),
+				'class' => 'btn btn-success btn-sm btn-icon mr-2'
+			), fa_icon('plus-circle').__('CSK_USERS_ADD_USER'));
 
-			// Temporary disable buttons.
-			html_tag('a', array(
-				'href'     => 'javascript:void(0)',
-				'role'     => 'button',
-				'class'    => 'btn btn-default btn-sm btn-icon disabled ml-2',
-				'disabled' => 'disabled',
-			), fa_icon('group').__('CSK_ADMIN_USERS_GROUPS')),
-			html_tag('a', array(
-				'href'     => 'javascript:void(0)',
-				'role'     => 'button',
-				'class'    => 'btn btn-default btn-sm btn-icon disabled ml-2',
-				'disabled' => 'disabled',
-			), fa_icon('key').__('CSK_ADMIN_USERS_LEVELS'));
+			do_action('in_users_subhead');
+
 		});
 	}
 
