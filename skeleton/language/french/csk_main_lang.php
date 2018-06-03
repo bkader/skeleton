@@ -211,10 +211,11 @@ $lang['CSK_ERROR_COMPONENT_DISABLED'] = 'Ce composant est désactivé. Activez-l
 $lang['form_validation_alpha_extra']       = 'Le champ {field} peut contenir uniquement des caractères alphanumériques, des espaces, des points, des traits de soulignement et des tirets.';
 $lang['form_validation_check_credentials'] = 'Nom d\'utilisateur/adresse e-mail et/ou mot de passe invalide';
 $lang['form_validation_current_password']  = 'Votre mot de passe actuel est incorrect.';
+$lang['form_validation_not_in_list']       = 'Le champ {field} ne doit pas avoir une de ces valeurs : {param}.';
 $lang['form_validation_unique_email']      = 'Cette adresse email est déjà utilisée.';
 $lang['form_validation_unique_username']   = 'Ce nom d\'utilisateur n\'est pas disponible.';
-$lang['form_validation_user_exists']       = 'Aucun utilisateur n\'a été trouvé avec ce nom d\'utilisateur ou adresse e-mail.';
 $lang['form_validation_user_admin']        = 'Vous n\'avez pas au tableau de bord de ce site.';
+$lang['form_validation_user_exists']       = 'Aucun utilisateur n\'a été trouvé avec ce nom d\'utilisateur ou adresse e-mail.';
 
 // ------------------------------------------------------------------------
 // Skeleton Related Lines.
