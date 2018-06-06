@@ -78,7 +78,8 @@ KPlatform::constants();
 Autoloader::add_classes(array(
 	// Kader Class.
 	'CS_Hooks' => KBPATH.'third_party/bkader/class-hooks.php',
-	'Route' => KBPATH.'third_party/bkader/class-route.php',
+	'Route'    => KBPATH.'third_party/bkader/class-route.php',
+	'Events'   => KBPATH.'third_party/bkader/class-events.php',
 
 	// Core classes.
 	'Admin_Controller'    => KBPATH.'core/Admin_Controller.php',
