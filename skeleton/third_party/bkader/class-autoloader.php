@@ -95,6 +95,21 @@ class Autoloader
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Method for returning the path to the previously registered class.
+	 *
+	 * @since 	2.1.2
+	 * @static
+	 * @param 	string 	$class 	The class name.
+	 * @return 	mixed 	The full path if found, else false.
+	 */
+	public static function class_path($class)
+	{
+		return isset(self::$classes[$class]) ? self::$classes[$class] : false;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Registers the autoloader to the SPL autoload stack.
 	 *
 	 * @static
