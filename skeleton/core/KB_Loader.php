@@ -72,6 +72,12 @@ class KB_Loader extends CI_Loader
 	protected $_router;
 
 	/**
+	 * Holds the array of files to be autoloaded.
+	 * @var array
+	 */
+	public $autoload = array();
+
+	/**
 	 * Class constructor.
 	 * @return 	void
 	 */
@@ -176,6 +182,77 @@ class KB_Loader extends CI_Loader
 		}
 
 		return $result;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Add Package Path
+	 *
+	 * This method was added so we can load "bootstrap.php" files from added
+	 * packages and do actions if found.
+	 *
+	 * @access 	public
+	 * @param 	string 	$path 	The path to add.
+	 * @param 	bool 	$view_cascade
+	 * @return 	object
+	 */
+	public function add_package_path($path, $view_cascade = TRUE)
+	{
+		// Make the method remember already loaded packages.
+		static $loaded = array();
+
+		if ( ! isset($loaded[$path]))
+		{
+			// Normalize path and use folder name for action.
+			$path = normalize_path($path);
+			$basename = basename($path);
+			
+			parent::add_package_path($path, $view_cascade);
+
+			// Possibility to add a bootstrap.php file.
+			if (is_file($path.'/bootstrap.php'))
+			{
+				require_once($path.'/bootstrap.php');
+
+				/**
+				 * If your package bootstrap file contains a class named like
+				 * "Folder_bootstrap" and having an "init" method, the class
+				 * is automatically initialized and the method called.
+				 */
+				$class = ucfirst($basename).'_bootstrap';
+
+				if (class_exists($class, false))
+				{
+					$class = new $class();
+					is_callable(array($class, 'init')) && $class->init();
+				}
+
+				do_action('package_added_'.$basename);
+			}
+
+			$loaded[$path] = $basename;
+		}
+
+		return $this;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Remove Package Path
+	 *
+	 * Simply uses parent's method and fires the "package_removed_" action
+	 * if it exists.
+	 *
+	 * @access 	public
+	 * @param 	string 	$path 	The path to remove.
+	 * @return 	object
+	 */
+	public function remove_package_path($path = '')
+	{
+		empty($path) OR do_action('package_removed_'.basename($path));
+		return parent::remove_package_path($path);
 	}
 
 	// ------------------------------------------------------------------------
@@ -821,6 +898,116 @@ class KB_Loader extends CI_Loader
 		}
 
 		return parent::_ci_load_stock_library($library_name, $file_path, $params, $object_name);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * CI Autoloader
+	 *
+	 * Overrides CodeIgniter default method to use our custom file.
+	 *
+	 * Loads component listed in the config/autoload.php file.
+	 *
+	 * @used-by 	CI_Loader::initialize()
+	 * @return 	void
+	 */
+	protected function _ci_autoloader()
+	{
+		// Skeleton "autoload.php".
+		if (is_file(KBPATH.'config/autoload.php'))
+		{
+			require_once(KBPATH.'config/autoload.php');
+			
+			if (isset($autoload))
+			{
+				$this->autoload = array_replace_recursive($this->autoload, $autoload);
+				unset($autoload);
+			}
+		}
+
+		// Application "autoload.php".
+		if (is_file(APPPATH.'config/autoload.php'))
+		{
+			require_once(APPPATH.'config/autoload.php');
+
+			if (isset($autoload))
+			{
+				$this->autoload = array_replace_recursive($this->autoload, $autoload);
+				unset($autoload);
+			}
+		}
+
+		if (is_file(APPPATH.'config/'.ENVIRONMENT.'/autoload.php'))
+		{
+			require_once(APPPATH.'config/'.ENVIRONMENT.'/autoload.php');
+
+			if (isset($autoload))
+			{
+				$this->autoload = array_replace_recursive($this->autoload, $autoload);
+				unset($autoload);
+			}
+		}
+
+		$this->autoload = array_filter($this->autoload);
+
+		if (empty($this->autoload))
+		{
+			return;
+		}
+
+		// Autoload packages
+		if (isset($this->autoload['packages']))
+		{
+			foreach ($this->autoload['packages'] as $package_path)
+			{
+				$this->add_package_path($package_path);
+			}
+		}
+
+		// Load any custom config file
+		if (isset($this->autoload['config']) && count($this->autoload['config']) > 0)
+		{
+			foreach ($this->autoload['config'] as $val)
+			{
+				$this->config($val);
+			}
+		}
+
+		// Autoload helpers and languages
+		foreach (array('helper', 'language') as $type)
+		{
+			if (isset($this->autoload[$type]) && count($this->autoload[$type]) > 0)
+			{
+				$this->$type($this->autoload[$type]);
+			}
+		}
+
+		// Autoload drivers
+		if (isset($this->autoload['drivers']))
+		{
+			$this->driver($this->autoload['drivers']);
+		}
+
+		// Load libraries
+		if (isset($this->autoload['libraries']) && count($this->autoload['libraries']) > 0)
+		{
+			// Load the database driver.
+			if (in_array('database', $this->autoload['libraries']))
+			{
+				$this->database();
+				$this->autoload['libraries'] = array_diff($this->autoload['libraries'], array('database'));
+			}
+
+			// Load all other libraries
+			$this->library($this->autoload['libraries']);
+		}
+
+		// Autoload models
+		if (isset($this->autoload['model']))
+		{
+			$this->model($this->autoload['model']);
+		}
 	}
 
 }
