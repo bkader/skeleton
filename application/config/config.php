@@ -283,7 +283,7 @@ $config['log_date_format'] = 'Y-m-d H:i:s';
 | application/views/errors/ directory.  Use a full server path with trailing slash.
 |
 */
-$config['error_views_path'] = '';
+$config['error_views_path'] = KBPATH.'views/errors/';
 
 /*
 |--------------------------------------------------------------------------
