@@ -38,109 +38,103 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Autoloader Class
+ * Theme package bootstrap file.
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @category 	Add-ons
+ * @category 	Packages
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
- * @since 		2.1.0
- * @version 	2.1.0
+ * @since 		2.1.3
+ * @version 	2.1.3
  */
-class Autoloader
-{
+
+if ( ! class_exists('Theme_bootstrap')):
+
+class Theme_bootstrap {
+
 	/**
-	 * Holds all the classes and their paths.
-	 * @var array
+	 * Holds an instance of CI object.
+	 * @var object
 	 */
-	protected static $classes = array();
+	private $CI;
 
 	/**
-	 * Method for adding classes load path. Any class added here will not
-	 * be searched for but explicitly loaded from the path.
-	 *
-	 * @static
-	 * @access 	public
-	 * @param 	string 	$class 	The class name.
-	 * @param 	string 	$path 	The path to the class file.
-	 * @return 	void
-	 */
-	public static function add_class($class, $path)
-	{
-		// Support for namespaces.
-		strpos($class, '\\') && $class = str_replace('\\', '/', $class);
-
-		self::$classes[$class] = normalize_path($path);
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Method for adding multiple class paths to the load path {@see Autoloader::add_class}.
-	 *
-	 * @static
-	 * @param 	array 	$classes 	Array of classes and their paths (class => path)
-	 * @return 	void
-	 */
-	public static function add_classes($classes)
-	{
-		foreach ($classes as $class => $path)
-		{
-			self::$classes[$class] = normalize_path($path);
-		}
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Method for returning the path to the previously registered class.
-	 *
-	 * @since 	2.1.2
-	 * @static
-	 * @param 	string 	$class 	The class name.
-	 * @return 	mixed 	The full path if found, else false.
-	 */
-	public static function class_path($class)
-	{
-		return isset(self::$classes[$class]) ? self::$classes[$class] : false;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Registers the autoloader to the SPL autoload stack.
-	 *
-	 * @static
+	 * Class constructor.
 	 * @access 	public
 	 * @param 	none
 	 * @return 	void
 	 */
-	public static function register()
+	public function __construct()
 	{
-		spl_autoload_register('Autoloader::load', true, true);
+		$this->CI =& get_instance();
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Loads a class.
-	 *
-	 * @static
+	 * Initialize class.
 	 * @access 	public
-	 * @param 	string 	$class 	The class to load.
-	 * @return 	bool 	true if the class was loaded, else false.
+	 * @param 	none
+	 * @return 	void
 	 */
-	public static function load($class)
+	public function init()
 	{
-		if ( ! isset(self::$classes[$class]))
-		{
-			return false;
-		}
+		/**
+		 * The reason behind this approach it to avoid initializing the class,
+		 * I mean executing this method if it has already executed.
+		 */
+		static $initialized = false;
 
-		require_once(self::$classes[$class]);
-		return true;
+		if (true !== $initialized)
+		{
+			// Register package adding and removal actions.
+			add_action('package_added_theme', array($this, 'package_added'));
+			add_action('package_removed_theme', array($this, 'package_removed'));
+
+			// We make sure to flag the method as already called.
+			$initialized = true;
+		}
 	}
 
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Fires when the package is added.
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
+	public function package_added()
+	{
+		// We load the theme library, helper and language file.
+		$this->CI->load->language('theme');
+		$this->CI->load->library('theme');
+		$this->CI->load->helper('theme');
+
+		$this->CI->theme->initialize();
+
+		// We load library's dependencies.
+		function_exists('base_url') OR $this->CI->load->helper('url');
+		function_exists('plural') OR $this->CI->load->helper('inflector');
+		function_exists('html_tag') OR $this->CI->load->helper('html');
+		class_exists('CI_User_agent', false) OR $this->CI->load->library('user_agent');
+		class_exists('CI_Session', false) OR $this->CI->load->library('session');
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Fires upon package removal.
+	 * @access 	public
+	 * @param 	none
+	 * @return 	void
+	 */
+	public function package_removed()
+	{
+		return;
+	}
 }
+
+endif;

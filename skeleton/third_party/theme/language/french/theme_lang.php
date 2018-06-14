@@ -38,24 +38,17 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Skeleton-related hooks config file.
+ * Theme library language file (French)
  *
  * @package 	CodeIgniter
- * @subpackage 	Skeleton
- * @category 	Configuration
+ * @subpackage 	Packages\Language
+ * @category 	Category
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	2.2.0
+ * @version 	2.1.3
  */
-
-/**
- * Appropriate headers and redirection for SSL websites.
- * @since 	2.2.0
- */
-$hook['post_controller'][] = array(
-	'function' => 'skeleton_ssl_hook',
-	'filename' => 'skeleton_ssl_hook.php',
-	'filepath' => 'hooks',
-);
+$lang['theme_missing_english']   = 'Le fichier "english.php" est requis afin de charger les traductions du thème.';
+$lang['theme_missing_file']      = 'Ce fichier de vue du thème actuel est introuvable: %s.';
+$lang['theme_missing_functions'] = 'Le fichier "functions.php" est introuvable pour le thème: %s';

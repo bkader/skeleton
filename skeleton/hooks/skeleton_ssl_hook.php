@@ -33,29 +33,74 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://goo.gl/wGXHO9
- * @since 		1.0.0
+ * @since 		2.2.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Skeleton-related hooks config file.
+ * CodeIgniter SSL Hook
+ *
+ * This hook will automatically redirect to the HTTPS version of your website
+ * and set the appropriate headers.
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @category 	Configuration
- * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @link 		https://goo.gl/wGXHO9
- * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
- * @since 		1.0.0
+ * @category 	Hooks
+ * @author 		Mehdi Bounya
+ * @link 		https://github.com/mehdibo/Codeigniter-SSLHook
+ * @copyright 	Copyright (c) 2018, Mehdi Bounya (https://github.com/mehdibo)
+ * @since 		2.2.0
  * @version 	2.2.0
  */
+if ( ! function_exists('skeleton_ssl_hook'))
+{
+	/**
+	 * Appropriate headers and redirection for SSL websites.
+	 * @param 	none
+	 * @return 	void
+	 */
+	function skeleton_ssl_hook()
+	{
+		// Check whether to base URL starts with HTTPS.
+		if (substr(base_url(), 0, 5) !== 'https')
+		{
+			return;
+		}
 
-/**
- * Appropriate headers and redirection for SSL websites.
- * @since 	2.2.0
- */
-$hook['post_controller'][] = array(
-	'function' => 'skeleton_ssl_hook',
-	'filename' => 'skeleton_ssl_hook.php',
-	'filepath' => 'hooks',
-);
+		// Make sure both "is_https" and "is_cli" functions exist.
+		if ( ! function_exists('is_https') OR ! function_exists('is_cli'))
+		{
+			return;
+		}
+
+		// We are not using HTTPS or in a CLI?
+		if ( ! is_https() OR is_cli())
+		{
+			redirect(site_url(uri_string()));
+			exit;
+		}
+
+		$CI =& get_instance();
+
+		// We only allow HTTPS cookies (no JS).
+		$CI->config->set_item('cookie_secure', true);
+		$CI->config->set_item('cookie_httponly', true);
+
+		$CI->output
+
+			// Force future requests to be over HTTPS (max-age is set to 1 month.
+			->set_header('Strict-Transport-Security: max-age=2629800')
+			
+			// Disable MIME type sniffing.
+			->set_header('X-Content-Type-Options: nosniff')
+			
+			// Only allow referrers to be sent withing the website.
+			->set_header('Referrer-Policy: strict-origin')
+			
+			// Frames are not allowed.
+			->set_header('X-Frame-Options: DENY')
+			
+			// Enable XSS protection in browser
+			->set_header('X-XSS-Protection: 1; mode=block');
+	}
+}

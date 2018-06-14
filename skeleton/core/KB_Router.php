@@ -954,7 +954,7 @@ class KB_Router extends CI_Router
     	}
 
     	// On the dashboard?
-    	if (KB_ADMIN === $module)
+    	if ($this->is_admin())
     	{
     		$module = $this->uri->segment(3);
     		isset($modules[$module]) OR $module = $this->uri->segment(2);

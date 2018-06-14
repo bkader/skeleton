@@ -206,24 +206,15 @@ class Admin_Controller extends KB_Controller
 			method_exists($this, '_subhead') && $this->_subhead();
 
 			/**
-			 * Use Data_Cache object to cache few things.
-			 *
-			 * This was added because some stored variables were moved from default
-			 * dashboard layout to separated partials, and because they cannot be 
-			 * retrieve unless they are set as globals, we use the Data_Cache
-			 * object to handle them.
-			 * 
+			 * We set global variables so they can be found by dashboard partials views.
 			 * @since 	2.1.2
 			 */
-			// We first make sure to start Data_Cache object first.
-			start_data_cache('globals');
-			
 			if ( ! empty($this->data))
 			{
 				// Then we make all variables global.
 				foreach ($this->data as $key => $val)
 				{
-					data_cache_add($key, $val, 'globals');
+					$this->load->vars($key, $val);
 				}
 			}
 
@@ -335,7 +326,7 @@ class Admin_Controller extends KB_Controller
 		
 		$ignored_contexts = array('admin', 'users', 'settings');
 		$modules = $this->router->list_modules(true);
-		$lang = $this->config->item('language');
+		$lang = $this->lang->lang('folder');
 
 		if ( ! $modules)
 		{

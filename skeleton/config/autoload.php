@@ -33,29 +33,27 @@
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://goo.gl/wGXHO9
- * @since 		1.0.0
+ * @since 		2.1.3
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-/**
- * Skeleton-related hooks config file.
- *
- * @package 	CodeIgniter
- * @subpackage 	Skeleton
- * @category 	Configuration
- * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @link 		https://goo.gl/wGXHO9
- * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
- * @since 		1.0.0
- * @version 	2.2.0
- */
+// Auto-load Packages.
+$autoload['packages'] = array(KBPATH.'third_party/theme');
 
-/**
- * Appropriate headers and redirection for SSL websites.
- * @since 	2.2.0
- */
-$hook['post_controller'][] = array(
-	'function' => 'skeleton_ssl_hook',
-	'filename' => 'skeleton_ssl_hook.php',
-	'filepath' => 'hooks',
-);
+// Auto-load Libraries.
+$autoload['libraries'] = array('database', 'session', 'user_agent');
+
+// Auto-load Drivers.
+$autoload['drivers'] = array();
+
+// Auto-load Helper Files.
+$autoload['helper'] = array('url', 'html');
+
+// Auto-load Config files.
+$autoload['config'] = array();
+
+// Auto-load Language files.
+$autoload['language'] = array('csk_main');
+
+// Auto-load Models.
+$autoload['model'] = array();

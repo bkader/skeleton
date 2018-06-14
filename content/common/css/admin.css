@@ -107,6 +107,10 @@ img[data-src] {
   filter: alpha(opacity=0);
 }
 
+html {
+  width: 100vw;
+}
+
 html,
 body {
   height: 100%;
@@ -152,6 +156,14 @@ select.form-control:not([size]):not([multiple]) {
 
 .badge {
   padding: 0.1875rem 0.4rem;
+}
+
+[dir="rtl"] .fa {
+  -webkit-transform: scale(-1, 1);
+  -moz-transform: scale(-1, 1);
+  -ms-transform: scale(-1, 1);
+  -o-transform: scale(-1, 1);
+  transform: scale(-1, 1);
 }
 
 .float-auto {
@@ -3935,6 +3947,7 @@ table td > input[type="checkbox"] {
   min-height: 41px;
   padding-bottom: 0;
   padding-top: 0;
+  width: 100vw;
   z-index: 999;
 }
 .navbar-admin .navbar-brand {

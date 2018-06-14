@@ -47,49 +47,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	1.4.0
+ * @version 	2.1.3
  */
-
-/**
- * Set the path to where themes are located. They must be
- * somewhere next to FCPATH with you mush not include.
- */
-$config['themes_dir']  = 'content/themes';
-$config['common_dir']  = 'content/common';
-$config['cache_dir']   = 'content/cache';
 
 // Site default theme
-$config['theme'] = 'default';
+$config['theme']['theme'] = 'default';
 
 // Site title separator
-$config['title_sep'] = '&#8212;';
+$config['theme']['title_separator'] = '&#8212;';
 
 // Minify HTML Output
-$config['compress'] = (defined('ENVIRONMENT') && ENVIRONMENT == 'production');
+$config['theme']['compress'] = (defined('ENVIRONMENT') && ENVIRONMENT == 'production');
 
 // Cache life time
-$config['cache_lifetime'] = 0;
-
-// Enable CDN (to use 2nd argument of css() & js() functions)
-$config['cdn_enabled'] = (defined('ENVIRONMENT') && ENVIRONMENT == 'production');
-
-// The CDN URL if you host your files there
-$config['cdn_server'] = ''; // i.e: 'http://static.myhost.com/';
-
-/**
- * Set this to true to detect browser details.
- * This is useful if you want to check if the
- * user is on mobile or not and it gives you access
- * to browser's name, version and the platform the
- * client is using.
- */
-$config['detect_browser'] = false;
-
-// ------------------------------------------------------------------------
-// Backup plan :D for site name, desription & keywords
-// ------------------------------------------------------------------------
-
-// Default site name, description and keywords.
-$config['site_name']        = 'CodeIgniter Skeleton';
-$config['site_description'] = 'A ready-to-use CodeIgniter skeleton with tons of new features and a whole new concept.';
-$config['site_keywords']    = 'codeigniter, skeleton, themes, libraries, bkader, ianhub';
+$config['theme']['cache_lifetime'] = 0;

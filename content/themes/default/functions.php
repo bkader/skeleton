@@ -208,15 +208,15 @@ class Default_theme {
 
 		// Load Font Awesome.
 		if ( ENVIRONMENT === 'development') {
-			add_style( 'opensans',    get_theme_url('assets/css/open-sans.min.css', ''), null, true);
-			add_style( 'fontawesome', get_common_url( 'css/font-awesome.min.css', ''),   null, true);
-			add_style( 'bootstrap',   get_theme_url('assets/css/bootstrap.min.css', ''), null, true);
-			add_script( 'bootstrap',  get_theme_url('assets/js/bootstrap.min.js', ''));
+			add_style( 'opensans', get_theme_url('assets/css/open-sans.min.css', ''), null, true);
+			add_style( 'fontawesome', get_common_url( 'css/font-awesome.min.css', ''), null, true);
+			add_style( 'bootstrap', get_theme_url('assets/css/bootstrap.min.css', ''), null, true);
+			add_script( 'bootstrap', get_theme_url('assets/js/bootstrap.min.js', ''));
 		} else {
-			add_style( 'opensans',    'https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i',            null, true);
-			add_style( 'fontawesome', 'https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', null, true);
-			add_style( 'bootstrap',   'https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css',       null, true);
-			add_script( 'bootstrap',  'https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js');
+			add_style( 'opensans', '//fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i', null, true);
+			add_style( 'fontawesome', '//stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', null, true, array('integrity' => 'sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN', 'crossorigin' => 'anonymous') );
+			add_style( 'bootstrap', '//stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css', null, true, array('integrity' => 'sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u', 'crossorigin' => 'anonymous') );
+			add_script( 'bootstrap', '//stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js', null, false, array( 'integrity' => 'sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa', 'crossorigin' => 'anonymous') );
 		}
 
 		// Load main theme style.
@@ -226,7 +226,7 @@ class Default_theme {
 		if (langinfo('direction' ) === 'rtl' )
 		{
 			add_style( 'bootstrap-rtl', get_theme_url('assets/css/bootstrap-rtl.min.css', ''), null, true);
-			add_style( 'style-rtl',     get_theme_url('style-rtl.min.css', ''),                null, true);
+			add_style( 'style-rtl', get_theme_url('style-rtl.min.css', ''), null, true);
 		}
 	}
 
