@@ -128,6 +128,8 @@ class Settings extends Settings_Controller {
 				'max_height',
 			),
 		);
+
+		$this->_jquery_validate();
 	}
 
 	// ------------------------------------------------------------------------
