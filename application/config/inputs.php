@@ -50,12 +50,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.3.3
- * @version 	1.3.3
+ * @version 	2.1.3
  */
 
-// Username field.
-$config['username'] = array(
-	'name'        => 'username',
-	'id'          => 'username',
-	'placeholder' => 'lang:username',
-);
+/**
+ * We make sure to add already set input fields.
+ * @see 	KBPATH.'/config/inputs.php' to examples.
+ * @since 	2.1.3
+ */
+require_once(KBPATH.'config/inputs.php');
+
+// ------------------------------------------------------------------------
+// Add your custom input fields below.
+// ------------------------------------------------------------------------
