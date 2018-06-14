@@ -76,7 +76,7 @@ if ($themes)
 }
 
 echo '<div id="theme-details">';
-if (null !== $theme): ?>
+if (isset($theme) && null !== $theme): ?>
 <div class="modal fade" tabindex="-1" role="dialog" id="theme-modal" tabindex="-1">
 	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
