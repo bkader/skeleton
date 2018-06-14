@@ -353,8 +353,7 @@
 		 * @since 	2.1.2
 		 * @var 	string
 		 */
-		$page_icon = data_cache_get('page_icon', 'globals');
-		$page_icon OR $page_icon = $default_icon;
+		isset($page_icon) OR $page_icon = $default_icon;
 		$page_icon .= ' page-icon';
 
 		/**
@@ -362,8 +361,7 @@
 		 * @since 	2.1.2
 		 * @var 	string
 		 */
-		$page_title = data_cache_get('page_title', 'globals');
-		$page_title OR $page_title = $default_icon;
+		isset($page_title) OR $page_title = $default_title;
 
 		// Filtered icon and title.
 		$page_icon  = apply_filters('admin_page_icon', $page_icon);
@@ -424,7 +422,7 @@ if (has_action('admin_subhead')
 				'target' => '_blank',
 				'class'  => 'btn btn-white btn-sm btn-icon',
 			), fa_icon('question-circle').__('CSK_BTN_HELP'));
-		} elseif (false !== ($page_help = data_cache_get('page_help', 'globals'))) {
+		} elseif (isset($page_help)) {
 			echo html_tag('a', array(
 				'href'   => $page_help,
 				'target' => '_blank',
@@ -439,7 +437,7 @@ if (has_action('admin_subhead')
 			), fa_icon('cog').__('CSK_BTN_SETTINGS'));
 		}
 
-		if (false !== ($page_donate = data_cache_get('page_donate', 'globals'))) {
+		if (isset($page_donate)) {
 			echo html_tag('a', array(
 				'href'   => $page_donate,
 				'target' => '_blank',
