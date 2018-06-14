@@ -107,6 +107,10 @@ img[data-src] {
   filter: alpha(opacity=0);
 }
 
+html {
+  width: 100vw;
+}
+
 html,
 body {
   height: 100%;
@@ -3935,6 +3939,7 @@ table td > input[type="checkbox"] {
   min-height: 41px;
   padding-bottom: 0;
   padding-top: 0;
+  width: 100vw;
   z-index: 999;
 }
 .navbar-admin .navbar-brand {
