@@ -326,7 +326,7 @@ class Admin_Controller extends KB_Controller
 		
 		$ignored_contexts = array('admin', 'users', 'settings');
 		$modules = $this->router->list_modules(true);
-		$lang = $this->config->item('language');
+		$lang = $this->lang->lang('folder');
 
 		if ( ! $modules)
 		{
