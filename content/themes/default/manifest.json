@@ -1,0 +1,12 @@
+{
+    "name": "Default",
+    "theme_uri": "https://github.com/bkader/skeleton/tree/develop/public/content/themes",
+    "description": "The default theme that comes with the CodeIgniter Skeleton..",
+    "version": "1.0.0",
+    "license": "MIT",
+    "license_uri": "https://opensource.org/licenses/MIT",
+    "author": "Kader Bouyakoub",
+    "author_uri": "https://goo.gl/wGXHO9/",
+    "author_email": "bkader@mail.com",
+    "tags": "codeigniter, skeleton, bkader, bootstrap, bootstrap3"
+}
