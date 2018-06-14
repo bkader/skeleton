@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	2.0.0
+ * @version 	2.1.3
  */
 
 if ( ! function_exists('form_nonce'))
@@ -144,11 +144,20 @@ if ( ! function_exists('print_input'))
 				if (is_int($key))
 				{
 					$input[$val] = $val;
+					continue;
 				}
-				else
+
+				/**
+				 * We make sure to concatenate CSS classes.
+				 * @since 	2.1.3
+				 */
+				if ('class' === $key && isset($input['class']))
 				{
-					$input[$key] = $val;
+					$input['class'] = trim($input['class'].' '.$val);
+					continue;
 				}
+
+				$input[$key] = $val;
 			}
 		}
 
