@@ -395,7 +395,7 @@ class KB_Loader extends CI_Loader
 	{
 		if (is_array($files))
 		{
-			foreach ($fles as $file)
+			foreach ($files as $file)
 			{
 				$this->language($file, $lang);
 			}
