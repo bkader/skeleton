@@ -102,3 +102,9 @@ select.form-control:not([size]):not([multiple]) { height: auto; }
 }
 
 .badge {padding: 0.1875rem 0.4rem;}
+
+.fa {
+    @include rtl {
+        @include transform(scale(-1, 1));
+    }
+}
