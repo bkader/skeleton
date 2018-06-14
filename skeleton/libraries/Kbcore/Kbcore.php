@@ -99,10 +99,6 @@ class Kbcore extends CI_Driver_Library
 			'variables',
 		);
 
-		// Here we load all what we need.
-		$this->ci->load->database();
-		$this->ci->load->library('session');
-
 		/**
 		 * Here we are making an instance of this driver global
 		 * so that themes, plugins or others can use it.
@@ -143,17 +139,8 @@ class Kbcore extends CI_Driver_Library
 		$KB->ci =& $this->ci;
 		$DB =& $this->ci->db;
 
-		// Make sure to load the URL helper.
-		$this->ci->load->helper('url', 'html');
-
-		// Loading theme library.
-		$this->ci->load->library('theme');
-
 		// Make current language available to themes.
 		$this->_languages_list();
-
-		// Load main language file.
-		$this->ci->load->language('csk_main');
 
 		log_message('info', 'Kbcore Class Initialized');
 	}
