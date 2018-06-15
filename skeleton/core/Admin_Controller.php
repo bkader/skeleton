@@ -798,28 +798,7 @@ class Admin_Controller extends KB_Controller
  * @since 		2.0.0
  * @version 	2.0.0
  */
-class Content_Controller extends Admin_Controller {
-
-	/**
-	 * __construct
-	 *
-	 * Load needed resources only.
-	 *
-	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
-	 * @since 	2.0.0
-	 *
-	 * @access 	public
-	 * @param 	none
-	 * @return 	void
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-		$this->load->language('csk_content');
-	}
-
-}
+class Content_Controller extends Admin_Controller {}
 
 // ------------------------------------------------------------------------
 
