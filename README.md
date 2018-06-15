@@ -1,4 +1,7 @@
 # CodeIgniter Skeleton
+
+[![Join the chat at https://gitter.im/CodeIgniterSkeleton/skeleton](https://badges.gitter.im/CodeIgniterSkeleton/skeleton.svg)](https://gitter.im/CodeIgniterSkeleton/skeleton?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 A CodeIgniter starter kit with lots of add-ons to give you a head start when developing web application.
 
 ## What Does Contain?
@@ -33,7 +36,7 @@ Make sure to read our [Wiki](https://github.com/bkader/skeleton/wiki). They are 
 I was not really going to share this at all! I built if for my own personal use, then I was told to sell it.
 Well, I am not selling it, I am releasing it for free, but your donations are most welcome if you want to. You can send any amount you want to help me keep this project up and enhance it as much as I can.
 
-**Donate: [PayPal](http://bit.ly/2pIIV0D)**  
+**Donate** (PayPal): bkader[at]mail[dot]com  
 **Bitcoin**: 1CZa1d4qBA2M7DjMu9vGqmyLrQ8hAuqTDw
 
 ## Screenshots
