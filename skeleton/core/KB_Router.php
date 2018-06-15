@@ -540,6 +540,25 @@ class KB_Router extends CI_Router
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Checks whether the given $folder is a valid module.
+	 * @access 	public
+	 * @param 	string 	$folder
+	 * @return 	bool
+	 */
+	public function valid_module($folder = null)
+	{
+		if ( ! empty($folder))
+		{
+			$modules = $this->list_modules();
+			return isset($modules[$folder]);
+		}
+
+		return false;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
 	 * active_modules
 	 *
 	 * List all active modules previously stored in database.
@@ -891,90 +910,198 @@ class KB_Router extends CI_Router
      */
     protected function _set_routing()
     {
-    	// Make the method remember routes, just in case.
-    	static $routes;
+		$routes  = array();
 
-    	if (empty($routes))
+		// Modules routes.
+    	if ( ! empty($modules = $this->list_modules()))
     	{
-    		// Let's the parent set it's routes first.
-    		parent::_set_routing();
-
-    		$routes = $this->routes;
-
-    		// Collect modules routes.
-    		$modules = $this->list_modules();
-    		if ( ! empty($modules))
+    		foreach ($modules as $folder => $path)
     		{
-    			foreach ($modules as $folder => $path)
+    			if (is_file($path.'config/routes.php'))
     			{
-    				if (is_file($path.'config/routes.php'))
+    				include_once($path.'config/routes.php');
+
+    				if (isset($route) && is_array($route))
     				{
-    					include_once($path.'config/routes.php');
-    					if (isset($route))
-    					{
-    						$routes = array_merge($routes, $route);
-    						unset($route);
-    					}
+    					$routes = array_merge($routes, $route);
+    					unset($route);
     				}
+
+    				continue;
+    			}
+
+    			$details = $this->module_details($folder, $path);
+    			if (isset($details['routes']) && ! empty($details['routes']))
+    			{
+    				$this->_set_module_routes($details['routes']);
+    				continue;
     			}
     		}
     	}
 
-    	// Now we override routes.
-    	$this->routes = Route::map($routes);
+    	// Skeleton routes.
+    	if (is_file(KBPATH.'config/routes.php'))
+    	{
+    		include_once(KBPATH.'config/routes.php');
+
+    		if (isset($route) && is_array($route))
+    		{
+    			$routes = array_merge($routes, $route);
+    			unset($route);
+    		}
+    	}
+
+    	// Application routes.
+    	if (is_file(APPPATH.'config/routes.php'))
+    	{
+    		include_once(APPPATH.'config/routes.php');
+    	}
+
+    	if (is_file(APPPATH.'config/'.ENVIRONMENT.'/routes.php'))
+    	{
+    		include_once(APPPATH.'config/'.ENVIRONMENT.'/routes.php');
+    	}
+
+    	if (isset($route) && is_array($route))
+    	{
+    		$routes = array_merge($routes, $route);
+    		unset($route);
+    	}
+
+		if (isset($routes) && is_array($routes))
+		{
+			isset($routes['default_controller']) && $this->default_controller = $routes['default_controller'];
+			isset($routes['translate_uri_dashes']) && $this->translate_uri_dashes = $routes['translate_uri_dashes'];
+			unset($routes['default_controller'], $routes['translate_uri_dashes']);
+			$this->routes = Route::map($routes);
+		}
+
+		// Are query strings enabled in the config file? Normally CI doesn't utilize query strings
+		// since URI segments are more search-engine friendly, but they can optionally be used.
+		// If this feature is enabled, we will gather the directory/class/method a little differently
+		if ($this->enable_query_strings)
+		{
+			// If the directory is set at this time, it means an override exists, so skip the checks
+			if ( ! isset($this->directory))
+			{
+				$_d = $this->config->item('directory_trigger');
+				$_d = isset($_GET[$_d]) ? trim($_GET[$_d], " \t\n\r\0\x0B/") : '';
+
+				if ($_d !== '')
+				{
+					$this->uri->filter_uri($_d);
+					$this->set_directory($_d);
+				}
+			}
+
+			$_c = trim($this->config->item('controller_trigger'));
+			if ( ! empty($_GET[$_c]))
+			{
+				$this->uri->filter_uri($_GET[$_c]);
+				$this->set_class($_GET[$_c]);
+
+				$_f = trim($this->config->item('function_trigger'));
+				if ( ! empty($_GET[$_f]))
+				{
+					$this->uri->filter_uri($_GET[$_f]);
+					$this->set_method($_GET[$_f]);
+				}
+
+				$this->uri->rsegments = array(
+					1 => $this->class,
+					2 => $this->method
+				);
+			}
+			else
+			{
+				$this->_set_default_controller();
+			}
+
+			// Routing rules don't apply to query strings and we don't need to detect
+			// directories, so we're done here
+			return;
+		}
+
+		// Is there anything to parse?
+		if ($this->uri->uri_string !== '')
+		{
+			$this->_parse_routes();
+		}
+		else
+		{
+			$this->_set_default_controller();
+		}
     }
 
     // ------------------------------------------------------------------------
 
-	/**
-	 * Parse Routes
-	 *
-	 * Matches any routes that may exist in the config/routes.php file
-	 * against the URI to determine if the class/method need to be remapped.
-	 *
-	 * @return	void
-	 */
-    protected function _parse_routes()
+    /**
+     * Set Module Routes
+     *
+     * Sets modules routes automatically.
+     *
+     * @access 	protected
+     * @param 	array 	$routes 	Module routes stored in manifest.json file.
+     * @return 	void
+     */
+    protected function _set_module_routes($routes = array())
     {
-    	$modules = $this->list_modules();
-		$module  = $this->uri->segment(1);
-
-		/**
-		 * If we have an existing module and it has its own routes file,
-		 * we make sure to include it and set routes.
-		 */
-    	if (isset($modules[$module]) && is_file($modules[$module].'config/routes.php'))
+    	if (empty($routes))
     	{
-    		include($modules[$module].'config/routes.php');
-    		if (isset($route) && is_array($route))
+    		return;
+    	}
+
+    	foreach ($routes as $route => $original)
+    	{
+    		if (1 === sscanf($route, 'resources:%s', $new_route))
     		{
-    			$this->routes = array_merge($this->routes, $route);
-    			unset($route);
+    			Route::resources($new_route, $original);
     		}
-    	}
-
-    	// On the dashboard?
-    	if ($this->is_admin())
-    	{
-    		$module = $this->uri->segment(3);
-    		isset($modules[$module]) OR $module = $this->uri->segment(2);
-    	}
-
-    	if (isset($modules[$module]) && is_file($modules[$module].'config/routes.php'))
-    	{
-    		include($modules[$module].'config/routes.php');
-    		if (isset($route) && is_array($route))
+    		elseif (1 === sscanf($route, 'context:%s', $new_route))
     		{
-    			$this->routes = array_merge($this->routes, $route);
-    			unset($route);
+    			Route::context($new_route, $original);
     		}
+    		elseif (empty($original))
+    		{
+    			Route::block($route);
+    		}
+    		elseif (1 === sscanf($route, 'any:%s', $new_route))
+			{
+    			Route::any($new_route, $original);
+			}
+    		elseif (1 === sscanf($route, 'get:%s', $new_route))
+			{
+    			Route::get($new_route, $original);
+			}
+    		elseif (1 === sscanf($route, 'post:%s', $new_route))
+			{
+    			Route::post($new_route, $original);
+			}
+			elseif (1 === sscanf($route, 'put:%s', $new_route))
+			{
+    			Route::put($new_route, $original);
+			}
+			elseif (1 === sscanf($route, 'delete:%s', $new_route))
+			{
+    			Route::delete($new_route, $original);
+			}
+			elseif (1 === sscanf($route, 'head:%s', $new_route))
+			{
+    			Route::head($new_route, $original);
+			}
+			elseif (1 === sscanf($route, 'patch:%s', $new_route))
+			{
+    			Route::patch($new_route, $original);
+			}
+			elseif (1 === sscanf($route, 'options:%s', $new_route))
+			{
+    			Route::options($new_route, $original);
+			}
+			else
+			{
+				Route::any($route, $original);
+			}
     	}
-
-    	// Remapping all routes again.
-    	$this->routes = Route::map($this->routes);
-
-        // Let parent do the heavy routing
-        return parent::_parse_routes();
     }
 
 	// ------------------------------------------------------------------------
