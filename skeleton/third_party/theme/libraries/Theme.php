@@ -375,6 +375,12 @@ EOT;
 	protected $messages = array();
 
 	/**
+	 * Holds the current URI segments.
+	 * @var array
+	 */
+	protected $uri = array();
+
+	/**
 	 * Class constructor.
 	 * @access 	public
 	 * @param 	none
@@ -383,6 +389,8 @@ EOT;
 	public function __construct()
 	{
 		$this->CI =& get_instance();
+
+		$this->uri = $this->CI->uri->segment_array();
 
 		$this->CI->config->load('theme', false, true);
 	}
@@ -1215,8 +1223,12 @@ EOT;
 			$view[] = 'admin';
 		}
 
-		$view[] = $this->module;
-		$view[] = $this->controller;
+		if ($this->module !== $this->controller)
+		{
+			$view[] = $this->module;
+			$view[] = $this->controller;
+		}
+
 		$view[] = $this->method;
 
 		return implode('/', array_clean($view));
@@ -2345,9 +2357,12 @@ EOT;
 			$full_path = $modpath.$folder;
 			if ('view' === $type && $this->_is_admin())
 			{
-				$context = rtrim(str_replace(array('admin/', $this->module), '', uri_string()), '/');
-				$full_path .= $context;
-				$file = ltrim(str_replace('admin/'.$context, '', $file), '/');
+				global $back_contexts;
+				if (isset($this->uri[2]) && in_array($this->uri[2], $back_contexts))
+				{
+					$full_path .= $this->uri[2];
+					$file = ltrim(str_replace(array($this->uri[1], $this->uri[2]), '', $file), '/');
+				}
 			}
 
 		}
@@ -2362,15 +2377,19 @@ EOT;
 			// Attempt to guess the folder from module's contexts.
 			if ('view' === $type && $this->_is_admin())
 			{
-				$contexts = $this->CI->router->module_contexts($this->module);
-				foreach ($contexts as $context => $status)
+				global $back_contexts;
+				if (isset($this->uri[2]) && in_array($this->uri[2], $back_contexts))
 				{
-					if (true === $status && is_file($modpath.$folder.$context.'/'.$file))
-					{
-						$folder .= $context.'/';
-						break;
-					}
+					$folder .= $this->uri[2].'/';
 				}
+				else
+				{
+					$folder .= 'admin/';
+				}
+			}
+			else
+			{
+				$folder = 'views/'.$folder;
 			}
 
 			$alt_file .= $modpath.$folder.$file;
@@ -2416,11 +2435,27 @@ EOT;
 		return $output;
 	}
 
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the current view file content.
+	 * @access 	public
+	 * @param 	none
+	 * @return 	string
+	 */
 	public function print_content()
 	{
-		return $this->the_content();
+		return $this->content;
 	}
 
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Alias of the method above.
+	 * @access 	public
+	 * @param 	none
+	 * @return 	string
+	 */
 	public function the_content()
 	{
 		return $this->content;
@@ -2430,6 +2465,12 @@ EOT;
 	// Header and Footer methods.
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Returns or outputs the header file or provided template.
+	 * @access 	public
+	 * @param 	string 	$name 	The name of the file to use (Optional).
+	 * @return 	string
+	 */
 	public function get_header($name = null)
 	{
 		static $cached = array();
@@ -2477,6 +2518,14 @@ EOT;
 		return $cached[$name];
 	}
 
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns or outputs the footer file or provided template.
+	 * @access 	public
+	 * @param 	string 	$name 	The name of the file to use (Optional).
+	 * @return 	string
+	 */
 	public function get_footer($name = null)
 	{
 		static $cached = array();
@@ -2537,6 +2586,12 @@ EOT;
 	// Alerts methods.
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Sets alert message by storing them in $messages property and session.
+	 * @access 	public
+	 * @param 	mixed 	$message 	Message string or associative array.
+	 * @return 	object
+	 */
 	public function set_alert($message, $type = 'info')
 	{
 		if ( ! empty($message))
@@ -2554,11 +2609,19 @@ EOT;
 		return $this;
 	}
 
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns all registered alerts.
+	 * @access 	public
+	 * @param 	none
+	 * @return 	string
+	 */
 	public function get_alert()
 	{
 		$output = '';
 		
-		empty($this->messages) && $this->message = $this->CI->session->flashdata('__ci_alert');
+		empty($this->messages) && $this->messages = $this->CI->session->flashdata('__ci_alert');
 
 		if ( ! empty($this->messages))
 		{
@@ -2583,6 +2646,16 @@ EOT;
 		return $output;
 	}
 
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Displays an alert.
+	 * @access 	public
+	 * @param 	string 	$message 	The message to display.
+	 * @param 	string 	$type 		The type of the alert.
+	 * @param 	bool 	$js 		Whether to use the JS template.
+	 * @return 	string
+	 */
 	public function print_alert($message, $type = 'info', $js = false)
 	{
 		if (empty($message))
@@ -2614,6 +2687,13 @@ EOT;
 	// Theme translation methods.
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Allows themes to be translatable by loading their language files.
+	 * @access 	public
+	 * @param 	string 	$path 	The path to the theme's folder.
+	 * @param 	string 	$index 	Unique identifier to retrieve language lines.
+	 * @return 	void
+	 */
 	public function load_translation($path = null, $index = null)
 	{
 		/**
@@ -2674,6 +2754,12 @@ EOT;
 	// Cache methods.
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Dynamically sets cache time.
+	 * @access 	public
+	 * @param 	int 	$minutes
+	 * @return 	object
+	 */
 	public function set_cache($minutes = 0)
 	{
 		$this->cache_lifetime = $minutes;
@@ -2979,6 +3065,12 @@ EOT;
 
 	// ------------------------------------------------------------------------
 
+	/**
+	 * Makes sure the ".htaccess" file that denies direct access is present.
+	 * @access 	protected
+	 * @param 	string 	$path 	The path to check/create .htaccess.
+	 * @return 	void
+	 */
 	protected function _check_htaccess($path)
 	{
 		if ($path == $this->theme_path()
