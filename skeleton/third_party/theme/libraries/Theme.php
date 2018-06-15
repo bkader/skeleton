@@ -2358,6 +2358,21 @@ EOT;
 		if ( ! is_file($alt_file) && $this->module)
 		{
 			isset($modpath) OR $modpath = $this->CI->router->module_path($this->module);
+
+			// Attempt to guess the folder from module's contexts.
+			if ('view' === $type && $this->_is_admin())
+			{
+				$contexts = $this->CI->router->module_contexts($this->module);
+				foreach ($contexts as $context => $status)
+				{
+					if (true === $status && is_file($modpath.$folder.$context.'/'.$file))
+					{
+						$folder .= $context.'/';
+						break;
+					}
+				}
+			}
+
 			$alt_file .= $modpath.$folder.$file;
 		}
 
