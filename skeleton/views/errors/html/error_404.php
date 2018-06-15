@@ -1,8 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-$lang = langinfo();
 ?><!DOCTYPE html>
-<html lang="<?php echo $lang['code']; ?>"<?php if ('rtl' === $lang['direction']) { echo ' dir="rtl"'; } ?>>
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <title>404 Page Not Found</title>
