@@ -149,7 +149,7 @@ class KPlatform {
 	public static function constants()
 	{
 		// We define useful Skeleton constants first.
-		define('KB_VERSION', '2.1.2');
+		define('KB_VERSION', '2.1.5');
 		define('DS', DIRECTORY_SEPARATOR);
 		define('EXT', '.php');
 
