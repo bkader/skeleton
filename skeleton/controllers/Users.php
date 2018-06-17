@@ -114,22 +114,24 @@ class Users extends KB_Controller {
 			 * @since 	2.0.0
 			 */
 			$default_styles = array(
-				'font-awesome' => $this->theme->common_url('css/font-awesome.min.css'),
-				'bootstrap'    => $this->theme->common_url('css/bootstrap.min.css'),
-				'admin'        => $this->theme->common_url('css/admin.min.css'),
+				'fontawesome' => $this->theme->common_url('css/font-awesome.min.css'),
+				'bootstrap'   => $this->theme->common_url('css/bootstrap.min.css'),
+				'admin'       => $this->theme->common_url('css/admin.min.css'),
 			);
 
 			// RTL languages.
 			if ('rtl' === $this->lang->lang('direction'))
 			{
 				$default_styles['bootstrap'] = $this->theme->common_url('css/bootstrap-rtl.min.css');
-				$default_styles['admin-rtl'] = $this->theme->common_url('css/admin-rtl.min.css');
 			}
 
 			$login_styles = apply_filters('login_styles', array());
-			if (empty($login_styles) OR ! is_array($login_styles)) {
+			if (empty($login_styles) OR ! is_array($login_styles))
+			{
 				$login_styles = $default_styles;
-			} else {
+			}
+			else
+			{
 				$login_styles = array_merge($default_styles, $login_styles);
 			}
 			$this->theme->add('css', $login_styles);
@@ -144,9 +146,11 @@ class Users extends KB_Controller {
 				'admin'     => $this->theme->common_url('js/admin.min.js'),
 			);
 			$login_scripts = apply_filters('login_scripts', array());
-			if (empty($login_scripts) OR ! is_array($login_scripts)) {
+			if (empty($login_scripts) OR ! is_array($login_scripts))
+			{
 				$login_scripts = $default_scripts;
-			} else {
+			} else
+			{
 				$login_scripts = array_merge($default_scripts, $login_scripts);
 			}
 			$this->theme->add('js', $login_scripts);
@@ -161,6 +165,18 @@ class Users extends KB_Controller {
 				$login_body_class .= ' '.$default_class;
 			}
 			$this->theme->body_class($login_body_class);
+
+			/**
+			 * Fixed views and layouts if theme doesn't have theme.
+			 * @since 	2.1.5
+			 */
+			add_filter('theme_layouts_path', function($path) {
+				return KBPATH.'views/layouts';
+			});
+
+			add_filter('theme_views_path', function($path) {
+				return KBPATH.'views';
+			});
 		}
 	}
 

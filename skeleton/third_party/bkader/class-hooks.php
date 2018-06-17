@@ -836,9 +836,10 @@ if ( ! function_exists('remove_all_filters'))
 	 */
 	function remove_all_filters($tag = null, $priority = false)
 	{
+		global $cs_filter;
+		
 		if (null !== $tag)
 		{
-			global $cs_filter;
 			
 			if (isset($cs_filter[$tag]))
 			{
@@ -849,6 +850,10 @@ if ( ! function_exists('remove_all_filters'))
 					unset($cs_filter[$tag]);
 				}
 			}
+		}
+		else
+		{
+			$cs_filter = array();
 		}
 		
 		return true;
