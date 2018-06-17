@@ -239,14 +239,14 @@ class KB_Controller extends CI_Controller {
 				// Make sure to use _query_validate() method on admin.
 				if (true !== $this->router->is_admin())
 				{
-					add_script('jquery-validate', get_common_url('js/jquery.validate'));
+					add_script('jquery-validate', get_common_url('js/jquery.validate.min.js'));
 
 					// Different language?
 					if ('en' !== ($code = $this->lang->lang('code')))
 					{
 						add_script(
 							'jquery-validate-'.$code,
-							get_common_url('js/jquery-validate/'.$code)
+							get_common_url('js/jquery-validate/'.$code.'.min.js')
 						);
 					}
 				}
