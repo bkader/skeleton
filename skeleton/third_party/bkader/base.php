@@ -844,3 +844,33 @@ if ( ! function_exists('is_forbidden_username')) {
 		return (in_array($username, $usernames));
 	}
 }
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('_load_session'))
+{
+	/**
+	 * This function is used to early-load session library
+	 * @param 	none
+	 * @return 	CI_Session
+	 */
+	function _load_session()
+	{
+		static $session;
+
+		if (is_null($session) OR ! isset($_SESSION))
+		{
+			if ( ! function_exists('load_class'))
+			{
+				require_once(BASEPATH.'libraries/Session/Session.php');
+				$session = new CI_Session();
+			}
+			else
+			{
+				$session =& load_class('Session', 'libraries/Session');
+			}
+		}
+
+		return $session;
+	}
+}
