@@ -1676,7 +1676,7 @@ EOT;
 	 * @param 	string 	$handle 	before which handle the content should be output.
 	 * @return 	object
 	 */
-	public function add_inline($type = 'css', string $content = '', $handle = null)
+	public function add_inline($type = 'css', $content = '', $handle = null)
 	{
 		if ( ! in_array($type, array('css', 'js')) OR empty(trim($content)))
 		{
@@ -1706,7 +1706,7 @@ EOT;
 	 * @param 	string 	$handle 	before which handle the content should be output.
 	 * @return 	object
 	 */
-	public function add_inline_style(string $content = '', $handle = null)
+	public function add_inline_style($content = '', $handle = null)
 	{
 		return $this->add_inline('css', $content, $handle);
 	}
@@ -1720,7 +1720,7 @@ EOT;
 	 * @param 	string 	$handle 	before which handle the content should be output.
 	 * @return 	object
 	 */
-	public function add_inline_script(string $content = '', $handle = null)
+	public function add_inline_script($content = '', $handle = null)
 	{
 		return $this->add_inline('js', $content, $handle);
 	}
@@ -1960,7 +1960,7 @@ EOT;
 	 * @param 	string 	$class to add.
 	 * @return 	string
 	 */
-	public function html_class(string $class = null)
+	public function html_class($class = null)
 	{
 		$output = '';
 
@@ -1991,7 +1991,7 @@ EOT;
 	 * @param 	string 	$class 	class to add.
 	 * @return 	string
 	 */
-	public function body_class(string $class = null)
+	public function body_class($class = null)
 	{
 		$output = '';
 
