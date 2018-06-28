@@ -50,7 +50,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	2.1.0
+ * @version 	2.1.6
  */
 class KB_Lang extends CI_Lang
 {
@@ -59,6 +59,22 @@ class KB_Lang extends CI_Lang
 	 * @var string
 	 */
 	protected $fallback = 'english';
+
+	/**
+	 * Holds an array of language details.
+	 * @since 	2.1.6
+	 * @var 	array
+	 */
+	public $details = array(
+		'name'      => 'English',
+		'name_en'   => 'English',
+		'folder'    => 'english',
+		'locale'    => 'en-US',
+		'gettext'   => 'en_US',
+		'direction' => 'ltr',
+		'code'      => 'en',
+		'flag'      => 'us',
+	);
 
 	/**
 	 * Flag to check whether we should use PHP-Gettext.
@@ -76,6 +92,12 @@ class KB_Lang extends CI_Lang
 
 		$this->config =& load_class('Config', 'core');
 		$this->router =& load_class('Router', 'core');
+
+		/**
+		 * Store language in session and change config item.
+		 * @since 	2.1.6
+		 */
+		$this->_set_language();
 
 		/**
 		 * In order to use PHP-Gettext, the following must be true:
@@ -342,7 +364,7 @@ class KB_Lang extends CI_Lang
 	 * @param	string	$index 		Acts like gettext domain.
 	 * @return	string	Translation.
 	 */
-	public function nline(string $singular, string $plural, int $number, $index = '')
+	public function nline($singular, $plural, $number, $index = '')
 	{
 		/**
 		 * See if we are are using PHP-Gettext.
@@ -369,52 +391,15 @@ class KB_Lang extends CI_Lang
 	 */
 	public function lang()
 	{
-		// Make the method remember the language.
-		static $lang;
+		// Make the method remember language details.
+		static $details;
 
-		// Not yet cached?
-		if (empty($lang))
-		{
-			// "current_language" item should have been set by Kbcore library.
-			$lang = $this->config->item('current_language');
+		is_null($details) && $details = $this->details;
 
-			// In case it wasn't set, we use a backup a plan.
-			if ( ! $lang)
-			{
-				/**
-				 * The language folder should have been stored in SESSION, in 
-				 * case it was not, we use default language.
-				 */
-				$folder = isset($_SESSION['language'])
-					? $_SESSION['language']
-					: $this->config->item('language');
-
-				$lang = $this->languages($folder);
-
-				// If the language was found, we use it.
-				if (isset($lang[$folder]))
-				{
-					$lang = $lang[$folder];
-				}
-				// Otherwise, we use English as a backup plan.
-				else
-				{
-					$lang = array(
-						'name'      => 'English',
-						'name_en'   => 'English',
-						'folder'    => 'english',
-						'locale'    => 'en-US',
-						'gettext'   => 'en_US',
-						'direction' => 'ltr',
-						'code'      => 'en',
-						'flag'      => 'us',
-					);
-				}
-			}
-		}
+		$return = $this->details;
 
 		// The language was not found?
-		if ( ! $lang)
+		if ( ! $return)
 		{
 			return false;
 		}
@@ -422,11 +407,8 @@ class KB_Lang extends CI_Lang
 		// Not arguments passed? Return the language folder.
 		if (empty($args = func_get_args()))
 		{
-			return $lang['folder'];
+			return $return['folder'];
 		}
-
-		// Prepare the the final returned result.
-		$return = $lang;
 
 		// Get rid of nasty array.
 		(is_array($args[0])) && $args = $args[0];
@@ -522,6 +504,80 @@ class KB_Lang extends CI_Lang
 		}
 
 		return $return;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Moved from KBcore.php for earlier usage.
+	 *
+	 * Make sure to store language in session.
+	 *
+	 * @since 	2.1.6
+	 *
+	 * @access 	protected
+	 * @param 	none
+	 * @return 	void
+	 */
+	protected function _set_language()
+	{
+		// We make sure to load session first.
+		_load_session();
+
+		// Site available language and all languages details.
+		$site_languages = $this->config->item('languages');
+		$languages = $this->languages();
+
+		// Current and default language.
+		$default = $this->config->item('language');
+		$current = isset($_SESSION['language']) ? $_SESSION['language'] : $default;
+
+        /**
+         * In case the language is not stored in session or is not available;
+         * we attempt to detect clients language. If available, we use it
+         * instead of the default language.
+         */
+		if ( ! isset($_SESSION['language']) 
+			OR ! in_array($_SESSION['language'], $site_languages))
+		{
+			$code = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) 
+				? substr(html_escape($_SERVER['HTTP_ACCEPT_LANGUAGE']), 0, 2) 
+				: 'en';
+
+			foreach ($languages as $folder => $lang)
+			{
+                /**
+                 * In order for the language to be used, the code must exists and
+                 * the language must be available.
+                 */
+				if (isset($lang['code']) && $code === $lang['code'] && in_array($folder, $site_languages))
+				{
+					$current = $folder;
+					break;
+				}
+			}
+
+			$_SESSION['language'] = $current;
+		}
+
+		$this->details = $languages[$current];
+		$this->config->set_item('current_language', $this->details);
+
+		if (false !== $this->gettext 
+			&& (isset($this->details['gettext']) OR isset($this->details['locale'])))
+		{
+			$locale = isset($this->details['gettext'])
+				? $this->details['gettext']
+				: str_replace('-', '_', $this->details['locale']);
+
+			gettext_instance()->setlocale($locale);
+
+			if ($this->router->is_admin())
+			{
+				gettext_instance()->add_location(KBPATH.'language');
+				gettext_instance()->textdomain('admin');
+			}
+		}
 	}
 
 }
