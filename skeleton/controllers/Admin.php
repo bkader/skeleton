@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	2.1.0
+ * @version 	2.1.6
  */
 class Admin extends Admin_Controller
 {
@@ -63,7 +63,7 @@ class Admin extends Admin_Controller
 
 		// Set page title and render view.
 		$this->theme
-			->set_title(line('CSK_ADMIN_ADMIN_PANEL'))
+			->set_title(__('CSK_ADMIN_ADMIN_PANEL'))
 			->render($this->data);
 	}
 
@@ -83,40 +83,56 @@ class Admin extends Admin_Controller
 		$output = '<div class="col-xs-6 col-sm-6 col-md-3">';
 
 		// Users count.
-		$boxes[] = info_box(
-			$this->kbcore->users->count(),
-			line('CSK_ADMIN_USERS'),
-			'users',
-			admin_url('users'),
-			'green'
-		);
+		$users_count = $this->kbcore->users->count();
+		if ($users_count > 0)
+		{
+			$boxes[] = info_box(
+				$this->kbcore->users->count(),
+				__('CSK_ADMIN_USERS'),
+				'users',
+				admin_url('users'),
+				'green'
+			);
+		}
 
 		// Themes count.
-		$boxes[] = info_box(
-			count($this->theme->get_themes()),
-			line('CSK_ADMIN_THEMES'),
-			'paint-brush',
-			admin_url('themes'),
-			'orange'
-		);
+		$themes_count = count($this->theme->get_themes());
+		if ($themes_count > 0)
+		{
+			$boxes[] = info_box(
+				count($this->theme->get_themes()),
+				__('CSK_ADMIN_THEMES'),
+				'paint-brush',
+				admin_url('themes'),
+				'orange'
+			);
+		}
 
 		// Plugins count.
-		$boxes[] = info_box(
-			count($this->kbcore->plugins->list_plugins()),
-			line('CSK_ADMIN_PLUGINS'),
-			'plug',
-			admin_url('plugins'),
-			'red'
-		);
+		$plugins_count = count($this->kbcore->plugins->list_plugins());
+		if ($plugins_count > 0)
+		{
+			$boxes[] = info_box(
+				count($this->kbcore->plugins->list_plugins()),
+				__('CSK_ADMIN_PLUGINS'),
+				'plug',
+				admin_url('plugins'),
+				'red'
+			);
+		}
 
 		// Languages count.
-		$boxes[] = info_box(
-			count($this->config->item('languages')),
-			line('CSK_ADMIN_LANGUAGES'),
-			'globe',
-			admin_url('languages'),
-			'teal'
-		);
+		$langs_count = count($this->config->item('languages'));
+		if ($langs_count >= 1)
+		{
+			$boxes[] = info_box(
+				count($this->config->item('languages')),
+				__('CSK_ADMIN_LANGUAGES'),
+				'globe',
+				admin_url('languages'),
+				'teal'
+			);
+		}
 
 		$output .= implode('</div><div class="col-xs-6 col-sm-6 col-md-3">', $boxes);
 
