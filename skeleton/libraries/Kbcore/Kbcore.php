@@ -131,7 +131,11 @@ class Kbcore extends CI_Driver_Library
 			// Options already initialized.
 			if ('options' !== $driver && 'auth' !== $driver)
 			{
-				$this->{$driver}->initialize();
+				if (method_exists($this->{$driver}, 'initialize'))
+				{
+					$this->{$driver}->initialize();
+				}
+
 				$KB->{$driver} = $this->{$driver};
 			}
 		}
