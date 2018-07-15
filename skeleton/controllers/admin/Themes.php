@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	2.0.0
+ * @version 	2.1.6
  */
 class Themes extends Admin_Controller {
 
@@ -114,7 +114,7 @@ class Themes extends Admin_Controller {
 			$t['actions'] = array();
 
 			// Activation button.
-			if ($folder !== get_option('theme', 'default'))
+			if ($folder !== $this->theme->current_theme())
 			{
 				$t['actions'][] = html_tag('a', array(
 					'href' => esc_url(nonce_admin_url(
@@ -357,8 +357,9 @@ class Themes extends Admin_Controller {
 	 */
 	protected function _activate($folder)
 	{
-		$themes = $this->theme->get_themes(true);
-		$db_theme  = $this->kbcore->options->get('theme');
+		$themes   = $this->theme->get_themes(true);
+		$db_theme = $this->kbcore->options->get('theme');
+		$theme    = $themes[$db_theme->value];
 
 		// Successfully updated?
 		if (false !== $db_theme->update('value', $folder))

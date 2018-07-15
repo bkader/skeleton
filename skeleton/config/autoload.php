@@ -34,6 +34,7 @@
  * @license 	http://opensource.org/licenses/MIT	MIT License
  * @link 		https://goo.gl/wGXHO9
  * @since 		2.1.3
+ * @version 	2.1.6
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -44,7 +45,7 @@ $autoload['packages'] = array(KBPATH.'third_party/theme');
 $autoload['libraries'] = array('database', 'session', 'user_agent');
 
 // Auto-load Drivers.
-$autoload['drivers'] = array();
+$autoload['drivers'] = array('kbcore');
 
 // Auto-load Helper Files.
 $autoload['helper'] = array('url', 'html');

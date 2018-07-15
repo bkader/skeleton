@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	2.1.3
+ * @version 	2.1.6
  */
 class Theme {
 
@@ -392,7 +392,7 @@ EOT;
 
 		$this->uri = $this->CI->uri->segment_array();
 
-		$this->CI->config->load('theme', false, true);
+		$this->CI->config->load('theme');
 	}
 
 	// ------------------------------------------------------------------------
@@ -442,7 +442,7 @@ EOT;
 		$this->title_separator = ' '.trim($this->title_separator).' ';
 
 		// Overridden output compression.
-		$this->compress = $this->CI->config->item('compress', 'theme');
+		$this->compress = $this->CI->config->item('theme_compress');
 		is_bool($this->compress) OR $this->compress = (ENVIRONMENT !== 'development');
 
 		// Overridden cache lifetime.
@@ -825,7 +825,7 @@ EOT;
 	{
 		if ( ! isset($this->public_theme))
 		{
-			$this->public_theme = $this->CI->config->item('theme', 'theme');
+			$this->public_theme = $this->CI->config->item('theme');
 			$this->public_theme OR $this->public_theme = 'default';
 		}
 
@@ -844,7 +844,7 @@ EOT;
 	{
 		if ( ! isset($this->admin_theme))
 		{
-			$this->admin_theme = $this->CI->config->item('admin_theme', 'theme');
+			$this->admin_theme = $this->CI->config->item('admin_theme');
 			$this->admin_theme OR $this->admin_theme = 'osiris';
 		}
 
@@ -1676,7 +1676,7 @@ EOT;
 	 * @param 	string 	$handle 	before which handle the content should be output.
 	 * @return 	object
 	 */
-	public function add_inline($type = 'css', string $content = '', $handle = null)
+	public function add_inline($type = 'css', $content = '', $handle = null)
 	{
 		if ( ! in_array($type, array('css', 'js')) OR empty(trim($content)))
 		{
@@ -1706,7 +1706,7 @@ EOT;
 	 * @param 	string 	$handle 	before which handle the content should be output.
 	 * @return 	object
 	 */
-	public function add_inline_style(string $content = '', $handle = null)
+	public function add_inline_style($content = '', $handle = null)
 	{
 		return $this->add_inline('css', $content, $handle);
 	}
@@ -1720,7 +1720,7 @@ EOT;
 	 * @param 	string 	$handle 	before which handle the content should be output.
 	 * @return 	object
 	 */
-	public function add_inline_script(string $content = '', $handle = null)
+	public function add_inline_script($content = '', $handle = null)
 	{
 		return $this->add_inline('js', $content, $handle);
 	}
@@ -1960,7 +1960,7 @@ EOT;
 	 * @param 	string 	$class to add.
 	 * @return 	string
 	 */
-	public function html_class(string $class = null)
+	public function html_class($class = null)
 	{
 		$output = '';
 
@@ -1991,7 +1991,7 @@ EOT;
 	 * @param 	string 	$class 	class to add.
 	 * @return 	string
 	 */
-	public function body_class(string $class = null)
+	public function body_class($class = null)
 	{
 		$output = '';
 
@@ -2707,27 +2707,31 @@ EOT;
 			return;
 		}
 
-		empty($path) && $path = $this->apply_filters('theme_translation', $this->theme_path('language'));
+		if (empty($path))
+		{
+			$path = $this->apply_filters('theme_translation', $this->theme_path('language'));
+		}
 
 		if ( ! $path)
 		{
 			return;
 		}
 
-		// English version is required!
-		if (false === is_file($english_file = $path.'/english.php'))
-		{
-			show_error(__('theme_missing_english'));
-		}
-
+		// Prepare our array of language lines.
 		$full_lang = array();
-		
-		require_once($english_file);
 
-		if (isset($lang))
+		// We make sure the check the english version.
+		$english_file = $path.'/english.php';
+
+		if (false !== is_file($english_file))
 		{
-			$full_lang = $lang;
-			unset($lang);
+			require_once($english_file);
+
+			if (isset($lang))
+			{
+				$full_lang = array_replace_recursive($full_lang, $lang);
+				unset($lang);
+			}
 		}
 
 		if ('english' !== ($language = $this->language('folder')) 

@@ -255,6 +255,10 @@ if ( ! function_exists('get_config'))
 
 		if (empty($config))
 		{
+			// Skeleton configuration file.
+			$csk_path = KBPATH.'config/config.php';
+			is_file($csk_path) && require_once($csk_path);
+
 			$file_path = APPPATH.'config/config.php';
 			$found = FALSE;
 			if (file_exists($file_path))
@@ -436,9 +440,7 @@ if ( ! function_exists('show_error'))
 			$exit_status = 1; // EXIT_ERROR
 		}
 
-		global $CFG;
-
-		$_error =& load_class('Exceptions', 'core', $CFG);
+		$_error =& load_class('Exceptions', 'core');
 		echo $_error->show_error($heading, $message, 'error_general', $status_code);
 		exit($exit_status);
 	}
@@ -461,8 +463,7 @@ if ( ! function_exists('show_404'))
 	 */
 	function show_404($page = '', $log_error = TRUE)
 	{
-		global $CFG;
-		$_error =& load_class('Exceptions', 'core', $CFG);
+		$_error =& load_class('Exceptions', 'core');
 		$_error->show_404($page, $log_error);
 		exit(4); // EXIT_UNKNOWN_FILE
 	}

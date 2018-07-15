@@ -52,7 +52,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	2.1.0
+ * @version 	2.1.6
  */
 class KB_Controller extends CI_Controller {
 
@@ -88,9 +88,6 @@ class KB_Controller extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
-
-		// Load application main library.
-		$this->load->driver('kbcore');
 
 		/**
 		 * We make sure to always store $_POST data upon submission. This

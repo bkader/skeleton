@@ -47,8 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	2.1.3
+ * @version 	2.1.6
  */
-$lang['theme_missing_english']   = 'Le fichier "english.php" est requis afin de charger les traductions du thème.';
 $lang['theme_missing_file']      = 'Ce fichier de vue du thème actuel est introuvable: %s.';
 $lang['theme_missing_functions'] = 'Le fichier "functions.php" est introuvable pour le thème: %s';

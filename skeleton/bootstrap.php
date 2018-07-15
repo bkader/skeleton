@@ -138,7 +138,7 @@ Autoloader::add_classes(array(
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		2.0.0
- * @version 	2.1.2
+ * @version 	2.1.6
  */
 class KPlatform {
 	/**
@@ -149,7 +149,7 @@ class KPlatform {
 	public static function constants()
 	{
 		// We define useful Skeleton constants first.
-		define('KB_VERSION', '2.1.2');
+		define('KB_VERSION', '2.1.6');
 		define('DS', DIRECTORY_SEPARATOR);
 		define('EXT', '.php');
 

@@ -47,8 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	2.1.3
+ * @version 	2.1.6
  */
-$lang['theme_missing_english']   = 'الملف "english.php" مطلوب لتحميل ترجمات القالب.';
 $lang['theme_missing_file']      = 'تعذر العثور على ملف العرض التالي في أي مكان في مجلد القالب: %s.';
 $lang['theme_missing_functions'] = 'تعذر العثور على الملف "functions.php" للقالب الحالي.';

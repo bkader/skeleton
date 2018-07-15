@@ -55,7 +55,7 @@ require_once('CRUD_interface.php');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	2.0.0
+ * @version 	2.1.6
  */
 class Kbcore extends CI_Driver_Library
 {
@@ -76,6 +76,7 @@ class Kbcore extends CI_Driver_Library
 	 *
 	 * @since 	1.0.0
 	 * @since 	1.3.3 	Updated methods order to avoid loading different language (activities).
+	 * @since 	2.1.6 	The "_set_language" was moved to "KB_Lang" class.
 	 *
 	 * @access 	public
 	 * @return 	void
@@ -99,6 +100,9 @@ class Kbcore extends CI_Driver_Library
 			'variables',
 		);
 
+		// Load Skeleton required resources.
+		$this->_load_dependencies();
+
 		/**
 		 * Here we are making an instance of this driver global
 		 * so that themes, plugins or others can use it.
@@ -121,16 +125,17 @@ class Kbcore extends CI_Driver_Library
 		$KB->auth = $this->auth;
 		$this->ci->auth =& $this->auth;
 
-		// Store language in session and change config item.
-		$this->_set_language();
-
 		// Initialize library drivers.
 		foreach ($this->valid_drivers as $driver)
 		{
 			// Options already initialized.
 			if ('options' !== $driver && 'auth' !== $driver)
 			{
-				$this->{$driver}->initialize();
+				if (method_exists($this->{$driver}, 'initialize'))
+				{
+					$this->{$driver}->initialize();
+				}
+
 				$KB->{$driver} = $this->{$driver};
 			}
 		}
@@ -805,79 +810,6 @@ class Kbcore extends CI_Driver_Library
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Make sure to store language in session.
-	 *
-	 * @since 	1.0.0
-	 * @since 	1.3.3 	Rewritten to fix issue with languages list when only
-	 *         			a single language is available.
-	 * @since 	2.1.0 	Instead of listing all language, we only list available ones.
-	 *
-	 * @access 	private
-	 * @param 	none
-	 * @return 	void
-	 */
-	private function _set_language()
-	{
-		// Site available languages and their details.
-		$site_languages = $this->options->item('languages', array('english'));
-		$languages = $this->ci->lang->languages($site_languages);
-
-		// Hold the current and default language.
-		$current = $this->ci->session->language;
-		$default = $this->ci->config->item('language');
-
-		/**
-		 * In case the language is not stored in session or is not available;
-		 * we attempt to detect clients language. If available, we use it
-		 * instead of the default language.
-		 */
-		if ( ! $this->ci->session->language 
-			OR ! in_array($this->ci->session->language, $site_languages))
-		{
-			$code = substr($this->ci->input->server('HTTP_ACCEPT_LANGUAGE', true), 0, 2);
-
-			foreach ($languages as $folder => $lang)
-			{
-				/**
-				 * In order for the language to be used, the code must exists and
-				 * the language must be available.
-				 */
-				if ((isset($lang['code']) && $code === $lang['code']) 
-					&& in_array($folder, $site_languages))
-				{
-					$current = $folder;
-					break;
-				}
-
-				// Otherwise, fall-back to default language.
-				$current = $default;
-			}
-
-			// We set/update the session.
-			$this->ci->session->set_userdata('language', $current);
-		}
-
-		// We make sure to add "current_language".
-		$details = $languages[$current];
-		$this->ci->config->set_item('current_language', $details);
-		
-		// Format the locale to use with gettext, if we are using it.
-		if (true === $this->ci->lang->gettext)
-		{
-			gettext_instance()->setlocale($details['gettext']);
-
-			// We set our admin domain as default on the dashboard.
-			if ($this->ci->router->is_admin())
-			{
-				gettext_instance()->add_location(KBPATH.'language');
-				gettext_instance()->textdomain('admin');
-			}
-		}
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
 	 * Pass available site languages to theme views in order to use them
 	 * for language switch.
 	 * @access 	private
@@ -913,6 +845,29 @@ class Kbcore extends CI_Driver_Library
 			}
 		}
 		$this->ci->theme->set('site_languages', $langs, true);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Used to load required libraries and helpers.
+	 * @access	protected
+	 * @param 	none
+	 * @return 	void
+	 */
+	protected function _load_dependencies()
+	{
+		static $loaded;
+
+		if (true !== $loaded)
+		{
+			isset($this->ci->db) OR $this->ci->load->database();
+			class_exists('CI_Session', false) OR $this->ci->load->library('session');
+			class_exists('CI_User_agent', false) OR $this->ci->load->library('user_agent');
+			function_exists('site_url') OR $this->ci->load->helper('url');
+			function_exists('html_tag') OR $this->ci->load->helper('html');
+			$loaded = true;
+		}
 	}
 
 }
