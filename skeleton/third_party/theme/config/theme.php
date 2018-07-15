@@ -47,17 +47,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	2.1.3
+ * @version 	2.1.6
  */
 
 // Site default theme
-$config['theme']['theme'] = 'default';
+$config['theme_theme'] = 'default';
+
+// Dashboard default theme.
+// Not available for the moment.
+$config['theme_admin_theme'] = null;
 
 // Site title separator
-$config['theme']['title_separator'] = '&#8212;';
+$config['theme_title_separator'] = '&#8212;';
 
 // Minify HTML Output
-$config['theme']['compress'] = (defined('ENVIRONMENT') && ENVIRONMENT == 'production');
+$config['theme_compress'] = (defined('ENVIRONMENT') && ENVIRONMENT == 'production');
 
 // Cache life time
-$config['theme']['cache_lifetime'] = 0;
+$config['theme_cache_lifetime'] = 0;

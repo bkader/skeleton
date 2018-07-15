@@ -47,8 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link 		https://goo.gl/wGXHO9
  * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
- * @version 	2.1.3
+ * @version 	2.1.6
  */
-$lang['theme_missing_english']   = 'The "english.php" file is required in order to load theme translations.';
 $lang['theme_missing_file']      = 'The following view file could not be found anywhere in your theme folder: %s.';
 $lang['theme_missing_functions'] = 'Unable to locate the theme\'s "functions.php" file: %s.';
