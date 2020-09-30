@@ -8,7 +8,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
+ * Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,7 @@
  *
  * @package 	CodeIgniter
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
+ * @copyright	Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
  * @license 	https://opensource.org/licenses/MIT	MIT License
  * @link 		https://goo.gl/wGXHO9
  * @since 		1.0.0
@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @category 	Core Extension
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
  * @link 		https://goo.gl/wGXHO9
- * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @copyright	Copyright (c) 2020, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		1.0.0
  * @version 	2.1.1
  */
@@ -794,7 +794,7 @@ class Admin_Controller extends KB_Controller
  * @category 	Core Extension
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
  * @link 		https://goo.gl/wGXHO9
- * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @copyright 	Copyright (c) 2020, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		2.0.0
  * @version 	2.0.0
  */
@@ -812,7 +812,7 @@ class Content_Controller extends Admin_Controller {}
  * @category 	Core Extension
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
  * @link 		https://goo.gl/wGXHO9
- * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @copyright 	Copyright (c) 2020, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		2.0.0
  * @version 	2.0.0
  */
@@ -855,7 +855,7 @@ class Help_Controller extends Admin_Controller {
  * @category 	Core Extension
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
  * @link 		https://goo.gl/wGXHO9
- * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @copyright 	Copyright (c) 2020, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		2.0.0
  * @version 	2.0.0
  */
@@ -928,7 +928,7 @@ class Reports_Controller extends Admin_Controller {
  * @category 	Core Extension
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
  * @link 		https://goo.gl/wGXHO9
- * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @copyright 	Copyright (c) 2020, Kader Bouyakoub (https://goo.gl/wGXHO9)
  * @since 		2.0.0
  * @version 	2.0.0
  */

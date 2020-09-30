@@ -6,7 +6,7 @@ as a ready-to-use and application-free theme and plugins system.
 
 This content is released under the MIT License (MIT)
 
-Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
+Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
