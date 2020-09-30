@@ -31,7 +31,7 @@
  * @package 	CodeIgniter
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
  * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
- * @license 	http://opensource.org/licenses/MIT	MIT License
+ * @license 	https://opensource.org/licenses/MIT	MIT License
  * @link 		https://goo.gl/wGXHO9
  * @since 		1.3.3
  */

@@ -4,7 +4,7 @@
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @license 	http://opensource.org/licenses/MIT	MIT License
+ * @license 	https://opensource.org/licenses/MIT	MIT License
  * @link 		https://goo.gl/wGXHO9
  * @since 		1.3.3
  */

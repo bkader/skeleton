@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2018, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2019, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,8 +29,8 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2018, British Columbia Institute of Technology (http://bcit.ca/)
- * @license	http://opensource.org/licenses/MIT	MIT License
+ * @copyright	Copyright (c) 2014 - 2019, British Columbia Institute of Technology (https://bcit.ca/)
+ * @license	https://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 1.0.0
  * @filesource
@@ -142,7 +142,7 @@ abstract class CI_DB_driver {
 	 *
 	 * @var	int
 	 */
-	public $port			= '';
+	public $port			= NULL;
 
 	/**
 	 * Persistent connection flag
@@ -1308,19 +1308,13 @@ abstract class CI_DB_driver {
 	 */
 	public function list_fields($table)
 	{
-		// Is there a cached result?
-		if (isset($this->data_cache['field_names'][$table]))
-		{
-			return $this->data_cache['field_names'][$table];
-		}
-
 		if (FALSE === ($sql = $this->_list_columns($table)))
 		{
 			return ($this->db_debug) ? $this->display_error('db_unsupported_function') : FALSE;
 		}
 
 		$query = $this->query($sql);
-		$this->data_cache['field_names'][$table] = array();
+		$fields = array();
 
 		foreach ($query->result_array() as $row)
 		{
@@ -1342,10 +1336,10 @@ abstract class CI_DB_driver {
 				}
 			}
 
-			$this->data_cache['field_names'][$table][] = $row[$key];
+			$fields[] = $row[$key];
 		}
 
-		return $this->data_cache['field_names'][$table];
+		return $fields;
 	}
 
 	// --------------------------------------------------------------------
@@ -1840,6 +1834,7 @@ abstract class CI_DB_driver {
 		{
 			return $item;
 		}
+
 		// Convert tabs or multiple spaces into single spaces
 		$item = preg_replace('/\s+/', ' ', trim($item));
 
@@ -1870,6 +1865,7 @@ abstract class CI_DB_driver {
 		if (strpos($item, '.') !== FALSE)
 		{
 			$parts = explode('.', $item);
+
 			// Does the first segment of the exploded item match
 			// one of the aliases previously identified? If so,
 			// we have nothing more to do other than escape the item
@@ -1887,6 +1883,7 @@ abstract class CI_DB_driver {
 							$parts[$key] = $this->escape_identifiers($val);
 						}
 					}
+
 					$item = implode('.', $parts);
 				}
 
@@ -1922,10 +1919,11 @@ abstract class CI_DB_driver {
 				{
 					$i++;
 				}
+
 				// dbprefix may've already been applied, with or without the identifier escaped
 				$ec = '(?<ec>'.preg_quote(is_array($this->_escape_char) ? $this->_escape_char[0] : $this->_escape_char).')?';
 				isset($ec[0]) && $ec .= '?'; // Just in case someone has disabled escaping by forcing an empty escape character
-				
+
 				// Verify table prefix and replace if necessary
 				if ($this->swap_pre !== '' && preg_match('#^'.$ec.preg_quote($this->swap_pre).'#', $parts[$i]))
 				{

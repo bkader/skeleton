@@ -31,7 +31,7 @@
  * @package 	CodeIgniter
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
  * @copyright	Copyright (c) 2003, 2005, 2006, 2009 Danilo Segan <danilo@kvota.net>.
- * @license 	http://opensource.org/licenses/MIT	MIT License
+ * @license 	https://opensource.org/licenses/MIT	MIT License
  * @link 		https://goo.gl/wGXHO9
  * @since 		2.1.0
  */
