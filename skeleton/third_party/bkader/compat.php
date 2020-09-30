@@ -289,30 +289,7 @@ if ( ! function_exists('spl_autoload_register')) {
 	 * @var array
 	 */
 	$_cs_spl_autoloaders = array();
-	
-	/**
-	 * Autoloader compatibility callback.
-	 * @param 	string 	$classname 	Class to attempt autoloading.
-	 * @return 	void
-	 */
-	function __autoload($classname) {
-		global $_cs_spl_autoloaders;
-		foreach ($_cs_spl_autoloaders as $autoloader) {
-			// Avoid the extra warning if the autoloader isn't callable.
-			if ( ! is_callable($autoloader)) {
-				continue;
-			}
-			
-			call_user_func($autoloader, $classname);
-			
-			// If it has been autoloaded, stop processing.
-			if (class_exists($classname, false)) {
-				return;
-			}
-		}
-	}
 
-	// ------------------------------------------------------------------------
 	
 	/**
 	 * Registers a function to be autoloaded.
