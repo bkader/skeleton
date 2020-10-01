@@ -781,7 +781,7 @@ class Users extends Admin_Controller {
 	 * Add some buttons to dashboard subhead section.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @access 	protected

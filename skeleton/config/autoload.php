@@ -32,7 +32,7 @@
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
  * @copyright	Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
  * @license 	https://opensource.org/licenses/MIT	MIT License
- * @link 		https://goo.gl/wGXHO9
+ * @link 		http://bit.ly/KaderGhb
  * @since 		2.1.3
  * @version 	2.1.6
  */

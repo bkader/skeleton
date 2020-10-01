@@ -24,7 +24,7 @@ do_action('admin_page_footer');
 		 * @since 	1.3.3
 		 * This line can be removed/overridden using the "admin_footer_text".
 		 */
-		$thankyou = sprintf(__('CSK_ADMIN_FOOTER_TEXT'), 'https://goo.gl/jb4nQC');
+		$thankyou = sprintf(__('CSK_ADMIN_FOOTER_TEXT'), 'http://bit.ly/CiSkeleton');
 		$thankyou = apply_filters('admin_footer_text', $thankyou);
 		if ( ! empty($thankyou))
 		{

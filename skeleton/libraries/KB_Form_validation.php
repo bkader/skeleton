@@ -32,7 +32,7 @@
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
  * @copyright	Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
  * @license 	https://opensource.org/licenses/MIT	MIT License
- * @link 		https://goo.gl/wGXHO9
+ * @link 		http://bit.ly/KaderGhb
  * @since 		Version 1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -46,8 +46,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @subpackage 	Skeleton
  * @category 	Libraries
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @link 		https://goo.gl/wGXHO9
- * @copyright	Copyright (c) 2020, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @link 		http://bit.ly/KaderGhb
+ * @copyright	Copyright (c) 2020, Kader Bouyakoub (http://bit.ly/KaderGhb)
  * @since 		Version 1.0.0
  * @version 	1.3.3
  */
@@ -171,7 +171,7 @@ class KB_Form_validation extends CI_Form_validation
 	 * Method for making sure the user trying to login is an admin.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @access 	public

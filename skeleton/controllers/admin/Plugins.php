@@ -32,7 +32,7 @@
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
  * @copyright	Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
  * @license 	https://opensource.org/licenses/MIT	MIT License
- * @link 		https://goo.gl/wGXHO9
+ * @link 		http://bit.ly/KaderGhb
  * @since 		2.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -47,8 +47,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @subpackage 	Skeleton
  * @category 	Controllers
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @link 		https://goo.gl/wGXHO9
- * @copyright 	Copyright (c) 2020, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @link 		http://bit.ly/KaderGhb
+ * @copyright 	Copyright (c) 2020, Kader Bouyakoub (http://bit.ly/KaderGhb)
  * @since 		2.0.0
  * @version 	2.1.0
  */
@@ -77,7 +77,7 @@ class Plugins extends Admin_Controller
 		// Page icon, title and help URL.
 		$this->data['page_icon']  = 'plug';
 		$this->data['page_title'] = __('CSK_PLUGINS_PLUGINS');
-		$this->data['page_help']  = 'https://goo.gl/cvLaCz';
+		$this->data['page_help']  = 'http://bit.ly/CSKPluginsDev';
 	}
 
 	// ------------------------------------------------------------------------
@@ -367,7 +367,7 @@ class Plugins extends Admin_Controller
 	 * Method for installing plugins from future server or upload ZIP plugins.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.3.4
 	 *
 	 * @access 	public
@@ -393,7 +393,7 @@ class Plugins extends Admin_Controller
 	 * Method for uploading plugins using ZIP archives.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.3.4
 	 *
 	 * @access 	public
@@ -605,7 +605,7 @@ class Plugins extends Admin_Controller
 	 * Add dashboard subhead section.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @access 	protected

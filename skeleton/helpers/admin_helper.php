@@ -32,7 +32,7 @@
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
  * @copyright	Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
  * @license 	https://opensource.org/licenses/MIT	MIT License
- * @link 		https://goo.gl/wGXHO9
+ * @link 		http://bit.ly/KaderGhb
  * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -82,7 +82,7 @@ if ( ! function_exists('fa_icon'))
 	 * Function for generating FontAwesome icons.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.4.0
 	 *
 	 * @access 	public
@@ -105,7 +105,7 @@ if ( ! function_exists('submit_button'))
 	 * Function display a submit button.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @param 	string 	$text
@@ -229,7 +229,7 @@ if ( ! function_exists('_dashboard_buttons'))
 	 * Function for returning an array of dashboard available buttons colors.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @param 	none

@@ -32,7 +32,7 @@
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
  * @copyright	Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
  * @license 	https://opensource.org/licenses/MIT	MIT License
- * @link 		https://goo.gl/wGXHO9
+ * @link 		http://bit.ly/KaderGhb
  * @since 		1.4.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -47,8 +47,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @subpackage 	Skeleton
  * @category 	Core Extension
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @link 		https://goo.gl/wGXHO9
- * @copyright 	Copyright (c) 2020, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @link 		http://bit.ly/KaderGhb
+ * @copyright 	Copyright (c) 2020, Kader Bouyakoub (http://bit.ly/KaderGhb)
  * @since 		1.4.0
  * @version 	2.0.0
  */
@@ -61,7 +61,7 @@ class KB_Security extends CI_Security {
 	 * user session id and window of time.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.4.0
 	 *
 	 * @access 	public
@@ -96,7 +96,7 @@ class KB_Security extends CI_Security {
 	 * the UID and $action remain the same, the independent variable is time.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.4.0
 	 *
 	 * @access 	public
@@ -139,7 +139,7 @@ class KB_Security extends CI_Security {
 	 * A nonce has a lifespan of two ticks, it may be updated in its second tick.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.4.0
 	 *
 	 * @access 	public
@@ -160,7 +160,7 @@ class KB_Security extends CI_Security {
 	 * Method for hashing the given string and return the nonce.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.4.0
 	 *
 	 * @access 	protected
@@ -187,7 +187,7 @@ if ( ! function_exists('sanitize'))
 	 * Function for sanitizing a string.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.4.0
 	 *
 	 * @param 	string 	$string 	The string to sanitize.
@@ -216,7 +216,7 @@ if ( ! function_exists('create_nonce'))
 	 * used with directly using the class method.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.4.0
 	 *
 	 * @param 	mixed
@@ -238,7 +238,7 @@ if ( ! function_exists('verify_nonce'))
 	 * Function that uses KB_Security::verify_nonce.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.4.0
 	 *
 	 * @param 	string

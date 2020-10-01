@@ -1,6 +1,6 @@
 /*!
  * CodeIgniter Skeleton - Plugins Module (https://github.com/bkader/skeleton)
- * Copyright 2018 Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * Copyright 2018 Kader Bouyakoub (http://bit.ly/KaderGhb)
  * Licensed under MIT (https://github.com/bkader/skeleton/blob/develop/LICENSE.md)
  */
 (function ($, window, document, undefined) {

@@ -32,7 +32,7 @@
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
  * @copyright	Copyright (c) 2003, 2005, 2006, 2009 Danilo Segan <danilo@kvota.net>.
  * @license 	https://opensource.org/licenses/MIT	MIT License
- * @link 		https://goo.gl/wGXHO9
+ * @link 		http://bit.ly/KaderGhb
  * @since 		2.1.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -47,8 +47,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @subpackage 	Skeleton
  * @category 	Third Party
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @link 		https://goo.gl/wGXHO9
- * @copyright 	Copyright (c) 2020, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @link 		http://bit.ly/KaderGhb
+ * @copyright 	Copyright (c) 2020, Kader Bouyakoub (http://bit.ly/KaderGhb)
  * @since 		2.1.0
  * @version 	2.1.0
  */

@@ -32,7 +32,7 @@
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
  * @copyright	Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
  * @license 	https://opensource.org/licenses/MIT	MIT License
- * @link 		https://goo.gl/wGXHO9
+ * @link 		http://bit.ly/KaderGhb
  * @since 		2.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -470,7 +470,7 @@ if ( ! function_exists('_deep_map')) {
 	 * Maps a function to all non-iterable elements of an array or an object.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @param 	mixed 		$value
@@ -646,7 +646,7 @@ if ( ! function_exists('json_read_file')) {
 	 * Function for reading JSON encoded files content.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @param 	string 	$path 	The path to the file to read.
@@ -683,7 +683,7 @@ if ( ! function_exists('json_write_file')) {
 	 * Function writing Arrays/Objects into a json file.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @param 	string 	$path 		The path to the file.

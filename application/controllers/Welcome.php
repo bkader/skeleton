@@ -12,8 +12,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @subpackage 	Skeleton
  * @category 	Controllers
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @link 		https://goo.gl/wGXHO9
- * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @link 		http://bit.ly/KaderGhb
+ * @copyright	Copyright (c) 2018, Kader Bouyakoub (http://bit.ly/KaderGhb)
  * @since 		Version 1.0.0
  * @version 	1.0.0
  */

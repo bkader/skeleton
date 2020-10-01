@@ -32,7 +32,7 @@
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
  * @copyright	Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
  * @license 	https://opensource.org/licenses/MIT	MIT License
- * @link 		https://goo.gl/wGXHO9
+ * @link 		http://bit.ly/KaderGhb
  * @since 		2.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -44,7 +44,7 @@ if ( ! function_exists('sanitize_key')) {
 	 * Sanitizes a string for using as internal identifiers.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @param 	string 
@@ -84,7 +84,7 @@ if ( ! function_exists('_sanitize_text_fields')) {
 	 * input or from the database.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @param 	string 	$str 			The string to sanitize.

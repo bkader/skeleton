@@ -32,7 +32,7 @@
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
  * @copyright	Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
  * @license 	https://opensource.org/licenses/MIT	MIT License
- * @link 		https://goo.gl/wGXHO9
+ * @link 		http://bit.ly/KaderGhb
  * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -52,8 +52,8 @@ require_once('CRUD_interface.php');
  * @subpackage 	Skeleton
  * @category 	Libraries
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @link 		https://goo.gl/wGXHO9
- * @copyright 	Copyright (c) 2020, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @link 		http://bit.ly/KaderGhb
+ * @copyright 	Copyright (c) 2020, Kader Bouyakoub (http://bit.ly/KaderGhb)
  * @since 		1.0.0
  * @version 	2.1.6
  */
@@ -719,7 +719,7 @@ class Kbcore extends CI_Driver_Library
 	 * Method for checking for new releases of CodeIgniter SKeleton on Github.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.4.0
 	 *
 	 * @access 	public

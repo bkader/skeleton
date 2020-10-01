@@ -32,7 +32,7 @@
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
  * @copyright	Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
  * @license 	https://opensource.org/licenses/MIT	MIT License
- * @link 		https://goo.gl/wGXHO9
+ * @link 		http://bit.ly/KaderGhb
  * @since 		2.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -48,7 +48,7 @@ if ( ! function_exists('is_xml')) {
 	 * Checks whether the given string is a valid XML.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @param 	string
@@ -78,7 +78,7 @@ if ( ! function_exists('is_html')) {
 	 * Checks whether the given string is HTML.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 * 
 	 * @param 	string
@@ -100,7 +100,7 @@ if ( ! function_exists('is_json')) {
 	 * Checks if the given string is JSON encoded.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.0.0
 	 *
 	 * @param 	string
@@ -124,7 +124,7 @@ if ( ! function_exists('maybe_json_encode'))
 	 * Turns arrays and objects into json encoded strings
 	 * @param   mixed   $value
 	 * @author  Kader Bouyakoub <bkader[at]mail[dot]com>
-	 * @link    https://goo.gl/wGXHO9
+	 * @link    http://bit.ly/KaderGhb
 	 * @return  string
 	 */
 	function maybe_json_encode($value, $options = 0, $depth = 512) {
@@ -144,7 +144,7 @@ if ( ! function_exists('maybe_json_decode'))
 	 * Turns a json encoded string into its true nature
 	 * @param   string  $json
 	 * @author  Kader Bouyakoub <bkader[at]mail[dot]com>
-	 * @link    https://goo.gl/wGXHO9
+	 * @link    http://bit.ly/KaderGhb
 	 * @return  array
 	 */
 	function maybe_json_decode($json, $assoc = false, $depth = 512, $options = 0) {
@@ -164,7 +164,7 @@ if ( ! function_exists('is_serialized')) {
 	 * Checks whether the given string is a serialized.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.0.0
 	 *
 	 * @param 	string
@@ -185,7 +185,7 @@ if ( ! function_exists('maybe_serialize')) {
 	 * Turns Array an Objects into serialized strings;
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.0.0
 	 *
 	 * @param 	mixed 	$value
@@ -206,7 +206,7 @@ if ( ! function_exists('maybe_unserialize')) {
 	 * Turns a serialized string into its nature.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.0.0
 	 *
 	 * @param 	string 	$string
@@ -229,7 +229,7 @@ if ( ! function_exists('str2bool')) {
 	 * @param   string
 	 * @param   boolean
 	 * @author  Kader Bouyakoub <bkader[at]mail[dot]com>
-	 * @link    https://goo.gl/wGXHO9
+	 * @link    http://bit.ly/KaderGhb
 	 * @return  boolean
 	 */
 	function str2bool($str, $strict = false) {
@@ -278,7 +278,7 @@ if ( ! function_exists('is_str2bool')) {
 	 * representation of a boolean.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @param 	string 	$str
@@ -578,7 +578,7 @@ if ( ! function_exists('strip_all_tags')) {
 	 * Properly strip all HTML tags including script and style.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @param 	string 	$string 	The string containing HTML.
@@ -720,7 +720,7 @@ if ( ! function_exists('html_excerpt')) {
 	 * given string, even if HTML.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @param 	string 	$str 	 	The string to generate excerpt from.
@@ -754,7 +754,7 @@ if ( ! function_exists('html_wexcerpt')) {
 	 * it uses words count instead of characters count.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @param 	string 	$str 	The string to generate excerpt from.
@@ -884,7 +884,7 @@ if ( ! function_exists('url_title')) {
 	 * a "separator" string as the word separator.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @param 	string 	$str

@@ -58,13 +58,13 @@ add_action('admin_index_footer', function() {
 	$content = <<<EOT
 <pre style="background:#f1f1f1;color:#000">{  
   <span style="color:#c03030">"name"</span>:<span style="color:#c03030">"Media Manager"</span>,
-  <span style="color:#c03030">"module_uri"</span>:<span style="color:#c03030">"https://goo.gl/G26BTB"</span>,
+  <span style="color:#c03030">"module_uri"</span>:<span style="color:#c03030">"http://bit.ly/CSKMediaManager"</span>,
   <span style="color:#c03030">"description"</span>:<span style="color:#c03030">"The Media Manager is a tool for uploading or deleting media on your CodeIgniter Skeleton application. Tools included are: upload new file(s), updating file(s) details and deleting file(s)."</span>,
   <span style="color:#c03030">"version"</span>:<span style="color:#c03030">"1.0.0"</span>,
   <span style="color:#c03030">"license"</span>:<span style="color:#c03030">"MIT"</span>,
   <span style="color:#c03030">"license_uri"</span>:<span style="color:#c03030">"http://opensource.org/licenses/MIT"</span>,
   <span style="color:#c03030">"author"</span>:<span style="color:#c03030">"Kader Bouyakoub"</span>,
-  <span style="color:#c03030">"author_uri"</span>:<span style="color:#c03030">"https://goo.gl/wGXHO9"</span>,
+  <span style="color:#c03030">"author_uri"</span>:<span style="color:#c03030">"http://bit.ly/KaderGhb"</span>,
   <span style="color:#c03030">"author_email"</span>:<span style="color:#c03030">"bkade@mail.com"</span>,
   <span style="color:#c03030">"tags"</span>:<span style="color:#c03030">"csk, codeigniter, skeleton, media, library"</span>,
   <span style="color:#c03030">"translations"</span>:{  

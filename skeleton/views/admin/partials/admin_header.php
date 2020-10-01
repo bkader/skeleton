@@ -205,7 +205,7 @@
 			'<div class="dropdown-menu">';
 
 			// Skeleton documentation.
-			$csk_wiki_url = apply_filters('csk_wiki_url', 'https://goo.gl/WuLdkt');
+			$csk_wiki_url = apply_filters('csk_wiki_url', 'http://bit.ly/2o3Hk8H');
 			if ( ! empty($csk_wiki_url)) {
 				echo html_tag('a', array(
 					'href'   => $csk_wiki_url,
@@ -395,7 +395,7 @@
  * @since 	2.0.0
  */
 if (has_action('admin_subhead') 
-	OR true === $module['has_help'] 
+	OR (isset($module['has_help']) && true === $module['has_help']) 
 	OR isset($page_help)) {
 
 	// Opening tags.
@@ -416,7 +416,7 @@ if (has_action('admin_subhead')
 		 */
 		echo '<div class="my-2 my-lg-0">';
 		
-		if (true === $module['has_help']) {
+		if (isset($module['has_help']) && true === $module['has_help']) {
 			echo html_tag('a', array(
 				'href'   => (true === $module['contexts']['help'] ? admin_url('help/'.$module['folder']) : $module['contexts']['help']),
 				'target' => '_blank',
@@ -430,7 +430,7 @@ if (has_action('admin_subhead')
 			), fa_icon('question-circle').__('CSK_BTN_HELP'));
 		}
 
-		if (true === $module['has_settings']) {
+		if (isset($module['has_settings']) && true === $module['has_settings']) {
 			echo html_tag('a', array(
 				'href'  => admin_url('settings/'.$module['folder']),
 				'class' => 'btn btn-white btn-sm btn-icon ml-2',
