@@ -4,8 +4,8 @@
  *
  * @package 	CodeIgniter
  * @subpackage 	Skeleton
- * @license 	http://opensource.org/licenses/MIT	MIT License
- * @link 		https://goo.gl/wGXHO9
+ * @license 	https://opensource.org/licenses/MIT	MIT License
+ * @link 		http://bit.ly/KaderGhb
  * @since 		1.3.3
  */
 defined('BASEPATH') OR exit('No direct script access allowed');

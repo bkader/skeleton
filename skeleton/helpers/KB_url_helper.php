@@ -8,7 +8,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
+ * Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,9 +30,9 @@
  *
  * @package 	CodeIgniter
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
- * @license 	http://opensource.org/licenses/MIT	MIT License
- * @link 		https://goo.gl/wGXHO9
+ * @copyright	Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
+ * @license 	https://opensource.org/licenses/MIT	MIT License
+ * @link 		http://bit.ly/KaderGhb
  * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -46,8 +46,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @subpackage 	Skeleton
  * @category 	Helpers
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @link 		https://goo.gl/wGXHO9
- * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @link 		http://bit.ly/KaderGhb
+ * @copyright	Copyright (c) 2020, Kader Bouyakoub (http://bit.ly/KaderGhb)
  * @since 		1.0.0
  * @version 	2.1.1
  */
@@ -315,7 +315,7 @@ if ( ! function_exists('nonce_url'))
 	 * Function for generating site URLs with appended security nonce.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 *
 	 * @since 	1.5.0
 	 *
@@ -375,7 +375,7 @@ if ( ! function_exists('nonce_anchor'))
 	 * URL with security nonce.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 *
 	 *  @since 	1.0.0
 	 *  @since 	1.4.0 	Rewritten because the "nonce_url" was rewritten as well.
@@ -526,7 +526,7 @@ if ( ! function_exists('nonce_admin_url'))
 	 * Function for creating nonce URLs for the dashboard area.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * 
 	 * @since 	1.5.0
 	 * @since 	2.0.1 	Added automatic context guess.
@@ -591,7 +591,7 @@ if ( ! function_exists('nonce_admin_anchor'))
 	 * Function for creating secured anchor tags for the dashboard area.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * 
 	 * @since 	1.5.0
 	 * @since 	2.0.1 	Added automatic context guess.
@@ -700,7 +700,7 @@ if ( ! function_exists('nonce_process_url'))
 	 * Function for creating nonce URLs for the process context.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * 
 	 * @since 	1.5.0
 	 *
@@ -740,7 +740,7 @@ if ( ! function_exists('nonce_process_anchor'))
 	 * Function for create nonce process anchor.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * 
 	 * @since 	1.5.0
 	 *
@@ -823,7 +823,7 @@ if ( ! function_exists('nonce_ajax_url'))
 	 * Function for creating nonce URLs for Ajax context.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * 
 	 * @since 	1.5.0
 	 *
@@ -863,7 +863,7 @@ if ( ! function_exists('nonce_ajax_anchor'))
 	 * Function for creating nonce anchors for the AJAX context.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * 
 	 * @since 	1.5.0
 	 *
@@ -905,7 +905,7 @@ if ( ! function_exists('check_nonce_url'))
 	 * Function for checking the selected URL noncety.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * 
 	 * @since 	1.5.0
 	 *
@@ -956,7 +956,7 @@ if ( ! function_exists('module_url'))
 	 * Returns the URL to the public modules folder.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.5.0
 	 *
 	 * @param 	string

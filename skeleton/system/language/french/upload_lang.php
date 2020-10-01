@@ -2,8 +2,8 @@
 /**
  * System messages translation for CodeIgniter(tm)
  * @author	CodeIgniter community
- * @copyright	Copyright (c) 2014 - 2018, British Columbia Institute of Technology (http://bcit.ca/)
- * @license	http://opensource.org/licenses/MIT	MIT License
+ * @copyright	Copyright (c) 2014 - 2019, British Columbia Institute of Technology (http://bcit.ca/)
+ * @license	https://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  */
 defined('BASEPATH') OR exit('No direct script access allowed');

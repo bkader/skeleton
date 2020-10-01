@@ -8,7 +8,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
+ * Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,9 +30,9 @@
  *
  * @package 	CodeIgniter
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
- * @license 	http://opensource.org/licenses/MIT	MIT License
- * @link 		https://goo.gl/wGXHO9
+ * @copyright	Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
+ * @license 	https://opensource.org/licenses/MIT	MIT License
+ * @link 		http://bit.ly/KaderGhb
  * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -46,8 +46,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @subpackage 	Skeleton
  * @category 	Core Extension
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @link 		https://goo.gl/wGXHO9
- * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @link 		http://bit.ly/KaderGhb
+ * @copyright	Copyright (c) 2020, Kader Bouyakoub (http://bit.ly/KaderGhb)
  * @since 		1.0.0
  * @version 	2.1.1
  */
@@ -244,7 +244,7 @@ class Admin_Controller extends KB_Controller
 	 * Method for adding JS global before anything else.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.4.0
 	 *
 	 * @access 	public
@@ -295,7 +295,7 @@ class Admin_Controller extends KB_Controller
 	 * Method for adding extra stuff to admin output before closing </head> tag.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.3.3
 	 *
 	 * @since 	1.4.0 	Left only iE9 support and other things moved to "csk_globals".
@@ -450,7 +450,7 @@ class Admin_Controller extends KB_Controller
 	 * Method to enqueue Dropzone files with optional LazyLoad use.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.4.0
 	 * @since 	2.0.0 	Dropped the LazyLoad. THe dashboard has built-in images lazy loading.
 	 *
@@ -476,7 +476,7 @@ class Admin_Controller extends KB_Controller
 	 * Method to enqueue Garlic.js file.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.4.0
 	 *
 	 * @copyright 	Guillaume Potier (https://github.com/guillaumepotier)
@@ -500,7 +500,7 @@ class Admin_Controller extends KB_Controller
 	 * Method to enqueue handlebars file.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.4.0
 	 *
 	 * @copyright 	Yehuda Katz (https://github.com/wycats)
@@ -528,7 +528,7 @@ class Admin_Controller extends KB_Controller
 	 * Method to enqueue highlight file.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @copyright 	Ivan Sagalaev (https://github.com/isagalaev)
@@ -553,7 +553,7 @@ class Admin_Controller extends KB_Controller
 	 * Method to enqueue jQuery UI assets with option use of jQuery TouchPunch.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.4.0
 	 *
 	 * @copyright 	jQuery (https://github.com/jquery)
@@ -584,7 +584,7 @@ class Admin_Controller extends KB_Controller
 	 * Method to enqueue jQuery validate plugin.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.5.0
 	 *
 	 * @copyright 	jquery-validation (https://github.com/jquery-validation)
@@ -620,7 +620,7 @@ class Admin_Controller extends KB_Controller
 	 * Method for loading jQuery sprintf plugin.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @copyright 	Carl Fürstenberg (https://github.com/azatoth)
@@ -648,7 +648,7 @@ class Admin_Controller extends KB_Controller
 	 * Method to enqueue Select2 files with optional Bootstrap theme.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.4.0
 	 *
 	 * @copyright 	Select2 (https://github.com/select2)
@@ -687,7 +687,7 @@ class Admin_Controller extends KB_Controller
 	 * Method for queuing Summernote JS.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.4.0
 	 *
 	 * @copyright 	Summernote (https://github.com/summernote)
@@ -722,7 +722,7 @@ class Admin_Controller extends KB_Controller
 	 * Method to enqueue ZoomJS files.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.4.0
 	 *
 	 * @copyright 	fat (https://github.com/fat)
@@ -747,7 +747,7 @@ class Admin_Controller extends KB_Controller
 	 * Method for creating a back to modules main page.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @access 	public
@@ -793,8 +793,8 @@ class Admin_Controller extends KB_Controller
  * @subpackage 	Skeleton
  * @category 	Core Extension
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @link 		https://goo.gl/wGXHO9
- * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @link 		http://bit.ly/KaderGhb
+ * @copyright 	Copyright (c) 2020, Kader Bouyakoub (http://bit.ly/KaderGhb)
  * @since 		2.0.0
  * @version 	2.0.0
  */
@@ -811,8 +811,8 @@ class Content_Controller extends Admin_Controller {}
  * @subpackage 	Skeleton
  * @category 	Core Extension
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @link 		https://goo.gl/wGXHO9
- * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @link 		http://bit.ly/KaderGhb
+ * @copyright 	Copyright (c) 2020, Kader Bouyakoub (http://bit.ly/KaderGhb)
  * @since 		2.0.0
  * @version 	2.0.0
  */
@@ -824,7 +824,7 @@ class Help_Controller extends Admin_Controller {
 	 * Load needed resources only.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @access 	public
@@ -838,7 +838,7 @@ class Help_Controller extends Admin_Controller {
 		
 		$this->data['page_icon']  = 'question-circle';
 		$this->data['page_title'] = __('CSK_ADMIN_HELP');
-		$this->data['page_help']  = 'https://goo.gl/dAChV1';
+		$this->data['page_help']  = 'http://bit.ly/CSKContextHelp';
 	}
 
 }
@@ -854,8 +854,8 @@ class Help_Controller extends Admin_Controller {
  * @subpackage 	Skeleton
  * @category 	Core Extension
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @link 		https://goo.gl/wGXHO9
- * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @link 		http://bit.ly/KaderGhb
+ * @copyright 	Copyright (c) 2020, Kader Bouyakoub (http://bit.ly/KaderGhb)
  * @since 		2.0.0
  * @version 	2.0.0
  */
@@ -867,7 +867,7 @@ class Reports_Controller extends Admin_Controller {
 	 * Load needed resources only.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @access 	public
@@ -885,7 +885,7 @@ class Reports_Controller extends Admin_Controller {
 		
 		$this->data['page_icon']  = 'bar-chart';
 		$this->data['page_title'] = __('CSK_ADMIN_REPORTS');
-		$this->data['page_help']  = 'https://goo.gl/L3cXUb';
+		$this->data['page_help']  = 'http://bit.ly/CSKContextReports';
 	}
 
 	// ------------------------------------------------------------------------
@@ -896,7 +896,7 @@ class Reports_Controller extends Admin_Controller {
 	 * Add some JS lines.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @access 	public
@@ -927,8 +927,8 @@ class Reports_Controller extends Admin_Controller {
  * @subpackage 	Skeleton
  * @category 	Core Extension
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @link 		https://goo.gl/wGXHO9
- * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @link 		http://bit.ly/KaderGhb
+ * @copyright 	Copyright (c) 2020, Kader Bouyakoub (http://bit.ly/KaderGhb)
  * @since 		2.0.0
  * @version 	2.0.0
  */
@@ -946,7 +946,7 @@ class Settings_Controller extends Admin_Controller {
 	 * Load needed resources only.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @access 	public
@@ -962,7 +962,7 @@ class Settings_Controller extends Admin_Controller {
 
 		$this->data['page_icon']  = 'sliders';
 		$this->data['page_title'] = __('CSK_BTN_SETTINGS');
-		$this->data['page_help']  = 'https://goo.gl/H9giKR';
+		$this->data['page_help']  = 'http://bit.ly/CSKContextSettings';
 	}
 
 	// ------------------------------------------------------------------------
@@ -973,7 +973,7 @@ class Settings_Controller extends Admin_Controller {
 	 * Method for preparing all settings data and their form validation rules.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.0.0
 	 * @since 	1.3.3 	Added the base controller setting handler.
 	 * @since 	2.0.0 	Moved to Settings_Controller class.
@@ -1153,7 +1153,7 @@ class Settings_Controller extends Admin_Controller {
 	 * Method that handles automatically saving settings.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @access 	protected

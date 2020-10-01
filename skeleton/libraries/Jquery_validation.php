@@ -8,7 +8,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
+ * Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,9 +30,9 @@
  *
  * @package 	CodeIgniter
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
- * @license 	http://opensource.org/licenses/MIT	MIT License
- * @link 		https://goo.gl/wGXHO9
+ * @copyright	Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
+ * @license 	https://opensource.org/licenses/MIT	MIT License
+ * @link 		http://bit.ly/KaderGhb
  * @since 		1.5.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -44,8 +44,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @subpackage 	Skeleton
  * @category 	Libraries
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @link 		https://goo.gl/wGXHO9
- * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @link 		http://bit.ly/KaderGhb
+ * @copyright 	Copyright (c) 2020, Kader Bouyakoub (http://bit.ly/KaderGhb)
  * @since 		1.5.0
  * @version 	2.0.0
  */
@@ -109,7 +109,7 @@ class Jquery_validation {
 	 * Simply so we can hold the CI object.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.5.0
 	 *
 	 * @access 	public
@@ -130,7 +130,7 @@ class Jquery_validation {
 	 * for later use.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.5.0
 	 *
 	 * @access 	public
@@ -152,7 +152,7 @@ class Jquery_validation {
 	 * for CodeIgniter form validation.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.5.0
 	 *
 	 * @access 	public
@@ -202,7 +202,7 @@ class Jquery_validation {
 	 * validation plugin.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.5.0
 	 *
 	 * @access 	public
@@ -243,7 +243,7 @@ class Jquery_validation {
 	 * Method for generating validation messages if none were provided.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.5.0
 	 *
 	 * @access 	private
@@ -301,7 +301,7 @@ class Jquery_validation {
 	 * Method for checking whether the CI rule has an equivalent for jQuery.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.5.0
 	 *
 	 * @access 	private
@@ -321,7 +321,7 @@ class Jquery_validation {
 	 * Method for returning the jQuery rule from CI rule.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.5.0
 	 *
 	 * @access 	private
@@ -341,7 +341,7 @@ class Jquery_validation {
 	 * Method for returning the CI rule from jQuery rule.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.5.0
 	 *
 	 * @access 	private
@@ -361,7 +361,7 @@ class Jquery_validation {
 	 * Method for getting the field name from the rules array
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.5.0
 	 *
 	 * @access 	private
@@ -404,7 +404,7 @@ class Jquery_validation {
 	 * Method for returning the custom field error.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.5.0
 	 *
 	 * @access 	private
@@ -448,7 +448,7 @@ class Jquery_validation {
 	 * Method for building the final jQuery validation string.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.5.0
 	 *
 	 * @access 	private

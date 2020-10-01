@@ -8,7 +8,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
+ * Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,9 +30,9 @@
  *
  * @package 	CodeIgniter
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
- * @license 	http://opensource.org/licenses/MIT	MIT License
- * @link 		https://goo.gl/wGXHO9
+ * @copyright	Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
+ * @license 	https://opensource.org/licenses/MIT	MIT License
+ * @link 		http://bit.ly/KaderGhb
  * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -47,8 +47,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @subpackage 	Skeleton
  * @category 	Modules\Controllers
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @link 		https://goo.gl/wGXHO9
- * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @link 		http://bit.ly/KaderGhb
+ * @copyright	Copyright (c) 2020, Kader Bouyakoub (http://bit.ly/KaderGhb)
  * @since 		1.0.0
  * @version 	2.0.0
  */
@@ -61,7 +61,7 @@ class Users extends KB_Controller {
 	 * only for already logged-in users.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.0.0
 	 *
 	 * @access 	public
@@ -188,7 +188,7 @@ class Users extends KB_Controller {
 	 * Method kept as a backup only, it does absolutely nothing.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.0.0
 	 *
 	 * @access 	public
@@ -207,7 +207,7 @@ class Users extends KB_Controller {
 	 * Method for users registration on the site.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.0.0
 	 *
 	 * @access 	public
@@ -332,7 +332,7 @@ class Users extends KB_Controller {
 	 * Method for activating a user by the given activation code.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @access 	public
@@ -370,7 +370,7 @@ class Users extends KB_Controller {
 	 * Method for resend account activation links.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.0.0
 	 *
 	 * @access 	public
@@ -450,7 +450,7 @@ class Users extends KB_Controller {
 	 * Method for restoring a previously soft-deleted account.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.0.0
 	 *
 	 * @access 	public
@@ -535,7 +535,7 @@ class Users extends KB_Controller {
 	 * Method for site's members login.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.0.0
 	 *
 	 * @access 	public
@@ -637,7 +637,7 @@ class Users extends KB_Controller {
 	 * Method for logging out already logged in users.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.0.0
 	 *
 	 * @access 	public
@@ -664,7 +664,7 @@ class Users extends KB_Controller {
 	 * Method for requesting a password reset link.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.0.0
 	 *
 	 * @access 	public
@@ -738,7 +738,7 @@ class Users extends KB_Controller {
 	 * Method for resetting account's password.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	1.0.0
 	 *
 	 * @access 	public

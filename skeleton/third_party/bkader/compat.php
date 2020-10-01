@@ -8,7 +8,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
+ * Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,9 +30,9 @@
  *
  * @package 	CodeIgniter
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
- * @license 	http://opensource.org/licenses/MIT	MIT License
- * @link 		https://goo.gl/wGXHO9
+ * @copyright	Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
+ * @license 	https://opensource.org/licenses/MIT	MIT License
+ * @link 		http://bit.ly/KaderGhb
  * @since 		2.1.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -44,8 +44,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @subpackage 	Skeleton
  * @category 	Compatibility
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @link 		https://goo.gl/wGXHO9
- * @copyright 	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @link 		http://bit.ly/KaderGhb
+ * @copyright 	Copyright (c) 2020, Kader Bouyakoub (http://bit.ly/KaderGhb)
  * @since 		2.1.0
  * @version 	2.1.0
  */
@@ -289,30 +289,7 @@ if ( ! function_exists('spl_autoload_register')) {
 	 * @var array
 	 */
 	$_cs_spl_autoloaders = array();
-	
-	/**
-	 * Autoloader compatibility callback.
-	 * @param 	string 	$classname 	Class to attempt autoloading.
-	 * @return 	void
-	 */
-	function __autoload($classname) {
-		global $_cs_spl_autoloaders;
-		foreach ($_cs_spl_autoloaders as $autoloader) {
-			// Avoid the extra warning if the autoloader isn't callable.
-			if ( ! is_callable($autoloader)) {
-				continue;
-			}
-			
-			call_user_func($autoloader, $classname);
-			
-			// If it has been autoloaded, stop processing.
-			if (class_exists($classname, false)) {
-				return;
-			}
-		}
-	}
 
-	// ------------------------------------------------------------------------
 	
 	/**
 	 * Registers a function to be autoloaded.

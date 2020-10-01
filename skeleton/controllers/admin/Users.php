@@ -8,7 +8,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
+ * Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,8 +30,8 @@
  *
  * @package 	CodeIgniter
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
- * @license 	http://opensource.org/licenses/MIT	MIT License
+ * @copyright	Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
+ * @license 	https://opensource.org/licenses/MIT	MIT License
  * @link 		https://github.com/bkader
  * @since 		1.0.0
  */
@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @category 	Modules\Controllers
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
  * @link 		https://github.com/bkader
- * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://github.com/bkader)
+ * @copyright	Copyright (c) 2020, Kader Bouyakoub (https://github.com/bkader)
  * @since 		1.0.0
  * @version 	1.4.0
  */
@@ -781,7 +781,7 @@ class Users extends Admin_Controller {
 	 * Add some buttons to dashboard subhead section.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @access 	protected

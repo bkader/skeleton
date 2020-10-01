@@ -8,7 +8,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
+ * Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,9 +30,9 @@
  *
  * @package 	CodeIgniter
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @copyright	Copyright (c) 2018, Kader Bouyakoub <bkader[at]mail[dot]com>
- * @license 	http://opensource.org/licenses/MIT	MIT License
- * @link 		https://goo.gl/wGXHO9
+ * @copyright	Copyright (c) 2020, Kader Bouyakoub <bkader[at]mail[dot]com>
+ * @license 	https://opensource.org/licenses/MIT	MIT License
+ * @link 		http://bit.ly/KaderGhb
  * @since 		1.0.0
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -46,8 +46,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @subpackage 	Skeleton
  * @category 	Modules\Controllers
  * @author 		Kader Bouyakoub <bkader[at]mail[dot]com>
- * @link 		https://goo.gl/wGXHO9
- * @copyright	Copyright (c) 2018, Kader Bouyakoub (https://goo.gl/wGXHO9)
+ * @link 		http://bit.ly/KaderGhb
+ * @copyright	Copyright (c) 2020, Kader Bouyakoub (http://bit.ly/KaderGhb)
  * @since 		1.0.0
  * @version 	2.1.6
  */
@@ -60,7 +60,7 @@ class Themes extends Admin_Controller {
 	 * string and load themes JS file.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * 
 	 * @since 	1.0.0
 	 * @since 	1.4.0 	Included Handlebars and removed array_push for better performance.
@@ -94,7 +94,7 @@ class Themes extends Admin_Controller {
 	 * Display available themes.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * 
 	 * @since 	1.0.0
 	 * @since 	1.3.3 	Rewritten for better code readability and performance.
@@ -244,7 +244,7 @@ class Themes extends Admin_Controller {
 	 * Method for installing themes from future server or upload ZIP themes.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * 
 	 * @since 	1.3.4
 	 * @since 	1.4.0 	Updated to use newly created nonce system.
@@ -272,7 +272,7 @@ class Themes extends Admin_Controller {
 	 * Method for uploading themes using ZIP archives.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * 
 	 * @since 	1.3.4
 	 * @since 	1.4.0 	Updated to use newly created nonce system.
@@ -466,7 +466,7 @@ class Themes extends Admin_Controller {
 	 * Add some buttons to dashboard subhead section.
 	 *
 	 * @author 	Kader Bouyakoub
-	 * @link 	https://goo.gl/wGXHO9
+	 * @link 	http://bit.ly/KaderGhb
 	 * @since 	2.0.0
 	 *
 	 * @access 	protected
@@ -478,7 +478,7 @@ class Themes extends Admin_Controller {
 		// Default page icon and title.
 		$this->data['page_icon']  = 'paint-brush';
 		$this->data['page_title'] = __('CSK_THEMES');
-		$this->data['page_help'] = 'https://goo.gl/B1hPhc';
+		$this->data['page_help'] = 'http://bit.ly/CSKThemesDev';
 
 		// On the install section?
 		if ('install' === $this->router->fetch_method())
