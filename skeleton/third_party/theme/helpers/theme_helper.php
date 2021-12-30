@@ -520,6 +520,38 @@ if ( ! function_exists('get_the_analytics'))
 	}
 }
 
+// --------------------------------------------------------------------
+
+if ( ! function_exists('the_google_site_verification'))
+{
+	/**
+	 * This function is used to output the full Google Site Verification code.
+	 * You may want to use it right before the closing </body> tag.
+	 * @param 	string 	$code 	Google Analytics ID.
+	 * @return 	void
+	 */
+	function the_google_site_verification($code = null)
+	{
+		echo get_instance()->theme->print_google_site_verification($code);
+	}
+}
+
+// --------------------------------------------------------------------
+
+if ( ! function_exists('get_google_site_verification'))
+{
+	/**
+	 * This function is similar to the "the_google_site_verification" function, the
+	 * only different is that is returns the code instead of output.
+	 * @param 	string 	$code 	Google Analytics ID.
+	 * @return 	string
+	 */
+	function get_google_site_verification($code = null)
+	{
+		return get_instance()->theme->print_google_site_verification($code);
+	}
+}
+
 /*==========================================
 =            METADATA FUNCTIONS            =
 ==========================================*/

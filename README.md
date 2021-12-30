@@ -22,9 +22,8 @@ Our database contains **9** required tables and a single optional table (`sessio
 
 ## Demo
 If you want to try it before using it and contributing to it, you can visit the demo:
-* [Demo Link v1](http://demo.ianhub.net/skeleton/).
-* [Demo Link v2](http://demo.ianhub.net/skeleton-v2/).
-* Username: **admin** (male) or **wadmin** (female)
+* [Demo Link](https://ci-skeleton.000webhostapp.com/).
+* Username: **admin**
 * Password: **admin123**
 
 Don't forget to contribute if you please! If you have any suggestions, let me know and please, don't forget that I am human, I am not perfect, I DO mistakes, lots of mistakes! So if you find any issues, just let me know and feel free to suggest any changes and enhancements.

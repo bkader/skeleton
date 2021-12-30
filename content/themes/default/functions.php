@@ -84,6 +84,9 @@ class Default_theme {
 			// Add IE8 support.
 			add_filter( 'extra_head', array( $this, 'extra_head' ) );
 
+			// Add Google Site Verification
+			add_filter( 'extra_head', array( $this, 'google_site_verification' ) );
+
 			// We add Google Analytics Code.
 			add_filter( 'after_scripts', array( $this, 'google_analytics' ) );
 
@@ -256,6 +259,16 @@ class Default_theme {
 	public function google_analytics( $output ) {
 		// We simply add the analytics script.
 		$output .= get_the_analytics( get_option( 'google_analytics_id' ) );
+		return $output;
+	}
+
+	/**
+	 * We add stuff to Google Site Verification script position.
+	 * @access 	public
+	 */
+	public function google_site_verification( $output ) {
+		// We simply add the analytics script.
+		$output .= get_google_site_verification( get_option( 'google_site_verification' ) );
 		return $output;
 	}
 

@@ -95,11 +95,22 @@ EOT;
 	 * @var string
 	 */
 	protected $template_google_analytics = <<<EOT
-	<script>
-        window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
-        ga('create','{site_id}','auto');ga('send','pageview')
-    </script>
-    <script src="https://www.google-analytics.com/analytics.js" async defer></script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={site_id}"></script>
+<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', '{site_id}');
+</script>
+EOT;
+
+	/**
+	 * Google site verification code.
+	 * @var string
+	 */
+	protected $template_google_site_verification = <<<EOT
+<meta name="google-site-verification" content="{code}" />
 EOT;
 
 	/**
@@ -563,7 +574,7 @@ EOT;
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Returns the full path to the currently active theme, whether it's the 
+	 * Returns the full path to the currently active theme, whether it's the
 	 * front-end theme or dashboard theme.
 	 * @access 	public
 	 * @param 	string 	$uri
@@ -941,7 +952,7 @@ EOT;
 				}
 			}
 
-			if (true !== $found 
+			if (true !== $found
 				&& false !== is_file($manifest = $this->themes_path($folder.'/'.$manifest_dist)))
 			{
 				$manifest = json_read_file($manifest);
@@ -1036,7 +1047,7 @@ EOT;
 	 * layout_exists
 	 *
 	 * Method for checking the existence of the layout.
-	 * 
+	 *
 	 * @access 	public
 	 * @param 	string 	$layout 	The layout to check (Optional).
 	 * @return 	bool 	true if the layout exists, else false.
@@ -1044,9 +1055,9 @@ EOT;
 	public function layout_exists($layout = null)
 	{
 		empty($layout) && $layout = $this->get_layout();
-		
+
 		$layout = preg_replace('/.php$/', '', $layout).'.php';
-		
+
 		$full_path = $this->apply_filters(
 			$this->_is_admin() ? 'admin_layouts_path' : 'theme_layouts_path',
 			$this->theme_path()
@@ -1177,7 +1188,7 @@ EOT;
 		if ($this->_is_admin())
 		{
 			$view = str_replace('admin/', '', isset($this->view) ? $this->view : $this->method);
-			$this->view = ($this->module && false !== ($modpath = $this->CI->router->module_path($this->module))) 
+			$this->view = ($this->module && false !== ($modpath = $this->CI->router->module_path($this->module)))
 				? 'admin/'.$view : $view;
 		}
 
@@ -1195,9 +1206,9 @@ EOT;
 	public function view_exists($view = null)
 	{
 		empty($view) && $view = $this->get_view();
-		
+
 		$view = preg_replace('/.php$/', '', $view).'.php';
-		
+
 		$full_path = $this->apply_filters(
 			$this->_is_admin() ? 'admin_views_path' : 'theme_views_path',
 			$this->theme_path()
@@ -1934,7 +1945,7 @@ EOT;
 	public function print_analytics($site_id = null)
 	{
 		$site_id OR $site_id = $this->CI->config->item('google_analytics_id');
-		
+
 		$output = '';
 
 		if ($site_id && 'UA-XXXXX-Y' !== $site_id)
@@ -1944,7 +1955,34 @@ EOT;
 				$this->template_google_analytics
 			);
 
-			$output = str_replace('{site_id}', $site_id, $temp_analytics)."\n";
+			$output .= str_replace('{site_id}', $site_id, $temp_analytics)."\n";
+		}
+
+		return $output;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Outputs the default google site verification code.
+	 * @access 	public
+	 * @param 	string 	$code 	Google Analytics ID
+	 * @return 	string
+	 */
+	public function print_google_site_verification($code = null)
+	{
+		$code OR $code = $this->CI->config->item('google_site_verification');
+
+		$output = '';
+
+		if ($code && '' !== $code)
+		{
+			$temp = $this->apply_filters(
+				$this->_is_admin() ? 'admin_google_site_verification' : 'google_site_verification',
+				$this->template_google_site_verification
+			);
+
+			$output .= str_replace('{code}', $code, $temp)."\n";
 		}
 
 		return $output;
