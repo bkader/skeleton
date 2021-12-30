@@ -66,7 +66,7 @@ class Reports extends Reports_Controller
 		if ( ! empty($get))
 		{
 			$this->load->helper('security');
-			$this->data['back_anchor'] = admin_anchor('reports', line('back'), array(
+			$this->data['back_anchor'] = admin_anchor('reports', line('CSK_BTN_BACK'), array(
 				'class' => 'btn btn-default btn-sm pull-right'
 			));
 		}

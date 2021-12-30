@@ -3,6 +3,8 @@
 .phpintel
 license.txt
 install/*
+*.sublime-project
+*.sublime-workspace
 
 # Ignore cache files.
 !application/cache/*
